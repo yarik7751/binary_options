@@ -20,10 +20,10 @@ import com.elatesoftware.grandcapital.views.fragments.QuotesFragment;
 import com.elatesoftware.grandcapital.views.fragments.SettingsFragment;
 import com.elatesoftware.grandcapital.views.fragments.ToolbarFragment;
 import com.elatesoftware.grandcapital.views.fragments.WithdrawFundsFragment;
-import com.elatesoftware.grandcapital.views.items.AlertShower;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
+import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuBaseItem;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
-import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuWithMarkItem;
+import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItemWithMark;
 
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 
@@ -33,7 +33,7 @@ public class BaseActivity extends CustomFontsActivity {
     private ResideMenu mResideMenu;
     private ResideMenuItem mAddFunds;
     private ResideMenuItem mWithdraw;
-    private ResideMenuWithMarkItem mDealing;
+    private ResideMenuItemWithMark mDealing;
     private ResideMenuItem mQuotes;
     private ResideMenuItem mHowItWorks;
     private ResideMenuItem mPromotions;
@@ -80,7 +80,7 @@ public class BaseActivity extends CustomFontsActivity {
     private void addItems() {
         mAddFunds = new ResideMenuItem(this, getString(R.string.menu_item_add_funds));
         mWithdraw = new ResideMenuItem(this, getString(R.string.menu_item_withdraw_funds));
-        mDealing = new ResideMenuWithMarkItem(this, getString(R.string.menu_item_dealing));
+        mDealing = new ResideMenuItemWithMark(this, getString(R.string.menu_item_dealing));
         mQuotes = new ResideMenuItem(this, getString(R.string.menu_item_quotes));
         mHowItWorks = new ResideMenuItem(this, getString(R.string.menu_item_how_it_works));
         mPromotions = new ResideMenuItem(this, getString(R.string.menu_item_promotions));
@@ -112,7 +112,7 @@ public class BaseActivity extends CustomFontsActivity {
     private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
         @Override
         public void openMenu() {
-            mDealing.setValue(8);
+            mDealing.setValue(9);
         }
         @Override
         public void closeMenu() {
@@ -171,7 +171,7 @@ public class BaseActivity extends CustomFontsActivity {
         //AlertShower.showDialogLogout(getApplicationContext(), this);
         CustomSharedPreferences.deleteInfoUser(getApplicationContext());
         Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
     }

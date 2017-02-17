@@ -40,7 +40,7 @@
                 android:paddingLeft="0dp"
                 android:paddingRight="20dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/arrow_up"
+                android:src="@drawable/up"
                 android:contentDescription="@string/dealing_page_item_arrow_description" />
 
             <TextView

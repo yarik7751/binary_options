@@ -14,7 +14,6 @@ import com.elatesoftware.grandcapital.R;
      TextView mThirdColumn;
      TextView mFourthColumn;
      TextView mFifthColumn;
-
      ImageView mArrow;
 
     FragmentDealingViewHolder(View v) {

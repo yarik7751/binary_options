@@ -146,13 +146,16 @@ public class SignInActivity extends CustomFontsActivity {
     }
 
     private void showTerminalActivity() {
-        Intent i = new Intent(getApplicationContext(), BaseActivity.class);
-        startActivity(i);
+        Intent intent = new Intent(getApplicationContext(), BaseActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        finish();
     }
 
     @Override

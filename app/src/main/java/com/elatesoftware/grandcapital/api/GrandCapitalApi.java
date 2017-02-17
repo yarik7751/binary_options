@@ -1,24 +1,15 @@
 package com.elatesoftware.grandcapital.api;
 
-import android.support.v4.util.ArrayMap;
-
-import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Order;
-import com.elatesoftware.grandcapital.models.User;
-import com.elatesoftware.grandcapital.utils.ConventFromJson;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventToJson;
-import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.CookieJar;
 import okhttp3.OkHttpClient;
@@ -31,7 +22,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class GrandCapitalApi {
 
     private static final String BASE_URL = "https://grandcapital.ru";
-
     private static IGrandCapitalApi grandCapitalApiService = null;
 
     private static IGrandCapitalApi getApiService() {
@@ -49,11 +39,6 @@ public class GrandCapitalApi {
         }
         return grandCapitalApiService;
     }
-/*
-    public static Call<AuthorizationAnswer> tryAuthorize(String login, String password) {
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), ConventToJson.getJsonRequestSignIn(login, password));
-        return getApiService().tryToAuthorize(body);
-    }*/
 
     public static String authorizationRequest(String login, String password){
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), ConventToJson.getJsonRequestSignIn(login, password));
@@ -75,7 +60,6 @@ public class GrandCapitalApi {
         }
         return result;
      }
-
 
     public static Call<List<Order>> getOrders(String login) {
         return getApiService().getOrders(login);

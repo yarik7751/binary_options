@@ -41,14 +41,14 @@ public class ResideMenu extends FrameLayout {
     private float shadowAdjustScaleX;
     private float shadowAdjustScaleY;
     private List<View> ignoredViews; /**Views which need stop to intercept touch events.*/
-    private List<ResideMenuItem> leftMenuItems;
+    private List<ResideMenuBaseItem> leftMenuItems;
     private DisplayMetrics displayMetrics = new DisplayMetrics();
     private OnMenuListener menuListener;
     private float lastRawX;
     private boolean isInIgnoredView = false;
     private int scaleDirection = DIRECTION_LEFT;
     private int pressedState = PRESSED_DOWN;
-    private List<Integer> disabledSwipeDirection = new ArrayList<Integer>();
+    private List<Integer> disabledSwipeDirection = new ArrayList<>();
     private float mScaleValue = 0.5f; /** Valid scale factor is between 0.0f and 1.0f.*/
     private boolean mUse3D;
     private static final int ROTATE_Y_ANGLE = 10;
@@ -134,9 +134,8 @@ public class ResideMenu extends FrameLayout {
 
     private void initValue(Activity activity) {
         this.activity = activity;
-        leftMenuItems = new ArrayList<ResideMenuItem>();
-        //rightMenuItems = new ArrayList<ResideMenuItem>();
-        ignoredViews = new ArrayList<View>();
+        leftMenuItems = new ArrayList<>();
+        ignoredViews = new ArrayList<>();
         viewDecor = (ViewGroup) activity.getWindow().getDecorView();
         viewActivity = new TouchDisableView(this.activity);
 
@@ -147,7 +146,6 @@ public class ResideMenu extends FrameLayout {
 
         ViewGroup parent = (ViewGroup) scrollViewLeftMenu.getParent();
         parent.removeView(scrollViewLeftMenu);
-        //parent.removeView(scrollViewRightMenu);
     }
 
     private void setShadowAdjustScaleXByOrientation() {
@@ -189,7 +187,7 @@ public class ResideMenu extends FrameLayout {
      * @param menuItem
      */
     @Deprecated
-    public void addMenuItem(ResideMenuItem menuItem) {
+    public void addMenuItem(ResideMenuBaseItem menuItem) {
         this.leftMenuItems.add(menuItem);
         layoutLeftMenu.addView(menuItem);
     }
@@ -199,19 +197,20 @@ public class ResideMenu extends FrameLayout {
      * @param menuItem
      * @param direction
      */
-    public void addMenuItem(ResideMenuItem menuItem, int direction) {
+    public void addMenuItem(ResideMenuBaseItem menuItem, int direction) {
         if (direction == DIRECTION_LEFT) {
             this.leftMenuItems.add(menuItem);
             layoutLeftMenu.addView(menuItem);
         }
     }
+
     /**
      * WARNING: It will be removed from v2.0.
      *
      * @param menuItems
      */
     @Deprecated
-    public void setMenuItems(List<ResideMenuItem> menuItems) {
+    public void setMenuItems(List<ResideMenuBaseItem> menuItems) {
         this.leftMenuItems = menuItems;
         rebuildMenu();
     }
@@ -220,7 +219,7 @@ public class ResideMenu extends FrameLayout {
      * @param menuItems
      * @param direction
      */
-    public void setMenuItems(List<ResideMenuItem> menuItems, int direction) {
+    public void setMenuItems(List<ResideMenuBaseItem> menuItems, int direction) {
         if (direction == DIRECTION_LEFT) {
             this.leftMenuItems = menuItems;
         }
@@ -230,7 +229,7 @@ public class ResideMenu extends FrameLayout {
     private void rebuildMenu() {
         if (layoutLeftMenu != null) {
             layoutLeftMenu.removeAllViews();
-            for (ResideMenuItem leftMenuItem : leftMenuItems)
+            for (ResideMenuBaseItem leftMenuItem : leftMenuItems)
                 layoutLeftMenu.addView(leftMenuItem);
         }
     }
@@ -240,7 +239,7 @@ public class ResideMenu extends FrameLayout {
      * @return
      */
     @Deprecated
-    public List<ResideMenuItem> getMenuItems() {
+    public List<ResideMenuBaseItem> getMenuItems() {
         return leftMenuItems;
     }
 
@@ -248,12 +247,10 @@ public class ResideMenu extends FrameLayout {
      * Return instances of menu items;
      * @return
      */
-    public List<ResideMenuItem> getMenuItems(int direction) {
+    public List<ResideMenuBaseItem> getMenuItems(int direction) {
         if (direction == DIRECTION_LEFT) {
             return leftMenuItems;
-        }/*
-        else
-            return rightMenuItems;*/
+        }
         return null;
     }
 
@@ -334,10 +331,9 @@ public class ResideMenu extends FrameLayout {
         return isOpened;
     }
 
-    private OnClickListener viewActivityOnClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (isOpened()) closeMenu();
+    private OnClickListener viewActivityOnClickListener = view -> {
+        if (isOpened()) {
+            closeMenu();
         }
     };
 
