@@ -153,7 +153,10 @@ public class DealingFragment extends Fragment {
     private void onFailRequest() {
         if (isAdded()) {
             mProgressLayout.setVisibility(View.GONE);
-            AlertShower.showInfo(getString(R.string.request_error_title), getString(R.string.request_error_text), getString(R.string.request_error_message_button), getActivity());
+            AlertShower.showInfoDialog(getString(R.string.request_error_title),
+                                       getString(R.string.request_error_text),
+                                       getString(R.string.request_error_message_button),
+                                       getActivity());
         }
     }
 

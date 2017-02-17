@@ -93,7 +93,10 @@ public class SignInActivity extends CustomFontsActivity {
         }else {
             llProgress.setVisibility(View.GONE);
             btnSignIn.setEnabled(true);
-            AlertShower.showInfo(getString(R.string.no_internet_connection_title), getString(R.string.no_internet_connection_text), getString(R.string.no_internet_connection_message_button), SignInActivity.this);
+            AlertShower.showInfoDialog(getString(R.string.no_internet_connection_title),
+                                       getString(R.string.no_internet_connection_text),
+                                       getString(R.string.no_internet_connection_message_button),
+                                       SignInActivity.this);
         }
     }
 
@@ -115,7 +118,10 @@ public class SignInActivity extends CustomFontsActivity {
                 btnSignIn.setEnabled(true);
             } else {
                 llProgress.setVisibility(View.GONE);
-                AlertShower.showInfo(getString(R.string.request_error_title), getString(R.string.request_error_text), getString(R.string.request_error_message_button), SignInActivity.this);
+                AlertShower.showInfoDialog(getString(R.string.request_error_title),
+                                           getString(R.string.request_error_text),
+                                           getString(R.string.request_error_message_button),
+                                           SignInActivity.this);
                 btnSignIn.setEnabled(true);
             }
         }

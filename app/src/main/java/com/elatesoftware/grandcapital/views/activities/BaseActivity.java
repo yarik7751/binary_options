@@ -20,8 +20,8 @@ import com.elatesoftware.grandcapital.views.fragments.QuotesFragment;
 import com.elatesoftware.grandcapital.views.fragments.SettingsFragment;
 import com.elatesoftware.grandcapital.views.fragments.ToolbarFragment;
 import com.elatesoftware.grandcapital.views.fragments.WithdrawFundsFragment;
+import com.elatesoftware.grandcapital.views.items.AlertShower;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
-import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuBaseItem;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItemWithMark;
 
@@ -144,7 +144,7 @@ public class BaseActivity extends CustomFontsActivity {
             } else if (view == mSettings) {
                 changeMainFragment(new SettingsFragment());
             } else if (view == mLogout) {
-                logout();
+                AlertShower.showLogoutDialog(getApplicationContext(), BaseActivity.this);
             }
             mResideMenu.closeMenu();
         }
@@ -165,15 +165,6 @@ public class BaseActivity extends CustomFontsActivity {
                 changeMainFragment(new QuotesFragment());
                 break;
         }
-    }
-
-    private void logout() {
-        //AlertShower.showDialogLogout(getApplicationContext(), this);
-        CustomSharedPreferences.deleteInfoUser(getApplicationContext());
-        Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
     }
 
     public static void changeMainFragment(Fragment targetFragment) {
