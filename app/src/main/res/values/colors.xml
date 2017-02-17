@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#ffffff</color>
+
+    <color name="textFiledColors">#ffffff</color>
+
+    <color name="editTextHint">#ffffff</color>
+
+    <color name="accentButtonGradientStartColor">#ef216c</color>
+    <color name="accentButtonGradientEndColor">#f4413c</color>
+    <color name="accentButtonGradientStartColorFocus">#ef216c</color>
+    <color name="accentButtonGradientEndColorFocus">#f4413c</color>
+    <color name="accentButtonGradientStartColorPressed">#ef216c</color>
+    <color name="accentButtonGradientEndColorPressed">#f4413c</color>
+
+    <color name="alertButtonTextColor">#000000</color>
+
+    <color name="menuAccountBalanceTextColor">#b3ffffff</color>
+
+    <color name="menuBadgeColor">#de4d66</color>
+
+    <color name="toolbarColor">#cc24303e</color>
+
+    <color name="dealingListTitlesColor">#b3ffffff</color>
+    <color name="dealingListItemColor">#1affffff</color>
+
+    <color name="dealingListUpOrderColor">#78d261</color>
+    <color name="dealingListDownOrderColor">#de4d66</color>
+</resources>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    tools:context=".views.activities.SignInActivity"
+    android:background="@drawable/bg">
+    <ScrollView
+        android:id="@+id/login_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/email_login_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:paddingLeft="@dimen/login_fileds_padding"
+            android:paddingRight="@dimen/login_fileds_padding">
+
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/logo"
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="@dimen/login_image_padding"
+                android:paddingRight="@dimen/login_image_padding"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:paddingBottom="@dimen/login_image_bottom_padding"/>
+
+            <EditText
+                android:id="@+id/signup_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/signup_page_name_field"
+                android:maxLines="1"
+                style="@style/EditText"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/signup_surname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/signup_page_surname_field"
+                android:maxLines="1"
+                style="@style/EditText"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/signup_phone_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/signup_page_phonenumber_field"
+                android:maxLines="1"
+                style="@style/EditText"
+                android:inputType="phone" />
+
+
+            <EditText
+                android:id="@+id/signup_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/signup_page_email_field"
+                android:maxLines="1"
+                style="@style/EditText"
+                android:inputType="textEmailAddress" />
+
+            <Button
+                android:id="@+id/signup_signup_button"
+                style="@style/AccentButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/login_page_button_padding"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/signup_page_registration_button_text" />
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/login_page_link_block_padding">
+
+                <TextView
+                    android:text="@string/signin_page_button_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/SugnupLinkStyle"
+                    android:id="@+id/signup_signin_link" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

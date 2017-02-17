@@ -1,0 +1,29 @@
+package com.elatesoftware.grandcapital.adapters.dealing;
+
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.elatesoftware.grandcapital.R;
+
+ class FragmentDealingViewHolder extends RecyclerView.ViewHolder {
+
+     TextView mFirstColumn;
+     TextView mSecondColumn;
+     TextView mThirdColumn;
+     TextView mFourthColumn;
+     TextView mFifthColumn;
+
+     ImageView mArrow;
+
+    FragmentDealingViewHolder(View v) {
+        super(v);
+        mFirstColumn = (TextView)itemView.findViewById(R.id.tv_dealing_header_col1_active);
+        mSecondColumn = (TextView)itemView.findViewById(R.id.tv_dealing_header_col2_open);
+        mThirdColumn = (TextView)itemView.findViewById(R.id.tv_dealing_col3_win);
+        mFourthColumn = (TextView)itemView.findViewById(R.id.tv_dealing_col4_invest);
+        mFifthColumn = (TextView)itemView.findViewById(R.id.tv_dealing_col5_income);
+        mArrow = (ImageView) itemView.findViewById(R.id.imgv_dealing_header_col1_active);
+    }
+}

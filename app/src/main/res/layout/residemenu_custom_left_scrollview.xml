@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ImageButton
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="@dimen/menu_cross_size"
+        android:layout_height="@dimen/menu_cross_size"
+        android:background="@drawable/cross_on_menu"
+        android:layout_margin="@dimen/menu_cross_margin"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:id="@+id/close_button"/>
+
+    <ScrollView
+        android:id="@+id/sv_left_menu"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:scrollbars="none"
+        android:paddingBottom="@dimen/menu_center_offset"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp">
+
+        <LinearLayout
+            android:id="@+id/layout_left_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="@dimen/menu_account_information_padding">
+
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/menu_photo_background"
+                        android:paddingLeft="@dimen/menu_account_photo_padding"
+                        android:paddingRight="@dimen/menu_account_photo_padding"
+                        android:adjustViewBounds="true"/>
+                    <ImageView
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:id="@+id/imgvUserPhoto"
+                        android:layout_centerInParent="true"
+                        android:src="@drawable/user_photo"
+                        android:adjustViewBounds="true"/>
+                    </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_account_name_fish"
+                    android:id="@+id/tvUserName"
+                    style="@style/MenuItem"
+                    android:textSize="@dimen/menu_account_name_text_size"
+                    android:layout_gravity="center_horizontal"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_account_balance_text_fish"
+                    android:textSize="@dimen/Menu_account_balance_text_size"
+                    android:id="@+id/tvUserBalance"
+                    style="@style/BoldText"
+                    android:textColor="@color/menuAccountBalanceTextColor"
+                    android:layout_gravity="center_horizontal"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:asd="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/toolbarColor"
+    tools:context=".views.fragments.ToolbarFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/menu_burger"
+            android:layout_width="40dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="9dp"
+            android:padding="10dp"
+            android:scaleType="fitXY"
+            android:background="@null"
+            android:src="@drawable/menu_icon" />
+
+        <TextView
+            android:id="@+id/page_title"
+            style="@style/BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_toEndOf="@+id/menu_burger"
+            android:layout_toRightOf="@+id/menu_burger"
+            android:text="Add funds"
+            android:textSize="16sp" />
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="14dp"
+            asd:tabIndicatorColor="@color/accentButtonGradientStartColor">
+
+            <android.support.design.widget.TabItem
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+            <android.support.design.widget.TabItem
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+            <android.support.design.widget.TabItem
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+
+            <android.support.design.widget.TabItem
+                android:layout_width="0dp"
+                android:layout_height="0dp" />
+        </android.support.design.widget.TabLayout>
+    </RelativeLayout>
+</FrameLayout>

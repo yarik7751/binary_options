@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.elatesoftware.grandcapital">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".app.GrandCapitalApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/logo"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".views.activities.BaseActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".views.activities.SignInActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity
+            android:name=".views.activities.SignUpActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <activity
+            android:name=".views.activities.WebActivity"
+            android:configChanges="keyboardHidden"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
+        <service android:name=".services.SignInService"/>
+    </application>
+</manifest>

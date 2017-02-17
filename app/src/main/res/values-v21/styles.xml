@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AccentButtonStyle" parent="LigthText">
+        <item name="android:background">@drawable/button</item>
+        <item name="android:elevation">30dp</item>
+    </style>
+</resources>

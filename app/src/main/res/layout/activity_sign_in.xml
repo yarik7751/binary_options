@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/bg"
+    tools:context=".views.activities.SignInActivity"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/email_login_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerInParent="true"
+            android:paddingLeft="@dimen/login_fileds_padding"
+            android:paddingRight="@dimen/login_fileds_padding"
+            android:paddingBottom="@dimen/login_page_center_fields_padding">
+
+            <ImageView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:src="@drawable/logo"
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="@dimen/login_image_padding"
+                android:paddingRight="@dimen/login_image_padding"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:paddingBottom="@dimen/login_image_bottom_padding"
+                android:contentDescription="@string/grandcapital_icon_description" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/emailEditTextLayout"
+                android:textColorHint="@color/editTextHint">
+
+                <EditText
+                    android:id="@+id/login"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/signin_page_login_field_text"
+                    android:text="@string/userLogin"
+                    android:imeActionId="@+id/login"
+                    android:imeOptions="actionUnspecified"
+                    android:maxLines="1"
+                    style="@style/EditText"
+                    android:inputType="textEmailAddress" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/passwordEditTextLayout"
+                app:passwordToggleEnabled="false"
+                android:textColorHint="@color/editTextHint">
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/signin_page_password_field_text"
+                    android:imeActionId="@+id/password"
+                    android:imeActionLabel="@string/signin_page_button_text"
+                    android:imeOptions="actionGo"
+                    android:text="@string/userPassword"
+                    android:inputType="textPassword"
+                    app:hintEnabled="false"
+                    android:maxLines="1"
+                    style="@style/EditText" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/email_sign_in_button"
+                style="@style/AccentButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/signin_page_button_text" />
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/login_page_link_block_padding">
+
+                <TextView
+                    android:text="@string/signin_page_forgot_password_link_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/AdditionalText"
+                    android:id="@+id/forgot_password_link" />
+            </LinearLayout>
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/email_login_form"
+            android:id="@+id/footerLayout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="@string/signin_page_signup_link_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/AdditionalText"
+                        android:id="@+id/signup_link"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:paddingTop="20dp"
+                        android:paddingBottom="@dimen/login_page_links_padding"/>
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+        <include layout="@layout/progress_bar" />
+    </RelativeLayout>
+</ScrollView>

@@ -1,0 +1,30 @@
+<resources>
+
+    <dimen name="login_fileds_padding">16dp</dimen>
+    <dimen name="login_image_padding">105dp</dimen>
+
+    <dimen name="button_radius">50dp</dimen>
+    <dimen name="login_image_bottom_padding">30dp</dimen>
+    <dimen name="login_page_link_block_padding">16dp</dimen>
+    <dimen name="login_page_button_padding">8dp</dimen>
+    <dimen name="login_page_links_padding">16dp</dimen>
+    
+    <dimen name="edit_text_size">16sp</dimen>
+    <dimen name="login_page_text_edit_padding">10dp</dimen>
+
+    <dimen name="login_page_padding_between_textfields">20dp</dimen>
+
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="login_page_center_fields_padding">10dp</dimen>
+    <dimen name="login_page_signin_button_padding">40dp</dimen>
+    <dimen name="menu_cross_size">16dp</dimen>
+    <dimen name="menu_cross_margin">20dp</dimen>
+    <dimen name="menu_center_offset">40dp</dimen>
+    <dimen name="menu_account_information_padding">20dp</dimen>
+    <dimen name="menu_account_photo_padding">16dp</dimen>
+    <dimen name="menu_account_name_text_size">14sp</dimen>
+    <dimen name="Menu_account_balance_text_size">10sp</dimen>
+    <dimen name="dealing_list_text_size">13sp</dimen>
+    <dimen name="dealing_fragment_no_orders_message_size">13sp</dimen>
+</resources>
