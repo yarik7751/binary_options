@@ -19,6 +19,7 @@ import com.nineoldandroids.view.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ResideMenu extends FrameLayout {
 
@@ -53,6 +54,9 @@ public class ResideMenu extends FrameLayout {
     private boolean mUse3D;
     private static final int ROTATE_Y_ANGLE = 10;
 
+    private TextView userName;
+    private TextView balance;
+
     public ResideMenu(Context context) {
         super(context);
         initViews(context, -1, -1);
@@ -83,11 +87,11 @@ public class ResideMenu extends FrameLayout {
         RelativeLayout menuHolder = (RelativeLayout) findViewById(R.id.sv_menu_holder);
         menuHolder.addView(scrollViewLeftMenu);
 
-        TextView userName = (TextView)findViewById(R.id.tvUserName);
-        userName.setText(User.getInstance().getUserName());
+        userName = (TextView)findViewById(R.id.tvUserName);
+        refreshNameUser();
 
-        TextView balance = (TextView)findViewById(R.id.tvUserBalance);
-        balance.setText(getResources().getString(R.string.balance) + " " + User.getInstance().getBalance());
+        balance = (TextView)findViewById(R.id.tvUserBalance);
+        refreshBalanceUser();
 
         ImageButton closeButton = (ImageButton)findViewById(R.id.close_button);
         closeButton.setOnClickListener(v -> closeMenu());
@@ -95,6 +99,15 @@ public class ResideMenu extends FrameLayout {
 
     public View getLeftMenuView() {
         return scrollViewLeftMenu;
+    }
+
+    public void refreshNameUser(){
+        userName.setText(User.getInstance().getUserName());
+    }
+    public void refreshBalanceUser(){
+        //System.out.println(String.format("%8.2f", User.getInstance().getBalance()).replace(',', '.'));
+
+        balance.setText(getResources().getString(R.string.balance) + " " + String.format("%.2f", User.getInstance().getBalance()).replace(',', '.'));
     }
 
     @Override

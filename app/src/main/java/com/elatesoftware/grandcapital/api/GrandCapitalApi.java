@@ -1,8 +1,11 @@
 package com.elatesoftware.grandcapital.api;
 
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
+import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Order;
+import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.utils.ConventToJson;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
@@ -61,7 +64,40 @@ public class GrandCapitalApi {
         return result;
      }
 
-    public static Call<List<Order>> getOrders(String login) {
-        return getApiService().getOrders(login);
+    public static Call<List<Order>> getOrders() {
+        return getApiService().getOrders(User.getInstance().getLogin());
+    }
+
+    public static void getInfoUser() {
+        Call<InfoAnswer> responseBodyCall = getApiService().getInfo(User.getInstance().getLogin());
+        Response<InfoAnswer> response = null;
+        try {
+            response = responseBodyCall.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null){
+            if(response.code() == 200) {
+                InfoAnswer infoAnswer = response.body();
+                User.getInstance().setUserName(infoAnswer.getName());
+            }
+        }
+    }
+
+    public static void getSummary() {
+       Call<SummaryAnswer> responseCall = getApiService().getSummary(User.getInstance().getLogin());
+       Response<SummaryAnswer> response = null;
+        try {
+            response = responseCall.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null){
+            if(response.code() == 200) {
+                SummaryAnswer answer = response.body();
+                Double balance = answer.getBalance();
+                User.getInstance().setBalance(balance);
+            }
+        }
     }
 }

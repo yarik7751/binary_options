@@ -1,8 +1,6 @@
 package com.elatesoftware.grandcapital.api.pojo;
 
-
 import javax.annotation.Generated;
-
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

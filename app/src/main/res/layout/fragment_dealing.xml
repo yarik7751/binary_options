@@ -70,7 +70,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:text="@string/dealing_page_open_active" />
+                tools:text="@string/dealing_page_open_active" />
 
             <TextView
                 android:id="@+id/tv_dealing_header_col2_open"
@@ -78,7 +78,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="@string/dealing_page_open_open" />
+                tools:text="@string/dealing_page_open_open" />
 
             <TextView
                 android:id="@+id/fragment_dealing_header_column_3"
@@ -86,7 +86,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="@string/dealing_page_open_market" />
+                tools:text="@string/dealing_page_open_market" />
 
             <TextView
                 android:id="@+id/fragment_dealing_header_column_4"
@@ -94,7 +94,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="@string/dealing_page_open_amount" />
+                tools:text="@string/dealing_page_open_amount" />
 
             <TextView
                 android:id="@+id/fragment_dealing_header_column_5"
@@ -102,7 +102,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="@string/dealing_page_open_time" />
+                tools:text="@string/dealing_page_open_time" />
 
         </LinearLayout>
 

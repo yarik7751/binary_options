@@ -5,8 +5,8 @@ public class User {
     private String login;
     private String token;
     private String serverName;
-    private String userName = "Richard Branson";
-    private double balance = 45.612;
+    private String userName = "";
+    private double balance = 0;
 
     private static User ourInstance = null;
 

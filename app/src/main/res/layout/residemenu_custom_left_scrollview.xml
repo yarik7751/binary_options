@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ImageButton
         android:layout_alignParentRight="true"
@@ -63,7 +64,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/menu_account_name_fish"
+                    tools:text="@string/menu_account_name_fish"
                     android:id="@+id/tvUserName"
                     style="@style/MenuItem"
                     android:textSize="@dimen/menu_account_name_text_size"
@@ -71,7 +72,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/menu_account_balance_text_fish"
+                    tools:text="@string/menu_account_balance_text_fish"
                     android:textSize="@dimen/Menu_account_balance_text_size"
                     android:id="@+id/tvUserBalance"
                     style="@style/BoldText"

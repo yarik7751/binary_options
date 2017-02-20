@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 
- class FragmentDealingViewHolder extends RecyclerView.ViewHolder {
+class FragmentDealingViewHolder extends RecyclerView.ViewHolder {
 
      TextView mFirstColumn;
      TextView mSecondColumn;

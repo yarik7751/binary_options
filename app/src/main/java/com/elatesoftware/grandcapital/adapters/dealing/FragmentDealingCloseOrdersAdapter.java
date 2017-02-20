@@ -20,11 +20,10 @@ public class FragmentDealingCloseOrdersAdapter extends FragmentDealingOrdersAdap
         FragmentDealingViewHolder orderHolder = (FragmentDealingViewHolder) holder;
 
         orderHolder.mFirstColumn.setText(orderList.get(position).getSymbol().replace("_OP", ""));
-        orderHolder.mSecondColumn.setText(orderList.get(position).getOpenPrice().toString());
-        orderHolder.mThirdColumn.setText(orderList.get(position).getClosePrice().toString());
+        orderHolder.mSecondColumn.setText(String.valueOf(orderList.get(position).getOpenPrice()));
+        orderHolder.mThirdColumn.setText(String.valueOf(orderList.get(position).getClosePrice()));
 
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-
         orderHolder.mFourthColumn.setText(String.format("$%s", numberFormat.format(((double)orderList.get(position).getVolume()) / 100)));
 
         String sign = "";

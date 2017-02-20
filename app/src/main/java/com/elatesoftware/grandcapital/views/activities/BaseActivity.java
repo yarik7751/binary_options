@@ -1,6 +1,9 @@
 package com.elatesoftware.grandcapital.views.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +14,7 @@ import android.view.View;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
+import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.views.fragments.AccountsFragment;
 import com.elatesoftware.grandcapital.views.fragments.AddFundsFragment;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
@@ -48,10 +52,17 @@ public class BaseActivity extends CustomFontsActivity {
     public static final int DEALING_POSITION = 2;
     public static final int QUOTES_POSITION = 3;
 
+    private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+        mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(mInfoBroadcastReceiver, intentFilter);
+
         if (!isAuth()) {
             Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
             startActivity(intent);
@@ -64,7 +75,12 @@ public class BaseActivity extends CustomFontsActivity {
                 changeToolbarFragment(toolbar);
                 changeMainFragment(new AddFundsFragment());
             }
+            getInfoUser();
         }
+    }
+    public void getInfoUser(){
+        Intent intentMyIntentService = new Intent(this, InfoUserService.class);
+        startService(intentMyIntentService);
     }
 
     private void setupMenu() {
@@ -199,7 +215,7 @@ public class BaseActivity extends CustomFontsActivity {
         if (User.getInstance() != null) {
             return true;
         }
-        return CustomSharedPreferences.isSaveInPreferences(getApplicationContext());
+        return CustomSharedPreferences.isSaveUserInPreferences(getApplicationContext());
     }
 
     @Override
@@ -211,6 +227,22 @@ public class BaseActivity extends CustomFontsActivity {
             super.onBackPressed();
         } else {
             fragmentManager.popBackStack();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mInfoBroadcastReceiver);
+        super.onDestroy();
+    }
+
+    public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mResideMenu.refreshNameUser();
+            mResideMenu.refreshBalanceUser();
+
+            CustomSharedPreferences.updateInfoUser(getApplicationContext());
         }
     }
 }

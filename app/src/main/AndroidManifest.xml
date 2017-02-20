@@ -38,5 +38,6 @@
             android:configChanges="keyboardHidden"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <service android:name=".services.SignInService"/>
+        <service android:name=".services.InfoUserService"/>
     </application>
 </manifest>

@@ -1,11 +1,10 @@
+
 package com.elatesoftware.grandcapital.api.pojo;
 
-import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-@Generated("org.jsonschema2pojo")
-public class Summary {
+public class SummaryAnswer {
 
     @SerializedName("margin_free")
     @Expose
@@ -29,116 +28,95 @@ public class Summary {
     @Expose
     private Double marginLevel;
 
-    /**
-     * @return
-     * The marginFree
-     */
     public Double getMarginFree() {
         return marginFree;
     }
 
-    /**
-     * @param marginFree
-     * The margin_free
-     */
     public void setMarginFree(Double marginFree) {
         this.marginFree = marginFree;
     }
 
-    /**
-     * @return
-     * The credit
-     */
+    public SummaryAnswer withMarginFree(Double marginFree) {
+        this.marginFree = marginFree;
+        return this;
+    }
+
     public Double getCredit() {
         return credit;
     }
 
-    /**
-     * @param credit
-     * The credit
-     */
     public void setCredit(Double credit) {
         this.credit = credit;
     }
 
-    /**
-     * @return
-     * The equity
-     */
+    public SummaryAnswer withCredit(Double credit) {
+        this.credit = credit;
+        return this;
+    }
+
     public Double getEquity() {
         return equity;
     }
 
-    /**
-     * @param equity
-     * The equity
-     */
     public void setEquity(Double equity) {
         this.equity = equity;
     }
 
-    /**
-     * @return
-     * The closedProfit
-     */
+    public SummaryAnswer withEquity(Double equity) {
+        this.equity = equity;
+        return this;
+    }
+
     public Double getClosedProfit() {
         return closedProfit;
     }
 
-    /**
-     * @param closedProfit
-     * The closed_profit
-     */
     public void setClosedProfit(Double closedProfit) {
         this.closedProfit = closedProfit;
     }
 
-    /**
-     * @return
-     * The balance
-     */
+    public SummaryAnswer withClosedProfit(Double closedProfit) {
+        this.closedProfit = closedProfit;
+        return this;
+    }
+
     public Double getBalance() {
         return balance;
     }
 
-    /**
-     * @param balance
-     * The balance
-     */
     public void setBalance(Double balance) {
         this.balance = balance;
     }
 
-    /**
-     * @return
-     * The margin
-     */
+    public SummaryAnswer withBalance(Double balance) {
+        this.balance = balance;
+        return this;
+    }
+
     public Double getMargin() {
         return margin;
     }
 
-    /**
-     * @param margin
-     * The margin
-     */
     public void setMargin(Double margin) {
         this.margin = margin;
     }
 
-    /**
-     * @return
-     * The marginLevel
-     */
+    public SummaryAnswer withMargin(Double margin) {
+        this.margin = margin;
+        return this;
+    }
+
     public Double getMarginLevel() {
         return marginLevel;
     }
 
-    /**
-     * @param marginLevel
-     * The margin_level
-     */
     public void setMarginLevel(Double marginLevel) {
         this.marginLevel = marginLevel;
+    }
+
+    public SummaryAnswer withMarginLevel(Double marginLevel) {
+        this.marginLevel = marginLevel;
+        return this;
     }
 
 }

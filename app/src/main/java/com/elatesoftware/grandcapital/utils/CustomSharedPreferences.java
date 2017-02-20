@@ -13,11 +13,12 @@ import com.google.gson.Gson;
 
 public class CustomSharedPreferences {
 
-    public static final String SHARED_PREFERENCES_NAME = "com.elatesoftware.grandcapital.user";
+     private static final String SHARED_PREFERENCES = "com.elatesoftware.grandcapital.user";
+     private static final String SHARED_PREFERENCES_USER = "user";
 
-    public static boolean isSaveInPreferences(Context context){
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String json = sharedPreferences.getString(SHARED_PREFERENCES_NAME, null);
+    public static boolean isSaveUserInPreferences(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        String json = sharedPreferences.getString(SHARED_PREFERENCES_USER, null);
         if (json == null) {
             return false;
         } else {
@@ -27,18 +28,26 @@ public class CustomSharedPreferences {
             return true;
         }
     }
+    public static void updateInfoUser(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(User.getInstance());
+        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_USER, json);
+        editor.commit();
+    }
 
     public static void deleteInfoUser(Context context){
         User.setInstance(null);
-        PreferenceManager.getDefaultSharedPreferences(context).edit().clear().commit();
+        context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE).getString(SHARED_PREFERENCES_USER, null);
     }
 
     public static void saveUser(Context context, User currentUser) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
         String json = gson.toJson(currentUser);
-        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_NAME, json);
+        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_USER, json);
         editor.commit();
         User.setInstance(currentUser);
     }

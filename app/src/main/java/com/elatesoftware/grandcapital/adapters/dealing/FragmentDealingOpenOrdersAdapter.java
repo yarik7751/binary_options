@@ -21,8 +21,8 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
 
         FragmentDealingViewHolder orderHolder = (FragmentDealingViewHolder) holder;
         orderHolder.mFirstColumn.setText(orderList.get(position).getSymbol().replace("_OP", ""));
-        orderHolder.mSecondColumn.setText(orderList.get(position).getOpenPrice().toString());
-        orderHolder.mThirdColumn.setText(orderList.get(position).getClosePrice().toString());
+        orderHolder.mSecondColumn.setText(String.valueOf(orderList.get(position).getOpenPrice()));
+        orderHolder.mThirdColumn.setText(String.valueOf(orderList.get(position).getClosePrice()));
 
         /**объем приходит умноженный на 100*/
         double amount = ((double) orderList.get(position).getVolume()) / 100;

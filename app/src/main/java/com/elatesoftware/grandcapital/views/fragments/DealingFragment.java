@@ -25,6 +25,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -35,20 +37,16 @@ import retrofit2.Response;
 public class DealingFragment extends Fragment {
 
     private TabLayout mTabs;
-
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
     private TextView mFirstColumnHeader;
     private TextView mSecondColumnHeader;
     private TextView mThirdColumnHeader;
     private TextView mFourthColumnHeader;
     private TextView mFifthColumnHeader;
-
     private LinearLayout mListLayout;
     private LinearLayout mNoOrdersLayout;
-
     private LinearLayout mProgressLayout;
 
     public static final int OPEN_TAB_POSITION = 0;
@@ -65,7 +63,6 @@ public class DealingFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         BaseActivity.getToolbar().switchTab(BaseActivity.DEALING_POSITION);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_dealing));
 
@@ -81,9 +78,7 @@ public class DealingFragment extends Fragment {
 
     private void initTabs() {
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.ordersListOpen);
-
         mRecyclerView.setHasFixedSize(true);
-
         mLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
@@ -118,31 +113,26 @@ public class DealingFragment extends Fragment {
     }
 
     private void updateData(int currentTabPosition) {
-        Call<List<Order>> ordersCall = GrandCapitalApi.getOrders(User.getInstance().getLogin());
-
+        Call<List<Order>> ordersCall = GrandCapitalApi.getOrders();
         ordersCall.enqueue(new Callback<List<Order>>() {
             @Override
             public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
                 if (response.code() == 200) {
                     List<Order> orders = response.body();
-
+                    Collections.sort(orders, (o1, o2) -> o2.getOpenTime().compareTo(o1.getOpenTime()));
                     List<Order> currentOrders = findOrders(orders, currentTabPosition);
-
                     checkOrders(currentOrders);
-
                     mAdapter = currentTabPosition == OPEN_TAB_POSITION
                             ? new FragmentDealingOpenOrdersAdapter(currentOrders)
                             : new FragmentDealingCloseOrdersAdapter(currentOrders);
 
                     mProgressLayout.setVisibility(View.GONE);
                     mRecyclerView.setAdapter(mAdapter);
-
                     setListHeader(currentTabPosition);
                 } else {
                     onFailRequest();
                 }
             }
-
             @Override
             public void onFailure(Call<List<Order>> call, Throwable t) {
                 onFailRequest();
@@ -173,7 +163,6 @@ public class DealingFragment extends Fragment {
     private void setListHeader(int currentTabPosition) {
         if (isAdded()) {
             switch (currentTabPosition) {
-
                 case OPEN_TAB_POSITION:
                     setOpenOrdersHeaders();
                     break;
@@ -201,31 +190,21 @@ public class DealingFragment extends Fragment {
     }
 
     private List<Order> findOrders(List<Order> orders, int currentTabPosition) {
-
         List<Order> closeOrders = new ArrayList();
         List<Order> openOrders = new ArrayList();
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        Date now = new Date();
-
         for (Order order : orders) {
-            try {
-                if(order.getOptionsData() != null) {
-                    Date date = dateFormat.parse(order.getOptionsData().getExpirationTime());
-                    if (date.after(now)) {
-                        openOrders.add(order);
-                    } else {
-                        closeOrders.add(order);
-                    }
+            if(order.getOptionsData() != null) {
+                if(order.getCloseTime().equals("1970-01-01T00:00:00")){
+                    openOrders.add(order);
+                }else{
+                    closeOrders.add(order);
                 }
-            } catch (ParseException e) {
-                e.printStackTrace();
             }
         }
-
         if (currentTabPosition == OPEN_TAB_POSITION) {
             return openOrders;
+        }else{
+            return closeOrders;
         }
-        return closeOrders;
     }
 }
