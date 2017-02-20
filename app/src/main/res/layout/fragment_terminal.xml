@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.fragments.AddFundsFragment">
+    android:padding="10dp">
 
-    <TextView android:layout_height="wrap_content"
+    <TextView
         android:layout_width="wrap_content"
-        android:text="@string/menu_item_add_funds"
-        style="@style/LigthText"
-        android:textSize="20sp"/>
+        android:layout_height="wrap_content"
+        android:text="@string/menu_item_add_funds"/>
 
-</FrameLayout>
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"/>
+
+</RelativeLayout>

@@ -13,21 +13,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.views.items.AlertShower;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingOpenOrdersAdapter;
 import com.elatesoftware.grandcapital.api.GrandCapitalApi;
 import com.elatesoftware.grandcapital.api.pojo.Order;
-import com.elatesoftware.grandcapital.models.User;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -143,10 +137,9 @@ public class DealingFragment extends Fragment {
     private void onFailRequest() {
         if (isAdded()) {
             mProgressLayout.setVisibility(View.GONE);
-            AlertShower.showInfoDialog(getString(R.string.request_error_title),
-                                       getString(R.string.request_error_text),
-                                       getString(R.string.request_error_message_button),
-                                       getActivity());
+            CustomDialog.showDialogInfo(getActivity(),
+                    getString(R.string.request_error_title),
+                    getString(R.string.request_error_text));
         }
     }
 

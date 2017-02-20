@@ -39,7 +39,10 @@ public class CustomSharedPreferences {
 
     public static void deleteInfoUser(Context context){
         User.setInstance(null);
-        context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE).getString(SHARED_PREFERENCES_USER, null);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_USER, null);
+        editor.commit();
     }
 
     public static void saveUser(Context context, User currentUser) {

@@ -24,7 +24,7 @@ import com.elatesoftware.grandcapital.views.fragments.QuotesFragment;
 import com.elatesoftware.grandcapital.views.fragments.SettingsFragment;
 import com.elatesoftware.grandcapital.views.fragments.ToolbarFragment;
 import com.elatesoftware.grandcapital.views.fragments.WithdrawFundsFragment;
-import com.elatesoftware.grandcapital.views.items.AlertShower;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItemWithMark;
@@ -160,7 +160,7 @@ public class BaseActivity extends CustomFontsActivity {
             } else if (view == mSettings) {
                 changeMainFragment(new SettingsFragment());
             } else if (view == mLogout) {
-                AlertShower.showLogoutDialog(getApplicationContext(), BaseActivity.this);
+                CustomDialog.showDialogLogout(BaseActivity.this);
             }
             mResideMenu.closeMenu();
         }

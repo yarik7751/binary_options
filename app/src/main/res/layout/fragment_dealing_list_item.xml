@@ -3,6 +3,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
@@ -28,6 +29,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
+                tools:text="EURUSD"
                 android:textSize="@dimen/dealing_list_text_size" />
 
             <ImageView
@@ -47,6 +49,7 @@
                 android:id="@+id/tv_dealing_header_col2_open"
                 style="@style/BoldText"
                 android:layout_width="0dp"
+                tools:text="$0.65431"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:textSize="@dimen/dealing_list_text_size" />
@@ -55,6 +58,7 @@
                 android:id="@+id/tv_dealing_col3_win"
                 style="@style/UpOrderStyle"
                 android:layout_width="0dp"
+                tools:text="$1.06000"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:textSize="@dimen/dealing_list_text_size" />
@@ -62,6 +66,7 @@
             <TextView
                 android:id="@+id/tv_dealing_col4_invest"
                 style="@style/BoldText"
+                tools:text="$1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
@@ -70,6 +75,7 @@
             <TextView
                 android:id="@+id/tv_dealing_col5_income"
                 style="@style/BoldText"
+                tools:text="$0.4"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"

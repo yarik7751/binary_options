@@ -9,12 +9,10 @@ import android.view.ViewGroup;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
 
 public class AddFundsFragment extends Fragment {
 
     private View parentView;
-    private ResideMenu resideMenu;
 
     public AddFundsFragment() {
     }
@@ -27,7 +25,6 @@ public class AddFundsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
-        setUpViews();
         return parentView;
     }
 
@@ -38,15 +35,4 @@ public class AddFundsFragment extends Fragment {
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_add_funds));
     }
 
-    private void setUpViews() {
-        BaseActivity parentActivity = (BaseActivity) getActivity();
-        resideMenu = parentActivity.getResideMenu();
-
-//        parentView.findViewById(R.id.btn_open_menu).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                resideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
-//            }
-//        });
-    }
 }

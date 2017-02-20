@@ -9,6 +9,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
 /**
  * Created by Дарья Высокович on 16.02.2017.
@@ -21,12 +22,7 @@ public class WebActivity extends AppCompatActivity {
 
         @Override
         public void onReceivedSslError(final WebView view, final SslErrorHandler handler, SslError error) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(WebActivity.this);
-            builder.setTitle("Внимание!");
-            builder.setMessage(getString(R.string.connection_not_secure));
-            builder.setNegativeButton(getString(R.string.no), (dialog, which) -> handler.cancel());
-            builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> handler.proceed());
-            builder.show();
+            CustomDialog.showDialog(WebActivity.this, handler, getResources().getString(R.string.caution), getString(R.string.connection_not_secure));
         }
     }
 

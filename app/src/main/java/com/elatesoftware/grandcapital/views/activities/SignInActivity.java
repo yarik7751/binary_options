@@ -22,7 +22,7 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.SignInService;
-import com.elatesoftware.grandcapital.views.items.AlertShower;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 
 public class SignInActivity extends CustomFontsActivity {
@@ -93,10 +93,8 @@ public class SignInActivity extends CustomFontsActivity {
         }else {
             llProgress.setVisibility(View.GONE);
             btnSignIn.setEnabled(true);
-            AlertShower.showInfoDialog(getString(R.string.no_internet_connection_title),
-                                       getString(R.string.no_internet_connection_text),
-                                       getString(R.string.no_internet_connection_message_button),
-                                       SignInActivity.this);
+            CustomDialog.showDialogInfo(this, getString(R.string.no_internet_connection_title),
+                                             getString(R.string.no_internet_connection_text));
         }
     }
 
@@ -118,10 +116,12 @@ public class SignInActivity extends CustomFontsActivity {
                 btnSignIn.setEnabled(true);
             } else {
                 llProgress.setVisibility(View.GONE);
-                AlertShower.showInfoDialog(getString(R.string.request_error_title),
-                                           getString(R.string.request_error_text),
-                                           getString(R.string.request_error_message_button),
-                                           SignInActivity.this);
+//                CustomDialog.showInfoDialog(getString(R.string.request_error_title),
+//                                           getString(R.string.request_error_text),
+//                                           getString(R.string.request_error_message_button),
+//                                           SignInActivity.this);
+                CustomDialog.showDialogInfo(SignInActivity.this, getString(R.string.request_error_title),
+                                                                 getString(R.string.request_error_text));
                 btnSignIn.setEnabled(true);
             }
         }

@@ -16,7 +16,7 @@
     <color name="accentButtonGradientEndColorPressed">#f4413c</color>
 
     <color name="alertButtonTextColor">#000000</color>
-
+    <color name="dialog_bg">#1C3140</color>
     <color name="menuAccountBalanceTextColor">#b3ffffff</color>
 
     <color name="menuBadgeColor">#de4d66</color>
