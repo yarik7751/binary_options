@@ -28,4 +28,10 @@
 
     <color name="dealingListUpOrderColor">#78d261</color>
     <color name="dealingListDownOrderColor">#de4d66</color>
+
+    <color name="chart_line_selected_horizontal_with_marker">#158376</color>
+    <color name="chart_values">#B9C5CB</color>
+    <color name="color_text_deposit">#FEC528</color>
+    <color name="color_view_terminal">#0F202F</color>
+
 </resources>

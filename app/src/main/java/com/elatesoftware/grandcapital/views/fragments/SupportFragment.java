@@ -10,29 +10,20 @@ import android.view.ViewGroup;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
-public class AddFundsFragment extends Fragment {
+public class SupportFragment extends Fragment {
 
-    private View parentView;
-
-    public AddFundsFragment() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public SupportFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
-        return parentView;
+        return inflater.inflate(R.layout.fragment_support, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
-        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_add_funds));
-    }
+        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_support));
 
+    }
 }

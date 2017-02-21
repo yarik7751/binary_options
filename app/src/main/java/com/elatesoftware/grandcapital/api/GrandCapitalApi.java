@@ -17,6 +17,7 @@ import java.util.List;
 import okhttp3.CookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -99,5 +100,8 @@ public class GrandCapitalApi {
                 User.getInstance().setBalance(balance);
             }
         }
+    }
+    public static Call<ResponseBody> getSymbolHistory() {
+        return getApiService().getSymbolHistory(User.getInstance().getLogin());
     }
 }

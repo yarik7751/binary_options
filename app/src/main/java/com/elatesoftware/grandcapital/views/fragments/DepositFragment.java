@@ -10,20 +10,23 @@ import android.view.ViewGroup;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
-public class WithdrawFundsFragment extends Fragment {
+/**
+ * Created by Дарья Высокович on 21.02.2017.
+ */
 
-    public WithdrawFundsFragment() {
+public class DepositFragment  extends Fragment {
+
+    public DepositFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_withdraw, container, false);
+        return inflater.inflate(R.layout.fragment_deposit, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_withdraw_funds));
-        BaseActivity.getToolbar().hideTabs();
+        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_deposit));
     }
 }

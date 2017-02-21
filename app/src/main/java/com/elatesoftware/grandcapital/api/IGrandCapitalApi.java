@@ -7,6 +7,7 @@ import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 
 import java.util.List;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -27,5 +28,7 @@ public interface IGrandCapitalApi {
     @GET("/my/webtrader/api/account/{login}/summary/")
     Call<SummaryAnswer> getSummary(@Path("login") String login);
 
+    @GET("/my/webtrader/api/account/{login}/symbol_history/")
+    Call<ResponseBody> getSymbolHistory(@Path("login") String login);
 
 }

@@ -107,7 +107,7 @@ public class ResideMenu extends FrameLayout {
     public void refreshBalanceUser(){
         //System.out.println(String.format("%8.2f", User.getInstance().getBalance()).replace(',', '.'));
 
-        balance.setText(getResources().getString(R.string.balance) + " " + String.format("%.2f", User.getInstance().getBalance()).replace(',', '.'));
+        balance.setText(getResources().getString(R.string.balance) + "$" + String.format("%.2f", User.getInstance().getBalance()).replace(',', '.'));
     }
 
     @Override

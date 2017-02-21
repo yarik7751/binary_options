@@ -16,14 +16,14 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.views.fragments.AccountsFragment;
-import com.elatesoftware.grandcapital.views.fragments.AddFundsFragment;
+import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 import com.elatesoftware.grandcapital.views.fragments.HowItWorksFragment;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuotesFragment;
 import com.elatesoftware.grandcapital.views.fragments.SettingsFragment;
 import com.elatesoftware.grandcapital.views.fragments.ToolbarFragment;
-import com.elatesoftware.grandcapital.views.fragments.WithdrawFundsFragment;
+import com.elatesoftware.grandcapital.views.fragments.SupportFragment;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
@@ -35,8 +35,8 @@ public class BaseActivity extends CustomFontsActivity {
 
     public static FragmentManager fragmentManager;
     private ResideMenu mResideMenu;
-    private ResideMenuItem mAddFunds;
-    private ResideMenuItem mWithdraw;
+    private ResideMenuItem mTerminal;
+    private ResideMenuItem mSupport;
     private ResideMenuItemWithMark mDealing;
     private ResideMenuItem mQuotes;
     private ResideMenuItem mHowItWorks;
@@ -73,7 +73,7 @@ public class BaseActivity extends CustomFontsActivity {
             if (savedInstanceState == null) {
                 toolbar = new ToolbarFragment();
                 changeToolbarFragment(toolbar);
-                changeMainFragment(new AddFundsFragment());
+                changeMainFragment(new TerminalFragment());
             }
             getInfoUser();
         }
@@ -94,33 +94,33 @@ public class BaseActivity extends CustomFontsActivity {
     }
 
     private void addItems() {
-        mAddFunds = new ResideMenuItem(this, getString(R.string.menu_item_add_funds));
-        mWithdraw = new ResideMenuItem(this, getString(R.string.menu_item_withdraw_funds));
+        mTerminal = new ResideMenuItem(this, getString(R.string.menu_item_terminal));
         mDealing = new ResideMenuItemWithMark(this, getString(R.string.menu_item_dealing));
         mQuotes = new ResideMenuItem(this, getString(R.string.menu_item_quotes));
         mHowItWorks = new ResideMenuItem(this, getString(R.string.menu_item_how_it_works));
         mPromotions = new ResideMenuItem(this, getString(R.string.menu_item_promotions));
         mAccounts = new ResideMenuItem(this, getString(R.string.menu_item_accounts));
+        mSupport = new ResideMenuItem(this, getString(R.string.menu_item_support));
         mSettings = new ResideMenuItem(this, getString(R.string.menu_item_settings));
         mLogout = new ResideMenuItem(this, getString(R.string.menu_item_logout));
 
-        mAddFunds.setOnClickListener(menuClickListener);
-        mWithdraw.setOnClickListener(menuClickListener);
+        mTerminal.setOnClickListener(menuClickListener);
         mDealing.setOnClickListener(menuClickListener);
         mQuotes.setOnClickListener(menuClickListener);
         mHowItWorks.setOnClickListener(menuClickListener);
         mPromotions.setOnClickListener(menuClickListener);
         mAccounts.setOnClickListener(menuClickListener);
+        mSupport.setOnClickListener(menuClickListener);
         mSettings.setOnClickListener(menuClickListener);
         mLogout.setOnClickListener(menuClickListener);
 
-        mResideMenu.addMenuItem(mAddFunds, ResideMenu.DIRECTION_LEFT);
-        mResideMenu.addMenuItem(mWithdraw, ResideMenu.DIRECTION_LEFT);
+        mResideMenu.addMenuItem(mTerminal, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mDealing, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mQuotes, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mHowItWorks, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mPromotions, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mAccounts, ResideMenu.DIRECTION_LEFT);
+        mResideMenu.addMenuItem(mSupport, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mSettings, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mLogout, ResideMenu.DIRECTION_LEFT);
     }
@@ -143,10 +143,10 @@ public class BaseActivity extends CustomFontsActivity {
     private View.OnClickListener menuClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (view == mAddFunds) {
-                changeMainFragment(new AddFundsFragment());
-            } else if (view == mWithdraw) {
-                changeMainFragment(new WithdrawFundsFragment());
+            if (view == mTerminal) {
+                changeMainFragment(new TerminalFragment());
+            } else if (view == mSupport) {
+                changeMainFragment(new SupportFragment());
             } else if (view == mDealing) {
                 changeMainFragment(new DealingFragment());
             } else if (view == mQuotes) {
@@ -169,10 +169,10 @@ public class BaseActivity extends CustomFontsActivity {
     public void setMain(int i) {
         switch (i){
             case SIGNAL_POSITION:
-                changeMainFragment(new AddFundsFragment());
+                changeMainFragment(new TerminalFragment());
                 break;
             case TERMINAL_POSITION:
-                changeMainFragment(new AddFundsFragment());
+                changeMainFragment(new TerminalFragment());
                 break;
             case DEALING_POSITION:
                 changeMainFragment(new DealingFragment());
@@ -241,7 +241,6 @@ public class BaseActivity extends CustomFontsActivity {
         public void onReceive(Context context, Intent intent) {
             mResideMenu.refreshNameUser();
             mResideMenu.refreshBalanceUser();
-
             CustomSharedPreferences.updateInfoUser(getApplicationContext());
         }
     }
