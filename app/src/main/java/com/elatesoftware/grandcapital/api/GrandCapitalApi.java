@@ -4,8 +4,11 @@ import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
+import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
+import com.elatesoftware.grandcapital.services.SymbolHistoryService;
+import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventToJson;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
@@ -123,10 +126,14 @@ public class GrandCapitalApi {
         return result;
     }
 
-    public static String getSymbolHistory() {
-        Response<ResponseBody> response = null;
+    public static String getSymbolHistory(String symbol) {
+        Response<SymbolHistoryAnswer> response = null;
         String result = null;
-        Call<ResponseBody> call = getApiService().getSymbolHistory(User.getInstance().getLogin());
+        //String toTime = "1487800920";
+        //String fromTime = "1486764120";
+        String toTime = ConventDate.getTimeStampLastDate();
+        String fromTime = ConventDate.getTimeStampCurrentDate();
+        Call<SymbolHistoryAnswer> call = getApiService().getSymbolHistory(User.getInstance().getLogin(), fromTime, toTime, "1", symbol + "_OP");
         try {
             response = call.execute();
         } catch (IOException e) {
@@ -134,7 +141,7 @@ public class GrandCapitalApi {
         }
         if(response != null){
             if(response.code() == 200) {
-
+                SymbolHistoryAnswer.setInstance(response.body());
             }
             result = String.valueOf(response.code());
         }

@@ -15,6 +15,7 @@ public class SymbolHistoryService extends IntentService {
     public final static String RESPONSE = "response";
     public static final String ACTION_SERVICE_SYMBOL_HISTORY = "com.elatesoftware.grandcapital.services.SymbolHistoryService";
     private final static String NAME_STREAM = "SymbolHistory";
+    public final static String SYMBOL = "Symbol";
 
     public SymbolHistoryService() {
         super(NAME_STREAM);
@@ -23,7 +24,7 @@ public class SymbolHistoryService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String response = GrandCapitalApi.getSymbolHistory();
+        String response = GrandCapitalApi.getSymbolHistory(intent.getStringExtra(SYMBOL));
         Intent responseIntent = new Intent();
         responseIntent.setAction(ACTION_SERVICE_SYMBOL_HISTORY);
         responseIntent.addCategory(Intent.CATEGORY_DEFAULT);

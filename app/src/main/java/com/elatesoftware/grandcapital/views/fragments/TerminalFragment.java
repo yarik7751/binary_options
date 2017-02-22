@@ -202,6 +202,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
     private void getOrders(){
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
+        intentService.putExtra(SymbolHistoryService.SYMBOL, "");
         getActivity().startService(intentService);
     }
     public void getInfoUser(){

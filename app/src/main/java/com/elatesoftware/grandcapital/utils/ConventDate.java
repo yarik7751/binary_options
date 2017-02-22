@@ -1,8 +1,10 @@
 package com.elatesoftware.grandcapital.utils;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -24,5 +26,17 @@ public class ConventDate {
         }else{
             return "";
         }
+    }
+
+    public static String getTimeStampCurrentDate(){
+        Date date = new Date();
+        Date d = new Timestamp(date.getTime());
+        return String.valueOf(date.getTime()/1000);
+    }
+    public static String getTimeStampLastDate(){
+        Date date = new Date();
+        date.setMinutes(date.getMinutes() - 30);
+        Date d = new Timestamp(date.getTime());
+        return String.valueOf(date.getTime()/1000);
     }
 }
