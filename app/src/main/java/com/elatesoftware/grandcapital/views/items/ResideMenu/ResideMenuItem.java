@@ -27,7 +27,7 @@ public class ResideMenuItem extends ResideMenuBaseItem {
 
     private void initViews(Context context){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.residemenu_item, this);
+        inflater.inflate(R.layout.item_reside_menu, this);
         tv_title = (TextView) findViewById(R.id.tv_title);
     }
     public void setTitle(int title){

@@ -39,5 +39,8 @@
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <service android:name=".services.SignInService"/>
         <service android:name=".services.InfoUserService"/>
+        <service android:name=".services.SymbolHistoryService"/>
+        <service android:name=".services.OrdersService"/>
+
     </application>
 </manifest>

@@ -22,6 +22,13 @@ public class AuthorizationAnswer {
     @Expose
     private String token;
 
+    private static AuthorizationAnswer authInstance = null;
+    public static AuthorizationAnswer getInstance() {
+        return authInstance;
+    }
+    public static void setInstance(AuthorizationAnswer auth) {
+        authInstance = auth;
+    }
     /**
      * @return
      * The serverName
@@ -53,7 +60,7 @@ public class AuthorizationAnswer {
     public void setToken(String token) {
         this.token = token;
     }
-
+/*
     @Override
     public String toString() {
         Map<String, Object> jsonParams = new HashMap<>();
@@ -78,5 +85,5 @@ public class AuthorizationAnswer {
         }else{
             return null;
         }
-    }
+    }*/
 }

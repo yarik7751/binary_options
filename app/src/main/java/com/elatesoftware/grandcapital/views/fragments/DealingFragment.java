@@ -1,5 +1,9 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -13,12 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.services.OrdersService;
+import com.elatesoftware.grandcapital.views.activities.SignInActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingOpenOrdersAdapter;
 import com.elatesoftware.grandcapital.api.GrandCapitalApi;
-import com.elatesoftware.grandcapital.api.pojo.Order;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +52,9 @@ public class DealingFragment extends Fragment {
     public static final int OPEN_TAB_POSITION = 0;
     public static final int CLOSE_TAB_POSITION = 1;
 
+    private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
+    private static int currentTabPosition = 0;
+
     public DealingFragment() {
     }
 
@@ -58,7 +67,7 @@ public class DealingFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().switchTab(BaseActivity.DEALING_POSITION);
-        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_dealing));
+        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_dealing));
 
         mListLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_list);
         mNoOrdersLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_no_elements_layout);
@@ -67,7 +76,7 @@ public class DealingFragment extends Fragment {
         initTabs();
         initListHeaders();
 
-        updateData(mTabs.getSelectedTabPosition());
+        updateData();
     }
 
     private void initTabs() {
@@ -80,10 +89,10 @@ public class DealingFragment extends Fragment {
         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
+                currentTabPosition = mTabs.getSelectedTabPosition();
                 mProgressLayout.setVisibility(View.VISIBLE);
                 mListLayout.setVisibility(View.INVISIBLE);
-                updateData(tab.getPosition());
+                updateData();
             }
 
             @Override
@@ -106,32 +115,9 @@ public class DealingFragment extends Fragment {
         mFifthColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_5);
     }
 
-    private void updateData(int currentTabPosition) {
-        Call<List<Order>> ordersCall = GrandCapitalApi.getOrders();
-        ordersCall.enqueue(new Callback<List<Order>>() {
-            @Override
-            public void onResponse(Call<List<Order>> call, Response<List<Order>> response) {
-                if (response.code() == 200) {
-                    List<Order> orders = response.body();
-                    Collections.sort(orders, (o1, o2) -> o2.getOpenTime().compareTo(o1.getOpenTime()));
-                    List<Order> currentOrders = findOrders(orders, currentTabPosition);
-                    checkOrders(currentOrders);
-                    mAdapter = currentTabPosition == OPEN_TAB_POSITION
-                            ? new FragmentDealingOpenOrdersAdapter(currentOrders)
-                            : new FragmentDealingCloseOrdersAdapter(currentOrders);
-
-                    mProgressLayout.setVisibility(View.GONE);
-                    mRecyclerView.setAdapter(mAdapter);
-                    setListHeader(currentTabPosition);
-                } else {
-                    onFailRequest();
-                }
-            }
-            @Override
-            public void onFailure(Call<List<Order>> call, Throwable t) {
-                onFailRequest();
-            }
-        });
+    private void updateData() {
+        Intent intentService = new Intent(getActivity(), OrdersService.class);
+        getActivity().startService(intentService);
     }
 
     private void onFailRequest() {
@@ -143,7 +129,7 @@ public class DealingFragment extends Fragment {
         }
     }
 
-    private void checkOrders(List<Order> currentOrders) {
+    private void checkOrders(List<OrderAnswer> currentOrders) {
         if (currentOrders.size() == 0) {
             mListLayout.setVisibility(View.GONE);
             mNoOrdersLayout.setVisibility(View.VISIBLE);
@@ -182,10 +168,10 @@ public class DealingFragment extends Fragment {
         mFifthColumnHeader.setText(getString(R.string.dealing_page_close_income));
     }
 
-    private List<Order> findOrders(List<Order> orders, int currentTabPosition) {
-        List<Order> closeOrders = new ArrayList();
-        List<Order> openOrders = new ArrayList();
-        for (Order order : orders) {
+    private List<OrderAnswer> findOrders(List<OrderAnswer> orders, int currentTabPosition) {
+        List<OrderAnswer> closeOrders = new ArrayList();
+        List<OrderAnswer> openOrders = new ArrayList();
+        for (OrderAnswer order : orders) {
             if(order.getOptionsData() != null) {
                 if(order.getCloseTime().equals("1970-01-01T00:00:00")){
                     openOrders.add(order);
@@ -199,5 +185,43 @@ public class DealingFragment extends Fragment {
         }else{
             return closeOrders;
         }
+    }
+
+    public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String response = intent.getStringExtra(OrdersService.RESPONSE);
+            if (response != null) {
+                if(response.equals("200")){
+                    List<OrderAnswer> orders = OrderAnswer.getInstance();
+                    List<OrderAnswer> currentOrders = findOrders(orders, currentTabPosition);
+                    checkOrders(currentOrders);
+                    mAdapter = currentTabPosition == OPEN_TAB_POSITION
+                            ? new FragmentDealingOpenOrdersAdapter(currentOrders)
+                            : new FragmentDealingCloseOrdersAdapter(currentOrders);
+
+                    mProgressLayout.setVisibility(View.GONE);
+                    mRecyclerView.setAdapter(mAdapter);
+                    setListHeader(currentTabPosition);
+                }
+            } else {
+                onFailRequest();
+            }
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mOrdersBroadcastReceiver = new GetResponseOrdersBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
     }
 }

@@ -31,10 +31,10 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:layout_toEndOf="@+id/menu_burger"
             android:layout_toRightOf="@+id/menu_burger"
-            android:text="Add funds"
+            tools:text="@string/toolbar_name_how_it_works"
             android:textSize="16sp" />
 
         <android.support.design.widget.TabLayout
@@ -43,7 +43,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="14dp"
+            android:layout_marginRight="10dp"
             asd:tabIndicatorColor="@color/accentButtonGradientStartColor">
 
             <android.support.design.widget.TabItem

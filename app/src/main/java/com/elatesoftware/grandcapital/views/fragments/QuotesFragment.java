@@ -27,6 +27,6 @@ public class QuotesFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().switchTab(BaseActivity.QUOTES_POSITION);
-        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_quotes));
+        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_quotes));
     }
 }

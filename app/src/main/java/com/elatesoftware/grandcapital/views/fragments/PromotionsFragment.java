@@ -23,7 +23,7 @@ public class PromotionsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_promotions));
+        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_promotions));
         BaseActivity.getToolbar().hideTabs();
     }
 }

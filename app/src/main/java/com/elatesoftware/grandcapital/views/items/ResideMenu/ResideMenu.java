@@ -12,6 +12,9 @@ import android.widget.*;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
+import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
+import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -56,22 +59,23 @@ public class ResideMenu extends FrameLayout {
 
     private TextView userName;
     private TextView balance;
+    public TextView tvDepositMenu;
 
     public ResideMenu(Context context) {
         super(context);
-        initViews(context, -1, -1);
+        initViews(context, -1);
     }
     /**
      * This constructor provides you to create menus with your own custom
      * layouts, but if you use custom menu then do not call addMenuItem because
      * it will not be able to find default views
      */
-    public ResideMenu(Context context, int customLeftMenuId, int customRightMenuId) {
+    public ResideMenu(Context context, int customLeftMenuId) {
         super(context);
-        initViews(context, customLeftMenuId, customRightMenuId);
+        initViews(context, customLeftMenuId);
     }
 
-    private void initViews(Context context, int customLeftMenuId, int customRightMenuId) {
+    private void initViews(Context context, int customLeftMenuId) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.residemenu_custom, this);
 
@@ -93,6 +97,8 @@ public class ResideMenu extends FrameLayout {
         balance = (TextView)findViewById(R.id.tvUserBalance);
         refreshBalanceUser();
 
+        tvDepositMenu = (TextView)findViewById(R.id.tvDepositMenu);
+
         ImageButton closeButton = (ImageButton)findViewById(R.id.close_button);
         closeButton.setOnClickListener(v -> closeMenu());
     }
@@ -105,9 +111,7 @@ public class ResideMenu extends FrameLayout {
         userName.setText(User.getInstance().getUserName());
     }
     public void refreshBalanceUser(){
-        //System.out.println(String.format("%8.2f", User.getInstance().getBalance()).replace(',', '.'));
-
-        balance.setText(getResources().getString(R.string.balance) + "$" + String.format("%.2f", User.getInstance().getBalance()).replace(',', '.'));
+        balance.setText(getResources().getString(R.string.balance) + "$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
     }
 
     @Override

@@ -8,14 +8,14 @@ public class User {
     private String userName = "";
     private double balance = 0;
 
-    private static User ourInstance = null;
+    private static User userInstance = null;
 
     public static User getInstance() {
-        return ourInstance;
+        return userInstance;
     }
 
     public static void setInstance(User user) {
-        ourInstance = user;
+        userInstance = user;
     }
 
     private User() {

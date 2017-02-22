@@ -25,11 +25,10 @@ public class ResideMenuItemWithMark extends ResideMenuBaseItem {
     }
     private void initViews(Context context){
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.residemenu_item_mark, this);
+        inflater.inflate(R.layout.item_reside_menu_item_mark, this);
         tv_title = (TextView) findViewById(R.id.tv_title);
         tv_value = (TextView) findViewById(R.id.menu_badge);
         checkValue();
-
     }
     public void setTitle(int title){
         tv_title.setText(title);

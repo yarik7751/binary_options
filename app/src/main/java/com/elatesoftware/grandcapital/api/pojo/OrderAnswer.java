@@ -4,8 +4,10 @@ import javax.annotation.Generated;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 @Generated("org.jsonschema2pojo")
-public class Order {
+public class OrderAnswer {
 
     @SerializedName("close_price")
     @Expose
@@ -58,6 +60,14 @@ public class Order {
     @SerializedName("volume")
     @Expose
     private Integer volume;
+
+    private static List<OrderAnswer> ordersInstance = null;
+    public static List<OrderAnswer> getInstance() {
+        return ordersInstance;
+    }
+    public static void setInstance(List<OrderAnswer> order) {
+        ordersInstance = order;
+    }
 
     public Double getClosePrice() {
         return closePrice;
@@ -156,7 +166,7 @@ public class Order {
     }
 
     public String getSymbol() {
-        return symbol;
+        return symbol.replace("_OP", "");
     }
 
     public void setSymbol(String symbol) {

@@ -31,7 +31,7 @@ public class HowItWorksFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_how_it_works));
+        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_how_it_works));
 
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.fragment_how_it_works_questions_list);
         mRecyclerView.setHasFixedSize(true);

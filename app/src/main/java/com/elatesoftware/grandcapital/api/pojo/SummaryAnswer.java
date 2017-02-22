@@ -28,6 +28,14 @@ public class SummaryAnswer {
     @Expose
     private Double marginLevel;
 
+    private static SummaryAnswer summaryInstance = null;
+    public static SummaryAnswer getInstance() {
+        return summaryInstance;
+    }
+    public static void setInstance(SummaryAnswer summary) {
+        summaryInstance = summary;
+    }
+
     public Double getMarginFree() {
         return marginFree;
     }

@@ -8,14 +8,14 @@ import android.view.ViewGroup;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
-import com.elatesoftware.grandcapital.api.pojo.Order;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 
 import java.util.List;
 
 class FragmentDealingOrdersAdapter extends GrandCapitalListAdapter {
 
-    List<Order> orderList;
+    List<OrderAnswer> orderList;
 
     static final int DOWN_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListDownOrderColor);
     static final int UP_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListUpOrderColor);
@@ -23,7 +23,7 @@ class FragmentDealingOrdersAdapter extends GrandCapitalListAdapter {
     static final Drawable DOWN_DRAWABLE = GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.down);
     static final Drawable UP_DRAWABLE = GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.up);
 
-    FragmentDealingOrdersAdapter(List<Order> orderList) {
+    FragmentDealingOrdersAdapter(List<OrderAnswer> orderList) {
         this.orderList = orderList;
     }
 

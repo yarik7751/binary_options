@@ -32,6 +32,14 @@ public class InfoAnswer {
     @Expose
     private Integer leverage;
 
+    private static InfoAnswer infoInstance = null;
+    public static InfoAnswer getInstance() {
+        return infoInstance;
+    }
+    public static void setInstance(InfoAnswer info) {
+        infoInstance = info;
+    }
+
     public Group getGroup() {
         return group;
     }
@@ -135,5 +143,4 @@ public class InfoAnswer {
         this.leverage = leverage;
         return this;
     }
-
 }

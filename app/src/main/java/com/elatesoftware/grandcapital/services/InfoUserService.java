@@ -12,7 +12,8 @@ import com.elatesoftware.grandcapital.api.GrandCapitalApi;
 
 public class InfoUserService extends IntentService {
 
-    public final static String RESPONSE = "response";
+    public final static String RESPONSE_INFO = "response_info";
+    public final static String RESPONSE_SUMMARY = "response_summary";
     public static final String ACTION_SERVICE_GET_INFO = "com.elatesoftware.grandcapital.services.InfoUserService";
     private final static String NAME_STREAM = "InfoUser";
 
@@ -23,11 +24,13 @@ public class InfoUserService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        GrandCapitalApi.getInfoUser();
-        GrandCapitalApi.getSummary();
+        String responseInfo = GrandCapitalApi.getInfoUser();
+        String responseSummary = GrandCapitalApi.getSummary();
         Intent responseIntent = new Intent();
         responseIntent.setAction(ACTION_SERVICE_GET_INFO);
         responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        responseIntent.putExtra(RESPONSE_INFO, responseInfo);
+        responseIntent.putExtra(RESPONSE_SUMMARY, responseSummary);
         sendBroadcast(responseIntent);
     }
 }

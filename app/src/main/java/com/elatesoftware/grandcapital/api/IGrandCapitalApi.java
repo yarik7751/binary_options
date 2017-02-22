@@ -2,7 +2,7 @@ package com.elatesoftware.grandcapital.api;
 
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
-import com.elatesoftware.grandcapital.api.pojo.Order;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public interface IGrandCapitalApi {
     Call<AuthorizationAnswer> tryToAuthorize(@Body RequestBody params);
 
     @GET("/my/webtrader/api/account/{login}/trade/")
-    Call<List<Order>> getOrders(@Path("login") String login);
+    Call<List<OrderAnswer>> getOrders(@Path("login") String login);
 
     @GET("/my/webtrader/api/account/{login}/info/")
     Call<InfoAnswer> getInfo(@Path("login") String login);

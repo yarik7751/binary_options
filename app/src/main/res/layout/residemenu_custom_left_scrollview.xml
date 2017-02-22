@@ -68,7 +68,8 @@
                     android:id="@+id/tvUserName"
                     style="@style/MenuItem"
                     android:textSize="@dimen/menu_account_name_text_size"
-                    android:layout_gravity="center_horizontal"/>
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="4dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -77,6 +78,17 @@
                     android:id="@+id/tvUserBalance"
                     style="@style/BoldText"
                     android:textColor="@color/menuAccountBalanceTextColor"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/deposit"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/Menu_account_balance_text_size"
+                    android:id="@+id/tvDepositMenu"
+                    style="@style/MenuItem"
+                    android:textColor="@color/color_text_deposit"
                     android:layout_gravity="center_horizontal"/>
             </LinearLayout>
         </LinearLayout>

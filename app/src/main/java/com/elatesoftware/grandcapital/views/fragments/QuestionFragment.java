@@ -29,12 +29,11 @@ public class QuestionFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_question, container, false);
     }
 
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        BaseActivity.getToolbar().setPageTitle(mHeader);
         TextView contentText  = (TextView) view.findViewById(R.id.fragment_question_content);
         contentText.setText(mContent);
-        BaseActivity.getToolbar().setPageTitle(mHeader);
     }
 }

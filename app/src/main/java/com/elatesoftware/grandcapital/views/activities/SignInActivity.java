@@ -106,24 +106,21 @@ public class SignInActivity extends CustomFontsActivity {
             if (response != null) {
                 if (response.equals("400")) {
                     tilPassword.setError(getString(R.string.error_wront_password));
-                } else {
+                } else if(response.equals("200")){
                     final String login = etLogin.getText().toString();
-                    User currentUser = new User(login, AuthorizationAnswer.getAuthorizationAnswer(response).getServerName(),
-                                                       AuthorizationAnswer.getAuthorizationAnswer(response).getToken());
-                    CustomSharedPreferences.saveUser(getApplicationContext(), currentUser);
-                    showTerminalActivity();
+                    if(AuthorizationAnswer.getInstance() != null){
+                        User currentUser = new User(login, AuthorizationAnswer.getInstance().getServerName(),
+                                                           AuthorizationAnswer.getInstance().getToken());
+                        CustomSharedPreferences.saveUser(getApplicationContext(), currentUser);
+                        showTerminalActivity();
+                    }
                 }
-                btnSignIn.setEnabled(true);
             } else {
                 llProgress.setVisibility(View.GONE);
-//                CustomDialog.showInfoDialog(getString(R.string.request_error_title),
-//                                           getString(R.string.request_error_text),
-//                                           getString(R.string.request_error_message_button),
-//                                           SignInActivity.this);
                 CustomDialog.showDialogInfo(SignInActivity.this, getString(R.string.request_error_title),
                                                                  getString(R.string.request_error_text));
-                btnSignIn.setEnabled(true);
             }
+            btnSignIn.setEnabled(true);
         }
     }
 

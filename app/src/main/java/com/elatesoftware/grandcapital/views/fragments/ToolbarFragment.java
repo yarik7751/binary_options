@@ -44,32 +44,9 @@ public class ToolbarFragment extends Fragment {
         mParentActivity.findViewById(R.id.menu_burger).setOnClickListener(v -> mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT));
         mPageTitle = (TextView) getView().findViewById(R.id.page_title);
         setupToolbar();
-       /* mTabLayout = (TabLayout) getView().findViewById(R.id.tabLayout);
-        mTabLayout.setVisibility(View.VISIBLE);
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                ImageView image = (ImageView) tab.getCustomView();
-                image.setAlpha(NOT_TRANSPARENT_TAB_ICON_VALUE);
-                mParentActivity.setMain(mTabLayout.getSelectedTabPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                ImageView image = (ImageView) tab.getCustomView();
-                image.setAlpha(TRANSPARENT_TAB_ICON_VALUE);
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                ImageView image = (ImageView) tab.getCustomView();
-                image.setAlpha(NOT_TRANSPARENT_TAB_ICON_VALUE);
-            }
-        });
-        changeFragment(TOOLBAR_TERMINATE_FRAGMENT);*/
     }
     private void setupToolbar() {
-        int[] drawableResourses = {R.drawable.signal, R.drawable.terminal, R.drawable.order, R.drawable.quotes};
+        int[] drawableResources = {R.drawable.signal, R.drawable.terminal, R.drawable.order, R.drawable.quotes};
         mTabLayout = (TabLayout) getView().findViewById(R.id.tabLayout);
         mTabLayout.setVisibility(View.VISIBLE);
 
@@ -94,40 +71,16 @@ public class ToolbarFragment extends Fragment {
             }
         });
 
-        if(mTabLayout.getTabCount() == drawableResourses.length){
+        if(mTabLayout.getTabCount() == drawableResources.length){
             for(int i = 0; i < mTabLayout.getTabCount(); i++){
                 ImageView icon = new ImageView(this.getContext());
-                icon.setImageDrawable(getResources().getDrawable(drawableResourses[i]));
+                icon.setImageDrawable(getResources().getDrawable(drawableResources[i]));
                 icon.setAlpha(TRANSPARENT_TAB_ICON_VALUE);
                 mTabLayout.getTabAt(i).setCustomView(icon);
             }
         }
         mTabLayout.getTabAt(0).select();
     }
-/*
-    public void changeFragment(int currentFragment){
-        int[] drawables = null;
-        switch (currentFragment) {
-            case TOOLBAR_EMPTY_FRAGMENT:
-                drawables = null;
-                break;
-            case TOOLBAR_OTHER_FRAGMENT:
-                drawables = new int[]{R.drawable.terminal, R.drawable.order, R.drawable.quotes};
-                break;
-            case TOOLBAR_TERMINATE_FRAGMENT:
-                drawables = new int[]{R.drawable.signal, R.drawable.terminal, R.drawable.order, R.drawable.quotes};
-                break;
-        }
-        if(mTabLayout.getTabCount() == drawables.length){
-            for(int i = 0; i < mTabLayout.getTabCount(); i++){
-                ImageView icon = new ImageView(this.getContext());
-                icon.setImageDrawable(getResources().getDrawable(drawables[i]));
-                icon.setAlpha(TRANSPARENT_TAB_ICON_VALUE);
-                mTabLayout.getTabAt(i).setCustomView(icon);
-            }
-        }
-        mTabLayout.getTabAt(0).select();
-    }*/
 
     public void switchTab(int position){
         if(position > 0 && position < 5) {

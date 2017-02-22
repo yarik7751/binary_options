@@ -1,7 +1,7 @@
 package com.elatesoftware.grandcapital.adapters.dealing;
 
 import android.support.v7.widget.RecyclerView;
-import com.elatesoftware.grandcapital.api.pojo.Order;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -11,7 +11,7 @@ import com.elatesoftware.grandcapital.utils.ConventDate;
 
 public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapter {
 
-    public FragmentDealingOpenOrdersAdapter(List<Order> orderList) {
+    public FragmentDealingOpenOrdersAdapter(List<OrderAnswer> orderList) {
         super(orderList);
     }
 
@@ -20,7 +20,7 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
         super.onBindViewHolder(holder, position);
 
         FragmentDealingViewHolder orderHolder = (FragmentDealingViewHolder) holder;
-        orderHolder.mFirstColumn.setText(orderList.get(position).getSymbol().replace("_OP", ""));
+        orderHolder.mFirstColumn.setText(orderList.get(position).getSymbol());
         orderHolder.mSecondColumn.setText(String.valueOf(orderList.get(position).getOpenPrice()));
         orderHolder.mThirdColumn.setText(String.valueOf(orderList.get(position).getClosePrice()));
 

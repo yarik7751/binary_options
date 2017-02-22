@@ -16,6 +16,7 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.views.fragments.AccountsFragment;
+import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 import com.elatesoftware.grandcapital.views.fragments.HowItWorksFragment;
@@ -44,6 +45,7 @@ public class BaseActivity extends CustomFontsActivity {
     private ResideMenuItem mAccounts;
     private ResideMenuItem mSettings;
     private ResideMenuItem mLogout;
+    private View mDeposit;
 
     private static ToolbarFragment toolbar;
 
@@ -58,6 +60,7 @@ public class BaseActivity extends CustomFontsActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+
         mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -75,12 +78,7 @@ public class BaseActivity extends CustomFontsActivity {
                 changeToolbarFragment(toolbar);
                 changeMainFragment(new TerminalFragment());
             }
-            getInfoUser();
         }
-    }
-    public void getInfoUser(){
-        Intent intentMyIntentService = new Intent(this, InfoUserService.class);
-        startService(intentMyIntentService);
     }
 
     private void setupMenu() {
@@ -103,6 +101,7 @@ public class BaseActivity extends CustomFontsActivity {
         mSupport = new ResideMenuItem(this, getString(R.string.menu_item_support));
         mSettings = new ResideMenuItem(this, getString(R.string.menu_item_settings));
         mLogout = new ResideMenuItem(this, getString(R.string.menu_item_logout));
+        mDeposit = mResideMenu.tvDepositMenu;
 
         mTerminal.setOnClickListener(menuClickListener);
         mDealing.setOnClickListener(menuClickListener);
@@ -113,6 +112,7 @@ public class BaseActivity extends CustomFontsActivity {
         mSupport.setOnClickListener(menuClickListener);
         mSettings.setOnClickListener(menuClickListener);
         mLogout.setOnClickListener(menuClickListener);
+        mDeposit.setOnClickListener(menuClickListener);
 
         mResideMenu.addMenuItem(mTerminal, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mDealing, ResideMenu.DIRECTION_LEFT);
@@ -143,6 +143,10 @@ public class BaseActivity extends CustomFontsActivity {
     private View.OnClickListener menuClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            if (view == mLogout) {
+                CustomDialog.showDialogLogout(BaseActivity.this);
+                return;
+            }
             if (view == mTerminal) {
                 changeMainFragment(new TerminalFragment());
             } else if (view == mSupport) {
@@ -159,8 +163,8 @@ public class BaseActivity extends CustomFontsActivity {
                 changeMainFragment(new AccountsFragment());
             } else if (view == mSettings) {
                 changeMainFragment(new SettingsFragment());
-            } else if (view == mLogout) {
-                CustomDialog.showDialogLogout(BaseActivity.this);
+            } else if (view == mDeposit) {
+                changeMainFragment(new DepositFragment());
             }
             mResideMenu.closeMenu();
         }
@@ -239,9 +243,13 @@ public class BaseActivity extends CustomFontsActivity {
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mResideMenu.refreshNameUser();
-            mResideMenu.refreshBalanceUser();
-            CustomSharedPreferences.updateInfoUser(getApplicationContext());
+            if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null){
+                if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals("200") && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals("200")){
+                    mResideMenu.refreshBalanceUser();
+                    mResideMenu.refreshNameUser();
+                    CustomSharedPreferences.updateInfoUser(getApplicationContext());
+                }
+            }
         }
     }
 }

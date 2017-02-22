@@ -2,7 +2,7 @@ package com.elatesoftware.grandcapital.api;
 
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
-import com.elatesoftware.grandcapital.api.pojo.Order;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
@@ -12,6 +12,7 @@ import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.CookieJar;
@@ -56,22 +57,37 @@ public class GrandCapitalApi {
         }
         if(response != null){
             if(response.code() == 200) {
-                AuthorizationAnswer authorizationAnswer = response.body();
-                result = authorizationAnswer.toString();
-            }else if(response.code() == 400){
-                result = "400";
+                AuthorizationAnswer.setInstance(response.body());
             }
+            result = String.valueOf(response.code());
         }
         return result;
      }
 
-    public static Call<List<Order>> getOrders() {
-        return getApiService().getOrders(User.getInstance().getLogin());
+    public static String getOrders() {
+        Call<List<OrderAnswer>> call = getApiService().getOrders(User.getInstance().getLogin());
+        Response<List<OrderAnswer>> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null){
+            if(response.code() == 200) {
+                List<OrderAnswer> list = response.body();
+                Collections.sort(list, (o1, o2) -> o2.getOpenTime().compareTo(o1.getOpenTime()));
+                OrderAnswer.setInstance(list);
+            }
+            result = String.valueOf(response.code());
+        }
+        return result;
     }
 
-    public static void getInfoUser() {
+    public static String getInfoUser() {
         Call<InfoAnswer> responseBodyCall = getApiService().getInfo(User.getInstance().getLogin());
         Response<InfoAnswer> response = null;
+        String result = null;
         try {
             response = responseBodyCall.execute();
         } catch (IOException e) {
@@ -79,15 +95,18 @@ public class GrandCapitalApi {
         }
         if(response != null){
             if(response.code() == 200) {
-                InfoAnswer infoAnswer = response.body();
-                User.getInstance().setUserName(infoAnswer.getName());
+                InfoAnswer.setInstance(response.body());
+                User.getInstance().setUserName(InfoAnswer.getInstance().getName());
             }
+            result = String.valueOf(response.code());
         }
+        return result;
     }
 
-    public static void getSummary() {
+    public static String getSummary() {
        Call<SummaryAnswer> responseCall = getApiService().getSummary(User.getInstance().getLogin());
        Response<SummaryAnswer> response = null;
+        String result = null;
         try {
             response = responseCall.execute();
         } catch (IOException e) {
@@ -95,13 +114,30 @@ public class GrandCapitalApi {
         }
         if(response != null){
             if(response.code() == 200) {
-                SummaryAnswer answer = response.body();
-                Double balance = answer.getBalance();
+                SummaryAnswer.setInstance(response.body());
+                Double balance = SummaryAnswer.getInstance().getBalance();
                 User.getInstance().setBalance(balance);
             }
+            result = String.valueOf(response.code());
         }
+        return result;
     }
-    public static Call<ResponseBody> getSymbolHistory() {
-        return getApiService().getSymbolHistory(User.getInstance().getLogin());
+
+    public static String getSymbolHistory() {
+        Response<ResponseBody> response = null;
+        String result = null;
+        Call<ResponseBody> call = getApiService().getSymbolHistory(User.getInstance().getLogin());
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null){
+            if(response.code() == 200) {
+
+            }
+            result = String.valueOf(response.code());
+        }
+        return result;
     }
 }

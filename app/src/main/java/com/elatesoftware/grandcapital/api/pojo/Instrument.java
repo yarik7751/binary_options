@@ -150,7 +150,7 @@ public class Instrument {
     }
 
     public String getSymbol() {
-        return symbol;
+        return symbol.replace("_OP", "");
     }
 
     public void setSymbol(String symbol) {

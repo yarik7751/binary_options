@@ -1,16 +1,30 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.api.GrandCapitalApi;
-import com.elatesoftware.grandcapital.api.pojo.Order;
+import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
+import com.elatesoftware.grandcapital.api.pojo.Instrument;
+import com.elatesoftware.grandcapital.models.User;
+import com.elatesoftware.grandcapital.services.InfoUserService;
+import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -23,16 +37,27 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.List;
 
 public class TerminalFragment extends Fragment implements OnChartValueSelectedListener {
 
     private View parentView;
     private LineChart mChart;
+    private TextView tvBalance;
+    private TextView tvDeposit;
+    private TextView tvLowerActive;
+    private TextView tvUpperActive;
+    private TextView tvValueActive;
+    private TextView tvMinusAmount;
+    private TextView tvPlusAmount;
+    private EditText etValueAmount;
+    private TextView tvMinusTime;
+    private TextView tvPlusTime;
+    private EditText etValueTime;
+    private List<String> listActives = new ArrayList<>();
+
+    private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
+    private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
     public TerminalFragment() {
     }
@@ -46,7 +71,20 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
         mChart = (LineChart) parentView.findViewById(R.id.chart);
-        mChart.setDrawGridBackground(false);
+        tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
+        tvDeposit = (TextView) parentView.findViewById(R.id.tvDepositTerminal);
+
+        tvLowerActive = (TextView) parentView.findViewById(R.id.tvLowerTabActiveTerminal);
+        tvUpperActive = (TextView) parentView.findViewById(R.id.tvUpperTabActiveTerminal);
+        tvValueActive = (TextView) parentView.findViewById(R.id.tvValueTabActiveTerminal);
+
+        tvMinusAmount = (TextView) parentView.findViewById(R.id.tvMinusTabAmountTerminal);
+        tvPlusAmount = (TextView) parentView.findViewById(R.id.tvPlusTabAmountTerminal);
+        etValueAmount = (EditText) parentView.findViewById(R.id.tvValueTabAmountTerminal);
+
+        tvMinusTime = (TextView) parentView.findViewById(R.id.tvMinusTabTimeTerminal);
+        tvPlusTime = (TextView) parentView.findViewById(R.id.tvPlusTabTimeTerminal);
+        etValueTime = (EditText) parentView.findViewById(R.id.tvValueTabTimeTerminal);
         return parentView;
     }
 
@@ -54,23 +92,138 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
-        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.menu_item_terminal));
-
-        Call<ResponseBody> ordersCall = GrandCapitalApi.getSymbolHistory();
-        ordersCall.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+        BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_terminal));
+        registrationBroadcasts();
+        if(User.getInstance() != null){
+            tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
+        }
+        tvLowerActive.setOnClickListener(v -> {
+            if(listActives.size() > 0){
+                int index = listActives.indexOf(tvValueActive.getText().toString());
+                if(index == 0){
+                    tvValueActive.setText(listActives.get(listActives.size() -1));
+                }else{
+                    tvValueActive.setText(listActives.get(index - 1));
+                }
             }
         });
-        initializationChart();
+        tvUpperActive.setOnClickListener(v -> {
+            if(listActives.size() > 0){
+                int index = listActives.indexOf(tvValueActive.getText().toString());
+                if(index == (listActives.size() - 1)){
+                    tvValueActive.setText(listActives.get(0));
+                }else{
+                    tvValueActive.setText(listActives.get(index  + 1));
+                }
+            }
+        });/*
+        etValueAmount.setOnClickListener(v -> {
+            String value = etValueAmount.getText().toString();
+            etValueAmount.setText(value.substring(1, value.length()-1));
+        });
+        etValueAmount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                CharSequence text;
+                if(s.length() > 0){
+                    text = s.subSequence(0, s.length()-1);
+                    text = "&" + text;
+                }else{
+                    text = "$0";
+                }
+                etValueAmount.setText(text);
+            }
+        });
+*/
+        /*tvMinusAmount.setOnClickListener(v -> {
+            try{
+                String value = etValueAmount.getText().toString().replace(',', '.').replace('$', ' ');
+                value = value.substring(1, value.length()-1);
+                double currentAmount = Double.valueOf(value);
+                if(currentAmount > 0){
+                    currentAmount = currentAmount --;
+                    etValueAmount.setText("$" + String.format("%.2f", currentAmount).replace('.', ','));
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        });
+        tvPlusAmount.setOnClickListener(v -> {
+            try{
+                String value = etValueAmount.getText().toString().replace(',', '.');
+                value = value.substring(1, value.length()-1);
+                double currentAmount = Double.valueOf(value);
+                if(currentAmount >= 0){
+                    currentAmount = currentAmount ++;
+                    etValueAmount.setText("$" + String.format("%.2f", currentAmount).replace('.', ','));
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        });
+        tvMinusTime.setOnClickListener(v -> {
+            String valueTime = etValueTime.getText().toString();
+
+        });
+        tvPlusTime.setOnClickListener(v -> {
+
+        });
+*/
+        tvDeposit.setOnClickListener(v -> {
+            BaseActivity.changeMainFragment(new DepositFragment());
+        });
+    }
+    private void registrationBroadcasts(){
+        mInfoBroadcastReceiver = new  GetResponseInfoBroadcastReceiver();
+        IntentFilter intentFilterInfo = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
+        intentFilterInfo.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mInfoBroadcastReceiver, intentFilterInfo);
+
+        mSymbolHistoryBroadcastReceiver = new GetResponseSymbolHistoryBroadcastReceiver();
+        IntentFilter intentFilterSymbolHistory = new IntentFilter(SymbolHistoryService.ACTION_SERVICE_SYMBOL_HISTORY);
+        intentFilterSymbolHistory.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mSymbolHistoryBroadcastReceiver, intentFilterSymbolHistory);
+    }
+    private void setActives(){
+        if(InfoAnswer.getInstance() != null &&  InfoAnswer.getInstance().getInstruments() != null &&  InfoAnswer.getInstance().getInstruments().size() > 0){
+            listActives.clear();
+            for(Instrument instrument: InfoAnswer.getInstance().getInstruments()){
+                listActives.add(instrument.getSymbol());
+            }
+            tvValueActive.setText(listActives.get(0));
+        }
     }
 
-    private void initializationChart(){
+    private void getOrders(){
+        Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
+        getActivity().startService(intentService);
+    }
+    public void getInfoUser(){
+        Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
+        getActivity().startService(intentMyIntentService);
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        getInfoUser();
+        getOrders();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
+        getActivity().unregisterReceiver(mInfoBroadcastReceiver);
+    }
+
+    private void initializationChart() {
+        mChart.setDrawGridBackground(false);
         mChart.getDescription().setEnabled(false);
         mChart.setTouchEnabled(true);
         mChart.setDragEnabled(true);
@@ -114,7 +267,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         }
         LineDataSet set1;
         if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
-            set1 = (LineDataSet)mChart.getData().getDataSetByIndex(0);
+            set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
             set1.setValues(values);
             mChart.getData().notifyDataChanged();
             mChart.notifyDataSetChanged();
@@ -151,5 +304,29 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     @Override
     public void onNothingSelected() {
 
+    }
+
+    public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null){
+                if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals("200") && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals("200")){
+                    setActives();
+                    tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
+                }
+            }
+        }
+    }
+    public class GetResponseSymbolHistoryBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String response = intent.getStringExtra(SymbolHistoryService.RESPONSE);
+            if (response != null) {
+                if (response.equals("200")) {
+
+                }
+            }
+            initializationChart();
+        }
     }
 }
