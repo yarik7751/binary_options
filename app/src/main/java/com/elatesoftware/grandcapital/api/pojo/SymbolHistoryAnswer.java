@@ -3,6 +3,8 @@ package com.elatesoftware.grandcapital.api.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class SymbolHistoryAnswer {
 
     @SerializedName("high")
@@ -19,14 +21,14 @@ public class SymbolHistoryAnswer {
     private Double low;
     @SerializedName("time")
     @Expose
-    private Integer time;
+    private Long time;
 
-    private static SymbolHistoryAnswer symbolInstance = null;
-    public static SymbolHistoryAnswer getInstance() {
+    private static List<SymbolHistoryAnswer> symbolInstance = null;
+    public static List<SymbolHistoryAnswer> getInstance() {
         return symbolInstance;
     }
-    public static void setInstance(SymbolHistoryAnswer symbol) {
-        symbolInstance = symbol;
+    public static void setInstance(List<SymbolHistoryAnswer> symbolList) {
+        symbolInstance = symbolList;
     }
 
     public Double getHigh() {
@@ -81,16 +83,18 @@ public class SymbolHistoryAnswer {
         return this;
     }
 
-    public Integer getTime() {
+    public Long getTime() {
         return time;
     }
 
-    public void setTime(Integer time) {
+    public void setTime(Long time) {
         this.time = time;
     }
 
-    public SymbolHistoryAnswer withTime(Integer time) {
+    public SymbolHistoryAnswer withTime(Long time) {
         this.time = time;
         return this;
     }
 }
+
+

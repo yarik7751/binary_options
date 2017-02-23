@@ -8,10 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.Spanned;
-import android.text.TextWatcher;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,16 +19,19 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
+import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -175,6 +175,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
         });
 */
+        initializationChart();
         tvDeposit.setOnClickListener(v -> {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
@@ -197,12 +198,15 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 listActives.add(instrument.getSymbol());
             }
             tvValueActive.setText(listActives.get(0));
+            if(tvValueActive.getText().toString() != null && !tvValueActive.getText().toString().equals("")){
+                getOrders();
+            }
         }
     }
 
     private void getOrders(){
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
-        intentService.putExtra(SymbolHistoryService.SYMBOL, "");
+        intentService.putExtra(SymbolHistoryService.SYMBOL, tvValueActive.getText().toString());
         getActivity().startService(intentService);
     }
     public void getInfoUser(){
@@ -213,7 +217,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public void onStart() {
         super.onStart();
         getInfoUser();
-        getOrders();
     }
 
     @Override
@@ -231,6 +234,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setScaleEnabled(true);
         mChart.setDoubleTapToZoomEnabled(false);
         mChart.setPinchZoom(true);
+        mChart.setScaleYEnabled(false);
+        mChart.setScaleXEnabled(true);
         /** create marker*/
         /*MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.item_marker);
         mv.setChartView(mChart);
@@ -252,49 +257,55 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         yAxis.setTextColor(getResources().getColor(R.color.chart_values));
         yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         mChart.getAxisLeft().setEnabled(false); /** hide left Y*/
-        setData(15, 20);    /** add data*/
         /** animation add data in chart*/
-        mChart.animateXY(1500, 1500);
+        mChart.animateXY(1500, 2000);
+        mChart.setOnTouchListener((v, event) -> {
+            return false;        // TODO
+        });
         mChart.setDragOffsetX(20f);  /** видимость графика не до конца экрана*/       // TODO
         mChart.getLegend().setEnabled(false);   /** Hide the legend */
         mChart.invalidate();
     }
 
-    private void setData(int count, float range) {
-        ArrayList<Entry> values = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            float val = (float) (Math.random() * range) + 3;
-            values.add(new Entry(i, val, getResources().getDrawable(R.drawable.front_elipsa)));
+    private void setData(List<SymbolHistoryAnswer> list) {
+        if(list != null && list.size() > 0){
+            ArrayList<Entry> values = new ArrayList<>();
+            for (int i = 0; i < list.size(); i++) {
+                values.add(new Entry(list.get(i).getTime(), Float.valueOf(String.valueOf(list.get(i).getOpen())), getResources().getDrawable(R.drawable.front_elipsa)));
+            }
+            LineDataSet set1;
+            if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
+                set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
+                set1.setValues(values);
+                mChart.getData().notifyDataChanged();
+                mChart.notifyDataSetChanged();
+            } else {
+                set1 = new LineDataSet(values, "Base line");    /** set the line*/
+                set1.setColor(Color.WHITE);
+                set1.setCircleColor(Color.WHITE);
+                set1.setLineWidth(1f);
+                set1.setDrawValues(false);    /**hide values all points*/
+                set1.setDrawCircles(false);   /**hide  all circle points */
+                set1.setCircleRadius(3f);
+                set1.setDrawCircleHole(false);
+                set1.setValueTextSize(9f);
+                set1.setDrawFilled(true);
+                set1.setFormLineWidth(1f);
+                set1.setFormSize(15.f);
+                /** fill color chart*/
+                set1.setFillColor(Color.WHITE);
+                set1.setFillAlpha(50);
+                /** add the datasets*/
+                ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+                dataSets.add(set1);
+                LineData data = new LineData(dataSets);
+                set1.setHighlightEnabled(false); /** hide Highlight*/
+                mChart.setData(data);
+            }
+        }else{
+            mChart.clear();
         }
-        LineDataSet set1;
-        if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
-            set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
-            set1.setValues(values);
-            mChart.getData().notifyDataChanged();
-            mChart.notifyDataSetChanged();
-        } else {
-            set1 = new LineDataSet(values, "Base line");    /** set the line*/
-            set1.setColor(Color.WHITE);
-            set1.setCircleColor(Color.WHITE);
-            set1.setLineWidth(1f);
-            set1.setDrawValues(false);    /**hide values all points*/
-            set1.setDrawCircles(false);   /**hide  all circle points */
-            set1.setCircleRadius(3f);
-            set1.setDrawCircleHole(false);
-            set1.setValueTextSize(9f);
-            set1.setDrawFilled(true);
-            set1.setFormLineWidth(1f);
-            set1.setFormSize(15.f);
-            /** fill color chart*/
-            set1.setFillColor(Color.WHITE);
-            set1.setFillAlpha(50);
-            /** add the datasets*/
-            ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-            dataSets.add(set1);
-            LineData data = new LineData(dataSets);
-            set1.setHighlightEnabled(false); /** hide Highlight*/
-            mChart.setData(data);
-        }
+        mChart.invalidate();
     }
 
     @Override
@@ -324,10 +335,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             String response = intent.getStringExtra(SymbolHistoryService.RESPONSE);
             if (response != null) {
                 if (response.equals("200")) {
-
+                    List<SymbolHistoryAnswer> listSymbolHistory = SymbolHistoryAnswer.getInstance();
+                    setData(listSymbolHistory);
                 }
             }
-            initializationChart();
         }
     }
 }

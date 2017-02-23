@@ -32,13 +32,9 @@ public interface IGrandCapitalApi {
     Call<SummaryAnswer> getSummary(@Path("login") String login);
 
     @GET("/my/webtrader/api/account/{login}/symbol_history/")
-    Call<SymbolHistoryAnswer> getSymbolHistory(@Path("login") String login,
-                                               @Query("from") String from,
-                                               @Query("to") String to,
-                                               @Query("resolution") String resolution,
-                                               @Query("symbol") String symbol);
-
-    @GET("/api/faq/questions?category=options")
-    Call<QuestionsAnswer> getAnswers(@Query("page") int page);
-
+    Call<List<SymbolHistoryAnswer>> getSymbolHistory(@Path("login") String login,
+                                        @Query ("from") String from,
+                                        @Query ("to") String to,
+                                        @Query ("resolution") String resolution,
+                                        @Query ("symbol") String symbol);
 }

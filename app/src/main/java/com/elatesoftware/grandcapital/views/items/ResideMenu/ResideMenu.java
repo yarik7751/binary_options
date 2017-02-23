@@ -325,7 +325,6 @@ public class ResideMenu extends FrameLayout {
     }
 
     private void setScaleDirection(int direction) {
-
         int screenWidth = getScreenWidth();
         float pivotX = 0;
         float pivotY = getScreenHeight() * 0.5f;
@@ -397,7 +396,6 @@ public class ResideMenu extends FrameLayout {
      * @return
      */
     private AnimatorSet buildScaleDownAnimation(View target, float targetScaleX, float targetScaleY) {
-
         AnimatorSet scaleDown = new AnimatorSet();
         scaleDown.playTogether(
                 ObjectAnimator.ofFloat(target, "scaleX", targetScaleX),
@@ -407,7 +405,7 @@ public class ResideMenu extends FrameLayout {
             int angle = scaleDirection == DIRECTION_LEFT ? -ROTATE_Y_ANGLE : ROTATE_Y_ANGLE;
             scaleDown.playTogether(ObjectAnimator.ofFloat(target, "rotationY", angle));
         }
-        scaleDown.setInterpolator(AnimationUtils.loadInterpolator(activity,android.R.anim.decelerate_interpolator));
+        scaleDown.setInterpolator(AnimationUtils.loadInterpolator(activity, android.R.anim.decelerate_interpolator));
         scaleDown.setDuration(250);
         return scaleDown;
     }
@@ -523,8 +521,7 @@ public class ResideMenu extends FrameLayout {
                 if (isInIgnoredView || isInDisableDirection(scaleDirection))
                     break;
 
-                if (pressedState != PRESSED_DOWN &&
-                        pressedState != PRESSED_MOVE_HORIZONTAL)
+                if (pressedState != PRESSED_DOWN && pressedState != PRESSED_MOVE_HORIZONTAL)
                     break;
 
                 int xOffset = (int) (ev.getX() - lastActionDownX);
@@ -562,14 +559,12 @@ public class ResideMenu extends FrameLayout {
                     lastRawX = ev.getRawX();
                     return true;
                 }
-
                 break;
-
             case MotionEvent.ACTION_UP:
-
-                if (isInIgnoredView) break;
-                if (pressedState != PRESSED_MOVE_HORIZONTAL) break;
-
+                if (isInIgnoredView)
+                    break;
+                if (pressedState != PRESSED_MOVE_HORIZONTAL)
+                    break;
                 pressedState = PRESSED_DONE;
                 if (isOpened()) {
                     if (currentActivityScaleX > 0.56f)
