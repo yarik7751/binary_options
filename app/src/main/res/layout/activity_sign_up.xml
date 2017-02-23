@@ -7,6 +7,7 @@
     android:orientation="vertical"
     tools:context=".views.activities.SignInActivity"
     android:background="@drawable/bg">
+
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"

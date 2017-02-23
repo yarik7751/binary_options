@@ -13,16 +13,20 @@ import com.elatesoftware.grandcapital.utils.ConventToJson;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.CookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -34,9 +38,13 @@ public class GrandCapitalApi {
 
     private static IGrandCapitalApi getApiService() {
         if (grandCapitalApiService == null) {
+
             CookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(GrandCapitalApplication.getAppContext()));
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .cookieJar(cookieJar)
+                    .connectTimeout(5, TimeUnit.MINUTES)
+                    .writeTimeout(5, TimeUnit.MINUTES)
+                    .readTimeout(5, TimeUnit.MINUTES)
                     .build();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -73,6 +81,8 @@ public class GrandCapitalApi {
         String result = null;
         try {
             response = call.execute();
+        } catch (final java.net.SocketTimeoutException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,11 +98,13 @@ public class GrandCapitalApi {
     }
 
     public static String getInfoUser() {
-        Call<InfoAnswer> responseBodyCall = getApiService().getInfo(User.getInstance().getLogin());
+        Call<InfoAnswer> call = getApiService().getInfo(User.getInstance().getLogin());
         Response<InfoAnswer> response = null;
         String result = null;
         try {
-            response = responseBodyCall.execute();
+            response = call.execute();
+        } catch (final java.net.SocketTimeoutException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,11 +119,13 @@ public class GrandCapitalApi {
     }
 
     public static String getSummary() {
-       Call<SummaryAnswer> responseCall = getApiService().getSummary(User.getInstance().getLogin());
+       Call<SummaryAnswer> call = getApiService().getSummary(User.getInstance().getLogin());
        Response<SummaryAnswer> response = null;
         String result = null;
         try {
-            response = responseCall.execute();
+            response = call.execute();
+        } catch (final java.net.SocketTimeoutException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,21 +141,25 @@ public class GrandCapitalApi {
     }
 
     public static String getSymbolHistory(String symbol) {
-        Response<SymbolHistoryAnswer> response = null;
+        Response<List<SymbolHistoryAnswer>> response = null;
         String result = null;
-        //String toTime = "1487800920";
-        //String fromTime = "1486764120";
-        String toTime = ConventDate.getTimeStampLastDate();
-        String fromTime = ConventDate.getTimeStampCurrentDate();
-        Call<SymbolHistoryAnswer> call = getApiService().getSymbolHistory(User.getInstance().getLogin(), fromTime, toTime, "1", symbol + "_OP");
+        //String toTime = ConventDate.getTimeStampLastDate();
+        //String fromTime = ConventDate.getTimeStampCurrentDate();
+        String toTime = "1487856360";
+        String fromTime = "1487853000";
+        symbol = (symbol + "_OP");
+        Call<List<SymbolHistoryAnswer>> call = getApiService().getSymbolHistory(User.getInstance().getLogin(), fromTime, toTime, "1", symbol);
         try {
             response = call.execute();
-        } catch (IOException e) {
+         } catch (final java.net.SocketTimeoutException e) {
+            e.printStackTrace();
+         } catch (IOException e) {
             e.printStackTrace();
         }
         if(response != null){
             if(response.code() == 200) {
-                SymbolHistoryAnswer.setInstance(response.body());
+                List<SymbolHistoryAnswer> list = response.body();
+                SymbolHistoryAnswer.setInstance(list);
             }
             result = String.valueOf(response.code());
         }
