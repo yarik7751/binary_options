@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.api;
 
+import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
@@ -36,5 +37,8 @@ public interface IGrandCapitalApi {
                                                @Query("to") String to,
                                                @Query("resolution") String resolution,
                                                @Query("symbol") String symbol);
+
+    @GET("/api/faq/questions?category=options")
+    Call<QuestionsAnswer> getAnswers(@Query("page") int page);
 
 }

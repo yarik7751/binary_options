@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.api;
 
+import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
@@ -7,7 +8,6 @@ import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
-import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventToJson;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
@@ -21,7 +21,6 @@ import java.util.List;
 import okhttp3.CookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -145,6 +144,25 @@ public class GrandCapitalApi {
             }
             result = String.valueOf(response.code());
         }
+        return result;
+    }
+
+    public static String getQuestions(int page) {
+        Call<QuestionsAnswer> call = getApiService().getAnswers(page);
+        Response<QuestionsAnswer> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null) {
+            if(response.code() == 200) {
+                QuestionsAnswer.setInstance(response.body());
+            }
+            result = String.valueOf(response.code());
+        }
+
         return result;
     }
 }
