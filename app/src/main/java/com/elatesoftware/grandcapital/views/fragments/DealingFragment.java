@@ -75,7 +75,6 @@ public class DealingFragment extends Fragment {
 
         initTabs();
         initListHeaders();
-
         updateData();
     }
 
@@ -193,13 +192,14 @@ public class DealingFragment extends Fragment {
             String response = intent.getStringExtra(OrdersService.RESPONSE);
             if (response != null) {
                 if(response.equals("200")){
-                    List<OrderAnswer> orders = OrderAnswer.getInstance();
-                    List<OrderAnswer> currentOrders = findOrders(orders, currentTabPosition);
-                    checkOrders(currentOrders);
-                    mAdapter = currentTabPosition == OPEN_TAB_POSITION
-                            ? new FragmentDealingOpenOrdersAdapter(currentOrders)
-                            : new FragmentDealingCloseOrdersAdapter(currentOrders);
-
+                    if(OrderAnswer.getInstance() != null){
+                        List<OrderAnswer> orders = OrderAnswer.getInstance();
+                        List<OrderAnswer> currentOrders = findOrders(orders, currentTabPosition);
+                        checkOrders(currentOrders);
+                        mAdapter = currentTabPosition == OPEN_TAB_POSITION
+                                ? new FragmentDealingOpenOrdersAdapter(currentOrders)
+                                : new FragmentDealingCloseOrdersAdapter(currentOrders);
+                    }
                     mProgressLayout.setVisibility(View.GONE);
                     mRecyclerView.setAdapter(mAdapter);
                     setListHeader(currentTabPosition);
