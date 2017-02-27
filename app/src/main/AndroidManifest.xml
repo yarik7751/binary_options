@@ -41,6 +41,8 @@
         <service android:name=".services.InfoUserService"/>
         <service android:name=".services.SymbolHistoryService"/>
         <service android:name=".services.OrdersService"/>
+        <service android:name=".services.QuestionsService"/>
+        <service android:name=".services.BinaryOptionService"></service>
 
     </application>
 </manifest>

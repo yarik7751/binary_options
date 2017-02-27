@@ -3,13 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
     tools:context=".views.fragments.QuestionFragment">
 
-    <TextView
-        android:id="@+id/fragment_question_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/FaqQuestionsContentText"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <TextView
+            android:id="@+id/fragment_question_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="16dp"
+            style="@style/FaqQuestionsContentText"/>
+    </ScrollView>
 
 </FrameLayout>

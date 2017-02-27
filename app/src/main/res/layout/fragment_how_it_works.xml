@@ -5,6 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".views.fragments.HowItWorksFragment">
 
+    <include layout="@layout/progress_bar" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fragment_how_it_works_questions_list"
         android:layout_width="match_parent"

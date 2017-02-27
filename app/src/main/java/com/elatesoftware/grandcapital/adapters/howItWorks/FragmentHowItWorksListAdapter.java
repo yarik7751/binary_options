@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
+import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.fragments.QuestionFragment;
 
@@ -32,6 +33,16 @@ public class FragmentHowItWorksListAdapter extends GrandCapitalListAdapter {
     public FragmentHowItWorksListAdapter(String[] mQuestionsNames, String[] mQuestionsContent) {
         this.mQuestionsNames = mQuestionsNames;
         this.mQuestionsContent = mQuestionsContent;
+    }
+
+    public FragmentHowItWorksListAdapter(QuestionsAnswer questionsAnswer) {
+        mQuestionsNames = new String[questionsAnswer.getQuestions().size()];
+        mQuestionsContent = new String[questionsAnswer.getQuestions().size()];
+
+        for (int i = 0; i < mQuestionsNames.length; i++) {
+            mQuestionsNames[i] = questionsAnswer.getQuestions().get(i).getQuestion();
+            mQuestionsContent[i] = questionsAnswer.getQuestions().get(i).getAnswer();
+        }
     }
 
     @Override
