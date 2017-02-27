@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,6 +37,8 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 
 import java.util.ArrayList;
@@ -187,7 +190,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setScaleYEnabled(false);
         mChart.setScaleXEnabled(true);
         mChart.setPadding(0,0,0,0);
-
         /** create marker*/
         /*MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.item_marker);
         mv.setChartView(mChart);
@@ -213,12 +215,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         yAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
         mChart.getAxisLeft().setEnabled(false); /** hide left Y*/
         /** animation add data in chart*/
-        mChart.setOnTouchListener((v, event) -> {
+        /*mChart.setOnTouchListener((v, event) -> {
             return false;        // TODO norm scroll
-        });
+        });*/
        // mChart.setDragOffsetX(100f);  /** видимость графика не до конца экрана*/       // TODO
+        mChart.setScaleMinima(4f, 1f);
         mChart.getLegend().setEnabled(false);   /** Hide the legend */
-        mChart.animateXY(1500,2000);
         mChart.invalidate();
     }
     private String getTime(long time){
@@ -262,8 +264,13 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         }else{
             mChart.clear();
-        }
-        mChart.invalidate();
+        }/*
+        if( list!= null && list.size() != 0){
+            SymbolHistoryAnswer item = list.get(list.size() - 1);
+            mChart.zoomToCenter(item.getTime(), Float.valueOf(String.valueOf(item.getOpen())));
+        }*/
+        mChart.canScrollHorizontally(View.SCROLLBAR_POSITION_RIGHT);
+        mChart.animateXY(1500,2000);
     }
 
     @Override
@@ -274,7 +281,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public void onNothingSelected() {
 
     }
-
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
