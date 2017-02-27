@@ -5,6 +5,9 @@
     <string name="userLogin1">10026417</string>
     <string name="userPassword1">UFZ0Spmi</string>
 
+    <string name="number">number</string>
+    <string name="logical_number">logical_number</string>
+
     <!--Exceptions-->
     <string name="error_incorrent_password_input">Please input password</string>
     <string name="error_wront_password">Wrong password</string>
@@ -70,6 +73,8 @@
     <!--Dealing list headers open-->
     <string name="dealing_page_tab_name_open">Open</string>
     <string name="dealing_page_tab_name_close">Close</string>
+    <string name="dealing_page_tab_name_binary_option">Binary Option</string>
+    <string name="dealing_page_tab_name_forex">Forex</string>
 
     <!--Dealing list headers open-->
     <string name="dealing_page_open_active">Active</string>

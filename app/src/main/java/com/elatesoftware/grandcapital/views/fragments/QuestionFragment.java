@@ -33,16 +33,18 @@ public class QuestionFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "QuestionFragmen onCreateView");
         this.mHeader = this.getArguments().getString(HEADER_TEXT);
         this.mContent = this.getArguments().getString(CONTENT_TEXT);
-        this.mContent = Html.fromHtml(this.mContent).toString();
-
+        this.mContent = Html.fromHtml(this.mContent).toString()
+                .replace((char) 160, (char) 32).replace((char) 65532, (char) 32).trim().replaceAll("[\\n]{2,}", "\n");
         return inflater.inflate(R.layout.fragment_question, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        BaseActivity.getToolbar().switchTab(BaseActivity.SIGNAL_POSITION);
         BaseActivity.getToolbar().setPageTitle(mHeader);
         TextView contentText  = (TextView) view.findViewById(R.id.fragment_question_content);
         contentText.setText(mContent);

@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,7 @@ public class ToolbarFragment extends Fragment {
     public static final int TOOLBAR_TERMINATE_FRAGMENT = 101;
     public static final int TOOLBAR_OTHER_FRAGMENT = 102;
     public static final int TOOLBAR_EMPTY_FRAGMENT = 103;
+    public static final int TOOLBAR_REFRESH_FRAGMENT = 104;
 
     public ToolbarFragment() {
 
@@ -46,7 +48,7 @@ public class ToolbarFragment extends Fragment {
         setupToolbar();
     }
     private void setupToolbar() {
-        int[] drawableResources = {R.drawable.signal, R.drawable.terminal, R.drawable.order, R.drawable.quotes};
+        int[] drawableResources = {R.drawable.signal, R.drawable.terminal, R.drawable.order, R.drawable.arrowdown, R.drawable.quotes};
         mTabLayout = (TabLayout) getView().findViewById(R.id.tabLayout);
         mTabLayout.setVisibility(View.VISIBLE);
 
@@ -83,9 +85,33 @@ public class ToolbarFragment extends Fragment {
     }
 
     public void switchTab(int position){
-        if(position > 0 && position < 5) {
+        if(position >= 0 && position < 5) {
             showTabs();
             mTabLayout.getTabAt(position).select();
+        }
+    }
+
+    /**
+     * скрыть табы в зависимости от типа фрагмента
+     * @param type
+     */
+    public void hideTabsByType(int type) {
+        switch(type) {
+            case TOOLBAR_TERMINATE_FRAGMENT:
+                /*View refreshView = mTabLayout.getTabAt(1).getCustomView();
+                mTabLayout.getChildAt(1);
+                mTabLayout.setSelectedTabIndicatorColor(Color.TRANSPARENT);
+                refreshView.setVisibility(View.GONE);
+                refreshView.getLayoutParams().width = 0;*/
+                break;
+            case TOOLBAR_OTHER_FRAGMENT:
+                break;
+
+            case TOOLBAR_EMPTY_FRAGMENT:
+                break;
+            case TOOLBAR_REFRESH_FRAGMENT:
+
+                break;
         }
     }
 

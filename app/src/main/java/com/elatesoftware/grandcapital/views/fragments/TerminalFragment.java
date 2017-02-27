@@ -93,6 +93,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_terminal));
+        BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINATE_FRAGMENT);
         registrationBroadcasts();
         if(User.getInstance() != null){
             tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));

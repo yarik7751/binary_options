@@ -52,7 +52,8 @@ public class BaseActivity extends CustomFontsActivity {
     public static final int SIGNAL_POSITION = 0;
     public static final int TERMINAL_POSITION = 1;
     public static final int DEALING_POSITION = 2;
-    public static final int QUOTES_POSITION = 3;
+    public static final int REFRESH_POSITION = 3;
+    public static final int QUOTES_POSITION = 4;
 
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
@@ -180,6 +181,9 @@ public class BaseActivity extends CustomFontsActivity {
                 break;
             case DEALING_POSITION:
                 changeMainFragment(new DealingFragment());
+                break;
+            case REFRESH_POSITION:
+                //??????
                 break;
             case QUOTES_POSITION:
                 changeMainFragment(new QuotesFragment());

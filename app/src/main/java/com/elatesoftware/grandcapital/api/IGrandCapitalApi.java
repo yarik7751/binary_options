@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.api;
 
+import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
@@ -37,4 +38,10 @@ public interface IGrandCapitalApi {
                                         @Query ("to") String to,
                                         @Query ("resolution") String resolution,
                                         @Query ("symbol") String symbol);
+
+    @GET("/api/faq/questions?category=options")
+    Call<QuestionsAnswer> getQuestions(@Query("page") int page);
+
+    @GET("/api/bonus/bonus_description")
+    Call<BinaryOptionAnswer> getBinaryOption();
 }

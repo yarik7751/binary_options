@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.api;
 
+import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
@@ -166,7 +167,7 @@ public class GrandCapitalApi {
     }
 
     public static String getQuestions(int page) {
-        Call<QuestionsAnswer> call = getApiService().getAnswers(page);
+        Call<QuestionsAnswer> call = getApiService().getQuestions(page);
         Response<QuestionsAnswer> response = null;
         String result = null;
         try {
@@ -177,6 +178,25 @@ public class GrandCapitalApi {
         if(response != null) {
             if(response.code() == 200) {
                 QuestionsAnswer.setInstance(response.body());
+            }
+            result = String.valueOf(response.code());
+        }
+
+        return result;
+    }
+
+    public static String getBinaryOption() {
+        Call<BinaryOptionAnswer> call = getApiService().getBinaryOption();
+        Response<BinaryOptionAnswer> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null) {
+            if(response.code() == 200) {
+                BinaryOptionAnswer.setInstance(response.body());
             }
             result = String.valueOf(response.code());
         }
