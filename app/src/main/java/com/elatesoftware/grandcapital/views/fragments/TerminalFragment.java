@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -40,6 +43,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -207,7 +211,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         xAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
         xAxis.setTextColor(getResources().getColor(R.color.chart_values));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-      //  xAxis.
         xAxis.setValueFormatter((value, axis) -> getTime(((Float)value).longValue()));
         /**Ось Y */
         YAxis yAxis = mChart.getAxisRight();
@@ -216,14 +219,15 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         yAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
         mChart.getAxisLeft().setEnabled(false); /** hide left Y*/
-        /** animation add data in chart*/
         /*mChart.setOnTouchListener((v, event) -> {
             return false;        // TODO norm scroll
         });*/
-       // mChart.setDragOffsetX(100f);  /** видимость графика не до конца экрана*/       // TODO
-        mChart.setScaleMinima(4f, 1f);
+        mChart.setDragOffsetX(100f);            /** видимость графика не до конца экрана*/       // TODO norm padding chart in left
+        mChart.setScaleMinima(5f, 1f);          /** scale chart*/
         mChart.getLegend().setEnabled(false);   /** Hide the legend */
-        mChart.invalidate();
+        /** animation add data in chart*/
+        mChart.animateX(1500);
+
     }
     private String getTime(long time){
         return ConventDate.convertDateFromMilSecHHMM(time);
@@ -243,8 +247,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 mChart.notifyDataSetChanged();
             } else {
                 set1 = new LineDataSet(values, "Base line");    /** set the line*/
-                set1.setColor(Color.WHITE);
-                set1.setCircleColor(Color.WHITE);
                 set1.setLineWidth(1f);
                 set1.setDrawValues(false);    /**hide values all points*/
                 set1.setDrawCircles(false);   /**hide  all circle points */
@@ -254,6 +256,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 set1.setDrawFilled(true);
                 set1.setFormLineWidth(1f);
                 set1.setFormSize(15.f);
+                set1.setColor(Color.WHITE);          /** color line*/
+                set1.setCircleColor(Color.WHITE);    /** color circles*/
                 /** fill color chart*/
                 set1.setFillColor(Color.WHITE);
                 set1.setFillAlpha(50);
@@ -266,13 +270,13 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         }else{
             mChart.clear();
-        }/*
+        }
+        /** scroolling in end chart*/
         if( list!= null && list.size() != 0){
             SymbolHistoryAnswer item = list.get(list.size() - 1);
-            mChart.zoomToCenter(item.getTime(), Float.valueOf(String.valueOf(item.getOpen())));
-        }*/
-        mChart.canScrollHorizontally(View.SCROLLBAR_POSITION_RIGHT);
-        mChart.animateXY(1500,2000);
+            mChart.centerViewTo(Float.valueOf(item.getTime()), Float.valueOf(String.valueOf(item.getOpen())), YAxis.AxisDependency.RIGHT);
+        }
+        mChart.invalidate();
     }
 
     @Override

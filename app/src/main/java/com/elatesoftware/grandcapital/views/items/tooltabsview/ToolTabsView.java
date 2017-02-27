@@ -18,11 +18,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.lenovo.test_tooltabsview.Logs;
-import com.example.lenovo.test_tooltabsview.R;
-import com.example.lenovo.test_tooltabsview.tooltabsview.adapter.OnChooseTab;
-import com.example.lenovo.test_tooltabsview.tooltabsview.adapter.OnLoadData;
-import com.example.lenovo.test_tooltabsview.tooltabsview.adapter.ToolTabsViewAdapter;
+import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChooseTab;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.ToolTabsViewAdapter;
+
 
 public class ToolTabsView extends LinearLayout {
 
