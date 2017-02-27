@@ -32,6 +32,8 @@ import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItemWithM
 
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 
+import java.util.List;
+
 public class BaseActivity extends CustomFontsActivity {
 
     public static FragmentManager fragmentManager;
@@ -77,7 +79,7 @@ public class BaseActivity extends CustomFontsActivity {
             if (savedInstanceState == null) {
                 toolbar = new ToolbarFragment();
                 changeToolbarFragment(toolbar);
-                changeMainFragment(new TerminalFragment());
+                changeMainFragment(TerminalFragment.getInstance());
             }
         }
     }
@@ -149,7 +151,7 @@ public class BaseActivity extends CustomFontsActivity {
                 return;
             }
             if (view == mTerminal) {
-                changeMainFragment(new TerminalFragment());
+                changeMainFragment(TerminalFragment.getInstance());
             } else if (view == mSupport) {
                 changeMainFragment(new SupportFragment());
             } else if (view == mDealing) {
@@ -174,10 +176,10 @@ public class BaseActivity extends CustomFontsActivity {
     public void setMain(int i) {
         switch (i){
             case SIGNAL_POSITION:
-                changeMainFragment(new TerminalFragment());
+                //changeMainFragment(new TerminalFragment());      // TODO
                 break;
             case TERMINAL_POSITION:
-                changeMainFragment(new TerminalFragment());
+                changeMainFragment(TerminalFragment.getInstance());
                 break;
             case DEALING_POSITION:
                 changeMainFragment(new DealingFragment());
@@ -194,11 +196,14 @@ public class BaseActivity extends CustomFontsActivity {
     public static void changeMainFragment(Fragment targetFragment) {
         //Опасно! Не ясно, что делает эта строка
        // mResideMenu.clearIgnoredViewList();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content, targetFragment, "fragment")
-                .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack("fragment")
-                .commit();
+        List<Fragment> list  = fragmentManager.getFragments();
+        if(list == null || list.get(list.size() -1) != targetFragment){
+            fragmentManager.beginTransaction()
+                    .replace(R.id.content, targetFragment, "fragment")
+                    .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack("fragment")
+                    .commit();
+        }
     }
 
     private void changeToolbarFragment(Fragment targetFragment) {

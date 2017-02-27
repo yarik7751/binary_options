@@ -23,11 +23,13 @@ import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
+import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -59,7 +61,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
-    public TerminalFragment() {
+    private static TerminalFragment fragment = new TerminalFragment();
+    public static TerminalFragment getInstance(){
+        if(fragment == null){
+            fragment = new TerminalFragment();
+        }
+        return fragment;
     }
 
     @Override
@@ -117,69 +124,11 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                     tvValueActive.setText(listActives.get(index  + 1));
                 }
             }
-        });/*
-        etValueAmount.setOnClickListener(v -> {
-            String value = etValueAmount.getText().toString();
-            etValueAmount.setText(value.substring(1, value.length()-1));
         });
-        etValueAmount.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                CharSequence text;
-                if(s.length() > 0){
-                    text = s.subSequence(0, s.length()-1);
-                    text = "&" + text;
-                }else{
-                    text = "$0";
-                }
-                etValueAmount.setText(text);
-            }
-        });
-*/
-        /*tvMinusAmount.setOnClickListener(v -> {
-            try{
-                String value = etValueAmount.getText().toString().replace(',', '.').replace('$', ' ');
-                value = value.substring(1, value.length()-1);
-                double currentAmount = Double.valueOf(value);
-                if(currentAmount > 0){
-                    currentAmount = currentAmount --;
-                    etValueAmount.setText("$" + String.format("%.2f", currentAmount).replace('.', ','));
-                }
-            }catch (Exception ex){
-                ex.printStackTrace();
-            }
-        });
-        tvPlusAmount.setOnClickListener(v -> {
-            try{
-                String value = etValueAmount.getText().toString().replace(',', '.');
-                value = value.substring(1, value.length()-1);
-                double currentAmount = Double.valueOf(value);
-                if(currentAmount >= 0){
-                    currentAmount = currentAmount ++;
-                    etValueAmount.setText("$" + String.format("%.2f", currentAmount).replace('.', ','));
-                }
-            }catch (Exception ex){
-                ex.printStackTrace();
-            }
-        });
-        tvMinusTime.setOnClickListener(v -> {
-            String valueTime = etValueTime.getText().toString();
-
-        });
-        tvPlusTime.setOnClickListener(v -> {
-
-        });
-*/
-        initializationChart();
         tvDeposit.setOnClickListener(v -> {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
+        initializationChart();
     }
     private void registrationBroadcasts(){
         mInfoBroadcastReceiver = new  GetResponseInfoBroadcastReceiver();
@@ -193,36 +142,38 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         getActivity().registerReceiver(mSymbolHistoryBroadcastReceiver, intentFilterSymbolHistory);
     }
     private void setActives(){
-        if(InfoAnswer.getInstance() != null &&  InfoAnswer.getInstance().getInstruments() != null &&  InfoAnswer.getInstance().getInstruments().size() > 0){
+        if(InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getInstruments() != null &&  InfoAnswer.getInstance().getInstruments().size() > 0){
             listActives.clear();
             for(Instrument instrument: InfoAnswer.getInstance().getInstruments()){
                 listActives.add(instrument.getSymbol());
             }
             tvValueActive.setText(listActives.get(0));
-            if(tvValueActive.getText().toString() != null && !tvValueActive.getText().toString().equals("")){
+            if(!tvValueActive.getText().toString().equals("")){
                 getOrders();
             }
+        }else{
+            Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
+            getActivity().startService(intentMyIntentService);
         }
     }
-
     private void getOrders(){
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
         intentService.putExtra(SymbolHistoryService.SYMBOL, tvValueActive.getText().toString());
         getActivity().startService(intentService);
     }
-    public void getInfoUser(){
-        Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
-        getActivity().startService(intentMyIntentService);
+    @Override
+    public void onResume() {
+        super.onResume();
+        setActives();
     }
     @Override
-    public void onStart() {
-        super.onStart();
-        getInfoUser();
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        registrationBroadcasts();
     }
-
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDetach() {
+        super.onDetach();
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
     }
@@ -237,6 +188,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setPinchZoom(true);
         mChart.setScaleYEnabled(false);
         mChart.setScaleXEnabled(true);
+        mChart.setPadding(0,0,0,0);
+
         /** create marker*/
         /*MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.item_marker);
         mv.setChartView(mChart);
@@ -252,20 +205,26 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         xAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
         xAxis.setTextColor(getResources().getColor(R.color.chart_values));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+      //  xAxis.
+        xAxis.setValueFormatter((value, axis) -> getTime(((Float)value).longValue()));
         /**Ось Y */
         YAxis yAxis = mChart.getAxisRight();
         yAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
         yAxis.setTextColor(getResources().getColor(R.color.chart_values));
         yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        yAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
         mChart.getAxisLeft().setEnabled(false); /** hide left Y*/
         /** animation add data in chart*/
-        mChart.animateXY(1500, 2000);
         mChart.setOnTouchListener((v, event) -> {
-            return false;        // TODO
+            return false;        // TODO norm scroll
         });
-        mChart.setDragOffsetX(20f);  /** видимость графика не до конца экрана*/       // TODO
+       // mChart.setDragOffsetX(100f);  /** видимость графика не до конца экрана*/       // TODO
         mChart.getLegend().setEnabled(false);   /** Hide the legend */
+        mChart.animateXY(1500,2000);
         mChart.invalidate();
+    }
+    private String getTime(long time){
+        return ConventDate.convertDateFromMilSecHHMM(time);
     }
 
     private void setData(List<SymbolHistoryAnswer> list) {
@@ -313,7 +272,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public void onValueSelected(Entry e, Highlight h) {
 
     }
-
     @Override
     public void onNothingSelected() {
 
@@ -336,8 +294,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             String response = intent.getStringExtra(SymbolHistoryService.RESPONSE);
             if (response != null) {
                 if (response.equals("200")) {
-                    List<SymbolHistoryAnswer> listSymbolHistory = SymbolHistoryAnswer.getInstance();
-                    setData(listSymbolHistory);
+                    if(SymbolHistoryAnswer.getInstance() != null){
+                        setData(SymbolHistoryAnswer.getInstance());
+                    }
                 }
             }
         }

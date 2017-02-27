@@ -6,15 +6,22 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
-import android.view.*;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
-import android.widget.*;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
-import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
-import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
 import com.nineoldandroids.animation.Animator;
 import com.nineoldandroids.animation.AnimatorSet;
 import com.nineoldandroids.animation.ObjectAnimator;
@@ -22,7 +29,6 @@ import com.nineoldandroids.view.ViewHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class ResideMenu extends FrameLayout {
 
