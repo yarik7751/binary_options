@@ -12,9 +12,13 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
 public class AccountsFragment extends Fragment {
 
-    public AccountsFragment() {
+    private static AccountsFragment fragment = null;
+    public static AccountsFragment getInstance() {
+        if (fragment == null) {
+            fragment = new AccountsFragment();
+        }
+        return fragment;
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_accounts, container, false);

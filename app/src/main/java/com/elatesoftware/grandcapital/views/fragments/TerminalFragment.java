@@ -5,16 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -23,7 +17,9 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
+import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
@@ -31,28 +27,24 @@ import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TerminalFragment extends Fragment implements OnChartValueSelectedListener {
+public class TerminalFragment extends Fragment implements OnChartValueSelectedListener{
 
     private View parentView;
-    private LineChart mChart;
+    private static LineChart mChart;
+    private static ArrayList<Entry> values;
+    private static LineDataSet lineDataSet;
     private TextView tvBalance;
     private TextView tvDeposit;
     private TextView tvLowerActive;
@@ -69,17 +61,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
-    private static TerminalFragment fragment = new TerminalFragment();
-    public static TerminalFragment getInstance(){
-        if(fragment == null){
+    private static TerminalFragment fragment = null;
+    public static TerminalFragment getInstance() {
+        if (fragment == null) {
             fragment = new TerminalFragment();
         }
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -162,14 +149,14 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
             tvValueActive.setText(listActives.get(0));
             if(!tvValueActive.getText().toString().equals("")){
-                getOrders();
+                getSymbolHistory();
             }
         }else{
             Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
             getActivity().startService(intentMyIntentService);
         }
     }
-    private void getOrders(){
+    private void getSymbolHistory(){
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
         intentService.putExtra(SymbolHistoryService.SYMBOL, tvValueActive.getText().toString());
         getActivity().startService(intentService);
@@ -179,14 +166,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         super.onResume();
         setActives();
     }
+
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        registrationBroadcasts();
-    }
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onDestroy() {
+        super.onDestroy();
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
     }
@@ -217,7 +200,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         xAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
         xAxis.setTextColor(getResources().getColor(R.color.chart_values));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setValueFormatter((value, axis) -> getTime(((Float)value).longValue()));
+        xAxis.setValueFormatter((value, axis) -> ConventDate.convertDateFromMilSecHHMM((((Float)value).longValue())));
+
         /**Ось Y */
         YAxis yAxis = mChart.getAxisRight();
         yAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
@@ -232,46 +216,67 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setScaleMinima(5f, 1f);          /** scale chart*/
         mChart.getLegend().setEnabled(false);   /** Hide the legend */
         /** animation add data in chart*/
+        mChart.invalidate();
         mChart.animateX(1500);
-
-    }
-    private String getTime(long time){
-        return ConventDate.convertDateFromMilSecHHMM(time);
     }
 
-    private void setData(List<SymbolHistoryAnswer> list) {
+    public static void updateChart(SocketAnswer value) {
+        /*List<SymbolHistoryAnswer> listPoints = SymbolHistoryAnswer.getInstance();
+        listPoints.add(new SymbolHistoryAnswer(value.getHigh(), value.getBid(), value.getAsk(), value.getLow(), value.getTime()));
+        SymbolHistoryAnswer.setInstance(listPoints);
+        setData(SymbolHistoryAnswer.getInstance());*/
+        /*lineDataSet.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))));
+        //mChart.getData().getDataSetByIndex(0).addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))));
+        mChart.getData().notifyDataChanged();
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();*/
+        //******************************
+        /*LineData data  = mChart.getData();
+        LineDataSet lineDataSet  = (LineDataSet) data.getDataSetByIndex(0);
+        if (lineDataSet == null) {
+            createLineDataSet(null);
+            data.addDataSet(lineDataSet);
+        }
+        data.addDataSet(lineDataSet);
+        data.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))), 0);
+        mChart.notifyDataSetChanged ();
+        mChart.moveViewToX(data.getXMax () - 10);*/
+    }
+    private static void createLineDataSet(List<Entry> values){
+        lineDataSet = new LineDataSet(values, "Base line");    /** set the line*/
+        lineDataSet.setLineWidth(1f);
+        lineDataSet.setDrawValues(false);    /**hide values all points*/
+        lineDataSet.setDrawCircles(false);   /**hide  all circle points */
+        lineDataSet.setCircleRadius(3f);
+        lineDataSet.setDrawCircleHole(false);
+        lineDataSet.setValueTextSize(9f);
+        lineDataSet.setDrawFilled(true);
+        lineDataSet.setFormLineWidth(1f);
+        lineDataSet.setFormSize(15.f);
+        lineDataSet.setColor(Color.WHITE);          /** color line*/
+        lineDataSet.setCircleColor(Color.WHITE);    /** color circles*/
+        /** fill color chart*/
+        lineDataSet.setFillColor(Color.WHITE);
+        lineDataSet.setFillAlpha(50);
+    }
+    private static void setData(List<SymbolHistoryAnswer> list) {
         if(list != null && list.size() > 0){
-            ArrayList<Entry> values = new ArrayList<>();
+            values = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
-                values.add(new Entry(list.get(i).getTime(), Float.valueOf(String.valueOf(list.get(i).getOpen())), getResources().getDrawable(R.drawable.front_elipsa)));
+                values.add(new Entry(list.get(i).getTime(), Float.valueOf(String.valueOf(list.get(i).getOpen())), 0));
             }
-            LineDataSet set1;
             if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
-                set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
-                set1.setValues(values);
+                lineDataSet = (LineDataSet) mChart.getData().getDataSetByIndex(0);
+                lineDataSet.setValues(values);
                 mChart.getData().notifyDataChanged();
                 mChart.notifyDataSetChanged();
             } else {
-                set1 = new LineDataSet(values, "Base line");    /** set the line*/
-                set1.setLineWidth(1f);
-                set1.setDrawValues(false);    /**hide values all points*/
-                set1.setDrawCircles(false);   /**hide  all circle points */
-                set1.setCircleRadius(3f);
-                set1.setDrawCircleHole(false);
-                set1.setValueTextSize(9f);
-                set1.setDrawFilled(true);
-                set1.setFormLineWidth(1f);
-                set1.setFormSize(15.f);
-                set1.setColor(Color.WHITE);          /** color line*/
-                set1.setCircleColor(Color.WHITE);    /** color circles*/
-                /** fill color chart*/
-                set1.setFillColor(Color.WHITE);
-                set1.setFillAlpha(50);
+                createLineDataSet(values);
                 /** add the datasets*/
                 ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-                dataSets.add(set1);
+                dataSets.add(lineDataSet);
                 LineData data = new LineData(dataSets);
-                set1.setHighlightEnabled(false); /** hide Highlight*/
+                lineDataSet.setHighlightEnabled(false); /** hide Highlight*/
                 mChart.setData(data);
             }
         }else{
@@ -293,6 +298,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public void onNothingSelected() {
 
     }
+
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -312,6 +318,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 if (response.equals("200")) {
                     if(SymbolHistoryAnswer.getInstance() != null){
                         setData(SymbolHistoryAnswer.getInstance());
+                        GrandCapitalApplication.openSocket();
                     }
                 }
             }

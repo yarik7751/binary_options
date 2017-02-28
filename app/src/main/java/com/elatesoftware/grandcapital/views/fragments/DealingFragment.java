@@ -55,7 +55,12 @@ public class DealingFragment extends Fragment {
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
     private static int currentTabPosition = 0;
 
-    public DealingFragment() {
+    private static DealingFragment fragment = null;
+    public static DealingFragment getInstance() {
+        if (fragment == null) {
+            fragment = new DealingFragment();
+        }
+        return fragment;
     }
 
     @Override

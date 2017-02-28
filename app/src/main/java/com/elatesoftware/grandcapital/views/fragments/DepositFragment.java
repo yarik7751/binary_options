@@ -16,7 +16,12 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
 public class DepositFragment  extends Fragment {
 
-    public DepositFragment() {
+    private static DepositFragment fragment = null;
+    public static DepositFragment getInstance() {
+        if (fragment == null) {
+            fragment = new DepositFragment();
+        }
+        return fragment;
     }
 
     @Override

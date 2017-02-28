@@ -34,9 +34,14 @@ public class ToolbarFragment extends Fragment {
     public static final int TOOLBAR_EMPTY_FRAGMENT = 103;
     public static final int TOOLBAR_REFRESH_FRAGMENT = 104;
 
-    public ToolbarFragment() {
-
+    private static ToolbarFragment fragment = null;
+    public static ToolbarFragment getInstance() {
+        if (fragment == null) {
+            fragment = new ToolbarFragment();
+        }
+        return fragment;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

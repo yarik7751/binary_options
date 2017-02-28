@@ -12,9 +12,13 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
 public class SupportFragment extends Fragment {
 
-    public SupportFragment() {
+    private static SupportFragment fragment = null;
+    public static SupportFragment getInstance() {
+        if (fragment == null) {
+            fragment = new SupportFragment();
+        }
+        return fragment;
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_support, container, false);

@@ -28,7 +28,12 @@ public class QuestionFragment extends Fragment {
     public static String HEADER_TEXT = "header_text_question_fragment";
     public static String CONTENT_TEXT = "content_text_question_fragment";
 
-    public QuestionFragment() {
+    private static QuestionFragment fragment = null;
+    public static QuestionFragment getInstance() {
+        if (fragment == null) {
+            fragment = new QuestionFragment();
+        }
+        return fragment;
     }
 
     @Override

@@ -33,7 +33,12 @@ public class HowItWorksFragment extends Fragment {
 
     private GetResponseQuestionsBroadcastReceiver getResponseQuestionsBroadcastReceiver;
 
-    public HowItWorksFragment() {
+    private static HowItWorksFragment fragment = null;
+    public static HowItWorksFragment getInstance() {
+        if (fragment == null) {
+            fragment = new HowItWorksFragment();
+        }
+        return fragment;
     }
 
     @Override

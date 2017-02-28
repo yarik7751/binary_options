@@ -23,6 +23,14 @@ public class SymbolHistoryAnswer {
     @Expose
     private Long time;
 
+    public SymbolHistoryAnswer(Double high, Double close, Double open, Double low, Long time) {
+        this.high = high;
+        this.close = close;
+        this.open = open;
+        this.low = low;
+        this.time = time;
+    }
+
     private static List<SymbolHistoryAnswer> symbolInstance = null;
     public static List<SymbolHistoryAnswer> getInstance() {
         return symbolInstance;
