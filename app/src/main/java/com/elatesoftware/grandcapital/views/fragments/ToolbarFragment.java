@@ -13,19 +13,23 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.ToolTabsView;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChooseTab;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.ToolTabsViewAdapter;
 
 public class ToolbarFragment extends Fragment {
 
     private ResideMenu mResideMenu;
     private BaseActivity mParentActivity;
 
-    private TabLayout mTabLayout;
+    public ToolTabsView mTabLayout;
     private TextView mPageTitle;
 
     private static final float TRANSPARENT_TAB_ICON_VALUE = 0.5f;
     private static final float NOT_TRANSPARENT_TAB_ICON_VALUE = 1f;
 
-    public static final int TOOLBAR_TERMINATE_FRAGMENT = 101;
+    public static final int TOOLBAR_TERMINALE_FRAGMENT = 101;
     public static final int TOOLBAR_OTHER_FRAGMENT = 102;
     public static final int TOOLBAR_EMPTY_FRAGMENT = 103;
     public static final int TOOLBAR_REFRESH_FRAGMENT = 104;
@@ -48,11 +52,32 @@ public class ToolbarFragment extends Fragment {
         setupToolbar();
     }
     private void setupToolbar() {
-        int[] drawableResources = {R.drawable.signal, R.drawable.terminal, R.drawable.order, R.drawable.arrowdown, R.drawable.quotes};
-        mTabLayout = (TabLayout) getView().findViewById(R.id.tabLayout);
+        int[] drawableResources = {
+                R.drawable.signal,
+                R.drawable.terminal,
+                R.drawable.order,
+                R.drawable.arrowdown,
+                R.drawable.quotes
+        };
+        mTabLayout = (ToolTabsView) getView().findViewById(R.id.tabLayout);
         mTabLayout.setVisibility(View.VISIBLE);
 
-        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mTabLayout.setAdapter(new ToolTabsViewAdapter(getContext(), drawableResources));
+        mTabLayout.setOnLoadData(new OnLoadData() {
+            @Override
+            public void loadData() {
+
+            }
+        });
+
+        mTabLayout.setOnChooseTab(new OnChooseTab() {
+            @Override
+            public void onChoose(View view, int position) {
+                mParentActivity.setMain(position);
+            }
+        });
+
+        /*mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 ImageView image = (ImageView) tab.getCustomView();
@@ -81,13 +106,14 @@ public class ToolbarFragment extends Fragment {
                 mTabLayout.getTabAt(i).setCustomView(icon);
             }
         }
-        mTabLayout.getTabAt(0).select();
+        mTabLayout.getTabAt(0).select();*/
     }
 
     public void switchTab(int position){
         if(position >= 0 && position < 5) {
             showTabs();
-            mTabLayout.getTabAt(position).select();
+            //mTabLayout.getTabAt(position).select();
+            mTabLayout.selectTab(position);
         }
     }
 
@@ -96,23 +122,39 @@ public class ToolbarFragment extends Fragment {
      * @param type
      */
     public void hideTabsByType(int type) {
+        mTabLayout.setVisibility(View.VISIBLE);
+        mTabLayout.showAllTabs();
         switch(type) {
-            case TOOLBAR_TERMINATE_FRAGMENT:
-                /*View refreshView = mTabLayout.getTabAt(1).getCustomView();
-                mTabLayout.getChildAt(1);
-                mTabLayout.setSelectedTabIndicatorColor(Color.TRANSPARENT);
-                refreshView.setVisibility(View.GONE);
-                refreshView.getLayoutParams().width = 0;*/
+            case TOOLBAR_TERMINALE_FRAGMENT:
+                mTabLayout.showTab(0);
+                mTabLayout.showTab(1);
+                mTabLayout.showTab(2);
+                mTabLayout.hideTab(3);
+                mTabLayout.showTab(4);
                 break;
             case TOOLBAR_OTHER_FRAGMENT:
+                mTabLayout.hideTab(0);
+                mTabLayout.showTab(1);
+                mTabLayout.showTab(2);
+                mTabLayout.hideTab(3);
+                mTabLayout.showTab(4);
                 break;
 
             case TOOLBAR_EMPTY_FRAGMENT:
+                mTabLayout.setVisibility(View.INVISIBLE);
                 break;
             case TOOLBAR_REFRESH_FRAGMENT:
-
+                mTabLayout.hideTab(0);
+                mTabLayout.showTab(1);
+                mTabLayout.showTab(2);
+                mTabLayout.showTab(3);
+                mTabLayout.showTab(4);
                 break;
         }
+    }
+
+    public void deselectAll() {
+        mTabLayout.deselectAllTabs();
     }
 
     public void hideTabs(){

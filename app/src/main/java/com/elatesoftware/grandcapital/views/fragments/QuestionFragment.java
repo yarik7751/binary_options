@@ -46,6 +46,7 @@ public class QuestionFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().switchTab(BaseActivity.SIGNAL_POSITION);
         BaseActivity.getToolbar().setPageTitle(mHeader);
+        BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_EMPTY_FRAGMENT);
         TextView contentText  = (TextView) view.findViewById(R.id.fragment_question_content);
         contentText.setText(mContent);
         Log.d(TAG, "mContent: " + mContent);

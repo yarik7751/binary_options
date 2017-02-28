@@ -25,6 +25,7 @@ import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
@@ -98,9 +99,14 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_terminal));
-        BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINATE_FRAGMENT);
+        BaseActivity.getToolbar().mTabLayout.setOnLoadData(new OnLoadData() {
+            @Override
+            public void loadData() {
+                BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+                BaseActivity.getToolbar().switchTab(0);
+            }
+        });
         registrationBroadcasts();
         if(User.getInstance() != null){
             tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));

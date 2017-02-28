@@ -21,9 +21,9 @@
     <ImageView
         style="?attr/actionButtonStyle"
         android:id="@+id/img_link"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_launch_white_24dp"/>
+        android:src="@drawable/ic_launch_white_18dp"/>
 </RelativeLayout>

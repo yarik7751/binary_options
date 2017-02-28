@@ -24,5 +24,7 @@ public class AccountsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_accounts));
+        BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_REFRESH_FRAGMENT);
+        BaseActivity.getToolbar().deselectAll();
     }
 }

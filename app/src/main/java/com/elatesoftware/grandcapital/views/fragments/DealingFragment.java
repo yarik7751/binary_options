@@ -66,8 +66,9 @@ public class DealingFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        BaseActivity.getToolbar().switchTab(BaseActivity.DEALING_POSITION);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_dealing));
+        BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+        BaseActivity.getToolbar().switchTab(2);
 
         mListLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_list);
         mNoOrdersLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_no_elements_layout);

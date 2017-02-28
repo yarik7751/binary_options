@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:asd="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -39,7 +40,17 @@
             tools:text="yguydfuygudyyguyfdgyuyguyudfygudfygufug"
             android:textSize="16sp" />
 
-        <android.support.design.widget.TabLayout
+        <com.elatesoftware.grandcapital.views.items.tooltabsview.ToolTabsView
+            android:id="@+id/tabLayout"
+            android:layout_width="170dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            app:line_color="@color/accentButtonGradientStartColor"
+            app:select_color="#55ffffff"/>
+
+        <!--<android.support.design.widget.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="170dp"
             android:layout_height="match_parent"
@@ -67,6 +78,6 @@
             <android.support.design.widget.TabItem
                 android:layout_width="0dp"
                 android:layout_height="0dp" />
-        </android.support.design.widget.TabLayout>
+        </android.support.design.widget.TabLayout>-->
     </RelativeLayout>
 </FrameLayout>

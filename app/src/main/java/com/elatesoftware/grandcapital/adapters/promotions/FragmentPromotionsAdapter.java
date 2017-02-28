@@ -50,7 +50,7 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
         super.onBindViewHolder(holder, position);
 
         FragmentPromotionsViewHolder promotionsViewHolder = (FragmentPromotionsViewHolder) holder;
-        promotionsViewHolder.tvName.setText(binaryOptionAnswer.getElements().get(position).getShortDescription());
+        promotionsViewHolder.tvName.setText(binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
         promotionsViewHolder.imgLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -3,6 +3,7 @@ package com.elatesoftware.grandcapital.views.items.tooltabsview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.transition.Transition;
@@ -18,11 +19,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.lenovo.test_tooltabsview.Logs;
-import com.example.lenovo.test_tooltabsview.R;
-import com.example.lenovo.test_tooltabsview.tooltabsview.adapter.OnChooseTab;
-import com.example.lenovo.test_tooltabsview.tooltabsview.adapter.OnLoadData;
-import com.example.lenovo.test_tooltabsview.tooltabsview.adapter.ToolTabsViewAdapter;
+import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChooseTab;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.ToolTabsViewAdapter;
+
 
 public class ToolTabsView extends LinearLayout {
 
@@ -32,10 +33,10 @@ public class ToolTabsView extends LinearLayout {
     private int lineColor, selectColor, heightView, widthView;
     private int lineWidth = -1, lineMargin = 1;
     private ToolTabsViewAdapter adapter;
-    private boolean isDataSet = false;
+    private boolean isDataSet = false, isDeselectAll = false;
 
     private LinearLayout llTabs, llLine, llMain;
-    private View vIndicator;
+    private View vIndicator, lastView = null;
     private LayoutParams itemParams;
 
     private OnChooseTab onChooseTab;
@@ -76,9 +77,65 @@ public class ToolTabsView extends LinearLayout {
         //setData();
     }
 
+    public void setAdapter(ToolTabsViewAdapter _adapter, boolean _isDeselectAll) {
+        adapter = _adapter;
+        isDataSet = false;
+        itemParams = new LayoutParams(
+                LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT
+        );
+        itemParams.weight = 1;
+        isDeselectAll = _isDeselectAll;
+        //setData();
+    }
+
     public void hideTab(int position) {
+        Log.d(TAG, "hideTab");
         llTabs.getChildAt(position).setVisibility(GONE);
         setNumbers();
+    }
+
+    public void showTab(int position) {
+        Log.d(TAG, "showTab");
+        View v = llTabs.getChildAt(position);
+        if(v.getVisibility() == GONE) {
+            v.setVisibility(VISIBLE);
+        }
+        setNumbers();
+    }
+
+    public void showAllTabs() {
+        Log.d(TAG, "showAllTabs");
+        for(int i = 0; i < llTabs.getChildCount(); i++) {
+            View v = llTabs.getChildAt(i);
+            v.setVisibility(VISIBLE);
+        }
+        setNumbers();
+    }
+
+    public void selectTab(int logicNumber) {
+        deselectAllTabs();
+        getNumbersTabsToLog();
+        int position = getPositionByLogicNumber(logicNumber);
+        setTint(llTabs.getChildAt(position), true);
+        vIndicator.setVisibility(VISIBLE);
+        moveIndicatior((int) llTabs.getChildAt(position).getTag(R.string.number), false);
+        if(onChooseTab != null) {
+            onChooseTab.onChoose(llTabs.getChildAt(position), logicNumber);
+        }
+    }
+
+    public void deselectAllTabs() {
+        for(int i = 0; i < llTabs.getChildCount(); i++) {
+            View v = llTabs.getChildAt(i);
+            setTint(v, false);
+        }
+        vIndicator.setVisibility(INVISIBLE);
+    }
+
+    public void setIcon(int logicNumber, int res) {
+        int position = getPositionByLogicNumber(logicNumber);
+        ((ImageView) llTabs.getChildAt(position).findViewById(R.id.img)).setImageResource(res);
     }
 
     public void setOnChooseTab(OnChooseTab onChooseTab) {
@@ -113,15 +170,11 @@ public class ToolTabsView extends LinearLayout {
             int[] icons = adapter.getIcons();
             String[] titles = adapter.getTitles();
             for (int i = 0; i < adapter.getItemsCount(); i++) {
-                View v;
-                if (titles == null || titles[i] == null) {
-                    v = View.inflate(context, R.layout.tool_tabs_view_item2, null);
-                    ImageView img = (ImageView) v.findViewById(R.id.img);
-                    img.setImageResource(icons[i]);
-                } else {
-                    v = View.inflate(context, R.layout.tool_tabs_view_item1, null);
-                    ImageView img = (ImageView) v.findViewById(R.id.img);
-                    img.setImageResource(icons[i]);
+                View v = View.inflate(context, R.layout.tool_tabs_view_item2, null);
+                ImageView img = (ImageView) v.findViewById(R.id.img);
+                img.setImageResource(icons[i]);
+                setTint(v, false);
+                if (titles != null && titles[i] != null) {
                     TextView tv = (TextView) v.findViewById(R.id.tv);
                     tv.setText(titles[i]);
                 }
@@ -138,9 +191,13 @@ public class ToolTabsView extends LinearLayout {
                             case MotionEvent.ACTION_DOWN:
                                 Log.d(TAG, "ACTION_DOWN");
                                 view.setBackgroundColor(selectColor);
+                                vIndicator.setVisibility(VISIBLE);
+                                setTint(lastView, false);
+                                setTint(view, true);
+                                lastView = view;
                                 Log.d(TAG, "num: " + num);
                                 Log.d(TAG, "logicNum: " + logicNum);
-                                moveIndicatior(num);
+                                moveIndicatior(num, true);
                                 if (onChooseTab != null) {
                                     onChooseTab.onChoose(view, logicNum);
                                 }
@@ -155,7 +212,12 @@ public class ToolTabsView extends LinearLayout {
                     }
                 });
             }
+            lastView = llTabs.getChildAt(0);
+            setTint(llTabs.getChildAt(0), true);
             isDataSet = true;
+            if(isDeselectAll) {
+                deselectAllTabs();
+            }
             setNumbers();
             if(onLoadData != null) {
                 onLoadData.loadData();
@@ -163,30 +225,49 @@ public class ToolTabsView extends LinearLayout {
         }
     }
 
-    private void moveIndicatior(int position) {
+    private void setTint(View v, boolean isSelected) {
+        ImageView img = (ImageView) v.findViewById(R.id.img);
+        if(isSelected) {
+            img.setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.MULTIPLY);
+        } else {
+            img.setColorFilter(Color.parseColor("#55ffffff"), PorterDuff.Mode.MULTIPLY);
+        }
+    }
+
+    private void moveIndicatior(int position, boolean isAnim) {
         final int way = position * (widthView / adapter.getItemsCount());
         int move = way - ((LayoutParams) vIndicator.getLayoutParams()).leftMargin;
-        TranslateAnimation animation = new TranslateAnimation(0, move, 0, 0);
-        animation.setDuration(300);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
+        if(isAnim) {
+            TranslateAnimation animation = new TranslateAnimation(0, move, 0, 0);
+            animation.setDuration(300);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {}
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                llLine.removeView(vIndicator);
-                LayoutParams params = new LayoutParams(
-                        adapter == null ? 0 : widthView / adapter.getItemsCount(),
-                        LayoutParams.MATCH_PARENT
-                );
-                params.leftMargin = way;
-                llLine.addView(vIndicator, params);
-            }
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    llLine.removeView(vIndicator);
+                    LayoutParams params = new LayoutParams(
+                            adapter == null ? 0 : widthView / adapter.getItemsCount(),
+                            LayoutParams.MATCH_PARENT
+                    );
+                    params.leftMargin = way;
+                    llLine.addView(vIndicator, params);
+                }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
-        vIndicator.startAnimation(animation);
+                @Override
+                public void onAnimationRepeat(Animation animation) {}
+            });
+            vIndicator.startAnimation(animation);
+        } else {
+            llLine.removeView(vIndicator);
+            LayoutParams params = new LayoutParams(
+                    adapter == null ? 0 : widthView / adapter.getItemsCount(),
+                    LayoutParams.MATCH_PARENT
+            );
+            params.leftMargin = way;
+            llLine.addView(vIndicator, params);
+        }
     }
 
     private void setNumbers() {
@@ -200,6 +281,25 @@ public class ToolTabsView extends LinearLayout {
         }
     }
 
+    private int getPositionByLogicNumber(int logicNumber) {
+        for(int i = 0; i < llTabs.getChildCount(); i++) {
+            View v = llTabs.getChildAt(i);
+            if(((int) v.getTag(R.string.logical_number)) == logicNumber && v.getVisibility() == VISIBLE) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void getNumbersTabsToLog() {
+        for(int i = 0; i < llTabs.getChildCount(); i++) {
+            View v = llTabs.getChildAt(i);
+            Log.d(TAG, "view Ni: " + i);
+            Log.d(TAG, "logical number: " + v.getTag(R.string.logical_number));
+            Log.d(TAG, "number: " + v.getTag(R.string.number));
+        }
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -209,7 +309,7 @@ public class ToolTabsView extends LinearLayout {
         Log.d(TAG, "height :" + MeasureSpec.getSize(heightMeasureSpec));
         heightView = MeasureSpec.getSize(heightMeasureSpec);
         widthView = MeasureSpec.getSize(widthMeasureSpec);
-        llLine.getLayoutParams().height = (int) (heightView * 0.1);
+        llLine.getLayoutParams().height = (int) (heightView * 0.05);
         vIndicator.getLayoutParams().width = adapter == null ? 0 : widthView / adapter.getItemsCount();
         setData();
     }

@@ -20,6 +20,7 @@ import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.services.QuestionsService;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.howItWorks.FragmentHowItWorksListAdapter;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
 
 public class HowItWorksFragment extends Fragment {
 
@@ -53,6 +54,14 @@ public class HowItWorksFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_how_it_works));
+        BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+        BaseActivity.getToolbar().deselectAll();
+        /*BaseActivity.getToolbar().mTabLayout.setOnLoadData(new OnLoadData() {
+            @Override
+            public void loadData() {
+                BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+            }
+        });*/
 
         llProgress = (LinearLayout) getView().findViewById(R.id.fragment_dealing_progress_bar);
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.fragment_how_it_works_questions_list);

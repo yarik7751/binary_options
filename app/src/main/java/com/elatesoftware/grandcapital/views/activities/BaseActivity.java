@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -35,6 +36,8 @@ import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import java.util.List;
 
 public class BaseActivity extends CustomFontsActivity {
+
+    public static final String TAG = "BaseActivity_TAG";
 
     public static FragmentManager fragmentManager;
     private ResideMenu mResideMenu;
@@ -176,19 +179,24 @@ public class BaseActivity extends CustomFontsActivity {
     public void setMain(int i) {
         switch (i){
             case SIGNAL_POSITION:
-                //changeMainFragment(new TerminalFragment());      // TODO
+                Log.d(TAG, "SIGNAL_POSITION");
+                //changeMainFragment(new TerminalFragment());
                 break;
             case TERMINAL_POSITION:
-                changeMainFragment(TerminalFragment.getInstance());
+                Log.d(TAG, "TERMINAL_POSITION");
+                //changeMainFragment(TerminalFragment.getInstance());
                 break;
             case DEALING_POSITION:
-                changeMainFragment(new DealingFragment());
+                Log.d(TAG, "DEALING_POSITION");
+                //changeMainFragment(new DealingFragment());
                 break;
             case REFRESH_POSITION:
+                Log.d(TAG, "REFRESH_POSITION");
                 //??????
                 break;
             case QUOTES_POSITION:
-                changeMainFragment(new QuotesFragment());
+                Log.d(TAG, "QUOTES_POSITION");
+                //changeMainFragment(new QuotesFragment());
                 break;
         }
     }

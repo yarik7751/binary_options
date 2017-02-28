@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:background="#000000">
 
     <TextView
         android:id="@+id/fragment_how_it_works_questions_name"
