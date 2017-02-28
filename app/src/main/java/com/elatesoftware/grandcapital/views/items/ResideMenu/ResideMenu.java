@@ -512,9 +512,9 @@ public class ResideMenu extends FrameLayout {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         float currentActivityScaleX = ViewHelper.getScaleX(viewActivity);
-        if (currentActivityScaleX == 1.0f)
+        if (currentActivityScaleX == 1.0f) {
             setScaleDirectionByRawX(ev.getRawX());
-
+        }
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastActionDownX = ev.getX();
@@ -522,14 +522,13 @@ public class ResideMenu extends FrameLayout {
                 isInIgnoredView = isInIgnoredView(ev) && !isOpened();
                 pressedState = PRESSED_DOWN;
                 break;
-
             case MotionEvent.ACTION_MOVE:
-                if (isInIgnoredView || isInDisableDirection(scaleDirection))
+                if (isInIgnoredView || isInDisableDirection(scaleDirection)) {
                     break;
-
-                if (pressedState != PRESSED_DOWN && pressedState != PRESSED_MOVE_HORIZONTAL)
+                }
+                if (pressedState != PRESSED_DOWN && pressedState != PRESSED_MOVE_HORIZONTAL) {
                     break;
-
+                }
                 int xOffset = (int) (ev.getX() - lastActionDownX);
                 int yOffset = (int) (ev.getY() - lastActionDownY);
 
@@ -543,9 +542,9 @@ public class ResideMenu extends FrameLayout {
                         ev.setAction(MotionEvent.ACTION_CANCEL);
                     }
                 } else if (pressedState == PRESSED_MOVE_HORIZONTAL) {
-                    if (currentActivityScaleX < 0.95)
+                    if (currentActivityScaleX < 0.95) {
                         showScrollViewMenu(scrollViewMenu);
-
+                    }
                     float targetScale = getTargetScale(ev.getRawX());
                     if (mUse3D) {
                         int angle = scaleDirection == DIRECTION_LEFT ? -ROTATE_Y_ANGLE : ROTATE_Y_ANGLE;
@@ -567,16 +566,20 @@ public class ResideMenu extends FrameLayout {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (isInIgnoredView)
+                if (isInIgnoredView) {
                     break;
-                if (pressedState != PRESSED_MOVE_HORIZONTAL)
+                }
+                if (pressedState != PRESSED_MOVE_HORIZONTAL) {
                     break;
+                }
                 pressedState = PRESSED_DONE;
                 if (isOpened()) {
-                    if (currentActivityScaleX > 0.56f)
+                    if (currentActivityScaleX > 0.56f) {
                         closeMenu();
-                    else
+                    }
+                    else {
                         openMenu(scaleDirection);
+                    }
                 } else {
                     if (currentActivityScaleX < 0.94f) {
                         openMenu(scaleDirection);

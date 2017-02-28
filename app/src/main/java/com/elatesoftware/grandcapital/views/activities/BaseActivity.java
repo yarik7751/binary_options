@@ -143,7 +143,7 @@ public class BaseActivity extends CustomFontsActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        return mResideMenu.dispatchTouchEvent(ev);
+         return mResideMenu.dispatchTouchEvent(ev);
     }
 
     private View.OnClickListener menuClickListener = new View.OnClickListener() {
