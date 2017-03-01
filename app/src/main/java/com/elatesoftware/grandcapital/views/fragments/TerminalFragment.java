@@ -12,12 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
+import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
@@ -25,7 +27,6 @@ import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -42,9 +43,10 @@ import java.util.List;
 public class TerminalFragment extends Fragment implements OnChartValueSelectedListener{
 
     private View parentView;
+
     private static LineChart mChart;
     private static ArrayList<Entry> values;
-    private static LineDataSet lineDataSet;
+
     private TextView tvBalance;
     private TextView tvDeposit;
     private TextView tvLowerActive;
@@ -56,6 +58,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private TextView tvMinusTime;
     private TextView tvPlusTime;
     private EditText etValueTime;
+    private LinearLayout llLowerTerminal;
+    private LinearLayout llHigherTerminal;
     private List<String> listActives = new ArrayList<>();
 
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
@@ -68,6 +72,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         }
         return fragment;
     }
+
+    String temp = "{\"symbol\":\"EURUSD_OP\",\"bid\":1.05379,\"ask\":1.05379,\"digits\":5,\"count\":201,\"point\":0.00001,\"high\":1.05889,\"low\":1.05260,\"time\":1488372836}";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -87,21 +93,22 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         tvMinusTime = (TextView) parentView.findViewById(R.id.tvMinusTabTimeTerminal);
         tvPlusTime = (TextView) parentView.findViewById(R.id.tvPlusTabTimeTerminal);
         etValueTime = (EditText) parentView.findViewById(R.id.tvValueTabTimeTerminal);
+
+        llLowerTerminal = (LinearLayout) parentView.findViewById(R.id.llLowerTerminal);
+        llHigherTerminal = (LinearLayout) parentView.findViewById(R.id.llHigherTerminal);
+
+        registrationBroadcasts();
+        initializationChart();
         return parentView;
     }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_terminal));
-        BaseActivity.getToolbar().mTabLayout.setOnLoadData(new OnLoadData() {
-            @Override
-            public void loadData() {
-                BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
-                BaseActivity.getToolbar().switchTab(0);
-            }
+        BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+            BaseActivity.getToolbar().switchTab(1);
         });
-        registrationBroadcasts();
         if(User.getInstance() != null){
             tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
         }
@@ -128,7 +135,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         tvDeposit.setOnClickListener(v -> {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
-        initializationChart();
+        llLowerTerminal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateChart(SocketAnswer.getSetInstance(temp));
+            }
+        });
     }
     private void registrationBroadcasts(){
         mInfoBroadcastReceiver = new  GetResponseInfoBroadcastReceiver();
@@ -151,32 +163,23 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             if(!tvValueActive.getText().toString().equals("")){
                 getSymbolHistory();
             }
-        }else{
-            Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
-            getActivity().startService(intentMyIntentService);
         }
     }
     private void getSymbolHistory(){
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
-        intentService.putExtra(SymbolHistoryService.SYMBOL, tvValueActive.getText().toString());
+        //intentService.putExtra(SymbolHistoryService.SYMBOL, tvValueActive.getText().toString()); // TODO
+        intentService.putExtra(SymbolHistoryService.SYMBOL, "EURUSD");
         getActivity().startService(intentService);
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        setActives();
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
     }
-
     private void initializationChart() {
         mChart.setDrawGridBackground(false);
-        mChart.getDescription().setEnabled(false);
+        mChart.getDescription().setEnabled(false );
         mChart.setTouchEnabled(true);
         mChart.setDragEnabled(true);
         mChart.setScaleEnabled(true);
@@ -185,6 +188,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setScaleYEnabled(false);
         mChart.setScaleXEnabled(true);
         mChart.setPadding(0,0,0,0);
+        mChart.setDrawingCacheEnabled(true);
+        mChart.setWillNotCacheDrawing(false);
+        mChart.buildDrawingCache(true);
         /** create marker*/
         /*MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.item_marker);
         mv.setChartView(mChart);
@@ -212,38 +218,30 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         /*mChart.setOnTouchListener((v, event) -> {
             return false;        // TODO norm scroll
         });*/
-        mChart.setDragOffsetX(100f);            /** видимость графика не до конца экрана*/       // TODO norm padding chart in left
-        mChart.setScaleMinima(5f, 1f);          /** scale chart*/
+        //mChart.setDragOffsetX(100f);            /** видимость графика не до конца экрана*/       // TODO norm padding chart in left
+        mChart.setScaleMinima(3f, 1f);          /** scale chart*/
         mChart.getLegend().setEnabled(false);   /** Hide the legend */
-        /** animation add data in chart*/
         mChart.invalidate();
-        mChart.animateX(1500);
+        /** animation add data in chart*/
+        //mChart.animateXY(2500, 2500);
+    }
+    public void updateChart(SocketAnswer value) {
+        LineData data = mChart.getData();
+        if (data != null) {
+            ILineDataSet xData = data.getDataSetByIndex(0);
+            if (xData == null) {
+                xData = createLineDataSet(values);
+                data.addDataSet(xData);
+            }
+            data.addEntry(new Entry(value.getTime() * 1000, Float.valueOf(String.valueOf(value.getAsk()))), 0);
+            mChart.setData(data);
+            mChart.notifyDataSetChanged();
+            mChart.centerViewTo((float) (value.getTime() * 1000), Float.valueOf(String.valueOf(value.getAsk())), YAxis.AxisDependency.RIGHT);
+        }
     }
 
-    public static void updateChart(SocketAnswer value) {
-        /*List<SymbolHistoryAnswer> listPoints = SymbolHistoryAnswer.getInstance();
-        listPoints.add(new SymbolHistoryAnswer(value.getHigh(), value.getBid(), value.getAsk(), value.getLow(), value.getTime()));
-        SymbolHistoryAnswer.setInstance(listPoints);
-        setData(SymbolHistoryAnswer.getInstance());*/
-        /*lineDataSet.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))));
-        //mChart.getData().getDataSetByIndex(0).addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))));
-        mChart.getData().notifyDataChanged();
-        mChart.notifyDataSetChanged();
-        mChart.invalidate();*/
-        //******************************
-        /*LineData data  = mChart.getData();
-        LineDataSet lineDataSet  = (LineDataSet) data.getDataSetByIndex(0);
-        if (lineDataSet == null) {
-            createLineDataSet(null);
-            data.addDataSet(lineDataSet);
-        }
-        data.addDataSet(lineDataSet);
-        data.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))), 0);
-        mChart.notifyDataSetChanged ();
-        mChart.moveViewToX(data.getXMax () - 10);*/
-    }
-    private static void createLineDataSet(List<Entry> values){
-        lineDataSet = new LineDataSet(values, "Base line");    /** set the line*/
+    private static LineDataSet createLineDataSet(List<Entry> values){
+        LineDataSet lineDataSet = new LineDataSet(values, "Base line");    /** set the line*/
         lineDataSet.setLineWidth(1f);
         lineDataSet.setDrawValues(false);    /**hide values all points*/
         lineDataSet.setDrawCircles(false);   /**hide  all circle points */
@@ -258,6 +256,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         /** fill color chart*/
         lineDataSet.setFillColor(Color.WHITE);
         lineDataSet.setFillAlpha(50);
+        lineDataSet.setHighlightEnabled(false);/** hide Highlight*/
+        return lineDataSet;
     }
     private static void setData(List<SymbolHistoryAnswer> list) {
         if(list != null && list.size() > 0){
@@ -266,37 +266,39 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 values.add(new Entry(list.get(i).getTime(), Float.valueOf(String.valueOf(list.get(i).getOpen())), 0));
             }
             if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
-                lineDataSet = (LineDataSet) mChart.getData().getDataSetByIndex(0);
+                LineDataSet lineDataSet = (LineDataSet) mChart.getData().getDataSetByIndex(0);
                 lineDataSet.setValues(values);
                 mChart.getData().notifyDataChanged();
                 mChart.notifyDataSetChanged();
             } else {
-                createLineDataSet(values);
+                LineDataSet lineDataSet = createLineDataSet(values);
                 /** add the datasets*/
                 ArrayList<ILineDataSet> dataSets = new ArrayList<>();
                 dataSets.add(lineDataSet);
                 LineData data = new LineData(dataSets);
-                lineDataSet.setHighlightEnabled(false); /** hide Highlight*/
                 mChart.setData(data);
+                mChart.notifyDataSetChanged();
             }
-        }else{
-            mChart.clear();
-        }
-        /** scroolling in end chart*/
-        if( list!= null && list.size() != 0){
+            /** scroolling in end chart*/
             SymbolHistoryAnswer item = list.get(list.size() - 1);
             mChart.centerViewTo(Float.valueOf(item.getTime()), Float.valueOf(String.valueOf(item.getOpen())), YAxis.AxisDependency.RIGHT);
+        }else{
+            mChart.clear();
+            mChart.notifyDataSetChanged();
         }
-        mChart.invalidate();
     }
-
+    @Override
+    protected void finalize() throws Throwable {
+        ArrayList<Entry> newList = (ArrayList<Entry>) values.subList(values.size() - 30, values.size() - 1);
+        values.clear();
+        values = newList;
+        mChart.destroyDrawingCache();
+    }
     @Override
     public void onValueSelected(Entry e, Highlight h) {
-
     }
     @Override
     public void onNothingSelected() {
-
     }
 
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {

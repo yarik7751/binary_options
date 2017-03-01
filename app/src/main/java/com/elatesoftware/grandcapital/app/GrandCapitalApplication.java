@@ -2,6 +2,8 @@ package com.elatesoftware.grandcapital.app;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.GrandCapitalApi;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
+import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 
 import org.java_websocket.WebSocket;
@@ -126,10 +129,31 @@ public class GrandCapitalApplication extends Application{
                 if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
                     return;
                 }
-                if(TerminalFragment.getInstance() != null){
-                    SocketAnswer.setInstance(message);
-                    TerminalFragment.updateChart(SocketAnswer.getInstance());
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                TerminalFragment.getInstance().getActivity().runOnUiThread(() ->
+                        TerminalFragment.getInstance().updateChart(SocketAnswer.getSetInstance(message)));
+               /*new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        long endTime = System.currentTimeMillis() + 600;
+                        while (System.currentTimeMillis() < endTime) {
+
+
+                            synchronized (this) {
+                                try {
+                                    TerminalFragment.getInstance().getActivity().runOnUiThread(() ->
+                                            TerminalFragment.getInstance().updateChart(SocketAnswer.getSetInstance(message)));
+                                    wait(endTime - System.currentTimeMillis());
+                                } catch (Exception e) {
+                                }
+                            }
+                        }
+                    }
+                }).start();*/
             }
             @Override
             public void onClose(int code, String reason, boolean remote){
@@ -138,7 +162,7 @@ public class GrandCapitalApplication extends Application{
             @Override
             public void onError(Exception ex){
                 if(ex instanceof ConnectException){
-                   // runOnUiThread(() -> Toast.makeText(getApplicationContext(), getResources().getString(R.string.request_error_text), Toast.LENGTH_LONG).show());
+                    //runOnUiThread(() -> Toast.makeText(getApplicationContext(), getResources().getString(R.string.request_error_text), Toast.LENGTH_LONG).show());
                 }
                 Log.d(TAG_SOCKET, "Error Connect in Socket - " + ex.toString());
             }

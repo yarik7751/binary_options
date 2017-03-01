@@ -82,6 +82,7 @@ public class BaseActivity extends CustomFontsActivity {
                 toolbar = new ToolbarFragment();
                 changeToolbarFragment(toolbar);
                 changeMainFragment(TerminalFragment.getInstance());
+                getInfoUser();
             }
         }
     }
@@ -129,7 +130,6 @@ public class BaseActivity extends CustomFontsActivity {
         mResideMenu.addMenuItem(mSettings, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mLogout, ResideMenu.DIRECTION_LEFT);
     }
-
     private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
         @Override
         public void openMenu() {
@@ -139,7 +139,6 @@ public class BaseActivity extends CustomFontsActivity {
         public void closeMenu() {
         }
     };
-
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
          return mResideMenu.dispatchTouchEvent(ev);
@@ -237,6 +236,12 @@ public class BaseActivity extends CustomFontsActivity {
         }
         return CustomSharedPreferences.isSaveUserInPreferences(getApplicationContext());
     }
+
+    private void getInfoUser(){
+        Intent intentMyIntentService = new Intent(this, InfoUserService.class);
+        startService(intentMyIntentService);
+    }
+
     @Override
     public void onBackPressed() {
         int count = fragmentManager.getBackStackEntryCount();

@@ -146,10 +146,8 @@ public class GrandCapitalApi {
     public static String getSymbolHistory(String symbol) {
         Response<List<SymbolHistoryAnswer>> response = null;
         String result = null;
-        //String toTime = ConventDate.getTimeStampLastDate();
-        //String fromTime = ConventDate.getTimeStampCurrentDate();
-        String toTime = "1487856360";
-        String fromTime = "1487853000";
+        String toTime = ConventDate.getTimeStampCurrentDate();
+        String fromTime = ConventDate.getTimeStampLastDate();
         symbol = (symbol + "_OP");
         Call<List<SymbolHistoryAnswer>> call = getApiService().getSymbolHistory(User.getInstance().getLogin(), fromTime, toTime, "1", symbol);
         try {
@@ -162,7 +160,11 @@ public class GrandCapitalApi {
         if(response != null){
             if(response.code() == 200) {
                 List<SymbolHistoryAnswer> list = response.body();
-                SymbolHistoryAnswer.setInstance(list);
+                if(list == null || list.size() < 2){
+                    SymbolHistoryAnswer.setInstance(null);
+                }else{
+                    SymbolHistoryAnswer.setInstance(list);
+                }
             }
             result = String.valueOf(response.code());
         }

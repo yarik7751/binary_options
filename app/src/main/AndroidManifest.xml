@@ -45,5 +45,6 @@
         <service android:name=".services.BinaryOptionService"></service>
         <service android:name=".services.ChatService"></service>
 
+
     </application>
 </manifest>
