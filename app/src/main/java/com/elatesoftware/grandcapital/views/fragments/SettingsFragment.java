@@ -15,8 +15,12 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
  */
 public class SettingsFragment extends Fragment {
 
-    public SettingsFragment() {
-
+    private static SettingsFragment fragment = null;
+    public static SettingsFragment getInstance() {
+        if (fragment == null) {
+            fragment = new SettingsFragment();
+        }
+        return fragment;
     }
 
     @Override

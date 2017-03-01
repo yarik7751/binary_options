@@ -15,7 +15,12 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
  */
 public class QuotesFragment extends Fragment {
 
-    public QuotesFragment() {
+    private static QuotesFragment fragment = null;
+    public static QuotesFragment getInstance() {
+        if (fragment == null) {
+            fragment = new QuotesFragment();
+        }
+        return fragment;
     }
 
     @Override

@@ -16,22 +16,21 @@ import android.view.View;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InfoUserService;
+import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.fragments.AccountsFragment;
-import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
-import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
+import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
 import com.elatesoftware.grandcapital.views.fragments.HowItWorksFragment;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuotesFragment;
 import com.elatesoftware.grandcapital.views.fragments.SettingsFragment;
-import com.elatesoftware.grandcapital.views.fragments.ToolbarFragment;
 import com.elatesoftware.grandcapital.views.fragments.SupportFragment;
+import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
+import com.elatesoftware.grandcapital.views.fragments.ToolbarFragment;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItemWithMark;
-
-import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 
 import java.util.List;
 
@@ -238,7 +237,6 @@ public class BaseActivity extends CustomFontsActivity {
         }
         return CustomSharedPreferences.isSaveUserInPreferences(getApplicationContext());
     }
-
     @Override
     public void onBackPressed() {
         int count = fragmentManager.getBackStackEntryCount();
@@ -269,4 +267,6 @@ public class BaseActivity extends CustomFontsActivity {
             }
         }
     }
+
+
 }

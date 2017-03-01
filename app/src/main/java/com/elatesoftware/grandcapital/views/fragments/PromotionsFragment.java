@@ -35,8 +35,14 @@ public class PromotionsFragment extends Fragment {
 
     GetResponseBinaryOptionBroadcastReceiver getResponseBinaryOptionBroadcastReceiver;
 
-    public PromotionsFragment() {
+    private static PromotionsFragment fragment = null;
+    public static PromotionsFragment getInstance() {
+        if (fragment == null) {
+            fragment = new PromotionsFragment();
+        }
+        return fragment;
     }
+
 
     @Override
     public void onStart() {

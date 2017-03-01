@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.CookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,6 +35,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class GrandCapitalApi {
 
     private static final String BASE_URL = "https://grandcapital.ru";
+    public static final String SOCKET_URL = "wss://ws.grandcapital.net/";
+
     private static IGrandCapitalApi grandCapitalApiService = null;
 
     private static IGrandCapitalApi getApiService() {
@@ -200,7 +203,6 @@ public class GrandCapitalApi {
             }
             result = String.valueOf(response.code());
         }
-
         return result;
     }
 }
