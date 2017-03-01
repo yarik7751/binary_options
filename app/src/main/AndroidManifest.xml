@@ -43,6 +43,7 @@
         <service android:name=".services.OrdersService"/>
         <service android:name=".services.QuestionsService"/>
         <service android:name=".services.BinaryOptionService"></service>
+        <service android:name=".services.ChatService"></service>
 
     </application>
 </manifest>

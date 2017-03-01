@@ -1,14 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.fragments.SupportFragment">
+    tools:context=".views.fragments.SupportFragment"
+    tools:background="@drawable/bg">
 
-    <TextView android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/menu_item_support"
-        style="@style/LigthText"
-        android:textSize="20sp"/>
+    <ScrollView
+        android:id="@+id/sv_messages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="10dp"
+        android:layout_weight="1">
 
-</FrameLayout>
+        <LinearLayout
+            android:id="@+id/ll_messages"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            card_view:cardCornerRadius="4dp">
+
+            <EditText
+                android:id="@+id/ed_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:background="@android:color/white"
+                android:gravity="top|left"
+                android:maxLines="3"
+                android:layout_margin="8dp"/>
+        </android.support.v7.widget.CardView>
+
+        <at.markushi.ui.CircleButton
+            android:id="@+id/cb_send_message"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_gravity="top"
+            android:src="@drawable/ic_send_white_24dp"
+            app:cb_color="@color/chat_green" />
+    </LinearLayout>
+</LinearLayout>

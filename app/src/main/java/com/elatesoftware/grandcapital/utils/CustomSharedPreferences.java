@@ -15,6 +15,7 @@ public class CustomSharedPreferences {
 
      private static final String SHARED_PREFERENCES = "com.elatesoftware.grandcapital.user";
      private static final String SHARED_PREFERENCES_USER = "user";
+     private static final String SHARED_PREFERENCES_CHAT_HISTORY = "SHARED_PREFERENCES_CHAT_HISTORY";
 
     public static boolean isSaveUserInPreferences(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
@@ -53,5 +54,15 @@ public class CustomSharedPreferences {
         editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_USER, json);
         editor.commit();
         User.setInstance(currentUser);
+    }
+
+    public static void saveChatHistory(Context context, String history) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        sharedPreferences.edit().putString(SHARED_PREFERENCES_CHAT_HISTORY, history).commit();
+    }
+
+    public static String getChatHistory(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(SHARED_PREFERENCES_CHAT_HISTORY, null);
     }
 }

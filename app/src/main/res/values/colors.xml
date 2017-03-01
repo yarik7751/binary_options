@@ -34,4 +34,8 @@
     <color name="color_text_deposit">#FEC528</color>
     <color name="color_view_terminal">#0F202F</color>
 
+    <color name="chat_green">#00b694</color>
+    <color name="chat_your_msg">#997f7f7f</color>
+    <color name="chat_their_msg">#9900b694</color>
+
 </resources>
