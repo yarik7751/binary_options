@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,7 +13,12 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.GrandCapitalApi;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.services.InfoUserService;
+import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
@@ -46,7 +52,9 @@ public class GrandCapitalApplication extends Application{
     private static SSLContext sc;
     public static WebSocketClient mClient;
     public final static String TAG_SOCKET = "socket";
+
     public static String symbol = "EURUSD_OP";
+    private static long currentTime = 0L;
 
     static {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -124,36 +132,26 @@ public class GrandCapitalApplication extends Application{
 
             }
             @Override
-            public void onMessage(final String message){
+            public void onMessage(final String message) {
                 Log.d(TAG_SOCKET, message);
                 if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
                     return;
                 }
-                try {
-                    wait(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                TerminalFragment.getInstance().getActivity().runOnUiThread(() ->
-                        TerminalFragment.getInstance().updateChart(SocketAnswer.getSetInstance(message)));
-               /*new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        long endTime = System.currentTimeMillis() + 600;
-                        while (System.currentTimeMillis() < endTime) {
-
-
-                            synchronized (this) {
-                                try {
-                                    TerminalFragment.getInstance().getActivity().runOnUiThread(() ->
-                                            TerminalFragment.getInstance().updateChart(SocketAnswer.getSetInstance(message)));
-                                    wait(endTime - System.currentTimeMillis());
-                                } catch (Exception e) {
+                SocketAnswer answer = SocketAnswer.getSetInstance(message);
+                if (!ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
+                   currentTime = answer.getTime();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            TerminalFragment.getInstance().getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    TerminalFragment.getInstance().updateChart(answer);
                                 }
-                            }
+                            });
                         }
-                    }
-                }).start();*/
+                    }).start();
+                }
             }
             @Override
             public void onClose(int code, String reason, boolean remote){

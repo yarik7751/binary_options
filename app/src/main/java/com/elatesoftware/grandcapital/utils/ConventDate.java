@@ -38,7 +38,35 @@ public class ConventDate {
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
         return formatter.format(date);
     }
-
+    public static boolean equalsTimeSymbols(long currentTime, long newTime) {
+        if(currentTime == 0L){
+            return false;
+        }else{
+             Date currentDate = new Date(Long.parseLong(String.valueOf(currentTime)));
+             Date newDate = new Date(Long.parseLong(String.valueOf(newTime)));
+            if((currentDate.getSeconds() == newDate.getSeconds()) ||
+                    (((newDate.getSeconds() - currentDate.getSeconds()))) < 2){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+    public static boolean equalsTimeSocket(long currentTime, long newTime) {
+        if(currentTime == 0L){
+            return false;
+        }else{
+            Date currentDate = new Date(Long.parseLong(String.valueOf(currentTime)));
+            Date newDate = new Date(Long.parseLong(String.valueOf(newTime)));
+            if((currentDate.getSeconds() == newDate.getSeconds()) ||
+                    ((currentDate.getSeconds() + 1) == newDate.getSeconds()) ||
+                    ((currentDate.getSeconds() - 1) == newDate.getSeconds())){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
     public static String getTimeStampCurrentDate() {
         /*DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         long unixtime = 0;
@@ -56,7 +84,6 @@ public class ConventDate {
         Date date = new Date();
         return String.valueOf(date.getTime() / 1000);
     }
-
     public static String getTimeStampLastDate() {
        /* DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         long unixtime = 0;
@@ -98,4 +125,6 @@ public class ConventDate {
 
         return date;
     }
+
+
 }

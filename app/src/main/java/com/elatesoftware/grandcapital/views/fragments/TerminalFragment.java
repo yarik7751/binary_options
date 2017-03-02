@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
@@ -61,7 +64,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private LinearLayout llLowerTerminal;
     private LinearLayout llHigherTerminal;
     private List<String> listActives = new ArrayList<>();
-
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
@@ -72,8 +74,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         }
         return fragment;
     }
-
-    String temp = "{\"symbol\":\"EURUSD_OP\",\"bid\":1.05379,\"ask\":1.05379,\"digits\":5,\"count\":201,\"point\":0.00001,\"high\":1.05889,\"low\":1.05260,\"time\":1488372836}";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,6 +99,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
         registrationBroadcasts();
         initializationChart();
+
         return parentView;
     }
     @Override
@@ -138,7 +139,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         llLowerTerminal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateChart(SocketAnswer.getSetInstance(temp));
+
+
             }
         });
     }
@@ -179,7 +181,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     }
     private void initializationChart() {
         mChart.setDrawGridBackground(false);
-        mChart.getDescription().setEnabled(false );
+        mChart.getDescription().setEnabled(false);
         mChart.setTouchEnabled(true);
         mChart.setDragEnabled(true);
         mChart.setScaleEnabled(true);
@@ -188,9 +190,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setScaleYEnabled(false);
         mChart.setScaleXEnabled(true);
         mChart.setPadding(0,0,0,0);
-        mChart.setDrawingCacheEnabled(true);
-        mChart.setWillNotCacheDrawing(false);
-        mChart.buildDrawingCache(true);
         /** create marker*/
         /*MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.item_marker);
         mv.setChartView(mChart);
@@ -206,8 +205,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         xAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
         xAxis.setTextColor(getResources().getColor(R.color.chart_values));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAvoidFirstLastClipping(true);
         xAxis.setValueFormatter((value, axis) -> ConventDate.convertDateFromMilSecHHMM((((Float)value).longValue())));
-
         /**Ось Y */
         YAxis yAxis = mChart.getAxisRight();
         yAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
@@ -219,43 +218,74 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             return false;        // TODO norm scroll
         });*/
         //mChart.setDragOffsetX(100f);            /** видимость графика не до конца экрана*/       // TODO norm padding chart in left
-        mChart.setScaleMinima(3f, 1f);          /** scale chart*/
+        //mChart.setScaleMinima(3f, 1f);          /** scale chart*/
         mChart.getLegend().setEnabled(false);   /** Hide the legend */
         mChart.invalidate();
         /** animation add data in chart*/
         //mChart.animateXY(2500, 2500);
     }
-    public void updateChart(SocketAnswer value) {
-        LineData data = mChart.getData();
-        if (data != null) {
-            ILineDataSet xData = data.getDataSetByIndex(0);
-            if (xData == null) {
-                xData = createLineDataSet(values);
-                data.addDataSet(xData);
+
+    public synchronized void updateChart(SocketAnswer value) {
+        LineDataSet lineDataSet1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
+        lineDataSet1.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))));
+        lineDataSet1.notifyDataSetChanged();
+        mChart.setData(new LineData(lineDataSet1));
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
+
+       /* LineDataSet lineDataSet1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
+        lineDataSet1.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))));
+        lineDataSet1.notifyDataSetChanged();
+        ArrayList<ILineDataSet> dataSets1 = new ArrayList<>();
+        dataSets1.add(lineDataSet1);
+        lineDataSet1.notifyDataSetChanged();
+        LineData data1 = new LineData(dataSets1);
+        data1.notifyDataChanged();
+        mChart.notifyDataSetChanged();
+        Log.d(GrandCapitalApplication.TAG_SOCKET, String.valueOf(lineDataSet1.getEntryCount()));
+*/
+
+        /*
+        try{
+            if (data != null) {
+                ILineDataSet xData = data.getDataSetByIndex(0);
+                if (xData == null) {
+                    xData = createLineDataSet(values);
+                    data.addDataSet(xData);
+                }
+                data.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))), 0);
+                data.notifyDataChanged();
+                //mChart.setData(data);
+                mChart.notifyDataSetChanged();
+                //mChart.invalidate();
+                mChart.centerViewTo((float) (value.getTime()), Float.valueOf(String.valueOf(value.getAsk())), YAxis.AxisDependency.RIGHT);
             }
-            data.addEntry(new Entry(value.getTime() * 1000, Float.valueOf(String.valueOf(value.getAsk()))), 0);
-            mChart.setData(data);
+        }catch(Exception ex) {
+            ex.printStackTrace();
+        } finally{
             mChart.notifyDataSetChanged();
-            mChart.centerViewTo((float) (value.getTime() * 1000), Float.valueOf(String.valueOf(value.getAsk())), YAxis.AxisDependency.RIGHT);
-        }
+            mChart.centerViewTo((float) (value.getTime()), Float.valueOf(String.valueOf(value.getAsk())), YAxis.AxisDependency.RIGHT);
+        }*/
     }
+
 
     private static LineDataSet createLineDataSet(List<Entry> values){
         LineDataSet lineDataSet = new LineDataSet(values, "Base line");    /** set the line*/
-        lineDataSet.setLineWidth(1f);
+        lineDataSet.setLineWidth(1.3f);
         lineDataSet.setDrawValues(false);    /**hide values all points*/
         lineDataSet.setDrawCircles(false);   /**hide  all circle points */
         lineDataSet.setCircleRadius(3f);
         lineDataSet.setDrawCircleHole(false);
         lineDataSet.setValueTextSize(9f);
         lineDataSet.setDrawFilled(true);
-        lineDataSet.setFormLineWidth(1f);
+        lineDataSet.setFormLineWidth(3f);
         lineDataSet.setFormSize(15.f);
         lineDataSet.setColor(Color.WHITE);          /** color line*/
         lineDataSet.setCircleColor(Color.WHITE);    /** color circles*/
         /** fill color chart*/
         lineDataSet.setFillColor(Color.WHITE);
         lineDataSet.setFillAlpha(50);
+        lineDataSet.setDrawFilled(true);
         lineDataSet.setHighlightEnabled(false);/** hide Highlight*/
         return lineDataSet;
     }
@@ -269,7 +299,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 LineDataSet lineDataSet = (LineDataSet) mChart.getData().getDataSetByIndex(0);
                 lineDataSet.setValues(values);
                 mChart.getData().notifyDataChanged();
-                mChart.notifyDataSetChanged();
+                //mChart.notifyDataSetChanged();
             } else {
                 LineDataSet lineDataSet = createLineDataSet(values);
                 /** add the datasets*/
