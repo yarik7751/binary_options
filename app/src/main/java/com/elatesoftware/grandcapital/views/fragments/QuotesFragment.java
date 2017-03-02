@@ -33,5 +33,7 @@ public class QuotesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().switchTab(BaseActivity.QUOTES_POSITION);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_quotes));
+        BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+        BaseActivity.getToolbar().switchTab(5);
     }
 }

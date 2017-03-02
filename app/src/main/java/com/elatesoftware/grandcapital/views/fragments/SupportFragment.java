@@ -75,6 +75,12 @@ public class SupportFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         getChatBroadcastReceiver = new GetChatBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(ChatService.ACTION_SERVICE_CHAT);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -156,6 +162,10 @@ public class SupportFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         handler.removeCallbacks(runnablePollChat);
+        getActivity().unregisterReceiver(getChatBroadcastReceiver);
+        if(!isChatCreated) {
+            return;
+        }
         Gson gson = new Gson();
         String historyStr = gson.toJson(historyChat, new TypeToken<LinkedList<HistoryMessage>>(){}.getType());
         CustomSharedPreferences.saveChatHistory(getContext(), historyStr);
