@@ -5,14 +5,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/chart"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="7"
-        android:padding="0dp"
         android:layout_marginBottom="5dp"
-        android:background="@android:color/transparent"/>
+        android:background="@android:color/transparent"
+        android:padding="0dp">
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart"
+            android:background="@android:color/transparent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"

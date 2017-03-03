@@ -109,10 +109,8 @@ public class GrandCapitalApplication extends Application{
         if (mClient != null && mClient.getReadyState() == WebSocket.READYSTATE.OPEN){
             mClient.close();
         }
-        if (mClient == null ||mClient.getReadyState() == WebSocket.READYSTATE.CLOSED ||
-                mClient.getReadyState() == WebSocket.READYSTATE.NOT_YET_CONNECTED ||
-                mClient.getReadyState() == WebSocket.READYSTATE.CLOSING){
-            openSocketInActivity();
+        if (mClient == null || mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
+           new SocketTask(symbol).execute();
         }
     }
 
@@ -129,7 +127,6 @@ public class GrandCapitalApplication extends Application{
             public void onOpen(ServerHandshake handshakedata) {
                 Log.d(TAG_SOCKET, "Open Connect Socket");
                 mClient.send(symbol);
-
             }
             @Override
             public void onMessage(final String message) {
@@ -138,19 +135,18 @@ public class GrandCapitalApplication extends Application{
                     return;
                 }
                 SocketAnswer answer = SocketAnswer.getSetInstance(message);
-                if (!ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
-                   currentTime = answer.getTime();
-                    new Thread(new Runnable() {
+                if (answer.getTime()!= null && !ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
+                    currentTime = answer.getTime();
+                    TerminalFragment.getInstance().getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            TerminalFragment.getInstance().getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    TerminalFragment.getInstance().updateChart(answer);
-                                }
-                            });
+                            //TerminalFragment.getInstance().queueSocketAnswer.push(answer);
+                            //TerminalFragment.getInstance().setDataSocket();
+                            TerminalFragment.getInstance().addEntry(answer);
                         }
-                    }).start();
+                    });
+                }else {
+                    currentTime = 0L;
                 }
             }
             @Override
@@ -187,9 +183,4 @@ public class GrandCapitalApplication extends Application{
         }
     }
 
-    public static void openSocketInActivity(){
-        if (mClient == null || mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
-            new SocketTask(symbol).execute();
-        }
-    }
 }

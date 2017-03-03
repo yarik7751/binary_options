@@ -58,9 +58,7 @@ public class ConventDate {
         }else{
             Date currentDate = new Date(Long.parseLong(String.valueOf(currentTime)));
             Date newDate = new Date(Long.parseLong(String.valueOf(newTime)));
-            if((currentDate.getSeconds() == newDate.getSeconds()) ||
-                    ((currentDate.getSeconds() + 1) == newDate.getSeconds()) ||
-                    ((currentDate.getSeconds() - 1) == newDate.getSeconds())){
+            if((newDate.getSeconds() - currentDate.getSeconds() <= 2)){
                 return true;
             }else{
                 return false;

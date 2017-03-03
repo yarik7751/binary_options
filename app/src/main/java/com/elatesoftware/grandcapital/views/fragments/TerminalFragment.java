@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,11 +19,10 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
-import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
-import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.models.QueueSocketAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
@@ -39,16 +37,17 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TerminalFragment extends Fragment implements OnChartValueSelectedListener{
 
-    private View parentView;
-
-    private static LineChart mChart;
-    private static ArrayList<Entry> values;
+    private LineChart mChart;
+    private Thread threadSymbolHistory;
+    private Thread threadSocket;
+    //public QueueSocketAnswer queueSocketAnswer = new QueueSocketAnswer();
 
     private TextView tvBalance;
     private TextView tvDeposit;
@@ -77,7 +76,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
+        View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
         mChart = (LineChart) parentView.findViewById(R.id.chart);
         tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
         tvDeposit = (TextView) parentView.findViewById(R.id.tvDepositTerminal);
@@ -110,9 +109,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(1);
         });
-        if(User.getInstance() != null){
-            tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
-        }
+        updateBalance();
         tvLowerActive.setOnClickListener(v -> {
             if(listActives.size() > 0){
                 int index = listActives.indexOf(tvValueActive.getText().toString());
@@ -144,6 +141,11 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         });
     }
+    private void updateBalance(){
+        if(User.getInstance() != null){
+            tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
+        }
+    }
     private void registrationBroadcasts(){
         mInfoBroadcastReceiver = new  GetResponseInfoBroadcastReceiver();
         IntentFilter intentFilterInfo = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
@@ -173,157 +175,160 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         intentService.putExtra(SymbolHistoryService.SYMBOL, "EURUSD");
         getActivity().startService(intentService);
     }
+    private void initializationChart() {
+        mChart.setPadding(0,0,0,0);
+        mChart.setScaleYEnabled(false);
+        mChart.setScaleXEnabled(true);
+        mChart.setDoubleTapToZoomEnabled(false);
+        // enable description text
+        mChart.getDescription().setEnabled(false);
+        // enable touch gestures жесты
+         mChart.setTouchEnabled(true);
+        // enable scaling and dragging
+        mChart.setDragEnabled(true);
+        mChart.setDrawGridBackground(false);
+        // if disabled, scaling can be done on x- and y-axis separately
+        mChart.setPinchZoom(true);
+        // set an alternative background color
+        mChart.setBackgroundColor(Color.TRANSPARENT);
+
+        LineData data = new LineData();
+        data.setValueTextColor(Color.WHITE);
+        mChart.setData(data);  // add empty data
+        // get the legend (only possible after setting data)
+        mChart.getLegend().setEnabled(false);   //Hide the legend
+
+        //Ось Х
+        XAxis xAxis = mChart.getXAxis();
+        xAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
+        xAxis.setTextColor(getResources().getColor(R.color.chart_values));
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setAvoidFirstLastClipping(true);
+        xAxis.setValueFormatter((value, axis) -> ConventDate.convertDateFromMilSecHHMM((((Float)value).longValue() * 10000)));
+        xAxis.setEnabled(true);
+        //Ось Y left
+        YAxis leftAxis = mChart.getAxisLeft();
+        leftAxis.setEnabled(false);
+        //Ось Y right
+        YAxis rightAxis = mChart.getAxisRight();
+        rightAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
+        rightAxis.setTextColor(getResources().getColor(R.color.chart_values));
+        rightAxis.setEnabled(true);
+        rightAxis.setDrawGridLines(true);
+        rightAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
+        //mChart.setDragOffsetX(-10f);            // видимость графика не до конца экрана       // TODO norm padding chart in left
+    }
+    private LineDataSet createSet() {
+        LineDataSet set = new LineDataSet(null, "Dynamic Data");
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.WHITE);
+        set.setCircleColor(Color.WHITE);
+        set.setLineWidth(1.3f);
+        set.setFillAlpha(50);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(9f);
+        set.setDrawValues(false);  //hide values all points
+        set.setDrawCircles(true);   //hide  all circle points
+        set.setCircleRadius(2f); // TODO hide
+        set.setDrawCircleHole(false);
+        set.setDrawFilled(true);
+        //fill color chart
+        set.setFillColor(Color.WHITE);
+        set.setFillAlpha(50);
+        //set.setHighlightEnabled(false);  //hide Highlight
+        return set;
+    }
+    public void addEntry(SocketAnswer answer) {
+        LineData data = mChart.getData();
+        if (data != null) {
+            ILineDataSet set = data.getDataSetByIndex(0);
+            if (set == null) {
+                set = createSet();
+                data.addDataSet(set);
+            }
+            data.addEntry(new Entry(Float.valueOf(String.valueOf(answer.getTime() / 10000)), Float.valueOf(String.valueOf(answer.getAsk()))), 0);
+            Log.d(GrandCapitalApplication.TAG_SOCKET, "in set = " + String.valueOf(set.getEntryCount()));
+            data.notifyDataChanged();
+            mChart.notifyDataSetChanged();
+            //mChart.setVisibleXRangeMinimum(5f);
+            //mChart.setVisibleXRangeMaximum(15f);
+            mChart.invalidate();
+            Log.d(GrandCapitalApplication.TAG_SOCKET, "chart was invalidate");
+        }
+    }
+    public void addEntry(SymbolHistoryAnswer answer) {
+        LineData data = mChart.getData();
+        if (data != null) {
+            ILineDataSet set = data.getDataSetByIndex(0);
+            if (set == null) {
+                set = createSet();
+                data.addDataSet(set);
+            }
+            data.addEntry(new Entry(Float.valueOf(String.valueOf(answer.getTime() / 10000)), Float.valueOf(String.valueOf(answer.getOpen()))), 0);
+            data.notifyDataChanged();
+            mChart.notifyDataSetChanged();
+            //mChart.setVisibleXRangeMinimum(5f);
+            //mChart.setVisibleXRangeMaximum(15f);
+            // move to the latest entry
+            mChart.moveViewToX(data.getEntryCount()); // this automatically refreshes the chart (calls invalidate())
+        }
+    }
+/*
+    public void setDataSocket() {
+        if (threadSocket != null){
+            threadSocket.interrupt();
+        }
+        threadSocket = new Thread(() -> {
+            while(queueSocketAnswer.size() != 0){
+                getActivity().runOnUiThread(() -> addEntry(queueSocketAnswer.pull()));
+                try {
+                    Thread.sleep(25);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        threadSocket.start();
+    }*/
+    private  void setDataSymbolHistory(List<SymbolHistoryAnswer> list) {
+        if (threadSymbolHistory != null){
+            threadSymbolHistory.interrupt();
+        }
+        threadSymbolHistory = new Thread(() -> {
+            for (int i = 0; i < list.size() - 1; i++) {
+                int finalI = i;
+                getActivity().runOnUiThread(() -> addEntry(list.get(finalI)));
+                try {
+                    Thread.sleep(25);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            GrandCapitalApplication.openSocket();
+        });
+        threadSymbolHistory.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (threadSymbolHistory != null) {
+            threadSymbolHistory.interrupt();
+        }
+        if (threadSocket != null) {
+            threadSocket.interrupt();
+        }
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
     }
-    private void initializationChart() {
-        mChart.setDrawGridBackground(false);
-        mChart.getDescription().setEnabled(false);
-        mChart.setTouchEnabled(true);
-        mChart.setDragEnabled(true);
-        mChart.setScaleEnabled(true);
-        mChart.setDoubleTapToZoomEnabled(false);
-        mChart.setPinchZoom(true);
-        mChart.setScaleYEnabled(false);
-        mChart.setScaleXEnabled(true);
-        mChart.setPadding(0,0,0,0);
-        /** create marker*/
-        /*MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.item_marker);
-        mv.setChartView(mChart);
-        mChart.setMarker(mv);*/
-        /** padding limit zone*/
-        /*LimitLine llXAxis = new LimitLine(0f, "Index 10");
-        llXAxis.setLineWidth(4f);
-        llXAxis.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
-        llXAxis.setTextSize(10f);
-        llXAxis.setLineColor(Color.WHITE);*/
-        /**Ось Х */
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
-        xAxis.setTextColor(getResources().getColor(R.color.chart_values));
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setAvoidFirstLastClipping(true);
-        xAxis.setValueFormatter((value, axis) -> ConventDate.convertDateFromMilSecHHMM((((Float)value).longValue())));
-        /**Ось Y */
-        YAxis yAxis = mChart.getAxisRight();
-        yAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
-        yAxis.setTextColor(getResources().getColor(R.color.chart_values));
-        yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
-        yAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
-        mChart.getAxisLeft().setEnabled(false); /** hide left Y*/
-        /*mChart.setOnTouchListener((v, event) -> {
-            return false;        // TODO norm scroll
-        });*/
-        //mChart.setDragOffsetX(100f);            /** видимость графика не до конца экрана*/       // TODO norm padding chart in left
-        //mChart.setScaleMinima(3f, 1f);          /** scale chart*/
-        mChart.getLegend().setEnabled(false);   /** Hide the legend */
-        mChart.invalidate();
-        /** animation add data in chart*/
-        //mChart.animateXY(2500, 2500);
-    }
 
-    public synchronized void updateChart(SocketAnswer value) {
-        LineDataSet lineDataSet1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
-        lineDataSet1.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))));
-        lineDataSet1.notifyDataSetChanged();
-        mChart.setData(new LineData(lineDataSet1));
-        mChart.notifyDataSetChanged();
-        mChart.invalidate();
-
-       /* LineDataSet lineDataSet1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
-        lineDataSet1.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))));
-        lineDataSet1.notifyDataSetChanged();
-        ArrayList<ILineDataSet> dataSets1 = new ArrayList<>();
-        dataSets1.add(lineDataSet1);
-        lineDataSet1.notifyDataSetChanged();
-        LineData data1 = new LineData(dataSets1);
-        data1.notifyDataChanged();
-        mChart.notifyDataSetChanged();
-        Log.d(GrandCapitalApplication.TAG_SOCKET, String.valueOf(lineDataSet1.getEntryCount()));
-*/
-
-        /*
-        try{
-            if (data != null) {
-                ILineDataSet xData = data.getDataSetByIndex(0);
-                if (xData == null) {
-                    xData = createLineDataSet(values);
-                    data.addDataSet(xData);
-                }
-                data.addEntry(new Entry(value.getTime(), Float.valueOf(String.valueOf(value.getAsk()))), 0);
-                data.notifyDataChanged();
-                //mChart.setData(data);
-                mChart.notifyDataSetChanged();
-                //mChart.invalidate();
-                mChart.centerViewTo((float) (value.getTime()), Float.valueOf(String.valueOf(value.getAsk())), YAxis.AxisDependency.RIGHT);
-            }
-        }catch(Exception ex) {
-            ex.printStackTrace();
-        } finally{
-            mChart.notifyDataSetChanged();
-            mChart.centerViewTo((float) (value.getTime()), Float.valueOf(String.valueOf(value.getAsk())), YAxis.AxisDependency.RIGHT);
-        }*/
-    }
-
-
-    private static LineDataSet createLineDataSet(List<Entry> values){
-        LineDataSet lineDataSet = new LineDataSet(values, "Base line");    /** set the line*/
-        lineDataSet.setLineWidth(1.3f);
-        lineDataSet.setDrawValues(false);    /**hide values all points*/
-        lineDataSet.setDrawCircles(false);   /**hide  all circle points */
-        lineDataSet.setCircleRadius(3f);
-        lineDataSet.setDrawCircleHole(false);
-        lineDataSet.setValueTextSize(9f);
-        lineDataSet.setDrawFilled(true);
-        lineDataSet.setFormLineWidth(3f);
-        lineDataSet.setFormSize(15.f);
-        lineDataSet.setColor(Color.WHITE);          /** color line*/
-        lineDataSet.setCircleColor(Color.WHITE);    /** color circles*/
-        /** fill color chart*/
-        lineDataSet.setFillColor(Color.WHITE);
-        lineDataSet.setFillAlpha(50);
-        lineDataSet.setDrawFilled(true);
-        lineDataSet.setHighlightEnabled(false);/** hide Highlight*/
-        return lineDataSet;
-    }
-    private static void setData(List<SymbolHistoryAnswer> list) {
-        if(list != null && list.size() > 0){
-            values = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
-                values.add(new Entry(list.get(i).getTime(), Float.valueOf(String.valueOf(list.get(i).getOpen())), 0));
-            }
-            if (mChart.getData() != null && mChart.getData().getDataSetCount() > 0) {
-                LineDataSet lineDataSet = (LineDataSet) mChart.getData().getDataSetByIndex(0);
-                lineDataSet.setValues(values);
-                mChart.getData().notifyDataChanged();
-                //mChart.notifyDataSetChanged();
-            } else {
-                LineDataSet lineDataSet = createLineDataSet(values);
-                /** add the datasets*/
-                ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-                dataSets.add(lineDataSet);
-                LineData data = new LineData(dataSets);
-                mChart.setData(data);
-                mChart.notifyDataSetChanged();
-            }
-            /** scroolling in end chart*/
-            SymbolHistoryAnswer item = list.get(list.size() - 1);
-            mChart.centerViewTo(Float.valueOf(item.getTime()), Float.valueOf(String.valueOf(item.getOpen())), YAxis.AxisDependency.RIGHT);
-        }else{
-            mChart.clear();
-            mChart.notifyDataSetChanged();
-        }
-    }
-    @Override
-    protected void finalize() throws Throwable {
-        ArrayList<Entry> newList = (ArrayList<Entry>) values.subList(values.size() - 30, values.size() - 1);
-        values.clear();
-        values = newList;
-        mChart.destroyDrawingCache();
-    }
     @Override
     public void onValueSelected(Entry e, Highlight h) {
     }
@@ -349,8 +354,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             if (response != null) {
                 if (response.equals("200")) {
                     if(SymbolHistoryAnswer.getInstance() != null){
-                        setData(SymbolHistoryAnswer.getInstance());
-                        GrandCapitalApplication.openSocket();
+                        setDataSymbolHistory(SymbolHistoryAnswer.getInstance());
                     }
                 }
             }
