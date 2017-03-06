@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -163,6 +164,13 @@ public class GrandCapitalApi {
                 if(list == null || list.size() < 2){
                     SymbolHistoryAnswer.setInstance(null);
                 }else{
+                    long currentDate = 0L;
+                    for (int i = list.size() - 1; i >= 0; i--){
+                        if(!ConventDate.equalsTimeSymbols(currentDate, list.get(i).getTime())){
+                            list.add(list.get(i));
+                            currentDate = list.get(i).getTime();
+                        }
+                    }
                     SymbolHistoryAnswer.setInstance(list);
                 }
             }

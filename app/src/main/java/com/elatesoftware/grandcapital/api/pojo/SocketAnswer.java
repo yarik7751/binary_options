@@ -160,7 +160,7 @@ public class SocketAnswer {
     }
 
     public Long getTime() {
-        return time;
+        return (time * 1000);
     }
 
     public void setTime(Long time) {
