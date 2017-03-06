@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.models;
 
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
+import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 
 /**
  * Created by Дарья Высокович on 03.03.2017.
@@ -10,6 +11,14 @@ public class QueueSocketAnswer {
     private ObjectBox head = null;      // Указатель на первый элемент
     private ObjectBox tail = null;      // Указатель на последний элемент
     private int size = 0;        // Поле для хранения размера очереди
+
+    private static QueueSocketAnswer queue = null;
+    public static QueueSocketAnswer getInstance() {
+        if (queue == null) {
+            queue = new QueueSocketAnswer();
+        }
+        return queue;
+    }
 
     public void push(SocketAnswer obj) {
         ObjectBox ob = new ObjectBox();

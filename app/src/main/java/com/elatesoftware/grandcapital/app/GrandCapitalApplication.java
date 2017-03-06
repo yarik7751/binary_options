@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
@@ -48,13 +49,14 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public class GrandCapitalApplication extends Application{
 
     private static Context context;
-
     private static SSLContext sc;
     public static WebSocketClient mClient;
     public final static String TAG_SOCKET = "socket";
 
     public static String symbol = "EURUSD_OP";
     private static long currentTime = 0L;
+
+    private static CountDownTimer timer;
 
     static {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -98,6 +100,22 @@ public class GrandCapitalApplication extends Application{
                 .build()
         );
         GrandCapitalApplication.context = getApplicationContext();
+        timer = new CountDownTimer(1000, 20) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+            @Override
+            public void onFinish() {
+                try{
+                    TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                        TerminalFragment.getInstance().addEntry(SocketAnswer.getInstance());
+                    });
+                }catch(Exception e){
+                    Log.e("Error", "Error: " + e.toString());
+                }
+            }
+        }.start();
     }
 
     public static void closeSocket(){
@@ -131,23 +149,22 @@ public class GrandCapitalApplication extends Application{
             @Override
             public void onMessage(final String message) {
                 Log.d(TAG_SOCKET, message);
-                if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
-                    return;
-                }
-                SocketAnswer answer = SocketAnswer.getSetInstance(message);
-                if (answer.getTime()!= null && !ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
-                    currentTime = answer.getTime();
-                    TerminalFragment.getInstance().getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //TerminalFragment.getInstance().queueSocketAnswer.push(answer);
-                            //TerminalFragment.getInstance().setDataSocket();
-                            TerminalFragment.getInstance().addEntry(answer);
+                    if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
+                        return;
+                    }
+                        SocketAnswer answer = SocketAnswer.getSetInstance(message);
+                        if (answer.getTime() != null && !ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
+                            currentTime = answer.getTime();
+
+                            //SocketAnswer finalAnswer = answer;
+                            /*TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                                TerminalFragment.getInstance().addEntry(finalAnswer);
+                            });*/
+                        } else {
+                            currentTime = 0L;
+                            answer = null;
                         }
-                    });
-                }else {
-                    currentTime = 0L;
-                }
+
             }
             @Override
             public void onClose(int code, String reason, boolean remote){
@@ -182,5 +199,10 @@ public class GrandCapitalApplication extends Application{
             return null;
         }
     }
-
+    public static void cancelTimer(){
+        timer.cancel();
+    }
+    public static void startTimer(){
+        timer.start();
+    }
 }
