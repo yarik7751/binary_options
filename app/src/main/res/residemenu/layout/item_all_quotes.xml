@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:background="#000000">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_gravity="left">
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_currency"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="DGFHJ"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"/>
+
+            <!--<TextView
+                android:id="@+id/tv_currency_description"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="gfgjgfhlkjlkjlkvbnjlhjkjhj"
+                style="@style/LigthText"
+                android:textSize="12sp"/>-->
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_gravity="right">
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_ask"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="16dp"
+                android:text="75.564564"
+                android:textStyle="bold"
+                android:textColor="@color/dealingListTitlesColor"
+                android:textSize="14sp"/>
+
+            <ImageView
+                android:id="@+id/img_is_selected"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="6dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_star_border_white_24dp"/>
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

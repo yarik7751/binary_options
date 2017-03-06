@@ -25,6 +25,7 @@ public class ToolbarFragment extends Fragment {
 
     public ToolTabsView mTabLayout;
     private TextView mPageTitle;
+    private ImageView imgBurger;
 
     private static final float TRANSPARENT_TAB_ICON_VALUE = 0.5f;
     private static final float NOT_TRANSPARENT_TAB_ICON_VALUE = 1f;
@@ -34,7 +35,12 @@ public class ToolbarFragment extends Fragment {
     public static final int TOOLBAR_EMPTY_FRAGMENT = 103;
     public static final int TOOLBAR_REFRESH_FRAGMENT = 104;
 
+    public static final int BURGER_OPEN_MENU = 201;
+    public static final int BURGER_BACK_PRESSED = 202;
+    private int burgerType = BURGER_OPEN_MENU;
+
     private static ToolbarFragment fragment = null;
+
     public static ToolbarFragment getInstance() {
         if (fragment == null) {
             fragment = new ToolbarFragment();
@@ -52,10 +58,23 @@ public class ToolbarFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        mParentActivity.findViewById(R.id.menu_burger).setOnClickListener(v -> mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT));
+        imgBurger = (ImageView) mParentActivity.findViewById(R.id.menu_burger);
+        //imgBurger.setOnClickListener(v -> mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT));
+        imgBurger.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (burgerType == BURGER_OPEN_MENU) {
+                    mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
+                }
+                if (burgerType == BURGER_BACK_PRESSED) {
+                    getActivity().onBackPressed();
+                }
+            }
+        });
         mPageTitle = (TextView) getView().findViewById(R.id.page_title);
         setupToolbar();
     }
+
     private void setupToolbar() {
         int[] drawableResources = {
                 R.drawable.signal,
@@ -114,8 +133,18 @@ public class ToolbarFragment extends Fragment {
         mTabLayout.getTabAt(0).select();*/
     }
 
-    public void switchTab(int position){
-        if(position >= 0 && position < 5) {
+    public void setBurgerType(int _burgerType) {
+        burgerType = _burgerType;
+        if (burgerType == BURGER_OPEN_MENU) {
+            imgBurger.setImageResource(R.drawable.menu_icon);
+        }
+        if (burgerType == BURGER_BACK_PRESSED) {
+            imgBurger.setImageResource(R.drawable.ic_keyboard_arrow_left_white_36dp);
+        }
+    }
+
+    public void switchTab(int position) {
+        if (position >= 0 && position < 5) {
             showTabs();
             //mTabLayout.getTabAt(position).select();
             mTabLayout.selectTab(position);
@@ -124,12 +153,19 @@ public class ToolbarFragment extends Fragment {
 
     /**
      * скрыть табы в зависимости от типа фрагмента
+     *
      * @param type
      */
     public void hideTabsByType(int type) {
+        if (mTabLayout.animation != null) {
+            if (mTabLayout.animation.hasStarted()) {
+                mTabLayout.animation.cancel();
+            }
+        }
+
         mTabLayout.setVisibility(View.VISIBLE);
         mTabLayout.showAllTabs();
-        switch(type) {
+        switch (type) {
             case TOOLBAR_TERMINALE_FRAGMENT:
                 mTabLayout.showTab(0);
                 mTabLayout.showTab(1);
@@ -162,26 +198,24 @@ public class ToolbarFragment extends Fragment {
         mTabLayout.deselectAllTabs();
     }
 
-    public void hideTabs(){
-        if(mTabLayout.getVisibility() == View.VISIBLE)
-        {
+    public void hideTabs() {
+        if (mTabLayout.getVisibility() == View.VISIBLE) {
             mTabLayout.setVisibility(View.INVISIBLE);
         }
     }
 
-    private void showTabs(){
-        if(mTabLayout.getVisibility() == View.INVISIBLE)
-        {
+    private void showTabs() {
+        if (mTabLayout.getVisibility() == View.INVISIBLE) {
             mTabLayout.setVisibility(View.VISIBLE);
         }
     }
 
-    public void setPageTitle(String title){
-       if(mPageTitle != null){
-           if(!title.isEmpty()){
-               mPageTitle.setText(title);
-           }
-       }
+    public void setPageTitle(String title) {
+        if (mPageTitle != null) {
+            if (!title.isEmpty()) {
+                mPageTitle.setText(title);
+            }
+        }
     }
 
     private void setUpViews() {

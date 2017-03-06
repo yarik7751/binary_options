@@ -64,7 +64,7 @@ public class FragmentHowItWorksListAdapter extends GrandCapitalListAdapter {
 
             QuestionFragment questionFragment = new QuestionFragment();
             questionFragment.setArguments(bundle);
-            BaseActivity.changeMainFragment(questionFragment);
+            BaseActivity.addNextFragment(questionFragment);
         });
     }
 

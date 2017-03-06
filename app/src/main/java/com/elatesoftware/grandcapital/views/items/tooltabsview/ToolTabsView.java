@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChangePosition;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChooseTab;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.ToolTabsViewAdapter;
@@ -41,6 +42,9 @@ public class ToolTabsView extends LinearLayout {
 
     private OnChooseTab onChooseTab;
     private OnLoadData onLoadData;
+    private OnChangePosition onChangePosition;
+
+    public TranslateAnimation animation;
 
     public ToolTabsView(Context context) {
         super(context);
@@ -73,7 +77,6 @@ public class ToolTabsView extends LinearLayout {
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT
         );
-        itemParams.weight = 1;
         //setData();
     }
 
@@ -84,7 +87,6 @@ public class ToolTabsView extends LinearLayout {
                 LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT
         );
-        itemParams.weight = 1;
         isDeselectAll = _isDeselectAll;
         //setData();
     }
@@ -120,9 +122,9 @@ public class ToolTabsView extends LinearLayout {
         setTint(llTabs.getChildAt(position), true);
         vIndicator.setVisibility(VISIBLE);
         moveIndicatior((int) llTabs.getChildAt(position).getTag(R.string.number), false);
-        if(onChooseTab != null) {
+        /*if(onChooseTab != null) {
             onChooseTab.onChoose(llTabs.getChildAt(position), logicNumber);
-        }
+        }*/
     }
 
     public void deselectAllTabs() {
@@ -144,6 +146,10 @@ public class ToolTabsView extends LinearLayout {
 
     public void setOnLoadData(OnLoadData onLoadData) {
         this.onLoadData = onLoadData;
+    }
+
+    public void setOnChangePosition(OnChangePosition onChangePosition) {
+        this.onChangePosition = onChangePosition;
     }
 
     private void init(Context _context) {
@@ -190,9 +196,10 @@ public class ToolTabsView extends LinearLayout {
                         switch (motionEvent.getAction()) {
                             case MotionEvent.ACTION_DOWN:
                                 Log.d(TAG, "ACTION_DOWN");
+                                deselectAllTabs();
                                 view.setBackgroundColor(selectColor);
                                 vIndicator.setVisibility(VISIBLE);
-                                setTint(lastView, false);
+                                //setTint(lastView, false);
                                 setTint(view, true);
                                 lastView = view;
                                 Log.d(TAG, "num: " + num);
@@ -238,14 +245,15 @@ public class ToolTabsView extends LinearLayout {
         final int way = position * (widthView / adapter.getItemsCount());
         int move = way - ((LayoutParams) vIndicator.getLayoutParams()).leftMargin;
         if(isAnim) {
-            TranslateAnimation animation = new TranslateAnimation(0, move, 0, 0);
-            animation.setDuration(300);
+            animation = new TranslateAnimation(0, move, 0, 0);
+            animation.setDuration(200);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {}
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
+                    vIndicator.clearAnimation();
                     llLine.removeView(vIndicator);
                     LayoutParams params = new LayoutParams(
                             adapter == null ? 0 : widthView / adapter.getItemsCount(),
@@ -253,6 +261,9 @@ public class ToolTabsView extends LinearLayout {
                     );
                     params.leftMargin = way;
                     llLine.addView(vIndicator, params);
+                    if(onChangePosition != null) {
+                        onChangePosition.changePosition();
+                    }
                 }
 
                 @Override
@@ -267,6 +278,9 @@ public class ToolTabsView extends LinearLayout {
             );
             params.leftMargin = way;
             llLine.addView(vIndicator, params);
+            /*if(onChangePosition != null) {
+                onChangePosition.changePosition();
+            }*/
         }
     }
 

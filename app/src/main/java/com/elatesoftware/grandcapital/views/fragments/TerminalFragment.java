@@ -109,6 +109,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(1);
         });
+        try {
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+            BaseActivity.getToolbar().switchTab(1);
+        } catch (Exception e){}
         if(User.getInstance() != null){
             tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
         }

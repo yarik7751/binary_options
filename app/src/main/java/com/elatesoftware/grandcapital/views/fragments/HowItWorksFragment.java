@@ -61,6 +61,7 @@ public class HowItWorksFragment extends Fragment {
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_how_it_works));
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
         BaseActivity.getToolbar().deselectAll();
+        BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
         /*BaseActivity.getToolbar().mTabLayout.setOnLoadData(new OnLoadData() {
             @Override
             public void loadData() {

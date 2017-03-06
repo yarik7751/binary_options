@@ -1,6 +1,8 @@
 
 package com.elatesoftware.grandcapital.api.pojo;
 
+import android.graphics.Color;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -96,6 +98,9 @@ public class Instrument {
     @SerializedName("low")
     @Expose
     private Double low;
+
+    //color quotes
+    int color = 0;
 
     public Integer getWinFull() {
         return winFull;
@@ -487,4 +492,11 @@ public class Instrument {
         return this;
     }
 
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 }

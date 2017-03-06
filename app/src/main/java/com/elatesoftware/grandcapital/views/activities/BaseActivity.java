@@ -31,6 +31,7 @@ import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItemWithMark;
+import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChangePosition;
 
 import java.util.List;
 
@@ -52,6 +53,8 @@ public class BaseActivity extends CustomFontsActivity {
     private View mDeposit;
 
     private static ToolbarFragment toolbar;
+
+    public static boolean backToRootFragment = false;
 
     public static final int SIGNAL_POSITION = 0;
     public static final int TERMINAL_POSITION = 1;
@@ -81,7 +84,8 @@ public class BaseActivity extends CustomFontsActivity {
             if (savedInstanceState == null) {
                 toolbar = new ToolbarFragment();
                 changeToolbarFragment(toolbar);
-                changeMainFragment(TerminalFragment.getInstance());
+                //changeMainFragment(TerminalFragment.getInstance());
+                setTerminalFragment();
                 getInfoUser();
             }
         }
@@ -152,7 +156,8 @@ public class BaseActivity extends CustomFontsActivity {
                 return;
             }
             if (view == mTerminal) {
-                changeMainFragment(TerminalFragment.getInstance());
+                //changeMainFragment(TerminalFragment.getInstance());
+                setTerminalFragment();
             } else if (view == mSupport) {
                 changeMainFragment(new SupportFragment());
             } else if (view == mDealing) {
@@ -175,41 +180,67 @@ public class BaseActivity extends CustomFontsActivity {
     };
 
     public void setMain(int i) {
-        switch (i){
-            case SIGNAL_POSITION:
-                Log.d(TAG, "SIGNAL_POSITION");
-                //changeMainFragment(new TerminalFragment());
-                break;
-            case TERMINAL_POSITION:
-                Log.d(TAG, "TERMINAL_POSITION");
-                //changeMainFragment(TerminalFragment.getInstance());
-                break;
-            case DEALING_POSITION:
-                Log.d(TAG, "DEALING_POSITION");
-                //changeMainFragment(new DealingFragment());
-                break;
-            case REFRESH_POSITION:
-                Log.d(TAG, "REFRESH_POSITION");
-                //??????
-                break;
-            case QUOTES_POSITION:
-                Log.d(TAG, "QUOTES_POSITION");
-                //changeMainFragment(new QuotesFragment());
-                break;
-        }
+        getToolbar().mTabLayout.setOnChangePosition(new OnChangePosition() {
+            @Override
+            public void changePosition() {
+                Log.d(TAG, "mTabLayout.setOnChangePosition");
+
+                switch (i){
+                    case SIGNAL_POSITION:
+                        Log.d(TAG, "SIGNAL_POSITION");
+                        break;
+                    case TERMINAL_POSITION:
+                        Log.d(TAG, "TERMINAL_POSITION");
+                        setTerminalFragment();
+                        break;
+                    case DEALING_POSITION:
+                        Log.d(TAG, "DEALING_POSITION");
+                        changeMainFragment(new DealingFragment());
+                        break;
+                    case REFRESH_POSITION:
+                        Log.d(TAG, "REFRESH_POSITION");
+                        //??????
+                        break;
+                    case QUOTES_POSITION:
+                        Log.d(TAG, "QUOTES_POSITION");
+                        changeMainFragment(new QuotesFragment());
+                        break;
+                }
+            }
+        });
     }
 
     public static void changeMainFragment(Fragment targetFragment) {
-        //Опасно! Не ясно, что делает эта строка
-       // mResideMenu.clearIgnoredViewList();
-        List<Fragment> list  = fragmentManager.getFragments();
-        if(list == null || list.get(list.size() -1) != targetFragment){
-            fragmentManager.beginTransaction()
-                    .replace(R.id.content, targetFragment, "fragment")
-                    .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack("fragment")
-                    .commit();
+        backToRootFragment = true;
+        onSwitchFragment(targetFragment, targetFragment.getClass().getName(), false, true, R.id.content);
+        Log.d(TAG, "BackStackEntryCount: " + fragmentManager.getBackStackEntryCount());
+    }
+
+    public static void addNextFragment(Fragment fragment) {
+        onSwitchFragment(fragment, fragment.getClass().getName(), true, true, R.id.content);
+    }
+
+    public static void setTerminalFragment() {
+        backToRootFragment = false;
+        TerminalFragment fragment = TerminalFragment.getInstance();
+        onSwitchFragment(fragment, fragment.getClass().getName(), false, true, R.id.content);
+    }
+
+    public static void onSwitchFragment(Fragment fragment, String tag, boolean add, boolean anim, int res) {
+        FragmentManager fm = fragmentManager;
+        FragmentTransaction tr = fm.beginTransaction();
+        if(anim) {
+            tr.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         }
+        tr.replace(res, fragment, tag);
+        if (add) {
+            try {
+                tr.addToBackStack(tag);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        tr.commit();
     }
 
     private void changeToolbarFragment(Fragment targetFragment) {
@@ -244,14 +275,28 @@ public class BaseActivity extends CustomFontsActivity {
 
     @Override
     public void onBackPressed() {
-        int count = fragmentManager.getBackStackEntryCount();
+        if(mResideMenu.isOpened()) {
+            mResideMenu.closeMenu();
+        }
+        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+        Log.d(TAG, "BackStackEntryCount (onBackPressed): " + backStackEntryCount);
+        if(backStackEntryCount == 0) {
+            if(backToRootFragment) {
+                setTerminalFragment();
+            } else {
+                super.onBackPressed();
+            }
+        } else {
+            super.onBackPressed();
+        }
+        /*int count = fragmentManager.getBackStackEntryCount();
         if (count < 3) {
             fragmentManager.popBackStackImmediate();
             fragmentManager.popBackStackImmediate();
             super.onBackPressed();
         } else {
             fragmentManager.popBackStack();
-        }
+        }*/
     }
 
     @Override

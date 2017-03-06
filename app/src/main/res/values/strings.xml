@@ -9,6 +9,9 @@
     <string name="logical_number">logical_number</string>
     <string name="is_their_message">is_their_message</string>
 
+    <string name="all_quotes">All quotes</string>
+    <string name="selected_quotes">Selected quotes</string>
+
     <!--Exceptions-->
     <string name="error_incorrent_password_input">Please input password</string>
     <string name="error_wront_password">Wrong password</string>

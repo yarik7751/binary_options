@@ -11,6 +11,10 @@ public class GrandCapitalListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private static final int WHITE_ROW_COLOR =  GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListItemColor);
     private static final int TRANSPARENT_ROW_COLOR = Color.TRANSPARENT;
+    protected static final int ORDER_EVEN = 0;
+    protected static final int ORDER_ODD = 1;
+
+    public int order =ORDER_ODD;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -19,7 +23,7 @@ public class GrandCapitalListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if(position % 2 == 1) {
+        if(position % 2 == order) {
             holder.itemView.setBackgroundColor(WHITE_ROW_COLOR);
         }
         else {

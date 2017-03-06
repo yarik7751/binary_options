@@ -1,14 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.fragments.QuotesFragment">
+    tools:context=".views.fragments.QuotesFragment"
+    tools:background="@drawable/bg">
 
-    <TextView android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/menu_item_quotes"
-        style="@style/LigthText"
-        android:textSize="20sp"/>
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-</FrameLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                style="@style/BoldText"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/selected_quotes"
+                android:textColor="@color/dealingListTitlesColor"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_selected_quotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                style="@style/BoldText"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="36dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/all_quotes"
+                android:textColor="@color/dealingListTitlesColor"
+                android:textStyle="bold"
+                android:textSize="14sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_all_quotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>

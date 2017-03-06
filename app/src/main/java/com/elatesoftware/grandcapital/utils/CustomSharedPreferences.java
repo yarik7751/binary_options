@@ -16,6 +16,7 @@ public class CustomSharedPreferences {
      private static final String SHARED_PREFERENCES = "com.elatesoftware.grandcapital.user";
      private static final String SHARED_PREFERENCES_USER = "user";
      private static final String SHARED_PREFERENCES_CHAT_HISTORY = "SHARED_PREFERENCES_CHAT_HISTORY";
+     private static final String SHARED_PREFERENCES_SELECTED_QUOTES = "SHARED_PREFERENCES_SELECTED_QUOTES";
 
     public static boolean isSaveUserInPreferences(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
@@ -64,5 +65,15 @@ public class CustomSharedPreferences {
     public static String getChatHistory(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return sharedPreferences.getString(SHARED_PREFERENCES_CHAT_HISTORY, null);
+    }
+
+    public static void saveSelectedQuotes(Context context, String quotes) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        sharedPreferences.edit().putString(SHARED_PREFERENCES_SELECTED_QUOTES, quotes).commit();
+    }
+
+    public static String getSelectedQuotes(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(SHARED_PREFERENCES_SELECTED_QUOTES, "");
     }
 }
