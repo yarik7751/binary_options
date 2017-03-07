@@ -69,7 +69,7 @@ public class ConventDate {
         }else{
             Date currentDate = new Date(Long.parseLong(String.valueOf(currentTime)));
             Date newDate = new Date(Long.parseLong(String.valueOf(newTime)));
-            if((newDate.getSeconds() - currentDate.getSeconds() <= 2)){
+            if((newDate.getSeconds() - currentDate.getSeconds() <= 1)){
                 return true;
             }else{
                 return false;
@@ -110,6 +110,11 @@ public class ConventDate {
         Date date = new Date();
         date.setMinutes(date.getMinutes() -30);
         return String.valueOf(date.getTime() / 1000);
+    }
+    public static long getTimePlusOneSecond(long time) {
+        Date date = new Date();
+        date.setSeconds(date.getSeconds() + 1);
+        return date.getTime();
     }
     public static String getChatDateByUnix(Context context, long unix) {
         Calendar calendarChat = Calendar.getInstance();

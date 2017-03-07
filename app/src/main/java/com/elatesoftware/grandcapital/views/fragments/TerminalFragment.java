@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -179,34 +180,27 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         tvDeposit.setOnClickListener(v -> {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
-        llLowerTerminal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "getAmountValue: " + getAmountValue());
-                Log.d(TAG, "getTimeValue: " + getTimeValue());
-            }
+        llLowerTerminal.setOnClickListener(v -> {
+            Log.d(TAG, "getAmountValue: " + getAmountValue());
+            Log.d(TAG, "getTimeValue: " + getTimeValue());
         });
     }
-
     private double getAmountValue() {
         String valueStr = etValueAmount.getText().toString();
         valueStr = valueStr.replaceAll("[^0-9.]", "");
         return Double.valueOf(valueStr);
     }
-
     private int getTimeValue() {
         String valueStr = etValueTime.getText().toString();
         valueStr = valueStr.replaceAll("[^0-9]", "");
         return Integer.parseInt(valueStr);
     }
-
     private void setSizeHeight() {
         int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
         rlChart.getLayoutParams().height = (int) (height * 0.6);
         llDeposit.getLayoutParams().height = (int) (height * 0.28);
         llButtons.getLayoutParams().height = (int) (height * 0.11);
     }
-
     private void updateBalance(){
         if(User.getInstance() != null){
             tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
@@ -243,12 +237,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     }
     private void initializationChart() {
         mChart.setNoDataText(getResources().getString(R.string.request_error_title));
-        mChart.setDragDecelerationFrictionCoef(0.95f); // задержка при тащении
+        mChart.setDragDecelerationFrictionCoef(0.95f); // задержка при перетаскивании
         mChart.setPadding(0,0,0,0);
         mChart.setScaleYEnabled(false);
         mChart.setScaleXEnabled(true);
-        mChart.setAutoScaleMinMaxEnabled(true); // xz
-
         mChart.setDoubleTapToZoomEnabled(false);
         mChart.getDescription().setEnabled(false);// enable description text
         mChart.setTouchEnabled(true);      // enable touch gestures жесты
@@ -272,12 +264,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         xAxis.disableAxisLineDashedLine();
         xAxis.setDrawGridLines(true);
 
-        xAxis.setSpaceMax(100f);
-        xAxis.setSpaceMin(1f);
-
-        //xAxis.setGranularityEnabled(true);
-        //xAxis.setGranularity(0.1f);             // диапазон между значениями на оси х
-
         YAxis leftAxis = mChart.getAxisLeft();      //Ось Y left
         leftAxis.setEnabled(false);
         YAxis rightAxis = mChart.getAxisRight();    //Ось Y right
@@ -287,9 +273,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         rightAxis.setDrawGridLines(true);
         rightAxis.disableAxisLineDashedLine();
         rightAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
-        //mChart.setDragOffsetX(-10f);            // видимость графика не до конца экрана       // TODO norm padding chart in left
 
-        //mChart.zoom(10f, 1f, xAxis.getAxisMaximum(), 1f);
+        //mChart.setDragOffsetX(-10f);            // видимость графика не до конца экрана       // TODO norm padding chart in left
+        //mChart.setVisibleXRangeMinimum(90.0f);
+
     }
     private synchronized LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
@@ -340,7 +327,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             data.addEntry(new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getOpen()))), 0);
             data.notifyDataChanged();
             mChart.notifyDataSetChanged();
-            mChart.moveViewToX(data.getEntryCount()); // this automatically refreshes the chart (calls invalidate())
+            //mChart.moveViewToX(data.getEntryCount()); // this automatically refreshes the chart (calls invalidate())
         }
     }
     private void setDataSymbolHistory(List<SymbolHistoryAnswer> list) {
@@ -357,6 +344,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                     e.printStackTrace();
                 }
             }
+            mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
             GrandCapitalApplication.openSocket();
         });
         threadSymbolHistory.start();

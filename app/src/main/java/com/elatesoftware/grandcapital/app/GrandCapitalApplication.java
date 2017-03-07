@@ -34,6 +34,8 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.KeyManager;
@@ -55,6 +57,9 @@ public class GrandCapitalApplication extends Application{
 
     public static String symbol = "EURUSD_OP";
     private static long currentTime = 0L;
+
+    static SocketAnswer answerLast = null;
+    private static boolean flag = false;
 
     static {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -98,6 +103,16 @@ public class GrandCapitalApplication extends Application{
                 .build()
         );
         GrandCapitalApplication.context = getApplicationContext();
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if(flag){
+
+                }
+                sentAnswer();
+                Log.d(TAG_SOCKET, "timer ++");
+            }
+        }, 0, 1000);
     }
 
     public static void closeSocket(){
@@ -113,7 +128,6 @@ public class GrandCapitalApplication extends Application{
            new SocketTask(symbol).execute();
         }
     }
-
     public static SSLContext getSSLContext() {
         return sc;
     }
@@ -134,17 +148,16 @@ public class GrandCapitalApplication extends Application{
                     if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
                         return;
                     }
-                    SocketAnswer answer = SocketAnswer.getSetInstance(message);
-                    if (answer.getTime() != null && !ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
-                        currentTime = answer.getTime();
-                        SocketAnswer finalAnswer = answer;
-                        TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                            TerminalFragment.getInstance().addEntry(finalAnswer);
-                        });
-                    } else {
-                        currentTime = 0L;
-                        answer = null;
-                    }
+                answerLast = SocketAnswer.getSetInstance(message);
+                    //SocketAnswer answer = SocketAnswer.getSetInstance(message);
+
+//                    if (answer.getTime() != null && !ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
+//                        currentTime = answer.getTime();
+//                        answerLast = answer;
+//                        flag = false;
+//                    } else {
+//                        flag = true;
+//                    }
             }
             @Override
             public void onClose(int code, String reason, boolean remote){
@@ -177,6 +190,15 @@ public class GrandCapitalApplication extends Application{
                 e.printStackTrace();
             }
             return null;
+        }
+    }
+
+    private void sentAnswer(){
+        if(answerLast != null){
+            TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                TerminalFragment.getInstance().addEntry(answerLast);
+                answerLast = null;
+            });
         }
     }
 }

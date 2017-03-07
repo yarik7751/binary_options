@@ -113,7 +113,6 @@ public class DepositFragment  extends Fragment {
         deposits.add(inOutAnswer3d);
         deposits.add(inOutAnswer4d);
 
-
         InOutAnswer inOutAnswer1w = new InOutAnswer(new InOutAnswer.AmountMoney("$12"), "VISA", "Ok", "04.05.2014");
         InOutAnswer inOutAnswer2w = new InOutAnswer(new InOutAnswer.AmountMoney("$65"), "VISA", "Ok", "08.05.2014");
         InOutAnswer inOutAnswer3w = new InOutAnswer(new InOutAnswer.AmountMoney("$48"), "VISA", "Ok", "01.05.2014");
