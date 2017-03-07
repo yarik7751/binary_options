@@ -6,6 +6,9 @@ import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Дарья Высокович on 28.02.2017.
  */
@@ -40,7 +43,7 @@ public class SocketAnswer {
     @Expose
     private Long time;
 
-    public static SocketAnswer answersInstance = null;
+    private static SocketAnswer answersInstance = null;
     public static SocketAnswer getInstance() {
         return answersInstance;
     }
@@ -53,6 +56,9 @@ public class SocketAnswer {
     public static SocketAnswer getSetInstance(String message) {
         answersInstance = new Gson().fromJson(message, SocketAnswer.class);
         return answersInstance;
+    }
+    public static void clearSocketAnswer(){
+        answersInstance = null;
     }
 
     public String getSymbol() {
@@ -81,7 +87,7 @@ public class SocketAnswer {
         return this;
     }
 
-    public Double getAsk() {
+    public synchronized Double getAsk() {
         return ask;
     }
 
@@ -159,7 +165,7 @@ public class SocketAnswer {
         return this;
     }
 
-    public Long getTime() {
+    public synchronized Long getTime() {
         return (time * 1000);
     }
 

@@ -32,6 +32,7 @@ import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -56,8 +57,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private LineChart mChart;
     private Thread threadSymbolHistory;
     private Thread threadSocket;
-    //public QueueSocketAnswer queueSocketAnswer = new QueueSocketAnswer();
-
+    private static ArrayList<SocketAnswer> listSocket;
     private TextView tvBalance;
     private TextView tvDeposit;
     private TextView tvLowerActive;
@@ -144,7 +144,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
         registrationBroadcasts();
         initializationChart();
-
         return parentView;
     }
     @Override
@@ -160,11 +159,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             BaseActivity.getToolbar().switchTab(1);
         } catch (Exception e){}
         updateBalance();
+        listSocket = new ArrayList<>();
         tvLowerActive.setOnClickListener(v -> {
             if(listActives.size() > 0){
                 int index = listActives.indexOf(tvValueActive.getText().toString());
                 if(index == 0){
-                    tvValueActive.setText(listActives.get(listActives.size() -1));
+                    tvValueActive.setText(listActives.get(listActives.size() - 1));
                 }else{
                     tvValueActive.setText(listActives.get(index - 1));
                 }
@@ -239,6 +239,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         }
     }
+    public synchronized static void setListSocketAnswer(SocketAnswer answer){
+        listSocket.add(answer);
+    }
     private void getSymbolHistory(){
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
         //intentService.putExtra(SymbolHistoryService.SYMBOL, tvValueActive.getText().toString()); // TODO
@@ -288,7 +291,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         rightAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
         //mChart.setDragOffsetX(-10f);            // видимость графика не до конца экрана       // TODO norm padding chart in left
     }
-    private LineDataSet createSet() {
+    private synchronized LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(Color.WHITE);
@@ -310,7 +313,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         //set.setHighlightEnabled(false);  //hide Highlight
         return set;
     }
-    public void addEntry(SocketAnswer answer) {
+    public synchronized void addEntry(SocketAnswer answer) {
         LineData data = mChart.getData();
         if (data != null) {
             ILineDataSet set = data.getDataSetByIndex(0);
@@ -318,15 +321,16 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 set = createSet();
                 data.addDataSet(set);
             }
-            data.addEntry(new Entry(Float.valueOf(String.valueOf(answer.getTime() / 10000)), Float.valueOf(String.valueOf(answer.getAsk()))), 0);
-            Log.d(GrandCapitalApplication.TAG_SOCKET, "in set = " + String.valueOf(set.getEntryCount()));
-            data.notifyDataChanged();
-            mChart.notifyDataSetChanged();
-            //mChart.setVisibleXRangeMinimum(5f);
-            //mChart.setVisibleXRangeMaximum(15f);
-            mChart.invalidate();
-            Log.d(GrandCapitalApplication.TAG_SOCKET, "chart was invalidate");
+            if(answer.getTime() != null){
+                data.addEntry(new Entry(Float.valueOf(String.valueOf(answer.getTime() / 10000)) , Float.valueOf(String.valueOf(answer.getAsk()))), 0);
+                data.notifyDataChanged();
+                mChart.notifyDataSetChanged();
+                //mChart.moveViewTo(data.getXMax() + 100, data.getYMax(), YAxis.AxisDependency.LEFT);
+                mChart.invalidate();
+                Log.d(GrandCapitalApplication.TAG_SOCKET, "in set = " + String.valueOf(set.getEntryCount()) + ",  chart added item and was invalidate");
+            }
         }
+        GrandCapitalApplication.startTimer();
     }
     public void addEntry(SymbolHistoryAnswer answer) {
         LineData data = mChart.getData();
@@ -339,30 +343,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             data.addEntry(new Entry(Float.valueOf(String.valueOf(answer.getTime() / 10000)), Float.valueOf(String.valueOf(answer.getOpen()))), 0);
             data.notifyDataChanged();
             mChart.notifyDataSetChanged();
-            //mChart.setVisibleXRangeMinimum(5f);
-            //mChart.setVisibleXRangeMaximum(15f);
-            // move to the latest entry
             mChart.moveViewToX(data.getEntryCount()); // this automatically refreshes the chart (calls invalidate())
         }
     }
-/*
-    public void setDataSocket() {
-        if (threadSocket != null){
-            threadSocket.interrupt();
-        }
-        threadSocket = new Thread(() -> {
-            while(queueSocketAnswer.size() != 0){
-                getActivity().runOnUiThread(() -> addEntry(queueSocketAnswer.pull()));
-                try {
-                    Thread.sleep(25);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        threadSocket.start();
-    }*/
-    private  void setDataSymbolHistory(List<SymbolHistoryAnswer> list) {
+    private void setDataSymbolHistory(List<SymbolHistoryAnswer> list) {
         if (threadSymbolHistory != null){
             threadSymbolHistory.interrupt();
         }
@@ -380,11 +364,29 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         });
         threadSymbolHistory.start();
     }
-
+    public synchronized void update (){
+        if (threadSocket != null){
+            threadSocket.interrupt();
+        }
+        threadSocket = new Thread(() -> {
+            if(listSocket != null && listSocket.size() > 0){
+                for (int i = 0; i < 3; i++) {
+                    int finalI = i;
+                    getActivity().runOnUiThread(() -> addEntry(listSocket.get(finalI)));
+                    try {
+                        Thread.sleep(25);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                listSocket.clear();
+            }
+        });
+        threadSocket.start();
+    }
     @Override
     public void onPause() {
         super.onPause();
-
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
         }
@@ -405,7 +407,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     @Override
     public void onNothingSelected() {
     }
-
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
