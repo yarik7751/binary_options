@@ -154,8 +154,6 @@ public class GrandCapitalApi {
         Call<List<SymbolHistoryAnswer>> call = getApiService().getSymbolHistory(User.getInstance().getLogin(), fromTime, toTime, "1", symbol);
         try {
             response = call.execute();
-         } catch (final java.net.SocketTimeoutException e) {
-            e.printStackTrace();
          } catch (IOException e) {
             e.printStackTrace();
         }

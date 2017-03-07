@@ -56,8 +56,6 @@ public class GrandCapitalApplication extends Application{
     public static String symbol = "EURUSD_OP";
     private static long currentTime = 0L;
 
-    private static CountDownTimer timer;
-
     static {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             @Override
@@ -100,22 +98,6 @@ public class GrandCapitalApplication extends Application{
                 .build()
         );
         GrandCapitalApplication.context = getApplicationContext();
-        timer = new CountDownTimer(1000, 20) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-            @Override
-            public void onFinish() {
-                try{
-                    TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                        TerminalFragment.getInstance().addEntry(SocketAnswer.getInstance());
-                    });
-                }catch(Exception e){
-                    Log.e("Error", "Error: " + e.toString());
-                }
-            }
-        }.start();
     }
 
     public static void closeSocket(){
@@ -152,19 +134,17 @@ public class GrandCapitalApplication extends Application{
                     if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
                         return;
                     }
-                        SocketAnswer answer = SocketAnswer.getSetInstance(message);
-                        if (answer.getTime() != null && !ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
-                            currentTime = answer.getTime();
-
-                            //SocketAnswer finalAnswer = answer;
-                            /*TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                                TerminalFragment.getInstance().addEntry(finalAnswer);
-                            });*/
-                        } else {
-                            currentTime = 0L;
-                            answer = null;
-                        }
-
+                    SocketAnswer answer = SocketAnswer.getSetInstance(message);
+                    if (answer.getTime() != null && !ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
+                        currentTime = answer.getTime();
+                        SocketAnswer finalAnswer = answer;
+                        TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                            TerminalFragment.getInstance().addEntry(finalAnswer);
+                        });
+                    } else {
+                        currentTime = 0L;
+                        answer = null;
+                    }
             }
             @Override
             public void onClose(int code, String reason, boolean remote){
@@ -198,11 +178,5 @@ public class GrandCapitalApplication extends Application{
             }
             return null;
         }
-    }
-    public static void cancelTimer(){
-        timer.cancel();
-    }
-    public static void startTimer(){
-        timer.start();
     }
 }

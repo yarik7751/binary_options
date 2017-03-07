@@ -17,6 +17,18 @@ import java.util.TimeZone;
 
 public class ConventDate {
 
+    public static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
+    public static float genericTimeForChart(long currentTimePoint){
+        return (float)(currentTimePoint - BIG_DATE_FOR_EQUALS);
+    }
+    public static long genericTimeForChartLabels(float currentTimePoint){
+        return (BIG_DATE_FOR_EQUALS + (long) currentTimePoint);
+    }
+    private static long getBigTimeForEquals(){
+        Date date = new Date();
+        date.setDate(date.getDay() - 1);
+        return (date.getTime());
+    }
     public static String getConventDate(String date) {
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date resultDate = null;
@@ -31,7 +43,6 @@ public class ConventDate {
             return "";
         }
     }
-
     public static String convertDateFromMilSecHHMM(long time) {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
         Date date = new Date(Long.parseLong(String.valueOf(time)));
@@ -100,7 +111,6 @@ public class ConventDate {
         date.setMinutes(date.getMinutes() -30);
         return String.valueOf(date.getTime() / 1000);
     }
-
     public static String getChatDateByUnix(Context context, long unix) {
         Calendar calendarChat = Calendar.getInstance();
         calendarChat.setTimeInMillis(unix);
@@ -123,6 +133,4 @@ public class ConventDate {
 
         return date;
     }
-
-
 }
