@@ -1,14 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.fragments.DepositFragment">
+    tools:context=".views.fragments.DepositFragment"
+    tools:background="@drawable/bg">
 
-    <TextView android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="@string/toolbar_name_deposit"
-        style="@style/LigthText"
-        android:textSize="20sp"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_inout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
 
-</FrameLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_deposit"
+            style="@style/AccentButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/deposit"
+            android:textSize="16sp"/>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/login_page_link_block_padding">
+
+            <TextView
+                android:text="@string/withdraw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AdditionalText"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:id="@+id/tv_withdraw" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -3,6 +3,7 @@
     <string name="balance">Balance:</string>
     <string name="link_company">https://grandcapital.ru</string>
     <string name="deposit">DEPOSIT</string>
+    <string name="withdraw">WITHDRAW</string>
     <string name="active">Active</string>
     <string name="amount">Amount</string>
     <string name="time">Time</string>

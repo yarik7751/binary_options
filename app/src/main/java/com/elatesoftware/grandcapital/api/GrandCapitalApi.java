@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.api;
 
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
+import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
@@ -210,6 +211,24 @@ public class GrandCapitalApi {
         if(response != null) {
             if(response.code() == 200) {
                 BinaryOptionAnswer.setInstance(response.body());
+            }
+            result = String.valueOf(response.code());
+        }
+        return result;
+    }
+
+    public static String getMoneyTransactions(String tran) {
+        Call<ArrayList<InOutAnswer>> call = getApiService().getMoneyTransactions(User.getInstance().getLogin(), tran);
+        Response<ArrayList<InOutAnswer>> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null) {
+            if(response.code() == 200) {
+                InOutAnswer.setInstance(response.body());
             }
             result = String.valueOf(response.code());
         }

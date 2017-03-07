@@ -8,12 +8,15 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
@@ -26,6 +29,7 @@ import com.elatesoftware.grandcapital.models.QueueSocketAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
+import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.github.mikephil.charting.charts.LineChart;
@@ -39,10 +43,15 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TerminalFragment extends Fragment implements OnChartValueSelectedListener{
+
+    private static final String TAG = "TerminalFragment_Logs";
 
     private LineChart mChart;
     private Thread threadSymbolHistory;
@@ -65,6 +74,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private List<String> listActives = new ArrayList<>();
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
+    private LinearLayout llButtons, llDeposit;
+    RelativeLayout rlChart;
 
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
@@ -95,6 +106,41 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
         llLowerTerminal = (LinearLayout) parentView.findViewById(R.id.llLowerTerminal);
         llHigherTerminal = (LinearLayout) parentView.findViewById(R.id.llHigherTerminal);
+
+        llButtons = (LinearLayout) parentView.findViewById(R.id.ll_buttons);
+        llDeposit = (LinearLayout) parentView .findViewById(R.id.ll_deposit);
+        rlChart = (RelativeLayout) parentView.findViewById(R.id.rl_chart);
+
+        KeyboardVisibilityEvent.registerEventListener(getActivity(), new KeyboardVisibilityEventListener() {
+            @Override
+            public void onVisibilityChanged(boolean isOpen) {
+                /*Log.d(TAG, "onVisibilityChanged: " + isOpen);
+                Log.d(TAG, "etValueAmount: " + etValueAmount.isFocused());
+                Log.d(TAG, "etValueTime: " + etValueTime.isFocused());*/
+                if(etValueAmount.isFocused()) {
+                    if(isOpen) {
+                        String str = etValueAmount.getText().toString();
+                        str = str.replace("$", "");
+                        etValueAmount.setText(str);
+                    } else {
+                        String str = etValueAmount.getText().toString();
+                        etValueAmount.setText("$" + str);
+                    }
+                }
+                if(etValueTime.isFocused()) {
+                    if(isOpen) {
+                        String str = etValueTime.getText().toString();
+                        str = str.replace(" MIN", "");
+                        etValueTime.setText(str);
+                    } else {
+                        String str = etValueTime.getText().toString();
+                        etValueTime.setText(str + " MIN");
+                    }
+                }
+            }
+        });
+
+        setSizeHeight();
 
         registrationBroadcasts();
         initializationChart();
@@ -140,11 +186,31 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         llLowerTerminal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                Log.d(TAG, "getAmountValue: " + getAmountValue());
+                Log.d(TAG, "getTimeValue: " + getTimeValue());
             }
         });
     }
+
+    private double getAmountValue() {
+        String valueStr = etValueAmount.getText().toString();
+        valueStr = valueStr.replaceAll("[^0-9.]", "");
+        return Double.valueOf(valueStr);
+    }
+
+    private int getTimeValue() {
+        String valueStr = etValueTime.getText().toString();
+        valueStr = valueStr.replaceAll("[^0-9]", "");
+        return Integer.parseInt(valueStr);
+    }
+
+    private void setSizeHeight() {
+        int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
+        rlChart.getLayoutParams().height = (int) (height * 0.6);
+        llDeposit.getLayoutParams().height = (int) (height * 0.28);
+        llButtons.getLayoutParams().height = (int) (height * 0.11);
+    }
+
     private void updateBalance(){
         if(User.getInstance() != null){
             tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));

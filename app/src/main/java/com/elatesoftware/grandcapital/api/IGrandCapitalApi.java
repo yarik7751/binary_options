@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.api;
 
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
+import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
@@ -8,6 +9,7 @@ import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.RequestBody;
@@ -45,4 +47,7 @@ public interface IGrandCapitalApi {
 
     @GET("/api/bonus/bonus_description")
     Call<BinaryOptionAnswer> getBinaryOption();
+
+    @GET("my/webtrader/api/account/{login}/payments/{tran}/")
+    Call<ArrayList<InOutAnswer>> getMoneyTransactions(@Path("login") String login, @Path("tran") String tran);
 }
