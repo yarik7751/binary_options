@@ -24,11 +24,12 @@ public class SymbolHistoryService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String response = GrandCapitalApi.getSymbolHistory(intent.getStringExtra(SYMBOL));
+        String response = GrandCapitalApi.getSymbolHistory(intent.getStringExtra(SYMBOL) + "_OP");
         Intent responseIntent = new Intent();
         responseIntent.setAction(ACTION_SERVICE_SYMBOL_HISTORY);
         responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
         responseIntent.putExtra(RESPONSE, response);
+        responseIntent.putExtra(SYMBOL, intent.getStringExtra(SYMBOL));
         sendBroadcast(responseIntent);
     }
 }

@@ -10,6 +10,7 @@
     <string name="lower">LOWER</string>
     <string name="higher">HIGHER</string>
     <string name="yesterday">Вчера</string>
+    <string name="clode_dealing_title">Вы уверены. что хотите закрыть сделку?</string>
 
     <string-array name="months">
         <item>января</item>

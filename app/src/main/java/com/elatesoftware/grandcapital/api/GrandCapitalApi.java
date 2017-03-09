@@ -150,7 +150,6 @@ public class GrandCapitalApi {
         String result = null;
         String toTime = ConventDate.getTimeStampCurrentDate();
         String fromTime = ConventDate.getTimeStampLastDate();
-        symbol = (symbol + "_OP");
         Call<List<SymbolHistoryAnswer>> call = getApiService().getSymbolHistory(User.getInstance().getLogin(), fromTime, toTime, "1", symbol);
         try {
             response = call.execute();

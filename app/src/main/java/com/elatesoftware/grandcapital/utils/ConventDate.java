@@ -26,7 +26,7 @@ public class ConventDate {
     }
     private static long getBigTimeForEquals(){
         Date date = new Date();
-        date.setDate(date.getDay() - 1);
+        date.setHours(date.getHours() - 12);
         return (date.getTime());
     }
     public static String getConventDate(String date) {
@@ -112,7 +112,7 @@ public class ConventDate {
         return String.valueOf(date.getTime() / 1000);
     }
     public static long getTimePlusOneSecond(long time) {
-        Date date = new Date();
+        Date date = new Date(Long.parseLong(String.valueOf(time)));
         date.setSeconds(date.getSeconds() + 1);
         return date.getTime();
     }

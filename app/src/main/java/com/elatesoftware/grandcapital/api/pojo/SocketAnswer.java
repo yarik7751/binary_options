@@ -50,6 +50,9 @@ public class SocketAnswer {
     public static void setInstance(SocketAnswer answers) {
         answersInstance = answers;
     }
+    public static void nullInstance() {
+        answersInstance = null;
+    }
     public static void setInstance(String message) {
         answersInstance =  new Gson().fromJson(message, SocketAnswer.class);
     }

@@ -38,7 +38,9 @@ public class SymbolHistoryAnswer {
     public static void setInstance(List<SymbolHistoryAnswer> symbolList) {
         symbolInstance = symbolList;
     }
-
+    public static void nullInstance() {
+        symbolInstance = null;
+    }
     public Double getHigh() {
         return high;
     }

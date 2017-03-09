@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -59,8 +58,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
     private TextView tvBalance;
     private TextView tvDeposit;
-    private TextView tvLowerActive;
-    private TextView tvUpperActive;
+    private TextView tvLeftActive;
+    private TextView tvRightActive;
     private TextView tvValueActive;
     private TextView tvMinusAmount;
     private TextView tvPlusAmount;
@@ -95,8 +94,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
         tvDeposit = (TextView) parentView.findViewById(R.id.tvDepositTerminal);
 
-        tvLowerActive = (TextView) parentView.findViewById(R.id.tvLowerTabActiveTerminal);
-        tvUpperActive = (TextView) parentView.findViewById(R.id.tvUpperTabActiveTerminal);
+        tvLeftActive = (TextView) parentView.findViewById(R.id.tvLeftTabActiveTerminal);
+        tvRightActive = (TextView) parentView.findViewById(R.id.tvRightTabActiveTerminal);
         tvValueActive = (TextView) parentView.findViewById(R.id.tvValueTabActiveTerminal);
 
         tvMinusAmount = (TextView) parentView.findViewById(R.id.tvMinusTabAmountTerminal);
@@ -142,9 +141,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 }
             }
         });
-
         setSizeHeight();
-
         registrationBroadcasts();
         initializationChart();
         return parentView;
@@ -161,10 +158,26 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(1);
         } catch (Exception e){}
-        updateBalance();;
-        tvLowerActive.setOnClickListener(v -> {
-            if(listActives.size() > 0){
-                int index = listActives.indexOf(tvValueActive.getText().toString());
+        updateBalance();
+        tvValueActive.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(InfoAnswer.getInstance() != null){
+                    GrandCapitalApplication.closeSocket();
+                    clearChart();
+                    getSymbolHistory(getActive());
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+        tvLeftActive.setOnClickListener(v -> {
+            if(!getActive().equals("") && listActives.size() > 0){
+                int index = listActives.indexOf(getActive());
                 if(index == 0){
                     tvValueActive.setText(listActives.get(listActives.size() - 1));
                 }else{
@@ -172,9 +185,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 }
             }
         });
-        tvUpperActive.setOnClickListener(v -> {
-            if(listActives.size() > 0){
-                int index = listActives.indexOf(tvValueActive.getText().toString());
+        tvRightActive.setOnClickListener(v -> {
+            if(!getActive().equals("") && listActives.size() > 0){
+                int index = listActives.indexOf(getActive());
                 if(index == (listActives.size() - 1)){
                     tvValueActive.setText(listActives.get(0));
                 }else{
@@ -185,18 +198,20 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         tvDeposit.setOnClickListener(v -> {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
-        llLowerTerminal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*Log.d(TAG, "getAmountValue: " + getAmountValue());
-                Log.d(TAG, "getTimeValue: " + getTimeValue());*/
-
-                //CustomDialog.showDialogCloseDealing(getActivity(), null, null);
-
-                CustomDialog.showDialogOpenAccount(getActivity(), null);
-            }
+        llLowerTerminal.setOnClickListener(v -> {
+            CustomDialog.showDialogOpenAccount(getActivity(), null);
         });
     }
+    private String getActive(){
+        return tvValueActive.getText().toString().replace("_OP", "");
+    }
+    private void clearChart(){
+        mChart.getData().clearValues();
+        mChart.getLineData().clearValues();
+        SymbolHistoryAnswer.nullInstance();
+        SocketAnswer.nullInstance();
+    }
+
     private double getAmountValue() {
         String valueStr = etValueAmount.getText().toString();
         valueStr = valueStr.replaceAll("[^0-9.]", "");
@@ -235,16 +250,14 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             for(Instrument instrument: InfoAnswer.getInstance().getInstruments()){
                 listActives.add(instrument.getSymbol());
             }
-            tvValueActive.setText(listActives.get(0));
-            if(!tvValueActive.getText().toString().equals("")){
-                getSymbolHistory();
+            if(listActives != null && listActives.size() > 0 ){
+                tvValueActive.setText(listActives.get(listActives.indexOf("EURUSD")));
             }
         }
     }
-    private void getSymbolHistory(){
+    private void getSymbolHistory(String symbol){
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
-        //intentService.putExtra(SymbolHistoryService.SYMBOL, tvValueActive.getText().toString()); // TODO
-        intentService.putExtra(SymbolHistoryService.SYMBOL, "EURUSD");
+        intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
         getActivity().startService(intentService);
     }
     private void initializationChart() {
@@ -261,6 +274,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setPinchZoom(true);      // if disabled, scaling can be done on x- and y-axis separately
         mChart.setBackgroundColor(Color.TRANSPARENT); // set an alternative background color
         mChart.getLegend().setEnabled(false);   //Hide the legend
+        //mChart.setDragOffsetX(30f);// TODO norm padding chart in left
 
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
@@ -285,10 +299,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         rightAxis.setDrawGridLines(true);
         rightAxis.disableAxisLineDashedLine();
         rightAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
-
-        //mChart.setDragOffsetX(-10f);            // видимость графика не до конца экрана       // TODO norm padding chart in left
-        //mChart.setVisibleXRangeMinimum(90.0f);
-
     }
     private synchronized LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
@@ -311,7 +321,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         //set.setHighlightEnabled(false);  //  TODO hide Highlight
         return set;
     }
-    public synchronized void addEntry(SocketAnswer answer) {
+    public synchronized void addEntry(final SocketAnswer answer) {
         LineData data = mChart.getData();
         if (data != null) {
             ILineDataSet set = data.getDataSetByIndex(0);
@@ -324,7 +334,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 data.notifyDataChanged();
                 mChart.notifyDataSetChanged();
                 mChart.invalidate();
-                Log.d(GrandCapitalApplication.TAG_SOCKET, "in set = " + String.valueOf(set.getEntryCount()) + ",  chart added item and was invalidate");
             }
         }
     }
@@ -342,7 +351,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             //mChart.moveViewToX(data.getEntryCount()); // this automatically refreshes the chart (calls invalidate())
         }
     }
-    private void setDataSymbolHistory(List<SymbolHistoryAnswer> list) {
+    private void setDataSymbolHistory(List<SymbolHistoryAnswer> list, final String symbol) {
         if (threadSymbolHistory != null){
             threadSymbolHistory.interrupt();
         }
@@ -356,8 +365,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                     e.printStackTrace();
                 }
             }
-            mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
-            GrandCapitalApplication.openSocket();
+            if(mChart.getLineData() != null){
+                mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
+            }
+            GrandCapitalApplication.openSocket(symbol);
         });
         threadSymbolHistory.start();
     }
@@ -369,13 +380,16 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
         }
+        super.onPause();
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy()");
+        GrandCapitalApplication.closeSocket();
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
+        super.onDestroy();
     }
     @Override
     public void onValueSelected(Entry e, Highlight h) {
@@ -389,7 +403,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null){
                 if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals("200") && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals("200")){
                     setActives();
-                    tvBalance.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
+                    updateBalance();
                 }
             }
         }
@@ -401,7 +415,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             if (response != null) {
                 if (response.equals("200")) {
                     if(SymbolHistoryAnswer.getInstance() != null){
-                        setDataSymbolHistory(SymbolHistoryAnswer.getInstance());
+                        setDataSymbolHistory(SymbolHistoryAnswer.getInstance(), intent.getStringExtra(SymbolHistoryService.SYMBOL));
+                    }else{
+                        GrandCapitalApplication.openSocket(intent.getStringExtra(SymbolHistoryService.SYMBOL));
                     }
                 }
             }

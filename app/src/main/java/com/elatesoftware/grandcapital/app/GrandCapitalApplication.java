@@ -2,24 +2,14 @@ package com.elatesoftware.grandcapital.app;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.GrandCapitalApi;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
-import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
@@ -27,7 +17,6 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
 
-import java.net.ConnectException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
@@ -43,8 +32,6 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.security.cert.CertificateException;
-import javax.security.cert.X509Certificate;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
@@ -53,13 +40,12 @@ public class GrandCapitalApplication extends Application{
     private static Context context;
     private static SSLContext sc;
     public static WebSocketClient mClient;
-    public final static String TAG_SOCKET = "socket";
+    public final static String TAG_SOCKET = "debug_for_socket";
 
-    public static String symbol = "EURUSD_OP";
-    private static long currentTime = 0L;
-
-    static SocketAnswer answerLast = null;
-    private static boolean flag = false;
+    private static SocketAnswer answerCurrent = null;
+    private static SocketAnswer answerSave = null;
+    private static Timer timer;
+    private static String symbolCurrent = "";
 
     static {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -103,102 +89,109 @@ public class GrandCapitalApplication extends Application{
                 .build()
         );
         GrandCapitalApplication.context = getApplicationContext();
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if(flag){
-
-                }
-                sentAnswer();
-                Log.d(TAG_SOCKET, "timer ++");
-            }
-        }, 0, 1000);
     }
-
-    public static void closeSocket(){
-        if (mClient != null && mClient.getReadyState() == WebSocket.READYSTATE.OPEN){
-            mClient.close();
-        }
-    }
-    public static void openSocket(){
-        if (mClient != null && mClient.getReadyState() == WebSocket.READYSTATE.OPEN){
-            mClient.close();
-        }
-        if (mClient == null || mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
-           new SocketTask(symbol).execute();
-        }
-    }
-    public static SSLContext getSSLContext() {
-        return sc;
-    }
-
     public static Context getAppContext() {
         return GrandCapitalApplication.context;
     }
-    private static void connectWebSocket(String symbol) throws URISyntaxException {
+    private static void connectWebSocket() throws URISyntaxException {
         mClient = new WebSocketClient(new URI(GrandCapitalApi.SOCKET_URL), new Draft_17(), null, 30000){
             @Override
             public void onOpen(ServerHandshake handshakedata) {
                 Log.d(TAG_SOCKET, "Open Connect Socket");
-                mClient.send(symbol);
+                mClient.send(symbolCurrent);
+                startTimer();
             }
             @Override
             public void onMessage(final String message) {
                 Log.d(TAG_SOCKET, message);
-                    if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
-                        return;
-                    }
-                answerLast = SocketAnswer.getSetInstance(message);
-                    //SocketAnswer answer = SocketAnswer.getSetInstance(message);
-
-//                    if (answer.getTime() != null && !ConventDate.equalsTimeSocket(currentTime, answer.getTime())) {
-//                        currentTime = answer.getTime();
-//                        answerLast = answer;
-//                        flag = false;
-//                    } else {
-//                        flag = true;
-//                    }
+                if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
+                    return;
+                }
+                answerCurrent = SocketAnswer.getSetInstance(message);
+                if(!answerCurrent.getSymbol().equals(symbolCurrent)){
+                    answerCurrent = null;
+                }
             }
             @Override
             public void onClose(int code, String reason, boolean remote){
                 Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
+                stopTimer();
             }
             @Override
             public void onError(Exception ex){
-                if(ex instanceof ConnectException){
-                    //runOnUiThread(() -> Toast.makeText(getApplicationContext(), getResources().getString(R.string.request_error_text), Toast.LENGTH_LONG).show());
-                }
                 Log.d(TAG_SOCKET, "Error Connect in Socket - " + ex.toString());
+                stopTimer();
+                if(!symbolCurrent.equals("")){
+                    openSocket(symbolCurrent);
+                }
             }
         };
         WebSocketClient.WebSocketClientFactory factory = new DefaultSSLWebSocketClientFactory(GrandCapitalApplication.getSSLContext());
         mClient.setWebSocketFactory(factory);
         mClient.connect();
     }
-    static class SocketTask extends AsyncTask<Void, Void, Void> {
-        String symbol = "";
 
-        public SocketTask(String symbol) {
-            this.symbol = symbol;
+    private static void sentAnswer(final SocketAnswer answer){
+        if(answer != null && answer.getTime() != null && answer.getTime() != 0L /*&& TerminalFragment.getInstance().getActivity() != null*/){
+            if(answerSave != null && answerSave.getTime() != null && answerSave.getTime() != 0L && ConventDate.equalsTimeSocket(answerSave.getTime(), answer.getTime())){
+                answer.setTime(ConventDate.getTimePlusOneSecond(answer.getTime())/1000);
+            }
+            TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                TerminalFragment.getInstance().addEntry(answer);
+            });
+            answerSave = answer;
         }
+    }
 
+    private static void startTimer(){
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(answerCurrent != null){
+                    sentAnswer(answerCurrent);
+                }
+            }
+        }, 0, 1500);
+    }
+    private static void stopTimer(){
+        answerCurrent = null;
+        answerSave = null;
+        symbolCurrent = "";
+        timer.cancel();
+    }
+    public static void closeSocket(){
+        if (mClient != null && mClient.getReadyState() == WebSocket.READYSTATE.OPEN){
+            mClient.close();
+            stopTimer();
+        }
+    }
+    public static void openSocket(String symbol){
+        if(!symbol.equals("")){
+            symbolCurrent = symbol;
+            if (mClient == null || mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
+                new SocketTask().execute();
+            }else{
+                mClient.close();
+                while(mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
+
+                }
+                new SocketTask().execute();
+            }
+        }
+    }
+    public static SSLContext getSSLContext() {
+        return sc;
+    }
+    static class SocketTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params){
             try {
-                connectWebSocket(symbol);
+                connectWebSocket();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
             return null;
-        }
-    }
-
-    private void sentAnswer(){
-        if(answerLast != null){
-            TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                TerminalFragment.getInstance().addEntry(answerLast);
-                answerLast = null;
-            });
         }
     }
 }

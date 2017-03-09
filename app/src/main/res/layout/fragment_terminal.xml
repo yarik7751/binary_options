@@ -115,7 +115,7 @@
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:background="@drawable/front_elipsa"
-                                android:id="@+id/tvLowerTabActiveTerminal"
+                                android:id="@+id/tvLeftTabActiveTerminal"
                                 style="@style/LigthText"/>
                             <TextView
                                 android:layout_width="0dp"
@@ -133,7 +133,7 @@
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:background="@drawable/front_elipsa"
-                                android:id="@+id/tvUpperTabActiveTerminal"
+                                android:id="@+id/tvRightTabActiveTerminal"
                                 style="@style/LigthText"/>
                         </LinearLayout>
 
