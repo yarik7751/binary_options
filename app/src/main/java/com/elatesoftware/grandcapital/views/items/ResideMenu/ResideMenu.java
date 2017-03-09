@@ -534,9 +534,6 @@ public class ResideMenu extends FrameLayout {
                 pressedState = PRESSED_DOWN;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(!isScrolling) {
-                    return true;
-                }
                 if (isInIgnoredView || isInDisableDirection(scaleDirection)) {
                     break;
                 }
@@ -551,39 +548,42 @@ public class ResideMenu extends FrameLayout {
                         pressedState = PRESSED_MOVE_VERTICAL;
                         break;
                     }
-                    if (xOffset < -50 || xOffset > 50) {
-                        pressedState = PRESSED_MOVE_HORIZONTAL;
-                        ev.setAction(MotionEvent.ACTION_CANCEL);
+                    if(isScrolling){
+                        if (xOffset < -50 || xOffset > 50) {
+                            pressedState = PRESSED_MOVE_HORIZONTAL;
+                            ev.setAction(MotionEvent.ACTION_CANCEL);
+                        }
+                    }else{
+                        ev.setAction(MotionEvent.ACTION_MOVE);
                     }
                 } else if (pressedState == PRESSED_MOVE_HORIZONTAL) {
-                    if (currentActivityScaleX < 0.95) {
-                        showScrollViewMenu(scrollViewMenu);
-                    }
-                    float targetScale = getTargetScale(ev.getRawX());
-                    if (mUse3D) {
-                        int angle = scaleDirection == DIRECTION_LEFT ? -ROTATE_Y_ANGLE : ROTATE_Y_ANGLE;
-                        angle *= (1 - targetScale) * 2;
-                        ViewHelper.setRotationY(viewActivity, angle);
+                     if(isScrolling) {
+                         if (currentActivityScaleX < 0.95) {
+                             showScrollViewMenu(scrollViewMenu);
+                         }
+                         float targetScale = getTargetScale(ev.getRawX());
+                         if (mUse3D) {
+                             int angle = scaleDirection == DIRECTION_LEFT ? -ROTATE_Y_ANGLE : ROTATE_Y_ANGLE;
+                             angle *= (1 - targetScale) * 2;
+                             ViewHelper.setRotationY(viewActivity, angle);
 
-                        ViewHelper.setScaleX(imageViewShadow, targetScale - shadowAdjustScaleX);
-                        ViewHelper.setScaleY(imageViewShadow, targetScale - shadowAdjustScaleY);
-                    } else {
-                        ViewHelper.setScaleX(imageViewShadow, targetScale + shadowAdjustScaleX);
-                        ViewHelper.setScaleY(imageViewShadow, targetScale + shadowAdjustScaleY);
-                    }
-                    ViewHelper.setScaleX(viewActivity, targetScale);
-                    ViewHelper.setScaleY(viewActivity, targetScale);
-                    ViewHelper.setAlpha(scrollViewMenu, (1 - targetScale) * 2.0f);
+                             ViewHelper.setScaleX(imageViewShadow, targetScale - shadowAdjustScaleX);
+                             ViewHelper.setScaleY(imageViewShadow, targetScale - shadowAdjustScaleY);
+                         } else {
+                             ViewHelper.setScaleX(imageViewShadow, targetScale + shadowAdjustScaleX);
+                             ViewHelper.setScaleY(imageViewShadow, targetScale + shadowAdjustScaleY);
+                         }
+                         ViewHelper.setScaleX(viewActivity, targetScale);
+                         ViewHelper.setScaleY(viewActivity, targetScale);
+                         ViewHelper.setAlpha(scrollViewMenu, (1 - targetScale) * 2.0f);
 
-                    lastRawX = ev.getRawX();
+                         lastRawX = ev.getRawX();
+                     }
                     return true;
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                if (isInIgnoredView) {
-                    break;
-                }
-                if (pressedState != PRESSED_MOVE_HORIZONTAL) {
+                if (isInIgnoredView || pressedState != PRESSED_MOVE_HORIZONTAL || isScrolling) {
                     break;
                 }
                 pressedState = PRESSED_DONE;
