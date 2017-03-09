@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/bg_graphic">
 
     <ScrollView
         android:fillViewport="true"
@@ -114,7 +115,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:background="@drawable/front_elipsa"
+                                android:background="@drawable/ic_keyboard_arrow_left_white_18dp"
                                 android:id="@+id/tvLeftTabActiveTerminal"
                                 style="@style/LigthText"/>
                             <TextView
@@ -132,7 +133,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:background="@drawable/front_elipsa"
+                                android:background="@drawable/ic_keyboard_arrow_right_white_18dp"
                                 android:id="@+id/tvRightTabActiveTerminal"
                                 style="@style/LigthText"/>
                         </LinearLayout>
@@ -279,7 +280,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:background="@android:color/holo_red_dark"
+                    android:background="@color/dealingListDownOrderColor"
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:id="@+id/llLowerTerminal"
@@ -312,7 +313,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:background="@android:color/holo_green_dark"
+                    android:background="@color/dealingListUpOrderColor"
                     android:orientation="horizontal"
                     android:id="@+id/llHigherTerminal"
                     android:gravity="center">

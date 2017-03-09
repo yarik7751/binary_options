@@ -89,6 +89,7 @@ public class GrandCapitalApplication extends Application{
                 .build()
         );
         GrandCapitalApplication.context = getApplicationContext();
+        timer = new Timer();
     }
     public static Context getAppContext() {
         return GrandCapitalApplication.context;
@@ -144,7 +145,6 @@ public class GrandCapitalApplication extends Application{
     }
 
     private static void startTimer(){
-        timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {

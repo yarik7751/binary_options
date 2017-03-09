@@ -29,7 +29,7 @@ public class PromotionsFragment extends Fragment {
 
     public static final String TAG = "PromotionsFragment";
 
-    private TabLayout promotionsTabs;
+    //private TabLayout promotionsTabs;
     private RecyclerView rvPromotions;
     private LinearLayout llProgress;
 
@@ -64,13 +64,13 @@ public class PromotionsFragment extends Fragment {
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_promotions));
         BaseActivity.getToolbar().hideTabs();
 
-        promotionsTabs = (TabLayout) view.findViewById(R.id.promotionsTabs);
+        //promotionsTabs = (TabLayout) view.findViewById(R.id.promotionsTabs);
         rvPromotions = (RecyclerView) view.findViewById(R.id.promotionsListOpen);
         rvPromotions.setLayoutManager(new LinearLayoutManager(getContext()));
         llProgress = (LinearLayout) view.findViewById(R.id.fragment_dealing_progress_bar);
 
         loadBinaryOptionData();
-        promotionsTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        /*promotionsTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.d(TAG, "position: " + promotionsTabs.getSelectedTabPosition());
@@ -87,7 +87,7 @@ public class PromotionsFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {}
-        });
+        });*/
     }
 
     private void loadBinaryOptionData() {

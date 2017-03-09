@@ -55,5 +55,5 @@
         android:layout_marginRight="16dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/logo" />
+        android:src="@drawable/chat_logo" />
 </RelativeLayout>

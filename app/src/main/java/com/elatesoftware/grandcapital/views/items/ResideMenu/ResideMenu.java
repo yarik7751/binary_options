@@ -523,9 +523,9 @@ public class ResideMenu extends FrameLayout {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         float currentActivityScaleX = ViewHelper.getScaleX(viewActivity);
-        if (currentActivityScaleX == 1.0f) {
+        if (currentActivityScaleX == 1.0f)
             setScaleDirectionByRawX(ev.getRawX());
-        }
+
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastActionDownX = ev.getX();
@@ -533,13 +533,15 @@ public class ResideMenu extends FrameLayout {
                 isInIgnoredView = isInIgnoredView(ev) && !isOpened();
                 pressedState = PRESSED_DOWN;
                 break;
+
             case MotionEvent.ACTION_MOVE:
-                if (isInIgnoredView || isInDisableDirection(scaleDirection)) {
+                if (isInIgnoredView || isInDisableDirection(scaleDirection))
                     break;
-                }
-                if (pressedState != PRESSED_DOWN && pressedState != PRESSED_MOVE_HORIZONTAL) {
+
+                if (pressedState != PRESSED_DOWN &&
+                        pressedState != PRESSED_MOVE_HORIZONTAL)
                     break;
-                }
+
                 int xOffset = (int) (ev.getX() - lastActionDownX);
                 int yOffset = (int) (ev.getY() - lastActionDownY);
 
@@ -548,52 +550,47 @@ public class ResideMenu extends FrameLayout {
                         pressedState = PRESSED_MOVE_VERTICAL;
                         break;
                     }
-                    if(isScrolling){
-                        if (xOffset < -50 || xOffset > 50) {
-                            pressedState = PRESSED_MOVE_HORIZONTAL;
-                            ev.setAction(MotionEvent.ACTION_CANCEL);
-                        }
-                    }else{
-                        ev.setAction(MotionEvent.ACTION_MOVE);
+                    if ((xOffset < -50 || xOffset > 50) && isScrolling) {
+                        pressedState = PRESSED_MOVE_HORIZONTAL;
+                        ev.setAction(MotionEvent.ACTION_CANCEL);
                     }
                 } else if (pressedState == PRESSED_MOVE_HORIZONTAL) {
-                     if(isScrolling) {
-                         if (currentActivityScaleX < 0.95) {
-                             showScrollViewMenu(scrollViewMenu);
-                         }
-                         float targetScale = getTargetScale(ev.getRawX());
-                         if (mUse3D) {
-                             int angle = scaleDirection == DIRECTION_LEFT ? -ROTATE_Y_ANGLE : ROTATE_Y_ANGLE;
-                             angle *= (1 - targetScale) * 2;
-                             ViewHelper.setRotationY(viewActivity, angle);
+                    if (currentActivityScaleX < 0.95)
+                        showScrollViewMenu(scrollViewMenu);
 
-                             ViewHelper.setScaleX(imageViewShadow, targetScale - shadowAdjustScaleX);
-                             ViewHelper.setScaleY(imageViewShadow, targetScale - shadowAdjustScaleY);
-                         } else {
-                             ViewHelper.setScaleX(imageViewShadow, targetScale + shadowAdjustScaleX);
-                             ViewHelper.setScaleY(imageViewShadow, targetScale + shadowAdjustScaleY);
-                         }
-                         ViewHelper.setScaleX(viewActivity, targetScale);
-                         ViewHelper.setScaleY(viewActivity, targetScale);
-                         ViewHelper.setAlpha(scrollViewMenu, (1 - targetScale) * 2.0f);
+                    float targetScale = getTargetScale(ev.getRawX());
+                    if (mUse3D) {
+                        int angle = scaleDirection == DIRECTION_LEFT ? -ROTATE_Y_ANGLE : ROTATE_Y_ANGLE;
+                        angle *= (1 - targetScale) * 2;
+                        ViewHelper.setRotationY(viewActivity, angle);
 
-                         lastRawX = ev.getRawX();
-                     }
+                        ViewHelper.setScaleX(imageViewShadow, targetScale - shadowAdjustScaleX);
+                        ViewHelper.setScaleY(imageViewShadow, targetScale - shadowAdjustScaleY);
+                    } else {
+                        ViewHelper.setScaleX(imageViewShadow, targetScale + shadowAdjustScaleX);
+                        ViewHelper.setScaleY(imageViewShadow, targetScale + shadowAdjustScaleY);
+                    }
+                    ViewHelper.setScaleX(viewActivity, targetScale);
+                    ViewHelper.setScaleY(viewActivity, targetScale);
+                    ViewHelper.setAlpha(scrollViewMenu, (1 - targetScale) * 2.0f);
+
+                    lastRawX = ev.getRawX();
                     return true;
                 }
+
                 break;
+
             case MotionEvent.ACTION_UP:
-                if (isInIgnoredView || pressedState != PRESSED_MOVE_HORIZONTAL || isScrolling) {
-                    break;
-                }
+
+                if (isInIgnoredView) break;
+                if (pressedState != PRESSED_MOVE_HORIZONTAL) break;
+
                 pressedState = PRESSED_DONE;
                 if (isOpened()) {
-                    if (currentActivityScaleX > 0.56f) {
+                    if (currentActivityScaleX > 0.56f)
                         closeMenu();
-                    }
-                    else {
+                    else
                         openMenu(scaleDirection);
-                    }
                 } else {
                     if (currentActivityScaleX < 0.94f) {
                         openMenu(scaleDirection);

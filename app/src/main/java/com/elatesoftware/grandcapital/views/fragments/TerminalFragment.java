@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -53,6 +54,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
     private static final String TAG = "TerminalFragment_Logs";
 
+    public static boolean isOpen = false;
+
     private LineChart mChart;
     private Thread threadSymbolHistory;
 
@@ -81,6 +84,20 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             fragment = new TerminalFragment();
         }
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isOpen = true;
+        ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
+        Log.d(TAG, "isScrolling: " + ((BaseActivity) getActivity()).mResideMenu.isScrolling());
+        Log.d(TAG, "TerminalFragment.isOpen: " + TerminalFragment.isOpen);
     }
 
     @Override
@@ -116,35 +133,118 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         KeyboardVisibilityEvent.registerEventListener(getActivity(), new KeyboardVisibilityEventListener() {
             @Override
             public void onVisibilityChanged(boolean isOpen) {
-                /*Log.d(TAG, "onVisibilityChanged: " + isOpen);
-                Log.d(TAG, "etValueAmount: " + etValueAmount.isFocused());
-                Log.d(TAG, "etValueTime: " + etValueTime.isFocused());*/
                 if(etValueAmount.isFocused()) {
-                    if(isOpen) {
-                        String str = etValueAmount.getText().toString();
-                        str = str.replace("$", "");
-                        etValueAmount.setText(str);
-                    } else {
-                        String str = etValueAmount.getText().toString();
-                        etValueAmount.setText("$" + str);
-                    }
+                    setMaskAmount(isOpen);
                 }
                 if(etValueTime.isFocused()) {
-                    if(isOpen) {
-                        String str = etValueTime.getText().toString();
-                        str = str.replace(" MIN", "");
-                        etValueTime.setText(str);
-                    } else {
-                        String str = etValueTime.getText().toString();
-                        etValueTime.setText(str + " MIN");
-                    }
+                    setMaskTime(isOpen);
                 }
             }
         });
+
+        etValueAmount.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                setMaskAmount(hasFocus);
+            }
+        });
+
+        etValueTime.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                setMaskTime(hasFocus);
+            }
+        });
+
+        tvMinusAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeAmountValue(false);
+            }
+        });
+
+        tvPlusAmount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeAmountValue(true);
+            }
+        });
+
+        tvPlusTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeTimeValue(true);
+            }
+        });
+
+        tvMinusTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeTimeValue(false);
+            }
+        });
+
         setSizeHeight();
+
         registrationBroadcasts();
         initializationChart();
         return parentView;
+    }
+
+    private void setMaskAmount(boolean isBol) {
+        if(isBol) {
+            String str = etValueAmount.getText().toString();
+            str = str.replace("$", "");
+            etValueAmount.setText(str);
+        } else {
+            String str = etValueAmount.getText().toString();
+            if(!str.contains("$")) {
+                etValueAmount.setText("$" + str);
+            }
+        }
+    }
+
+    private void setMaskTime(boolean isBol) {
+        if(isBol) {
+            String str = etValueTime.getText().toString();
+            str = str.replace(" MIN", "");
+            etValueTime.setText(str);
+        } else {
+            String str = etValueTime.getText().toString();
+            if(!str.contains(" MIN")) {
+                etValueTime.setText(str + " MIN");
+            }
+        }
+    }
+
+    private void changeTimeValue(boolean isAdd) {
+        String str = etValueTime.getText().toString();
+        str = str.replace(" MIN", "");
+        int time = Integer.parseInt(str);
+        if(isAdd) {
+            time++;
+        } else {
+            time--;
+            if(time < 0) {
+                time = 0;
+            }
+        }
+        etValueTime.setText(time + " MIN");
+    }
+
+    private void changeAmountValue(boolean isAdd) {
+        String str = etValueAmount.getText().toString();
+        str = str.replace("$", "");
+        int amout = Integer.parseInt(str);
+        if(isAdd) {
+            amout++;
+        } else {
+            amout--;
+            if(amout < 0) {
+                amout = 0;
+            }
+        }
+        etValueAmount.setText("$" + amout);
     }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -376,11 +476,11 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause()");
+        isOpen = false;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(true);
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
         }
-        super.onPause();
     }
     @Override
     public void onDestroy() {

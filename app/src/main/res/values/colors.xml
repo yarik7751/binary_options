@@ -26,8 +26,8 @@
     <color name="dealingListTitlesColor">#b3ffffff</color>
     <color name="dealingListItemColor">#1affffff</color>
 
-    <color name="dealingListUpOrderColor">#00a39e</color>
-    <color name="dealingListDownOrderColor">#ff4c67</color>
+    <color name="dealingListUpOrderColor">#00bc97</color>
+    <color name="dealingListDownOrderColor">#fb3150</color>
 
     <color name="chart_line_selected_horizontal_with_marker">#158376</color>
     <color name="chart_values">#B9C5CB</color>

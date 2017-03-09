@@ -3,6 +3,7 @@ package com.elatesoftware.grandcapital.adapters.promotions;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
+import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.fragments.QuestionFragment;
 
 /**
  * Created by Ярослав Левшунов on 24.02.2017.
@@ -22,17 +25,6 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
 
     private Context context;
     private BinaryOptionAnswer binaryOptionAnswer;
-
-    private class FragmentPromotionsViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvName;
-        public ImageView imgLink;
-
-        public FragmentPromotionsViewHolder(View itemView) {
-            super(itemView);
-            tvName = (TextView) itemView.findViewById(R.id.tv_name);
-            imgLink = (ImageView) itemView.findViewById(R.id.img_link);
-        }
-    }
 
     public FragmentPromotionsAdapter(Context context, BinaryOptionAnswer binaryOptionAnswer) {
         this.context = context;
@@ -58,10 +50,35 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
                 context.startActivity(browserIntent);
             }
         });
+        promotionsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(QuestionFragment.HEADER_TEXT, binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
+                bundle.putString(QuestionFragment.CONTENT_TEXT, binaryOptionAnswer.getElements().get(position).getLongDescription());
+
+                QuestionFragment questionFragment = new QuestionFragment();
+                questionFragment.setArguments(bundle);
+                BaseActivity.addNextFragment(questionFragment);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return binaryOptionAnswer.getElements().size();
+    }
+
+    private class FragmentPromotionsViewHolder extends RecyclerView.ViewHolder {
+        public TextView tvName;
+        public ImageView imgLink;
+        public View itemView;
+
+        public FragmentPromotionsViewHolder(View itemView) {
+            super(itemView);
+            this.itemView = itemView;
+            tvName = (TextView) itemView.findViewById(R.id.tv_name);
+            imgLink = (ImageView) itemView.findViewById(R.id.img_link);
+        }
     }
 }

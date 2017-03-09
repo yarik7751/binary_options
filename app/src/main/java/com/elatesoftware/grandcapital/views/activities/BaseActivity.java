@@ -47,8 +47,8 @@ public class BaseActivity extends CustomFontsActivity {
     private ResideMenuItem mQuotes;
     private ResideMenuItem mHowItWorks;
     private ResideMenuItem mPromotions;
-    private ResideMenuItem mAccounts;
-    private ResideMenuItem mSettings;
+    //private ResideMenuItem mAccounts;
+    //private ResideMenuItem mSettings;
     private ResideMenuItem mLogout;
     private View mDeposit;
 
@@ -107,9 +107,9 @@ public class BaseActivity extends CustomFontsActivity {
         mQuotes = new ResideMenuItem(this, getString(R.string.menu_item_quotes));
         mHowItWorks = new ResideMenuItem(this, getString(R.string.menu_item_how_it_works));
         mPromotions = new ResideMenuItem(this, getString(R.string.menu_item_promotions));
-        mAccounts = new ResideMenuItem(this, getString(R.string.menu_item_accounts));
+        //mAccounts = new ResideMenuItem(this, getString(R.string.menu_item_accounts));
         mSupport = new ResideMenuItem(this, getString(R.string.menu_item_support));
-        mSettings = new ResideMenuItem(this, getString(R.string.menu_item_settings));
+        //mSettings = new ResideMenuItem(this, getString(R.string.menu_item_settings));
         mLogout = new ResideMenuItem(this, getString(R.string.menu_item_logout));
         mDeposit = mResideMenu.tvDepositMenu;
 
@@ -118,9 +118,9 @@ public class BaseActivity extends CustomFontsActivity {
         mQuotes.setOnClickListener(menuClickListener);
         mHowItWorks.setOnClickListener(menuClickListener);
         mPromotions.setOnClickListener(menuClickListener);
-        mAccounts.setOnClickListener(menuClickListener);
+        //mAccounts.setOnClickListener(menuClickListener);
         mSupport.setOnClickListener(menuClickListener);
-        mSettings.setOnClickListener(menuClickListener);
+        //mSettings.setOnClickListener(menuClickListener);
         mLogout.setOnClickListener(menuClickListener);
         mDeposit.setOnClickListener(menuClickListener);
 
@@ -129,18 +129,24 @@ public class BaseActivity extends CustomFontsActivity {
         mResideMenu.addMenuItem(mQuotes, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mHowItWorks, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mPromotions, ResideMenu.DIRECTION_LEFT);
-        mResideMenu.addMenuItem(mAccounts, ResideMenu.DIRECTION_LEFT);
+        //mResideMenu.addMenuItem(mAccounts, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mSupport, ResideMenu.DIRECTION_LEFT);
-        mResideMenu.addMenuItem(mSettings, ResideMenu.DIRECTION_LEFT);
+        //mResideMenu.addMenuItem(mSettings, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mLogout, ResideMenu.DIRECTION_LEFT);
     }
     private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
         @Override
         public void openMenu() {
             mDealing.setValue(9);
+            mResideMenu.setScrolling(true);
         }
         @Override
         public void closeMenu() {
+            if(TerminalFragment.isOpen) {
+                mResideMenu.setScrolling(false);
+            } else {
+                mResideMenu.setScrolling(true);
+            }
         }
     };
 
@@ -169,11 +175,11 @@ public class BaseActivity extends CustomFontsActivity {
                 changeMainFragment(new HowItWorksFragment());
             } else if (view == mPromotions) {
                 changeMainFragment(new PromotionsFragment());
-            } else if (view == mAccounts) {
+            } /*else if (view == mAccounts) {
                 changeMainFragment(new AccountsFragment());
-            } else if (view == mSettings) {
+            }*/ /*else if (view == mSettings) {
                 changeMainFragment(new SettingsFragment());
-            } else if (view == mDeposit) {
+            }*/ else if (view == mDeposit) {
                 changeMainFragment(new DepositFragment());
             }
             mResideMenu.closeMenu();

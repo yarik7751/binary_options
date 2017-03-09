@@ -55,5 +55,5 @@
         android:layout_marginLeft="16dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:src="@drawable/ic_account_circle_white_24dp" />
+        android:src="@drawable/avatar_chat" />
 </RelativeLayout>
