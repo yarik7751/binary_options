@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -84,20 +83,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             fragment = new TerminalFragment();
         }
         return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        isOpen = true;
-        ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
-        Log.d(TAG, "isScrolling: " + ((BaseActivity) getActivity()).mResideMenu.isScrolling());
-        Log.d(TAG, "TerminalFragment.isOpen: " + TerminalFragment.isOpen);
     }
 
     @Override
@@ -191,61 +176,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         return parentView;
     }
 
-    private void setMaskAmount(boolean isBol) {
-        if(isBol) {
-            String str = etValueAmount.getText().toString();
-            str = str.replace("$", "");
-            etValueAmount.setText(str);
-        } else {
-            String str = etValueAmount.getText().toString();
-            if(!str.contains("$")) {
-                etValueAmount.setText("$" + str);
-            }
-        }
-    }
-
-    private void setMaskTime(boolean isBol) {
-        if(isBol) {
-            String str = etValueTime.getText().toString();
-            str = str.replace(" MIN", "");
-            etValueTime.setText(str);
-        } else {
-            String str = etValueTime.getText().toString();
-            if(!str.contains(" MIN")) {
-                etValueTime.setText(str + " MIN");
-            }
-        }
-    }
-
-    private void changeTimeValue(boolean isAdd) {
-        String str = etValueTime.getText().toString();
-        str = str.replace(" MIN", "");
-        int time = Integer.parseInt(str);
-        if(isAdd) {
-            time++;
-        } else {
-            time--;
-            if(time < 0) {
-                time = 0;
-            }
-        }
-        etValueTime.setText(time + " MIN");
-    }
-
-    private void changeAmountValue(boolean isAdd) {
-        String str = etValueAmount.getText().toString();
-        str = str.replace("$", "");
-        int amout = Integer.parseInt(str);
-        if(isAdd) {
-            amout++;
-        } else {
-            amout--;
-            if(amout < 0) {
-                amout = 0;
-            }
-        }
-        etValueAmount.setText("$" + amout);
-    }
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -299,7 +229,19 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             BaseActivity.changeMainFragment(new DepositFragment());
         });
         llLowerTerminal.setOnClickListener(v -> {
-            CustomDialog.showDialogOpenAccount(getActivity(), null);
+            //CustomDialog.showDialogOpenAccount(getActivity(), null);
+            if(getAmountValue()!= 0 && getTimeValue() != 0 && !getActive().equals("")){
+
+            }else{
+                CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
+            }
+        });
+        llHigherTerminal.setOnClickListener(v -> {
+            if(getAmountValue()!= 0 && getTimeValue() != 0 && !getActive().equals("")){
+
+            }else{
+                CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
+            }
         });
     }
     private String getActive(){
@@ -311,7 +253,58 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         SymbolHistoryAnswer.nullInstance();
         SocketAnswer.nullInstance();
     }
-
+    private void setMaskAmount(boolean isBol) {
+        if(isBol) {
+            String str = etValueAmount.getText().toString();
+            str = str.replace("$", "");
+            etValueAmount.setText(str);
+        } else {
+            String str = etValueAmount.getText().toString();
+            if(!str.contains("$")) {
+                etValueAmount.setText("$" + str);
+            }
+        }
+    }
+    private void setMaskTime(boolean isBol) {
+        if(isBol) {
+            String str = etValueTime.getText().toString();
+            str = str.replace(" MIN", "");
+            etValueTime.setText(str);
+        } else {
+            String str = etValueTime.getText().toString();
+            if(!str.contains(" MIN")) {
+                etValueTime.setText(str + " MIN");
+            }
+        }
+    }
+    private void changeTimeValue(boolean isAdd) {
+        String str = etValueTime.getText().toString();
+        str = str.replace(" MIN", "");
+        int time = Integer.parseInt(str);
+        if(isAdd) {
+            time++;
+        } else {
+            time--;
+            if(time < 0) {
+                time = 0;
+            }
+        }
+        etValueTime.setText(time + " MIN");
+    }
+    private void changeAmountValue(boolean isAdd) {
+        String str = etValueAmount.getText().toString();
+        str = str.replace("$", "");
+        int amout = Integer.parseInt(str);
+        if(isAdd) {
+            amout++;
+        } else {
+            amout--;
+            if(amout < 0) {
+                amout = 0;
+            }
+        }
+        etValueAmount.setText("$" + amout);
+    }
     private double getAmountValue() {
         String valueStr = etValueAmount.getText().toString();
         valueStr = valueStr.replaceAll("[^0-9.]", "");
@@ -471,6 +464,15 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             GrandCapitalApplication.openSocket(symbol);
         });
         threadSymbolHistory.start();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isOpen = true;
+        ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
+        Log.d(TAG, "isScrolling: " + ((BaseActivity) getActivity()).mResideMenu.isScrolling());
+        Log.d(TAG, "TerminalFragment.isOpen: " + TerminalFragment.isOpen);
     }
     @Override
     public void onPause() {
