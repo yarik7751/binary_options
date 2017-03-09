@@ -42,9 +42,10 @@
         <service android:name=".services.SymbolHistoryService"/>
         <service android:name=".services.OrdersService"/>
         <service android:name=".services.QuestionsService"/>
-        <service android:name=".services.BinaryOptionService"></service>
-        <service android:name=".services.ChatService"></service>
-        <service android:name=".services.InOutService"></service>
+        <service android:name=".services.BinaryOptionService"/>
+        <service android:name=".services.ChatService"/>
+        <service android:name=".services.InOutService"/>
+        <service android:name=".services.MakeDealingService"/>
 
     </application>
 </manifest>

@@ -17,11 +17,13 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface IGrandCapitalApi {
+interface IGrandCapitalApi {
 
     @POST("/my/webtrader/api/account/signin/")
     Call<AuthorizationAnswer> tryToAuthorize(@Body RequestBody params);
@@ -50,4 +52,13 @@ public interface IGrandCapitalApi {
 
     @GET("my/webtrader/api/account/{login}/payments/{tran}/")
     Call<ArrayList<InOutAnswer>> getMoneyTransactions(@Path("login") String login, @Path("tran") String tran);
+
+    @GET("my/webtrader/api/account/{login}/trade/order")
+    Call<ResponseBody> makeDealing(@Header("X-Trader-Token") String token,
+                                   @Path("login") String login,
+                                   @Query("cmd") String cmd,
+                                   @Query("volume") String volume,
+                                   @Query("symbol") String symbol,
+                                   @Query("expiration") String expiration);
+
 }

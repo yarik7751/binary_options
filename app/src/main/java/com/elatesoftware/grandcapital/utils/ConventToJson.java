@@ -20,4 +20,13 @@ public class ConventToJson {
         return new Gson().toJson(jsonParams);
     }
 
+    public static String getJsonRequestMake(final String cmd, final String volume, final String expiration, final String symbol){
+        Map<String, Object> jsonParams = new HashMap<>();
+        jsonParams.put("cmd", cmd);
+        jsonParams.put("volume", volume);
+        jsonParams.put("expiration", expiration);
+        jsonParams.put("symbol", symbol);
+        return new Gson().toJson(jsonParams);
+    }
+
 }

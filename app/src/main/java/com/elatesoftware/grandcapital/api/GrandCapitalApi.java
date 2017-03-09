@@ -43,7 +43,6 @@ public class GrandCapitalApi {
 
     private static IGrandCapitalApi getApiService() {
         if (grandCapitalApiService == null) {
-
             CookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(GrandCapitalApplication.getAppContext()));
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .cookieJar(cookieJar)
@@ -86,8 +85,6 @@ public class GrandCapitalApi {
         String result = null;
         try {
             response = call.execute();
-        } catch (final java.net.SocketTimeoutException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,15 +98,12 @@ public class GrandCapitalApi {
         }
         return result;
     }
-
     public static String getInfoUser() {
         Call<InfoAnswer> call = getApiService().getInfo(User.getInstance().getLogin());
         Response<InfoAnswer> response = null;
         String result = null;
         try {
             response = call.execute();
-        } catch (final java.net.SocketTimeoutException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -122,15 +116,12 @@ public class GrandCapitalApi {
         }
         return result;
     }
-
     public static String getSummary() {
        Call<SummaryAnswer> call = getApiService().getSummary(User.getInstance().getLogin());
        Response<SummaryAnswer> response = null;
         String result = null;
         try {
             response = call.execute();
-        } catch (final java.net.SocketTimeoutException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -144,7 +135,6 @@ public class GrandCapitalApi {
         }
         return result;
     }
-
     public static String getSymbolHistory(String symbol) {
         Response<List<SymbolHistoryAnswer>> response = null;
         String result = null;
@@ -171,6 +161,25 @@ public class GrandCapitalApi {
                     }
                     SymbolHistoryAnswer.setInstance(list);
                 }
+            }
+            result = String.valueOf(response.code());
+        }
+        return result;
+    }
+    public static String getMakeDealing(String cmd, String volume, String symbol, String expiration){
+        Call<ResponseBody> call = getApiService().makeDealing(User.getInstance().getToken(),
+                                                              User.getInstance().getLogin(),
+                                                              cmd, volume, symbol, expiration);
+        Response<ResponseBody> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null){
+            if(response.code() == 200) {
+
             }
             result = String.valueOf(response.code());
         }
