@@ -34,47 +34,44 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp">
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            tools:text="@string/logout"
-            style="@style/LigthText"
-            android:id="@+id/tvInfoMsg"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginTop="20dp"
         android:gravity="right|bottom">
 
         <TextView
             android:id="@+id/tvCancel"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:gravity="center_horizontal"
             style="@style/BoldText"
             android:textColor="@color/colorAccent"
             android:text="@string/cancel"
-            android:paddingRight="30dp"
-            android:textSize="14sp"/>
+            android:textSize="12sp"/>
+
+        <TextView
+            android:id="@+id/tvMaybe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            style="@style/BoldText"
+            android:textColor="@color/colorAccent"
+            android:text="@string/cancel_dont_show"
+            android:textSize="12sp"/>
+
         <TextView
             android:id="@+id/tvOk"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:gravity="center_horizontal"
             style="@style/BoldText"
             android:textColor="@color/dealingListUpOrderColor"
             android:text="@string/ok"
-            android:paddingRight="16dp"
-            android:textSize="14sp"/>
+            android:textSize="12sp"/>
     </LinearLayout>
 </LinearLayout>

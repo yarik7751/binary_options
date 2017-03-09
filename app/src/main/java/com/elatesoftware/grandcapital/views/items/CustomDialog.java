@@ -72,7 +72,8 @@ public class CustomDialog {
         TextView tvInfoMsg = (TextView) dialog.findViewById(R.id.tvInfoMsg);
         TextView tvToolbarDialog = (TextView) dialog.findViewById(R.id.tvToolbarDialog);
 
-        tvInfoMsg.setText(activity.getResources().getString(R.string.logout));
+        tvInfoMsg.setText(activity.getResources().getString(R.string.logout) + "                                                                                                                              ");
+        //tvInfoMsg.setText("");
         tvToolbarDialog.setText(activity.getResources().getString(R.string.caution));
 
         tvOk.setOnClickListener(v -> {
@@ -85,6 +86,51 @@ public class CustomDialog {
         tvCancel.setOnClickListener(v -> {
             dialog.cancel();
         });
+        dialog.show();
+    }
+
+    public static void showDialogCloseDealing(Activity activity, View.OnClickListener listnerOk, View.OnClickListener listnerMaybe) {
+        Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_close_dealing);
+
+        TextView tvOk = (TextView) dialog.findViewById(R.id.tvOk);
+        TextView tvCancel = (TextView) dialog.findViewById(R.id.tvCancel);
+        TextView tvMaybe = (TextView) dialog.findViewById(R.id.tvMaybe);
+        TextView tvToolbarDialog = (TextView) dialog.findViewById(R.id.tvToolbarDialog);
+
+        tvToolbarDialog.setText(activity.getResources().getString(R.string.clode_dealing_title));
+
+        tvOk.setOnClickListener(listnerOk);
+        tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        tvMaybe.setOnClickListener(listnerMaybe);
+
+        dialog.show();
+    }
+
+    public static void showDialogOpenAccount(Activity activity, View.OnClickListener listnerOpenAccount) {
+        Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_open_account);
+
+        Button btnOpenAccaunt = (Button) dialog.findViewById(R.id.btn_open_accaunt);
+        TextView tvLater = (TextView) dialog.findViewById(R.id.tv_later);
+
+        tvLater.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        btnOpenAccaunt.setOnClickListener(listnerOpenAccount);
+
         dialog.show();
     }
 }

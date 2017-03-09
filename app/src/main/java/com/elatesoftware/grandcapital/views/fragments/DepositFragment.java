@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
@@ -40,6 +41,7 @@ public class DepositFragment  extends Fragment {
     private RecyclerView rvIoOut;
     private Button btnDeposit;
     private TextView tvWithdraw;
+    private LinearLayout llProgress;
 
     private ArrayList<InOutAnswer> deposits;
     private ArrayList<InOutAnswer> withdraws;
@@ -99,6 +101,7 @@ public class DepositFragment  extends Fragment {
         testMethod();
         //rvIoOut.setAdapter(new InOutAdapter());
         //query(InOutService.DEPOSIT);
+        //llProgress.setVisibility(View.VISIBLE);
     }
 
     //тестовый метод
@@ -156,6 +159,7 @@ public class DepositFragment  extends Fragment {
                         if(transaction.equals(InOutService.WITHDRAW)) {
                             withdraws = InOutAnswer.getInstance();
                             rvIoOut.setAdapter(new InOutAdapter(deposits, withdraws));
+                            llProgress.setVisibility(View.INVISIBLE);
                         }
                     }
                 } else {

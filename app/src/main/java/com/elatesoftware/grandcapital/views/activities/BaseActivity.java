@@ -40,7 +40,7 @@ public class BaseActivity extends CustomFontsActivity {
     public static final String TAG = "BaseActivity_TAG";
 
     public static FragmentManager fragmentManager;
-    private ResideMenu mResideMenu;
+    public ResideMenu mResideMenu;
     private ResideMenuItem mTerminal;
     private ResideMenuItem mSupport;
     private ResideMenuItemWithMark mDealing;
@@ -143,9 +143,10 @@ public class BaseActivity extends CustomFontsActivity {
         public void closeMenu() {
         }
     };
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-         return mResideMenu.dispatchTouchEvent(ev);
+        return mResideMenu.dispatchTouchEvent(ev);
     }
 
     private View.OnClickListener menuClickListener = new View.OnClickListener() {
@@ -212,7 +213,12 @@ public class BaseActivity extends CustomFontsActivity {
 
     public static void changeMainFragment(Fragment targetFragment) {
         backToRootFragment = true;
-        onSwitchFragment(targetFragment, targetFragment.getClass().getName(), false, true, R.id.content);
+        //int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+        //Log.d(TAG, "BackStackEntryCount 1: " + backStackEntryCount);
+        fragmentManager.popBackStack();
+        //backStackEntryCount = fragmentManager.getBackStackEntryCount();
+        //Log.d(TAG, "BackStackEntryCount 2: " + backStackEntryCount);
+        onSwitchFragment(targetFragment, targetFragment.getClass().getName(), true, true, R.id.content);
         Log.d(TAG, "BackStackEntryCount: " + fragmentManager.getBackStackEntryCount());
     }
 
@@ -221,9 +227,18 @@ public class BaseActivity extends CustomFontsActivity {
     }
 
     public static void setTerminalFragment() {
+        if(backToRootFragment) {
+            clearFragmentBackStack();
+        }
         backToRootFragment = false;
         TerminalFragment fragment = TerminalFragment.getInstance();
         onSwitchFragment(fragment, fragment.getClass().getName(), false, true, R.id.content);
+    }
+
+    private static void clearFragmentBackStack() {
+        for(int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
+            fragmentManager.popBackStack();
+        }
     }
 
     public static void onSwitchFragment(Fragment fragment, String tag, boolean add, boolean anim, int res) {

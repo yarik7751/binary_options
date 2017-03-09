@@ -32,6 +32,7 @@ import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -86,6 +87,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
+
+        BaseActivity.backToRootFragment = false;
+        ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
+
         mChart = (LineChart) parentView.findViewById(R.id.chart);
         tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
         tvDeposit = (TextView) parentView.findViewById(R.id.tvDepositTerminal);
@@ -180,9 +185,16 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         tvDeposit.setOnClickListener(v -> {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
-        llLowerTerminal.setOnClickListener(v -> {
-            Log.d(TAG, "getAmountValue: " + getAmountValue());
-            Log.d(TAG, "getTimeValue: " + getTimeValue());
+        llLowerTerminal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*Log.d(TAG, "getAmountValue: " + getAmountValue());
+                Log.d(TAG, "getTimeValue: " + getTimeValue());*/
+
+                //CustomDialog.showDialogCloseDealing(getActivity(), null, null);
+
+                CustomDialog.showDialogOpenAccount(getActivity(), null);
+            }
         });
     }
     private double getAmountValue() {
@@ -352,6 +364,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     @Override
     public void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause()");
+        ((BaseActivity) getActivity()).mResideMenu.setScrolling(true);
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
         }
@@ -359,6 +373,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy()");
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
     }

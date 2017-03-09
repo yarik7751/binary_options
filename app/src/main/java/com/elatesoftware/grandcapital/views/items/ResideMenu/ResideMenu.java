@@ -63,6 +63,9 @@ public class ResideMenu extends FrameLayout {
     private boolean mUse3D;
     private static final int ROTATE_Y_ANGLE = 10;
 
+    //yarik
+    private boolean isScrolling;
+
     private TextView userName;
     private TextView balance;
     public TextView tvDepositMenu;
@@ -134,6 +137,14 @@ public class ResideMenu extends FrameLayout {
                 bottomPadding);
         insets.left = insets.top = insets.right = insets.bottom = 0;
         return true;
+    }
+
+    public boolean isScrolling() {
+        return isScrolling;
+    }
+
+    public void setScrolling(boolean scrolling) {
+        isScrolling = scrolling;
     }
 
     private int getNavigationBarHeight() {
@@ -523,6 +534,9 @@ public class ResideMenu extends FrameLayout {
                 pressedState = PRESSED_DOWN;
                 break;
             case MotionEvent.ACTION_MOVE:
+                if(!isScrolling) {
+                    return true;
+                }
                 if (isInIgnoredView || isInDisableDirection(scaleDirection)) {
                     break;
                 }

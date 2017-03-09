@@ -26,8 +26,8 @@
     <color name="dealingListTitlesColor">#b3ffffff</color>
     <color name="dealingListItemColor">#1affffff</color>
 
-    <color name="dealingListUpOrderColor">#78d261</color>
-    <color name="dealingListDownOrderColor">#de4d66</color>
+    <color name="dealingListUpOrderColor">#00a39e</color>
+    <color name="dealingListDownOrderColor">#ff4c67</color>
 
     <color name="chart_line_selected_horizontal_with_marker">#158376</color>
     <color name="chart_values">#B9C5CB</color>
@@ -38,4 +38,6 @@
     <color name="chat_your_msg">#997f7f7f</color>
     <color name="chat_their_msg">#9900b694</color>
 
+    <color name="close_dealing_background">@color/chat_their_msg</color>
+    <color name="open_dealing_background">#99000000</color>
 </resources>

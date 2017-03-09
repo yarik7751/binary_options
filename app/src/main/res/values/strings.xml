@@ -19,11 +19,19 @@
     <string name="connection_not_secure">Your connection is not private. Do you want to continue?</string>
     <string name="yes">Yes</string>
     <string name="cancel">CANCEL</string>
+    <string name="cancel_dont_show">CANCEL, DON"T ASK AGAIN</string>
     <string name="ok">OK</string>
     <string name="caution">Caution!</string>
     <string name="logout">Do you want to log out?</string>
     <string name="reward">Reward: $</string>
+    <string name="clode_dealing_title">Вы уверены. что хотите закрыть сделку?</string>
+    <string name="open_account">OPEN ACCOUNT</string>
+    <string name="later">LATER</string>
+    <string name="open_account_message">Вы совершили несколько успешных сделок.\nПочему бы не попробовать заработать реальные деньги?</string>
+    <string name="open_account_title">Откройте реальный счет</string>
 
+    <string name="label_open_dealing_title">СДЕЛКА ОТКРЫТА</string>
+    <string name="label_close_dealing_title">СДЕЛКА ЗАКРЫТА</string>
     <!--Signin activity-->
     <string name="signin_page_button_text">SIGN IN</string>
     <string name="signin_page_signup_link_text">Don\'t have an Account? Sign up</string>
