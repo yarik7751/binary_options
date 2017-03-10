@@ -72,7 +72,6 @@ public class CustomDialog {
         tvToolbarDialog.setText(activity.getResources().getString(R.string.caution));
 
         tvOk.setOnClickListener(v -> {
-            GrandCapitalApplication.closeSocket();
             CustomSharedPreferences.deleteInfoUser(activity.getApplicationContext());
             Intent intent = new Intent(activity.getApplicationContext(), SignInActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);

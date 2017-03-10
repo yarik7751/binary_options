@@ -45,7 +45,7 @@ public class ConventDate {
     }
     public static String convertDateFromMilSecHHMM(long time) {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
-        Date date = new Date(Long.parseLong(String.valueOf(time)));
+        Date date = new Date(time);
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
         return formatter.format(date);
     }
@@ -53,8 +53,8 @@ public class ConventDate {
         if(currentTime == 0L){
             return false;
         }else{
-             Date currentDate = new Date(Long.parseLong(String.valueOf(currentTime)));
-             Date newDate = new Date(Long.parseLong(String.valueOf(newTime)));
+             Date currentDate = new Date(currentTime);
+             Date newDate = new Date(newTime);
             if((currentDate.getSeconds() == newDate.getSeconds()) ||
                     (((newDate.getSeconds() - currentDate.getSeconds()))) < 2){
                 return true;
@@ -67,9 +67,9 @@ public class ConventDate {
         if(currentTime == 0L){
             return false;
         }else{
-            Date currentDate = new Date(Long.parseLong(String.valueOf(currentTime)));
-            Date newDate = new Date(Long.parseLong(String.valueOf(newTime)));
-            if((newDate.getSeconds() - currentDate.getSeconds() <= 1)){
+            Date currentDate = new Date(currentTime);
+            Date newDate = new Date(newTime);
+            if((newDate.getSeconds() - currentDate.getSeconds() <= 1.5)){
                 return true;
             }else{
                 return false;
@@ -77,42 +77,18 @@ public class ConventDate {
         }
     }
     public static String getTimeStampCurrentDate() {
-        /*DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        long unixtime = 0;
-        Date date = new Date();
-        String time = dfm.format(date);
-        dfm.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
-        try {
-            unixtime = dfm.parse(time).getTime();
-            unixtime = unixtime / 1000;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return String.valueOf(unixtime);*/
-
         Date date = new Date();
         return String.valueOf(date.getTime() / 1000);
     }
     public static String getTimeStampLastDate() {
-       /* DateFormat dfm = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        long unixtime = 0;
         Date date = new Date();
-        date.setMinutes(date.getMinutes() -30);
-        String time = dfm.format(date);
-        dfm.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
-        try {
-            unixtime = dfm.parse(time).getTime();
-            unixtime = unixtime / 1000;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return String.valueOf(unixtime);*/
-        Date date = new Date();
-        date.setMinutes(date.getMinutes() -30);
+        date.setMinutes(date.getMinutes() - 30);
         return String.valueOf(date.getTime() / 1000);
     }
     public static long getTimePlusOneSecond(long time) {
-        Date date = new Date(Long.parseLong(String.valueOf(time)));
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date date = new Date(time);
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
         date.setSeconds(date.getSeconds() + 1);
         return date.getTime();
     }
