@@ -6,6 +6,7 @@ import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.api.pojo.SignalAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
@@ -17,6 +18,9 @@ import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,6 +56,24 @@ public class GrandCapitalApi {
                     .build();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+            grandCapitalApiService = retrofit.create(IGrandCapitalApi.class);
+        }
+        return grandCapitalApiService;
+    }
+    private static IGrandCapitalApi getSimpleService() {
+        if (grandCapitalApiService == null) {
+            CookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(GrandCapitalApplication.getAppContext()));
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .cookieJar(cookieJar)
+                    .connectTimeout(5, TimeUnit.MINUTES)
+                    .writeTimeout(5, TimeUnit.MINUTES)
+                    .readTimeout(5, TimeUnit.MINUTES)
+                    .build();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(okHttpClient)
                     .build();
@@ -135,6 +157,24 @@ public class GrandCapitalApi {
         }
         return result;
     }
+    public static String getSignals(){
+        Call<List<SignalAnswer>> call = getSimpleService().getSignals();
+        Response<List<SignalAnswer>> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null){
+            if(response.code() == 200) {
+               SignalAnswer.setInstance(response.body());
+            }
+            result = String.valueOf(response.code());
+        }
+        return result;
+    }
+
     public static String getSymbolHistory(String symbol) {
         Response<List<SymbolHistoryAnswer>> response = null;
         String result = null;
@@ -179,7 +219,21 @@ public class GrandCapitalApi {
         }
         if(response != null){
             if(response.code() == 200) {
-
+                try {
+                    result = response.body().string();
+                    try {
+                        JSONObject json = new JSONObject(result);
+                        if(json.has("success")){
+                            if(json.getBoolean("success")){
+                               return "true";
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             result = String.valueOf(response.code());
         }

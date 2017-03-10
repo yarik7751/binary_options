@@ -21,7 +21,7 @@ public class MyMarkerView extends MarkerView {
 
     public MyMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
-        tvContent = (TextView) findViewById(R.id.tvContent);
+        //tvContent = (TextView) findViewById(R.id.tvContent);
     }
     @Override
     public void refreshContent(Entry e, Highlight highlight) {

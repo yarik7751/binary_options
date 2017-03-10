@@ -6,8 +6,10 @@ import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.api.pojo.SignalAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
+import com.elatesoftware.grandcapital.services.SignalService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,8 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -50,15 +54,18 @@ interface IGrandCapitalApi {
     @GET("/api/bonus/bonus_description")
     Call<BinaryOptionAnswer> getBinaryOption();
 
-    @GET("my/webtrader/api/account/{login}/payments/{tran}/")
+    @GET("/my/webtrader/api/account/{login}/payments/{tran}/")
     Call<ArrayList<InOutAnswer>> getMoneyTransactions(@Path("login") String login, @Path("tran") String tran);
 
-    @GET("my/webtrader/api/account/{login}/trade/order")
+    @POST("/my/webtrader/api/account/{login}/trade/order/")
+    @FormUrlEncoded
     Call<ResponseBody> makeDealing(@Header("X-Trader-Token") String token,
                                    @Path("login") String login,
-                                   @Query("cmd") String cmd,
-                                   @Query("volume") String volume,
-                                   @Query("symbol") String symbol,
-                                   @Query("expiration") String expiration);
+                                   @Field("cmd") String cmd,
+                                   @Field("volume") String volume,
+                                   @Field("symbol") String symbol,
+                                   @Field("expiration") String expiration);
 
+    @GET("https://grandcapital.net/api/technical_summary/")
+    Call<List<SignalAnswer>> getSignals();
 }

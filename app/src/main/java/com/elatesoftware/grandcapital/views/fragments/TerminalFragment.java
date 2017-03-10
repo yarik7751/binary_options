@@ -23,12 +23,14 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
+import com.elatesoftware.grandcapital.api.pojo.SignalAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.MakeDealingService;
+import com.elatesoftware.grandcapital.services.SignalService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
@@ -80,6 +82,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
     private GetResponseMakeDealingBroadcastReceiver mMakeDealingBroadcastReceiver;
+    private GetResponseSignalsBroadcastReceiver mSignalsBroadcastReceiver;
 
     public boolean direction = true;
 
@@ -123,8 +126,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         rlChart = (RelativeLayout) parentView.findViewById(R.id.rl_chart);
         llProgressBar = (LinearLayout) parentView.findViewById(R.id.progress_bar);
         flMain = (FrameLayout) parentView.findViewById(R.id.fl_main);
-        setSizeHeight();
 
+        setSizeHeight();
         registrationBroadcasts();
         initializationChart();
         return parentView;
@@ -209,13 +212,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private String getActive(){
         return tvValueActive.getText().toString().replace("_OP", "");
     }
-    private void newActive(){
-        clearChart();
-        GrandCapitalApplication.closeSocket();
-        getSymbolHistory(getActive());
-        tvLeftActive.setEnabled(false);
-        tvRightActive.setEnabled(false);
-    }
     private void clearChart(){
         mChart.getData().clearValues();
         mChart.getLineData().clearValues();
@@ -281,6 +277,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         return Double.valueOf(valueStr);
     }
     public void showTopPanel() {
+        Intent intentService = new Intent(getActivity(), SignalService.class);
+        getActivity().startService(intentService);
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(direction ? 60 : -60));
         animation.setDuration(200);
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -336,6 +334,11 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         IntentFilter intentFilterMakeDealing = new IntentFilter(MakeDealingService.ACTION_SERVICE_MAKE_DEALING);
         intentFilterMakeDealing.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mMakeDealingBroadcastReceiver, intentFilterMakeDealing);
+
+        mSignalsBroadcastReceiver = new GetResponseSignalsBroadcastReceiver();
+        IntentFilter intentFilterSignal = new IntentFilter(SignalService.ACTION_SERVICE_SIGNAL);
+        intentFilterSignal.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mSignalsBroadcastReceiver, intentFilterSignal);
     }
     private void setActives(){
         if(InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getInstruments() != null &&  InfoAnswer.getInstance().getInstruments().size() > 0){
@@ -348,11 +351,18 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         }
     }
+    private void onlyOpenSocket(){
+        clearChart();
+        GrandCapitalApplication.openSocket(getActive());
+    }
     private void setSelectedActive(String symbol){
         tvValueActive.setText(symbol);
-        newActive();
+        clearChart();
+        GrandCapitalApplication.closeSocket();
+        getSymbolHistory(getActive());
+        tvLeftActive.setEnabled(false);
+        tvRightActive.setEnabled(false);
     }
-
     private void getSymbolHistory(String symbol){
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
         intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
@@ -363,8 +373,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setNoDataText(getResources().getString(R.string.request_error_title));
         mChart.setDragDecelerationFrictionCoef(0.95f); // задержка при перетаскивании
         mChart.setPadding(0,0,0,0);
+        mChart.setAutoScaleMinMaxEnabled(true);
         mChart.setScaleYEnabled(false);
-        mChart.setScaleXEnabled(true);
+        //mChart.setScaleXEnabled(true);
         mChart.setDoubleTapToZoomEnabled(false);
         mChart.getDescription().setEnabled(false);// enable description text
         mChart.setTouchEnabled(true);      // enable touch gestures жесты
@@ -412,13 +423,13 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         set.setValueTextSize(9f);
         set.setDrawValues(false);
         set.setDrawCircles(false);
-        //set.setCircleRadius(2f);
         set.setDrawCircleHole(false);
         set.setDrawFilled(true);
         set.setFillColor(Color.WHITE);    //fill color chart
         set.setFillAlpha(50);
-        //set.setHighlightEnabled(false);  //  TODO hide Highlight
+        set.setHighlightEnabled(false);  //  TODO hide Highlight
         return set;
+        //set.getEntryForIndex(set.getEntryCount() - 1)
     }
     public synchronized void addEntry(final SocketAnswer answer) {
         LineData data = mChart.getData();
@@ -432,7 +443,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 data.addEntry(new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk()))), 0);
                 data.notifyDataChanged();
                 mChart.notifyDataSetChanged();
-                mChart.invalidate();
             }
         }
     }
@@ -465,10 +475,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                     e.printStackTrace();
                 }
             }
-            GrandCapitalApplication.openSocket(symbol);
             if(mChart.getLineData() != null){
                 mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
             }
+            GrandCapitalApplication.openSocket(symbol);
         });
         threadSymbolHistory.start();
     }
@@ -491,7 +501,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
         }
-
     }
     @Override
     public void onDestroy() {
@@ -500,6 +509,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
         getActivity().unregisterReceiver(mMakeDealingBroadcastReceiver);
+        getActivity().unregisterReceiver(mSignalsBroadcastReceiver);
         super.onDestroy();
     }
     @Override
@@ -529,12 +539,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                     if(SymbolHistoryAnswer.getInstance() != null){
                         setDataSymbolHistory(SymbolHistoryAnswer.getInstance(), getActive());
                     }else{
-                        GrandCapitalApplication.openSocket(SYMBOL);
+                        onlyOpenSocket();
                     }
                 }
             }
             else{
-                GrandCapitalApplication.openSocket(SYMBOL);
+                onlyOpenSocket();
             }
             tvLeftActive.setEnabled(true);
             tvRightActive.setEnabled(true);
@@ -546,8 +556,32 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(MakeDealingService.RESPONSE);
             if (response != null) {
-                if (response.equals("200")) {
+                if (response.equals("true")) {
 
+                }else{
+                    CustomDialog.showDialogInfo(getActivity(),
+                            getResources().getString(R.string.error),
+                            getResources().getString(R.string.request_error_text));
+                }
+            }
+        }
+    }
+    public class GetResponseSignalsBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String response = intent.getStringExtra(SignalService.RESPONSE);
+            if (response != null) {
+                if (response.equals("200")) {
+                    if(SignalAnswer.getInstance() != null){
+                        List<SignalAnswer> listForActive = new ArrayList<>();
+                          for(SignalAnswer answer : SignalAnswer.getInstance()){
+
+                          }
+                    }
+                }else{
+                    CustomDialog.showDialogInfo(getActivity(),
+                            getResources().getString(R.string.error),
+                            getResources().getString(R.string.request_error_text));
                 }
             }
         }
