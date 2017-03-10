@@ -106,7 +106,7 @@ public class DepositFragment  extends Fragment {
 
     //тестовый метод
     private void testMethod() {
-        InOutAnswer inOutAnswer1d = new InOutAnswer(new InOutAnswer.AmountMoney("$12"), "VISA", "Ok", "03.05.2014");
+        InOutAnswer inOutAnswer1d = new InOutAnswer(new InOutAnswer.AmountMoney("$122000"), "VISA", "Ok", "03.05.2014");
         InOutAnswer inOutAnswer2d = new InOutAnswer(new InOutAnswer.AmountMoney("$65"), "VISA", "Ok", "07.05.2014");
         InOutAnswer inOutAnswer3d = new InOutAnswer(new InOutAnswer.AmountMoney("$48"), "VISA", "Ok", "12.05.2014");
         InOutAnswer inOutAnswer4d = new InOutAnswer(new InOutAnswer.AmountMoney("$12"), "Master card", "Ok", "03.04.2014");

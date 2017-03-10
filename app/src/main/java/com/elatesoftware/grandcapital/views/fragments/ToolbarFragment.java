@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
@@ -170,6 +171,7 @@ public class ToolbarFragment extends Fragment {
 
         mTabLayout.setVisibility(View.VISIBLE);
         mTabLayout.showAllTabs();
+        showTabs();
         switch (type) {
             case TOOLBAR_TERMINALE_FRAGMENT:
                 mTabLayout.showTab(0);
@@ -187,7 +189,8 @@ public class ToolbarFragment extends Fragment {
                 break;
 
             case TOOLBAR_EMPTY_FRAGMENT:
-                mTabLayout.setVisibility(View.INVISIBLE);
+                //mTabLayout.setVisibility(View.INVISIBLE);
+                hideTabs();
                 break;
             case TOOLBAR_REFRESH_FRAGMENT:
                 mTabLayout.hideTab(0);
@@ -205,14 +208,18 @@ public class ToolbarFragment extends Fragment {
 
     public void hideTabs() {
         if (mTabLayout.getVisibility() == View.VISIBLE) {
-            mTabLayout.setVisibility(View.INVISIBLE);
+            mTabLayout.setVisibility(View.GONE);
+            mTabLayout.getLayoutParams().width = 0;
+            ((RelativeLayout.LayoutParams) mPageTitle.getLayoutParams()).rightMargin = AndroidUtils.dp(1);
         }
     }
 
-    private void showTabs() {
-        if (mTabLayout.getVisibility() == View.INVISIBLE) {
+    public void showTabs() {
+        //if (mTabLayout.getVisibility() == View.INVISIBLE || mTabLayout.getVisibility() == View.GONE) {
             mTabLayout.setVisibility(View.VISIBLE);
-        }
+            mTabLayout.getLayoutParams().width = AndroidUtils.dp(170);
+            ((RelativeLayout.LayoutParams) mPageTitle.getLayoutParams()).rightMargin = AndroidUtils.dp(180);
+        //}
     }
 
     public void setPageTitle(String title) {

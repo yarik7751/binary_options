@@ -12,7 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -71,10 +74,14 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private LinearLayout llButtons, llDeposit;
     private LinearLayout llProgressBar;
     private RelativeLayout rlChart;
+    private FrameLayout flMain;
+    private LinearLayout llTopPanel;
 
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
     private GetResponseMakeDealingBroadcastReceiver mMakeDealingBroadcastReceiver;
+
+    public boolean direction = true;
 
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
@@ -109,11 +116,13 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
         llLowerTerminal = (LinearLayout) parentView.findViewById(R.id.llLowerTerminal);
         llHigherTerminal = (LinearLayout) parentView.findViewById(R.id.llHigherTerminal);
+        llTopPanel = (LinearLayout) parentView.findViewById(R.id.ll_top_panel);
 
         llButtons = (LinearLayout) parentView.findViewById(R.id.ll_buttons);
         llDeposit = (LinearLayout) parentView .findViewById(R.id.ll_deposit);
         rlChart = (RelativeLayout) parentView.findViewById(R.id.rl_chart);
         llProgressBar = (LinearLayout) parentView.findViewById(R.id.progress_bar);
+        flMain = (FrameLayout) parentView.findViewById(R.id.fl_main);
         setSizeHeight();
 
         registrationBroadcasts();
@@ -270,6 +279,31 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         String valueStr = etValueAmount.getText().toString();
         valueStr = valueStr.replaceAll("[^0-9.]", "");
         return Double.valueOf(valueStr);
+    }
+    public void showTopPanel() {
+        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(direction ? 60 : -60));
+        animation.setDuration(200);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                llTopPanel.clearAnimation();
+                flMain.removeView(llTopPanel);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        AndroidUtils.dp(60)
+                );
+                params.topMargin = AndroidUtils.dp(direction ? -60 : 0);
+                flMain.addView(llTopPanel, params);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        llTopPanel.startAnimation(animation);
+        direction = !direction;
     }
     private int getTimeValue() {
         String valueStr = etValueTime.getText().toString();
@@ -450,13 +484,14 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     }
     @Override
     public void onPause() {
+        super.onPause();
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         isOpen = false;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(true);
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
         }
-        super.onPause();
+
     }
     @Override
     public void onDestroy() {

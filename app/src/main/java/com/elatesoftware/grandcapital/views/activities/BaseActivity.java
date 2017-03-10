@@ -51,6 +51,7 @@ public class BaseActivity extends CustomFontsActivity {
     //private ResideMenuItem mSettings;
     private ResideMenuItem mLogout;
     private View mDeposit;
+    private TerminalFragment terminalFragment;
 
     private static ToolbarFragment toolbar;
 
@@ -85,7 +86,7 @@ public class BaseActivity extends CustomFontsActivity {
                 toolbar = new ToolbarFragment();
                 changeToolbarFragment(toolbar);
                 //changeMainFragment(TerminalFragment.getInstance());
-                setTerminalFragment();
+                terminalFragment = setTerminalFragment();
                 getInfoUser();
             }
         }
@@ -164,7 +165,7 @@ public class BaseActivity extends CustomFontsActivity {
             }
             if (view == mTerminal) {
                 //changeMainFragment(TerminalFragment.getInstance());
-                setTerminalFragment();
+                terminalFragment = setTerminalFragment();
             } else if (view == mSupport) {
                 changeMainFragment(new SupportFragment());
             } else if (view == mDealing) {
@@ -195,10 +196,16 @@ public class BaseActivity extends CustomFontsActivity {
                 switch (i){
                     case SIGNAL_POSITION:
                         Log.d(TAG, "SIGNAL_POSITION");
+                        if(TerminalFragment.isOpen && terminalFragment != null) {
+                            terminalFragment.showTopPanel();
+                        }
                         break;
                     case TERMINAL_POSITION:
                         Log.d(TAG, "TERMINAL_POSITION");
-                        setTerminalFragment();
+                        terminalFragment = setTerminalFragment();
+                        if(!terminalFragment.direction) {
+                            terminalFragment.showTopPanel();
+                        }
                         break;
                     case DEALING_POSITION:
                         Log.d(TAG, "DEALING_POSITION");
@@ -232,13 +239,14 @@ public class BaseActivity extends CustomFontsActivity {
         onSwitchFragment(fragment, fragment.getClass().getName(), true, true, R.id.content);
     }
 
-    public static void setTerminalFragment() {
+    public static TerminalFragment setTerminalFragment() {
         if(backToRootFragment) {
             clearFragmentBackStack();
         }
         backToRootFragment = false;
         TerminalFragment fragment = TerminalFragment.getInstance();
         onSwitchFragment(fragment, fragment.getClass().getName(), false, true, R.id.content);
+        return fragment;
     }
 
     private static void clearFragmentBackStack() {

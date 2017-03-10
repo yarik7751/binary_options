@@ -63,6 +63,7 @@ public class PromotionsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_promotions));
         BaseActivity.getToolbar().hideTabs();
+        BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
 
         //promotionsTabs = (TabLayout) view.findViewById(R.id.promotionsTabs);
         rvPromotions = (RecyclerView) view.findViewById(R.id.promotionsListOpen);

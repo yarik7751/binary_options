@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:id="@+id/fl_main"
     android:background="@drawable/bg_graphic">
 
     <LinearLayout
@@ -167,18 +167,20 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:id="@+id/tvTabAmountTerminal"/>
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="1"
                             android:orientation="horizontal">
+
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="-"
-                                android:textSize="20sp"
+                                android:background="@drawable/ic_minus"
+                                android:textSize="25sp"
                                 android:id="@+id/tvMinusTabAmountTerminal"
                                 style="@style/LigthText"/>
                             <EditText
@@ -195,12 +197,13 @@
                                 android:id="@+id/tvValueTabAmountTerminal"
                                 android:inputType="numberDecimal"
                                 style="@style/LigthText"/>
+
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="+"
+                                android:background="@drawable/ic_plus"
                                 android:id="@+id/tvPlusTabAmountTerminal"
                                 style="@style/LigthText"/>
                         </LinearLayout>
@@ -231,7 +234,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="-"
+                                android:background="@drawable/ic_minus"
                                 android:textSize="20sp"
                                 android:id="@+id/tvMinusTabTimeTerminal"
                                 style="@style/LigthText"/>
@@ -253,7 +256,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="+"
+                                android:background="@drawable/ic_plus"
                                 android:id="@+id/tvPlusTabTimeTerminal"
                                 style="@style/LigthText"/>
                         </LinearLayout>
@@ -353,4 +356,128 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_top_panel"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="60dp"
+        android:layout_marginTop="-60dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:background="@color/dialog_bg">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2">
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_currency"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="EURUSD"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:textSize="10sp"/>
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_amout"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="75.56"
+                android:textStyle="bold"
+                android:textColor="@color/dealingListTitlesColor"
+                android:textSize="10sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_time1"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="1 Minute"
+                android:textStyle="bold"
+                android:textColor="@color/dealingListTitlesColor"
+                android:textSize="10sp"/>
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_time1_value"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="ACTIVELY BUY"
+                android:textStyle="bold"
+                android:textColor="@color/dealingListUpOrderColor"
+                android:textSize="10sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_time2"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="1 Minute"
+                android:textStyle="bold"
+                android:textColor="@color/dealingListTitlesColor"
+                android:textSize="10sp"/>
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_time2_value"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="ACTIVELY BUY"
+                android:textStyle="bold"
+                android:textColor="@color/dealingListDownOrderColor"
+                android:textSize="10sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.1">
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_time3"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="1 Minute"
+                android:textStyle="bold"
+                android:textColor="@color/dealingListTitlesColor"
+                android:textSize="10sp"/>
+
+            <TextView
+                style="@style/BoldText"
+                android:id="@+id/tv_time3_value"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="ACTIVELY BUY"
+                android:textStyle="bold"
+                android:textColor="@color/dealingListUpOrderColor"
+                android:textSize="10sp"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
