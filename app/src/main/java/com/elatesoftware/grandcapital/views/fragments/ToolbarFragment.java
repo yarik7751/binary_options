@@ -1,8 +1,6 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +14,6 @@ import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.ToolTabsView;
-import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChooseTab;
-import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.ToolTabsViewAdapter;
 
 public class ToolbarFragment extends Fragment {
@@ -49,7 +45,6 @@ public class ToolbarFragment extends Fragment {
         }
         return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,50 +84,10 @@ public class ToolbarFragment extends Fragment {
         mTabLayout.setVisibility(View.VISIBLE);
 
         mTabLayout.setAdapter(new ToolTabsViewAdapter(getContext(), drawableResources));
-        mTabLayout.setOnLoadData(new OnLoadData() {
-            @Override
-            public void loadData() {
+        mTabLayout.setOnLoadData(() -> {
 
-            }
         });
-
-        mTabLayout.setOnChooseTab(new OnChooseTab() {
-            @Override
-            public void onChoose(View view, int position) {
-                mParentActivity.setMain(position);
-            }
-        });
-
-        /*mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                ImageView image = (ImageView) tab.getCustomView();
-                image.setAlpha(NOT_TRANSPARENT_TAB_ICON_VALUE);
-                mParentActivity.setMain(mTabLayout.getSelectedTabPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                ImageView image = (ImageView) tab.getCustomView();
-                image.setAlpha(TRANSPARENT_TAB_ICON_VALUE);
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                ImageView image = (ImageView) tab.getCustomView();
-                image.setAlpha(NOT_TRANSPARENT_TAB_ICON_VALUE);
-            }
-        });
-
-        if(mTabLayout.getTabCount() == drawableResources.length){
-            for(int i = 0; i < mTabLayout.getTabCount(); i++){
-                ImageView icon = new ImageView(this.getContext());
-                icon.setImageDrawable(getResources().getDrawable(drawableResources[i]));
-                icon.setAlpha(TRANSPARENT_TAB_ICON_VALUE);
-                mTabLayout.getTabAt(i).setCustomView(icon);
-            }
-        }
-        mTabLayout.getTabAt(0).select();*/
+        mTabLayout.setOnChooseTab((view, position) -> mParentActivity.setMain(position));
     }
 
     public void setBurgerType(int _burgerType) {
@@ -152,14 +107,11 @@ public class ToolbarFragment extends Fragment {
     public void switchTab(int position) {
         if (position >= 0 && position < 5) {
             showTabs();
-            //mTabLayout.getTabAt(position).select();
             mTabLayout.selectTab(position);
         }
     }
-
     /**
      * скрыть табы в зависимости от типа фрагмента
-     *
      * @param type
      */
     public void hideTabsByType(int type) {
@@ -168,7 +120,6 @@ public class ToolbarFragment extends Fragment {
                 mTabLayout.animation.cancel();
             }
         }
-
         mTabLayout.setVisibility(View.VISIBLE);
         mTabLayout.showAllTabs();
         showTabs();
@@ -234,5 +185,4 @@ public class ToolbarFragment extends Fragment {
         mParentActivity = (BaseActivity) getActivity();
         mResideMenu = mParentActivity.getResideMenu();
     }
-
 }

@@ -20,8 +20,6 @@ public class QuestionFragment extends Fragment {
 
     public static final String TAG = "QuestionFragment";
 
-    WebView wvAnswer;
-
     private String mHeader;
     private String mContent;
 

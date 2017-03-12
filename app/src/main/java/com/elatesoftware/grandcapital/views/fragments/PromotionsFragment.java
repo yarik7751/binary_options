@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,10 +16,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.adapters.howItWorks.FragmentHowItWorksListAdapter;
 import com.elatesoftware.grandcapital.adapters.promotions.FragmentPromotionsAdapter;
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
-import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.services.BinaryOptionService;
 import com.elatesoftware.grandcapital.services.QuestionsService;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -33,7 +30,7 @@ public class PromotionsFragment extends Fragment {
     private RecyclerView rvPromotions;
     private LinearLayout llProgress;
 
-    GetResponseBinaryOptionBroadcastReceiver getResponseBinaryOptionBroadcastReceiver;
+    private GetResponseBinaryOptionBroadcastReceiver mBinaryOptionBroadcastReceiver;
 
     private static PromotionsFragment fragment = null;
     public static PromotionsFragment getInstance() {
@@ -41,16 +38,6 @@ public class PromotionsFragment extends Fragment {
             fragment = new PromotionsFragment();
         }
         return fragment;
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        getResponseBinaryOptionBroadcastReceiver = new GetResponseBinaryOptionBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(BinaryOptionService.ACTION_SERVICE_BINARY_OPTION);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(getResponseBinaryOptionBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -91,16 +78,26 @@ public class PromotionsFragment extends Fragment {
         });*/
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mBinaryOptionBroadcastReceiver = new GetResponseBinaryOptionBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(BinaryOptionService.ACTION_SERVICE_BINARY_OPTION);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mBinaryOptionBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        getActivity().unregisterReceiver(mBinaryOptionBroadcastReceiver);
+        super.onStop();
+    }
+
     private void loadBinaryOptionData() {
         getActivity().startService(new Intent(getActivity(), BinaryOptionService.class));
     }
 
-    private void loadForexData() {
-
-    }
-
     public class GetResponseBinaryOptionBroadcastReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(QuestionsService.RESPONSE);
@@ -112,7 +109,6 @@ public class PromotionsFragment extends Fragment {
                     Log.d(TAG, "BinaryOptionAnswer: " + BinaryOptionAnswer.getInstance());
                     Log.d(TAG, "BinaryOptionAnswer size: " + BinaryOptionAnswer.getInstance().getElements().size());
                     Log.d(TAG, "BinaryOptionAnswer elements: " + BinaryOptionAnswer.getInstance().getElements());
-
                     rvPromotions.setAdapter(new FragmentPromotionsAdapter(getActivity(), BinaryOptionAnswer.getInstance()));
                 } else {
                     Log.d(TAG, "BinaryOptionAnswer questions ERROR: " + response);

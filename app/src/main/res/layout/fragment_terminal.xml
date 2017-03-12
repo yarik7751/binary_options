@@ -357,6 +357,5 @@
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/item_window_signal"/>
-
+    <include layout="@layout/item_window_signal" />
 </FrameLayout>

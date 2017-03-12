@@ -14,6 +14,16 @@
     <string name="error">Error!</string>
     <string name="no_correct_values">The entered values are not correct. Check them, please.</string>
 
+    <!--Signals-->
+    <string name="minutes3Cell">15 Minutes</string>
+    <string name="minutes2Cell">5 Minutes</string>
+    <string name="_1_minute">1 Minute</string>
+    <string name="signal_s">SELL</string>
+    <string name="signal_ss">STRONG SELL</string>
+    <string name="signal_b">BUY</string>
+    <string name="signal_sb">STRONG BUY</string>
+
+
     <string-array name="months">
         <item>января</item>
         <item>февраля</item>
@@ -28,5 +38,6 @@
         <item>ноября</item>
         <item>декабря</item>
     </string-array>
+
 
 </resources>

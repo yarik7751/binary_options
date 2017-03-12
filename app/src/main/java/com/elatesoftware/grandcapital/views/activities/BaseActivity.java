@@ -318,14 +318,6 @@ public class BaseActivity extends CustomFontsActivity {
         } else {
             super.onBackPressed();
         }
-        /*int count = fragmentManager.getBackStackEntryCount();
-        if (count < 3) {
-            fragmentManager.popBackStackImmediate();
-            fragmentManager.popBackStackImmediate();
-            super.onBackPressed();
-        } else {
-            fragmentManager.popBackStack();
-        }*/
     }
 
     @Override

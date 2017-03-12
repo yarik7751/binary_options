@@ -17,7 +17,7 @@ import java.util.TimeZone;
 
 public class ConventDate {
 
-    public static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
+    private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
     public static float genericTimeForChart(long currentTimePoint){
         return (float)(currentTimePoint - BIG_DATE_FOR_EQUALS);
     }

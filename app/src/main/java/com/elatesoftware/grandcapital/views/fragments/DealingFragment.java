@@ -227,7 +227,7 @@ public class DealingFragment extends Fragment {
 
     @Override
     public void onStop() {
-        super.onStop();
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
+        super.onStop();
     }
 }

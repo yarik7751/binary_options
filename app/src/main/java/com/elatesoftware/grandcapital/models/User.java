@@ -18,9 +18,6 @@ public class User {
         userInstance = user;
     }
 
-    private User() {
-    }
-
     public Double getBalance() {
         return balance;
     }

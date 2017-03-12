@@ -20,7 +20,6 @@ import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.services.QuestionsService;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.howItWorks.FragmentHowItWorksListAdapter;
-import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnLoadData;
 
 public class HowItWorksFragment extends Fragment {
 
@@ -31,7 +30,7 @@ public class HowItWorksFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    private GetResponseQuestionsBroadcastReceiver getResponseQuestionsBroadcastReceiver;
+    private GetResponseQuestionsBroadcastReceiver mQuestionsBroadcastReceiver;
 
     private static HowItWorksFragment fragment = null;
     public static HowItWorksFragment getInstance() {
@@ -39,15 +38,6 @@ public class HowItWorksFragment extends Fragment {
             fragment = new HowItWorksFragment();
         }
         return fragment;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        getResponseQuestionsBroadcastReceiver = new GetResponseQuestionsBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(QuestionsService.ACTION_SERVICE_QUESTIONS);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(getResponseQuestionsBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -82,6 +72,21 @@ public class HowItWorksFragment extends Fragment {
         pageIntent.putExtra(QuestionsService.PAGE, 1);
         getActivity().startService(pageIntent);
         llProgress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mQuestionsBroadcastReceiver = new GetResponseQuestionsBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(QuestionsService.ACTION_SERVICE_QUESTIONS);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mQuestionsBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        getActivity().unregisterReceiver(mQuestionsBroadcastReceiver);
+        super.onStop();
     }
 
     public class GetResponseQuestionsBroadcastReceiver extends BroadcastReceiver {

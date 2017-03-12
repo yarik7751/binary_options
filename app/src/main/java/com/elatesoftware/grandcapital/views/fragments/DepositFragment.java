@@ -20,12 +20,9 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.in_out.InOutAdapter;
-import com.elatesoftware.grandcapital.api.chat.pojo.SendMessageAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
-import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InOutService;
-import com.elatesoftware.grandcapital.services.SignInService;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
 import java.util.ArrayList;
@@ -46,7 +43,7 @@ public class DepositFragment  extends Fragment {
     private ArrayList<InOutAnswer> deposits;
     private ArrayList<InOutAnswer> withdraws;
 
-    private GetMoneyTransactionBroadcastReceiver getMoneyTransactionBroadcastReceiver;
+    private GetMoneyTransactionBroadcastReceiver mMoneyTransactionBroadcastReceiver;
 
     private static DepositFragment fragment = null;
     public static DepositFragment getInstance() {
@@ -54,15 +51,6 @@ public class DepositFragment  extends Fragment {
             fragment = new DepositFragment();
         }
         return fragment;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getMoneyTransactionBroadcastReceiver = new GetMoneyTransactionBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(InOutService.ACTION_SERVICE_IN_OUT);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(getMoneyTransactionBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -104,6 +92,21 @@ public class DepositFragment  extends Fragment {
         //llProgress.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mMoneyTransactionBroadcastReceiver = new GetMoneyTransactionBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(InOutService.ACTION_SERVICE_IN_OUT);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mMoneyTransactionBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        getActivity().unregisterReceiver(mMoneyTransactionBroadcastReceiver);
+        super.onStop();
+    }
+
     //тестовый метод
     private void testMethod() {
         InOutAnswer inOutAnswer1d = new InOutAnswer(new InOutAnswer.AmountMoney("$122000"), "VISA", "Ok", "03.05.2014");
@@ -129,12 +132,6 @@ public class DepositFragment  extends Fragment {
         rvIoOut.setAdapter(new InOutAdapter(deposits, withdraws));
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getActivity().unregisterReceiver(getMoneyTransactionBroadcastReceiver);
-    }
-
     private void query(String transaction) {
         Intent intent = new Intent(getContext(), InOutService.class);
         intent.putExtra(InOutService.TRANSACTION, transaction);
@@ -142,7 +139,6 @@ public class DepositFragment  extends Fragment {
     }
 
     public class GetMoneyTransactionBroadcastReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(InOutService.RESPONSE);

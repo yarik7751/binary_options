@@ -101,9 +101,10 @@ public class GrandCapitalApplication extends Application{
         mClient = new WebSocketClient(new URI(GrandCapitalApi.SOCKET_URL), new Draft_17(), null, 30000){
             @Override
             public void onOpen(ServerHandshake handshakedata) {
-                Log.d(TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
+                Log.d(TAG_SOCKET, "Open Connect Socket");
                 if(!symbolCurrent.equals("")){
                     mClient.send(symbolCurrent);
+                    Log.d(TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
                 }
             }
             @Override
@@ -120,6 +121,7 @@ public class GrandCapitalApplication extends Application{
             @Override
             public void onClose(int code, String reason, boolean remote){
                 Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
+                openSocket(symbolCurrent);
             }
             @Override
             public void onError(Exception ex){

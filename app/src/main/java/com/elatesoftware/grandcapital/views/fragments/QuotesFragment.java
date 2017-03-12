@@ -44,8 +44,8 @@ public class QuotesFragment extends Fragment {
     private List<Instrument> lastInstruments;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
-    Handler handler = new Handler();
-    Runnable runnableQuotes = new Runnable() {
+    private Handler handler = new Handler();
+    private Runnable runnableQuotes = new Runnable() {
         @Override
         public void run() {
             Intent intentMyIntentService = new Intent(getContext(), InfoUserService.class);
@@ -53,22 +53,19 @@ public class QuotesFragment extends Fragment {
             handler.postDelayed(runnableQuotes, INTERVAL);
         }
     };
-
+    private OnSharedPreferencesChange onSharedPreferencesChange = new OnSharedPreferencesChange() {
+        @Override
+        public void onChange() {
+            Log.d(TAG, "onChange()");
+            setData(lastInstruments);
+        }
+    };
     private static QuotesFragment fragment = null;
     public static QuotesFragment getInstance() {
         if (fragment == null) {
             fragment = new QuotesFragment();
         }
         return fragment;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(mInfoBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -110,24 +107,25 @@ public class QuotesFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStart() {
+        super.onStart();
+        mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mInfoBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
         handler.removeCallbacks(runnableQuotes);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
+        super.onStop();
     }
 
     private void setData(List<Instrument> quotes) {
         rvAllQuotes.setAdapter(new QuotesAdapter(getActivity(), quotes, QuotesAdapter.ALL_QUOTES, onSharedPreferencesChange));
         rvSelectedQuotes.setAdapter(new QuotesAdapter(getActivity(), quotes, QuotesAdapter.SELECT_QUOTES, onSharedPreferencesChange));
     }
-
-    OnSharedPreferencesChange onSharedPreferencesChange = new OnSharedPreferencesChange() {
-        @Override
-        public void onChange() {
-            Log.d(TAG, "onChange()");
-            setData(lastInstruments);
-        }
-    };
 
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override

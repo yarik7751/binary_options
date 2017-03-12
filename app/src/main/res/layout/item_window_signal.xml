@@ -51,7 +51,7 @@
             android:id="@+id/tv_time1"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            tools:text="1 Minute"
+            android:text="@string/_1_minute"
             android:textStyle="bold"
             android:textColor="@color/dealingListTitlesColor"
             android:textSize="10sp"/>
@@ -79,7 +79,7 @@
             android:id="@+id/tv_time2"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            tools:text="1 Minute"
+            android:text="@string/minutes2Cell"
             android:textStyle="bold"
             android:textColor="@color/dealingListTitlesColor"
             android:textSize="10sp"/>
@@ -107,7 +107,7 @@
             android:id="@+id/tv_time3"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            tools:text="1 Minute"
+            android:text="@string/minutes3Cell"
             android:textStyle="bold"
             android:textColor="@color/dealingListTitlesColor"
             android:textSize="10sp"/>

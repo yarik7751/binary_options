@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 public class CustomSharedPreferences {
 
      private static final String SHARED_PREFERENCES = "com.elatesoftware.grandcapital.user";
-     private static final String SHARED_PREFERENCES_USER = "user";
+     private static final String SHARED_PREFERENCES_USER = "USER";
      private static final String SHARED_PREFERENCES_CHAT_HISTORY = "SHARED_PREFERENCES_CHAT_HISTORY";
      private static final String SHARED_PREFERENCES_SELECTED_QUOTES = "SHARED_PREFERENCES_SELECTED_QUOTES";
 

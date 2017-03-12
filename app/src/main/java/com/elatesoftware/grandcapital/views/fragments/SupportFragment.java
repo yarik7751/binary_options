@@ -14,13 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.api.chat.ChatApi;
 import com.elatesoftware.grandcapital.api.chat.pojo.ChatCreateAnswer;
 import com.elatesoftware.grandcapital.api.chat.pojo.HistoryMessage;
 import com.elatesoftware.grandcapital.api.chat.pojo.PollChatAnswer;
@@ -30,7 +28,6 @@ import com.elatesoftware.grandcapital.services.SignInService;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -55,6 +52,8 @@ public class SupportFragment extends Fragment {
     private boolean isChatCreated = false;
     private LinkedList<HistoryMessage> historyChat = new LinkedList<>();
 
+    private GetChatBroadcastReceiver mChatBroadcastReceiver;
+
     private Handler handler = new Handler();
     private Runnable runnablePollChat = new Runnable() {
         @Override
@@ -66,26 +65,6 @@ public class SupportFragment extends Fragment {
             handler.postDelayed(runnablePollChat, INTERVAL);
         }
     };
-
-    private GetChatBroadcastReceiver getChatBroadcastReceiver;
-
-    public SupportFragment() {
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getChatBroadcastReceiver = new GetChatBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(ChatService.ACTION_SERVICE_CHAT);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(getChatBroadcastReceiver, intentFilter);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,28 +83,25 @@ public class SupportFragment extends Fragment {
         edMessage = (EditText) view.findViewById(R.id.ed_message);
         llMessages = (LinearLayout) view.findViewById(R.id.ll_messages);
 
-        cbSendMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "cbSendMessage click");
-                String message = edMessage.getText().toString();
-                Intent intent = new Intent(getContext(), ChatService.class);
-                if(!isChatCreated) {
-                    llMessages.removeAllViews();
-                    intent.putExtra(ChatService.ACTION, ChatService.CREATE_CHAT);
-                    intent.putExtra(ChatService.WIDGET_ID, WIDGET_ID);
-                    intent.putExtra(ChatService.VISITOR_MESSAGE, message);
-                    isChatCreated = true;
-                } else {
-                    intent.putExtra(ChatService.ACTION, ChatService.SEND_MESSAGE_CHAT);
-                    intent.putExtra(ChatService.CASE_ID, caseId);
-                    intent.putExtra(ChatService.MESSAGE_TYPE, 1);
-                    intent.putExtra(ChatService.MESSAGE_BODY, message);
-                }
-                getActivity().startService(intent);
-                addYourMessageInView(message, System.currentTimeMillis(), true);
-                edMessage.setText("");
+        cbSendMessage.setOnClickListener(v -> {
+            Log.d(TAG, "cbSendMessage click");
+            String message = edMessage.getText().toString();
+            Intent intent = new Intent(getContext(), ChatService.class);
+            if(!isChatCreated) {
+                llMessages.removeAllViews();
+                intent.putExtra(ChatService.ACTION, ChatService.CREATE_CHAT);
+                intent.putExtra(ChatService.WIDGET_ID, WIDGET_ID);
+                intent.putExtra(ChatService.VISITOR_MESSAGE, message);
+                isChatCreated = true;
+            } else {
+                intent.putExtra(ChatService.ACTION, ChatService.SEND_MESSAGE_CHAT);
+                intent.putExtra(ChatService.CASE_ID, caseId);
+                intent.putExtra(ChatService.MESSAGE_TYPE, 1);
+                intent.putExtra(ChatService.MESSAGE_BODY, message);
             }
+            getActivity().startService(intent);
+            addYourMessageInView(message, System.currentTimeMillis(), true);
+            edMessage.setText("");
         });
 
         loadChatHistory();
@@ -159,10 +135,18 @@ public class SupportFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onStart() {
+        super.onStart();
+        mChatBroadcastReceiver = new GetChatBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(ChatService.ACTION_SERVICE_CHAT);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mChatBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
         handler.removeCallbacks(runnablePollChat);
-        getActivity().unregisterReceiver(getChatBroadcastReceiver);
+        getActivity().unregisterReceiver(mChatBroadcastReceiver);
         if(!isChatCreated) {
             return;
         }
@@ -172,6 +156,7 @@ public class SupportFragment extends Fragment {
         //LinkedList<HistoryMessage> copy = gson.fromJson(historyStr, new TypeToken<LinkedList<HistoryMessage>>(){}.getType());
         Log.d(TAG, "historyStr: " + historyStr);
         //Log.d(TAG, "copy.size(): " + copy.size());
+        super.onStop();
     }
 
     private void addYourMessageInView(String message, long unix, boolean addInHistory) {
@@ -183,12 +168,7 @@ public class SupportFragment extends Fragment {
         }
         v.setTag(R.string.is_their_message, false);
         llMessages.addView(v);
-        svMessages.post(new Runnable() {
-            @Override
-            public void run() {
-                svMessages.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        });
+        svMessages.post(() -> svMessages.fullScroll(ScrollView.FOCUS_DOWN));
         if(addInHistory) {
             HistoryMessage historyMessage = new HistoryMessage(false, message, System.currentTimeMillis());
             historyChat.add(historyMessage);
@@ -204,12 +184,7 @@ public class SupportFragment extends Fragment {
         }
         v.setTag(R.string.is_their_message, true);
         llMessages.addView(v);
-        svMessages.post(new Runnable() {
-            @Override
-            public void run() {
-                svMessages.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        });
+        svMessages.post(() -> svMessages.fullScroll(ScrollView.FOCUS_DOWN));
         if(addInHistory) {
             HistoryMessage historyMessage = new HistoryMessage(true, message, System.currentTimeMillis());
             historyChat.add(historyMessage);
@@ -257,9 +232,9 @@ public class SupportFragment extends Fragment {
                                 ArrayList<PollChatAnswer.Message> messages = PollChatAnswer.getInstance().getMessageList();
                                 if(messages.size() > 0) {
                                     PollChatAnswer.Message lastMessage = messages.get(messages.size() - 1);
-                                    if(lastIndex < lastMessage.getIndex().intValue()) {
+                                    if(lastIndex < lastMessage.getIndex()) {
                                         addTheirMessages(messages);
-                                        lastIndex = lastMessage.getIndex().intValue();
+                                        lastIndex = lastMessage.getIndex();
                                     }
                                 }
                             } else {
@@ -294,7 +269,7 @@ public class SupportFragment extends Fragment {
 
     private void addTheirMessages(ArrayList<PollChatAnswer.Message> messages) {
         for(int i = messages.size() - 1; i >= 0; i--) {
-            if(lastIndex < messages.get(i).getIndex().intValue()) {
+            if(lastIndex < messages.get(i).getIndex()) {
                 addTheirMessageInView(messages.get(i).getText(), System.currentTimeMillis(), true);
             } else {
                 break;
