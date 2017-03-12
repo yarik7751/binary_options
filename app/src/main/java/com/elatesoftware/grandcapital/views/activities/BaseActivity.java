@@ -161,9 +161,7 @@ public class BaseActivity extends CustomFontsActivity {
         public void onClick(View view) {
             if (view == mLogout) {
                 CustomDialog.showDialogLogout(BaseActivity.this);
-                return;
-            }
-            if (view == mTerminal) {
+            }else if (view == mTerminal) {
                 //changeMainFragment(TerminalFragment.getInstance());
                 terminalFragment = setTerminalFragment();
             } else if (view == mSupport) {

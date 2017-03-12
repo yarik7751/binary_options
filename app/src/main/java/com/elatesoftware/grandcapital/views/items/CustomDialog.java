@@ -84,7 +84,7 @@ public class CustomDialog {
         dialog.show();
     }
 
-    public static void showDialogCloseDealing(Activity activity, View.OnClickListener listnerOk, View.OnClickListener listnerMaybe) {
+    public static void showDialogCloseDealing(Activity activity, View.OnClickListener listenerOk, View.OnClickListener listnerMaybe) {
         Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -97,7 +97,7 @@ public class CustomDialog {
 
         tvToolbarDialog.setText(activity.getResources().getString(R.string.clode_dealing_title));
 
-        tvOk.setOnClickListener(listnerOk);
+        tvOk.setOnClickListener(listenerOk);
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
