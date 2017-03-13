@@ -16,6 +16,7 @@ import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import org.java_websocket.WebSocket;
 import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.drafts.Draft_10;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -94,6 +95,7 @@ public class GrandCapitalApplication extends Application{
         timer = new Timer();
         startTimer();
     }
+
     public static Context getAppContext() {
         return GrandCapitalApplication.context;
     }
@@ -129,6 +131,7 @@ public class GrandCapitalApplication extends Application{
                 openSocket(symbolCurrent);
             }
         };
+
         WebSocketClient.WebSocketClientFactory factory = new DefaultSSLWebSocketClientFactory(GrandCapitalApplication.getSSLContext());
         mClient.setWebSocketFactory(factory);
         mClient.connect();

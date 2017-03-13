@@ -4,4 +4,8 @@
         <attr name="line_color" format="color"/>
         <attr name="select_color" format="color"/>
     </declare-styleable>
+
+    <declare-styleable name="Cursor">
+        <attr name="orientation" format="integer"/>
+    </declare-styleable>
 </resources>

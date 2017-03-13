@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.views.items;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
@@ -21,15 +22,16 @@ public class MyMarkerView extends MarkerView {
 
     public MyMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
-        //tvContent = (TextView) findViewById(R.id.tvContent);
+        tvContent = (TextView) findViewById(R.id.tvContent);
     }
+
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
         if (e instanceof CandleEntry) {
             CandleEntry ce = (CandleEntry) e;
-            tvContent.setText("" + Utils.formatNumber(ce.getHigh(), 0, true));
+            tvContent.setText(Utils.formatNumber(ce.getHigh(), 0, true));
         } else {
-            tvContent.setText("" + Utils.formatNumber(e.getY(), 0, true));
+            tvContent.setText(Utils.formatNumber(e.getY(), 0, true));
         }
         super.refreshContent(e, highlight);
     }
