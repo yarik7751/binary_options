@@ -1,7 +1,7 @@
 package com.elatesoftware.grandcapital.views.items;
 
 import android.content.Context;
-import android.graphics.Canvas;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
@@ -13,31 +13,25 @@ import com.github.mikephil.charting.utils.MPPointF;
 import com.github.mikephil.charting.utils.Utils;
 
 /**
- * Created by Дарья Высокович on 21.02.2017.
+ * Created by Дарья Высокович on 13.03.2017.
  */
 
-public class MyMarkerView extends MarkerView {
+public class CurrentMarkerView extends MarkerView {
 
-    private TextView tvContent;
+    private ImageView imgvMarker;
 
-    public MyMarkerView(Context context, int layoutResource) {
+    public CurrentMarkerView(Context context, int layoutResource) {
         super(context, layoutResource);
-        tvContent = (TextView) findViewById(R.id.tvContent);
+        imgvMarker = (ImageView) findViewById(R.id.imgvMarker);
     }
 
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
-        if (e instanceof CandleEntry) {
-            CandleEntry ce = (CandleEntry) e;
-            tvContent.setText(Utils.formatNumber(ce.getHigh(), 0, true));
-        } else {
-            tvContent.setText(Utils.formatNumber(e.getY(), 0, true));
-        }
         super.refreshContent(e, highlight);
     }
 
     @Override
     public MPPointF getOffset() {
-        return new MPPointF(-(getWidth() / 2), -getHeight());
+        return new MPPointF(-(getWidth() / 2), -getHeight()/2);
     }
 }

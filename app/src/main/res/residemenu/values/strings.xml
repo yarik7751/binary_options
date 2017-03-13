@@ -15,7 +15,8 @@
     <string name="no_correct_values">The entered values are not correct. Check them, please.</string>
     <string name="error_find_signal">There are no signals for this instrument</string>
 
-
+    <string name="of_price">По цене </string>
+    <string name="profit">прибыль </string>
     <string-array name="months">
         <item>января</item>
         <item>февраля</item>
