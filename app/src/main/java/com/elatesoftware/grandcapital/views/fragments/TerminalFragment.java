@@ -187,7 +187,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
 
         setSizeHeight();
-        registrationBroadcasts();
         initializationChart();
         return parentView;
     }
@@ -262,6 +261,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public void onResume() {
         super.onResume();
         isOpen = true;
+        registrationBroadcasts();
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
         if(tvValueActive.getText().equals("") || !tvValueActive.getText().equals(SYMBOL)){
             selectedActive(SYMBOL);
@@ -273,6 +273,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     @Override
     public void onPause() {
         super.onPause();
+        getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
+        getActivity().unregisterReceiver(mInfoBroadcastReceiver);
+        getActivity().unregisterReceiver(mMakeDealingBroadcastReceiver);
+        getActivity().unregisterReceiver(mSignalsBroadcastReceiver);
+        getActivity().unregisterReceiver(closeDealingBroadcastReceiver);
+        getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         isOpen = false;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(true);
@@ -284,12 +290,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public void onDestroy() {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
         GrandCapitalApplication.closeSocket();
-        getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
-        getActivity().unregisterReceiver(mInfoBroadcastReceiver);
-        getActivity().unregisterReceiver(mMakeDealingBroadcastReceiver);
-        getActivity().unregisterReceiver(mSignalsBroadcastReceiver);
-        getActivity().unregisterReceiver(closeDealingBroadcastReceiver);
-        getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
         super.onDestroy();
     }
 
@@ -527,8 +527,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             if(mChart.getLineData() != null){
                 mChart.moveViewToX(mChart.getData().getXMax());
                 mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
-                addLimitLine(mChart.getLineData().getDataSetByIndex(0).getEntryForIndex(
-                        mChart.getLineData().getDataSetByIndex(0).getEntryCount() - 1));
+                /*addLimitLine(mChart.getLineData().getDataSetByIndex(0).getEntryForIndex(
+                        mChart.getLineData().getDataSetByIndex(0).getEntryCount() - 1));*/
             }
             GrandCapitalApplication.openSocket(symbol);
         });
@@ -678,7 +678,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                         Log.d(TAG, "closeOrders.size(): " + closeOrders.size());
                         Log.d(TAG, "closeOrders: " + closeOrders);
                         for(OrderAnswer closeDealing : closeOrders) {
-                            if(closeDealing.getSymbol().contains(activeClose) && closeDealing.getVolumeStr().contains(amountClose) && Math.abs(closeTime - 3600000 - closeDealing.getCloseTimeUnix()) <= 5000) {
+                            if(closeDealing != null &&
+                                    closeDealing.getSymbol().contains(activeClose) &&
+                                    closeDealing.getVolumeStr().contains(amountClose) &&
+                                    Math.abs(closeTime - 3600000 - closeDealing.getCloseTimeUnix()) <= 5000) {
                                 showCloseDealingLabel(closeDealing.getClosePrice() + "", closeDealing.getProfitStr());
                                 Log.d(TAG, "closeDealing: " + closeDealing);
                                 break;
