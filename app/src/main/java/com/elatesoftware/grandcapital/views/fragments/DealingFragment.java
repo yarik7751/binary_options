@@ -173,7 +173,7 @@ public class DealingFragment extends Fragment {
         mFifthColumnHeader.setText(getString(R.string.dealing_page_close_income));
     }
 
-    private List<OrderAnswer> findOrders(List<OrderAnswer> orders, int currentTabPosition) {
+    public static List<OrderAnswer> findOrders(List<OrderAnswer> orders, int currentTabPosition) {
         List<OrderAnswer> closeOrders = new ArrayList();
         List<OrderAnswer> openOrders = new ArrayList();
         for (OrderAnswer order : orders) {

@@ -43,6 +43,30 @@ public class ConventDate {
             return "";
         }
     }
+
+    public static long stringToUnix(String date) {
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date resultDate = null;
+        try {
+            resultDate = dateFormat.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (resultDate != null) {
+            return resultDate.getTime();
+        } else {
+            return -1;
+        }
+    }
+
+    public static String getConvertDateFromUnix(long unix) {
+        String dateStr = "";
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date date = new Date(unix);
+        dateStr = dateFormat.format(date);
+        return dateStr;
+    }
+
     public static String convertDateFromMilSecHHMM(long time) {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
         Date date = new Date(time);

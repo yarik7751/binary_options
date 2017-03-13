@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -21,14 +22,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
+import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingOpenOrdersAdapter;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SignalAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.models.Dealing;
+import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.MakeDealingService;
+import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.services.SignalService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
@@ -64,6 +71,11 @@ import static com.elatesoftware.grandcapital.R.id.rl_chart;
 
 public class TerminalFragment extends Fragment implements OnChartValueSelectedListener{
 
+    public static final String TAG = "TerminalFragment_Logs";
+
+    private final int INTERVAL_SHOW_LABEL = 3000;
+    private final int INTERVAL_SHOW_LABEL_CLOSE = 9000;
+
     private static final String SYMBOL = "EURUSD";
     public static boolean isOpen = false;
     public boolean direction = true;
@@ -72,6 +84,29 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private XAxis xAxis;
     private Thread threadSymbolHistory;
     private List<String> listActives = new ArrayList<>();
+    private String currActive, currAmount, currTime;
+    private View openDealingView;
+
+    String activeClose, amountClose;
+    private View closeDealingView;
+    long closeTime;
+
+    private Handler handler = new Handler();
+    long currTimeUnix;
+
+    private Runnable runnableHideOpenDealingView = new Runnable() {
+        @Override
+        public void run() {
+            rlChart.removeView(openDealingView);
+        }
+    };
+
+    private Runnable runnableHideClodeDealingView = new Runnable() {
+        @Override
+        public void run() {
+            rlChart.removeView(closeDealingView);
+        }
+    };
 
     private TextView tvBalance;
     private TextView tvDeposit;
@@ -103,6 +138,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
     private GetResponseMakeDealingBroadcastReceiver mMakeDealingBroadcastReceiver;
     private GetResponseSignalsBroadcastReceiver mSignalsBroadcastReceiver;
+    private CloseDealingBroadcastReceiver closeDealingBroadcastReceiver;
+    private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
 
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
@@ -255,6 +292,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
         getActivity().unregisterReceiver(mMakeDealingBroadcastReceiver);
         getActivity().unregisterReceiver(mSignalsBroadcastReceiver);
+        getActivity().unregisterReceiver(closeDealingBroadcastReceiver);
+        getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
         super.onDestroy();
     }
 
@@ -309,6 +348,16 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         IntentFilter intentFilterSignal = new IntentFilter(SignalService.ACTION_SERVICE_SIGNAL);
         intentFilterSignal.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mSignalsBroadcastReceiver, intentFilterSignal);
+
+        closeDealingBroadcastReceiver = new CloseDealingBroadcastReceiver();
+        IntentFilter intentFilterCloseDealing = new IntentFilter(CheckDealingService.ACTION_SERVICE_CHECK_DEALINGS);
+        intentFilterCloseDealing.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(closeDealingBroadcastReceiver, intentFilterCloseDealing);
+
+        mOrdersBroadcastReceiver = new GetResponseOrdersBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
     }
     private void selectedActive(String symbol){
         tvValueActive.setText(symbol);
@@ -362,6 +411,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         llProgressBar.setVisibility(View.VISIBLE);
     }
     private void requestMakeDealing(String cmd){
+        currActive = tvValueActive.getText().toString();
+        currAmount = etValueAmount.getText().toString();
+        currTime = etValueTime.getText().toString();
         if(ConventString.getAmountValue(etValueAmount)!= 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).equals("")){
             Intent intentService = new Intent(getActivity(), MakeDealingService.class);
             intentService.putExtra(MakeDealingService.CMD, cmd);
@@ -373,6 +425,15 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
         }
     }
+
+    private View getViewOpenDealing() {
+        View v = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
+        ((TextView) v.findViewById(R.id.tvActive)).setText(currActive);
+        ((TextView) v.findViewById(R.id.tvAmount)).setText(currAmount);
+        ((TextView) v.findViewById(R.id.tvTime)).setText(currTime);
+        return v;
+    }
+
     private void clearChart(){
         mChart.getData().clearValues();
         mChart.getLineData().clearValues();
@@ -558,8 +619,20 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(MakeDealingService.RESPONSE);
+            currTimeUnix = Long.valueOf(ConventDate.getTimeStampCurrentDate());
+            Log.d(TAG, "getTimeStampCurrentDate :" + ConventDate.getTimeStampCurrentDate());
             if (response != null && response.equals("true")) {
-
+                openDealingView = getViewOpenDealing();
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        RelativeLayout.LayoutParams.WRAP_CONTENT,
+                        RelativeLayout.LayoutParams.WRAP_CONTENT
+                );
+                params.topMargin = AndroidUtils.dp(16);
+                params.leftMargin = AndroidUtils.dp(16);
+                rlChart.addView(openDealingView, params);
+                handler.postDelayed(runnableHideOpenDealingView, INTERVAL_SHOW_LABEL);
+                Dealing dealing = new Dealing(currActive, currAmount, ConventString.getTimeValue(etValueTime) * 60, currTimeUnix);
+                CheckDealingService.dealings.add(dealing);
             }else{
                 CustomDialog.showDialogInfo(getActivity(),
                         getResources().getString(R.string.error),
@@ -567,6 +640,65 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         }
     }
+
+    public class CloseDealingBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            activeClose = intent.getStringExtra(CheckDealingService.ACTIVE);
+            amountClose = intent.getStringExtra(CheckDealingService.AMOUNT);
+            String closeTime = ConventDate.getConvertDateFromUnix(intent.getLongExtra(CheckDealingService.CLOSE_DATE, -1) * 1000);
+            TerminalFragment.this.closeTime = intent.getLongExtra(CheckDealingService.CLOSE_DATE, -1) * 1000;
+            Log.d(TAG, "active: " + activeClose + ", amount: " + amountClose + ", closeTime: " + closeTime);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intentService = new Intent(getActivity(), OrdersService.class);
+                    getActivity().startService(intentService);
+                }
+            }, 3000);
+        }
+    }
+
+    public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String response = intent.getStringExtra(OrdersService.RESPONSE);
+            if (response != null) {
+                if(response.equals("200")){
+                    if(OrderAnswer.getInstance() != null){
+                        List<OrderAnswer> orders = OrderAnswer.getInstance();
+                        List<OrderAnswer> closeOrders = DealingFragment.findOrders(orders, DealingFragment.CLOSE_TAB_POSITION);
+                        Log.d(TAG, "closeOrders.size(): " + closeOrders.size());
+                        Log.d(TAG, "closeOrders: " + closeOrders);
+                        for(OrderAnswer closeDealing : closeOrders) {
+                            if(closeDealing.getSymbol().contains(activeClose) && closeDealing.getVolumeStr().contains(amountClose) && Math.abs(closeTime - 3600000 - closeDealing.getCloseTimeUnix()) <= 5000) {
+                                showCloseDealingLabel(closeDealing.getClosePrice() + "", closeDealing.getProfitStr());
+                                Log.d(TAG, "closeDealing: " + closeDealing);
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else {
+                Log.d(TAG, "response = null");
+            }
+        }
+    }
+
+    private void showCloseDealingLabel(String closePrice, String profit) {
+        closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
+        ((TextView) closeDealingView.findViewById(R.id.tvPrice)).setText(getResources().getString(R.string.of_price) + " " + closePrice + ",\n" + getResources().getString(R.string.profit) + " " + profit);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.topMargin = AndroidUtils.dp(16);
+        params.leftMargin = AndroidUtils.dp(16);
+        rlChart.addView(closeDealingView, params);
+        handler.postDelayed(runnableHideClodeDealingView, INTERVAL_SHOW_LABEL_CLOSE);
+    }
+
     public class GetResponseSignalsBroadcastReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {

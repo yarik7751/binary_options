@@ -3,23 +3,34 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="20dp"
+    android:paddingRight="20dp"
+    android:paddingBottom="20dp"
     android:orientation="vertical"
     android:background="@color/dialog_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:layout_height="60dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/shadow">
 
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            tools:text="Information"
-            style="@style/LigthText"
-            android:textSize="20sp"
-            android:id="@+id/tvToolbarDialog" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/dialog_bg"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                tools:text="Information"
+                style="@style/BoldText"
+                android:textSize="16sp"
+                android:id="@+id/tvToolbarDialog" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -32,9 +43,11 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             tools:text="@string/connection_not_secure"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             style="@style/LigthText"
             android:id="@+id/tvInfoMsg"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -52,6 +65,6 @@
             android:textColor="@color/dealingListUpOrderColor"
             android:text="@string/ok"
             android:paddingRight="16dp"
-            android:textSize="16sp"/>
+            android:textSize="14sp"/>
     </LinearLayout>
 </LinearLayout>

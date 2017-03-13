@@ -51,6 +51,7 @@
         <service android:name=".services.InOutService"/>
         <service android:name=".services.MakeDealingService"/>
         <service android:name=".services.SignalService"/>
+        <service android:name=".services.CheckDealingService"></service>
 
     </application>
 </manifest>

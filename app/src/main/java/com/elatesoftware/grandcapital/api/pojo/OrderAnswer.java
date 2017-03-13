@@ -1,10 +1,14 @@
 package com.elatesoftware.grandcapital.api.pojo;
 
 import javax.annotation.Generated;
+
+import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 @Generated("org.jsonschema2pojo")
 public class OrderAnswer {
@@ -61,6 +65,13 @@ public class OrderAnswer {
     @Expose
     private Integer volume;
 
+    @Override
+    public String toString() {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+        String volumeStr = String.format("$%s", numberFormat.format((volume) / 100));
+        return "symbol: " + symbol + ", closePrice: " + closePrice + ", volume: " + volumeStr + ", closeTime: " + getCloseTime() + "\n";
+    }
+
     private static List<OrderAnswer> ordersInstance = null;
     public static List<OrderAnswer> getInstance() {
         return ordersInstance;
@@ -79,6 +90,10 @@ public class OrderAnswer {
 
     public String getCloseTime() {
         return closeTime;
+    }
+
+    public long getCloseTimeUnix() {
+        return ConventDate.stringToUnix(closeTime);
     }
 
     public void setCloseTime(String closeTime) {
@@ -145,6 +160,11 @@ public class OrderAnswer {
         return profit;
     }
 
+    public String getProfitStr() {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+        return String.format("$%s", numberFormat.format((profit) / 100));
+    }
+
     public void setProfit(Double profit) {
         this.profit = profit;
     }
@@ -199,6 +219,11 @@ public class OrderAnswer {
 
     public Integer getVolume() {
         return volume;
+    }
+
+    public String getVolumeStr() {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+        return String.format("$%s", numberFormat.format((volume) / 100));
     }
 
     public void setVolume(Integer volume) {

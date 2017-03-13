@@ -15,6 +15,7 @@ import android.view.View;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
+import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.fragments.AccountsFragment;
@@ -88,6 +89,7 @@ public class BaseActivity extends CustomFontsActivity {
                 //changeMainFragment(TerminalFragment.getInstance());
                 terminalFragment = setTerminalFragment();
                 getInfoUser();
+                startService(new Intent(this, CheckDealingService.class));
             }
         }
     }
@@ -240,6 +242,7 @@ public class BaseActivity extends CustomFontsActivity {
     public static TerminalFragment setTerminalFragment() {
         if(backToRootFragment) {
             clearFragmentBackStack();
+            Log.d(TAG, "clearFragmentBackStack()");
         }
         backToRootFragment = false;
         TerminalFragment fragment = TerminalFragment.getInstance();
@@ -314,7 +317,11 @@ public class BaseActivity extends CustomFontsActivity {
                 super.onBackPressed();
             }
         } else {
-            super.onBackPressed();
+            try {
+                super.onBackPressed();
+            } catch (IllegalStateException e) {
+                super.onBackPressed();
+            }
         }
     }
 
