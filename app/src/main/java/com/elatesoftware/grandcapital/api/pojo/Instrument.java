@@ -74,7 +74,7 @@ public class Instrument {
     @SerializedName("price_scale")
     @Expose
     private Integer priceScale;
-    @SerializedName("direction")
+    @SerializedName("isDirection")
     @Expose
     private Boolean direction;
     @SerializedName("tradable")

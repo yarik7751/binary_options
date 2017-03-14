@@ -22,8 +22,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
-import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingOpenOrdersAdapter;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
@@ -42,8 +40,9 @@ import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.views.items.CurrentMarkerView;
+import com.elatesoftware.grandcapital.views.items.items_terminal.CurrentMarkerView;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
+import com.elatesoftware.grandcapital.views.items.items_terminal.CustomLimitLine;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -67,14 +66,16 @@ import static com.elatesoftware.grandcapital.R.id.rl_chart;
 
 public class TerminalFragment extends Fragment implements OnChartValueSelectedListener{
 
-    public static final String TAG = "TerminalFragment_Logs";
+    public final static String TAG = "TerminalFragment_Logs";
 
-    private final int INTERVAL_SHOW_LABEL = 3000;
-    private final int INTERVAL_SHOW_LABEL_CLOSE = 9000;
+    private final static int INTERVAL_SHOW_LABEL = 3000;
+    private final static int INTERVAL_SHOW_LABEL_CLOSE = 9000;
 
-    private static final String SYMBOL = "EURUSD";
+    private final static  String SYMBOL = "EURUSD";
+    private  static String sSymbolCurrnet = "EURUSD";
+
     public static boolean isOpen = false;
-    public boolean direction = true;
+    public boolean isDirection = true;
     private LineChart mChart;
     private YAxis rightAxis;
     private XAxis xAxis;
@@ -83,27 +84,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private String currActive, currAmount, currTime;
     private View openDealingView;
 
-    String activeClose, amountClose;
-    private View closeDealingView;
-    long closeTime;
-
+    private String activeClose, amountClose;
+    private long mCurrTimeUnix;
+    private long mCloseTime;
     private Handler handler = new Handler();
-    long currTimeUnix;
 
-    private Runnable runnableHideOpenDealingView = new Runnable() {
-        @Override
-        public void run() {
-            rlChart.removeView(openDealingView);
-        }
-    };
-
-    private Runnable runnableHideClodeDealingView = new Runnable() {
-        @Override
-        public void run() {
-            rlChart.removeView(closeDealingView);
-        }
-    };
-
+    private View closeDealingView;
     private TextView tvBalance;
     private TextView tvDeposit;
     private TextView tvLeftActive;
@@ -293,37 +279,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         super.onDestroy();
     }
 
-    public void showTopPanel() {
-        parseResponseSignals(ConventString.getActive(tvValueActive));
-        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(direction ? 60 : -60));
-        animation.setDuration(200);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                llTopPanel.clearAnimation();
-                flMain.removeView(llTopPanel);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        AndroidUtils.dp(60)
-                );
-                params.topMargin = AndroidUtils.dp(direction ? -60 : 0);
-                flMain.addView(llTopPanel, params);
-            }
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
-        llTopPanel.startAnimation(animation);
-        direction = !direction;
-    }
-    private void setSizeHeight() {
-        int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
-        rlChart.getLayoutParams().height = (int) (height * 0.6);
-        llDeposit.getLayoutParams().height = (int) (height * 0.28);
-        llButtons.getLayoutParams().height = (int) (height * 0.11);
-    }
     private void registrationBroadcasts(){
         mInfoBroadcastReceiver = new  GetResponseInfoBroadcastReceiver();
         IntentFilter intentFilterInfo = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
@@ -355,88 +310,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
     }
-    private void selectedActive(String symbol){
-        tvValueActive.setText(symbol);
-        clearChart();
-        GrandCapitalApplication.closeSocket();
-        requestSymbolHistory(ConventString.getActive(tvValueActive));
-        tvLeftActive.setEnabled(false);
-        tvRightActive.setEnabled(false);
-    }
-    private void onlyOpenSocket(){
-        clearChart();
-        GrandCapitalApplication.openSocket(ConventString.getActive(tvValueActive));
-    }
 
-    private void requestSignals(){
-        Intent intentService = new Intent(getActivity(), SignalService.class);
-        getActivity().startService(intentService);
-    }
-    private void parseResponseSignals(String symbol){
-        if(SignalAnswer.getInstance() != null){
-            List<SignalAnswer> list = new ArrayList<>();
-            for(SignalAnswer answer : SignalAnswer.getInstance()) {
-                if (answer.getInstrument().replace("/", "").equals(symbol)) {
-                    list.add(answer);
-                }
-            }
-            if(list.size() != 0 ){
-                rlErrorSignal.setVisibility(View.GONE);
-                tvCurrentActive.setText(symbol);
-                tvCurrentActiveAmount.setText(list.get(0).getCost());
-                for(SignalAnswer answer: list){
-                    if(answer.getTime() == 60){
-                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes1, answer.getSummary());
-                    }else if(answer.getTime() == 300){
-                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes5, answer.getSummary());
-                    }else if(answer.getTime() == 900){
-                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes15, answer.getSummary());
-                    }
-                }
-            }else{
-                rlErrorSignal.setVisibility(View.VISIBLE);
-                tvErrorSignal.setText(getResources().getString(R.string.error_find_signal));
-            }
-        }
-    }
-
-    private void requestSymbolHistory(String symbol){
-        Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
-        intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
-        getActivity().startService(intentService);
-        llProgressBar.setVisibility(View.VISIBLE);
-    }
-    private void requestMakeDealing(String cmd){
-        currActive = tvValueActive.getText().toString();
-        currAmount = etValueAmount.getText().toString();
-        currTime = etValueTime.getText().toString();
-        if(ConventString.getAmountValue(etValueAmount)!= 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).equals("")){
-            Intent intentService = new Intent(getActivity(), MakeDealingService.class);
-            intentService.putExtra(MakeDealingService.CMD, cmd);
-            intentService.putExtra(MakeDealingService.SYMBOL, ConventString.getActive(tvValueActive));
-            intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
-            intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
-            getActivity().startService(intentService);
-        }else{
-            CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
-        }
-    }
-
-    private View getViewOpenDealing() {
-        View v = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
-        ((TextView) v.findViewById(R.id.tvActive)).setText(currActive);
-        ((TextView) v.findViewById(R.id.tvAmount)).setText(currAmount);
-        ((TextView) v.findViewById(R.id.tvTime)).setText(currTime);
-        return v;
-    }
-
-    private void clearChart(){
-        mChart.getData().clearValues();
-        mChart.getLineData().clearValues();
-        mChart.invalidate();
-        SymbolHistoryAnswer.nullInstance();
-        SocketAnswer.nullInstance();
-    }
     private void initializationChart() {
         mChart.setNoDataText(getResources().getString(R.string.request_error_title));
         mChart.setDragDecelerationFrictionCoef(0.95f); // задержка при перетаскивании
@@ -458,7 +332,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setDrawMarkers(true);
 
         CurrentMarkerView mv = new CurrentMarkerView(getContext(), R.layout.item_current_marker);
-        //mv.animate(n) // TODO
         mChart.setMarker(mv);
 
         LineData data = new LineData();
@@ -487,7 +360,132 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         rightAxis.disableAxisLineDashedLine();
         rightAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
     }
-    private synchronized LineDataSet createSet() {
+    private void setSizeHeight() {
+        int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
+        rlChart.getLayoutParams().height = (int) (height * 0.6);
+        llDeposit.getLayoutParams().height = (int) (height * 0.28);
+        llButtons.getLayoutParams().height = (int) (height * 0.11);
+    }
+    public void showSignalsPanel() {
+        parseResponseSignals(ConventString.getActive(tvValueActive));
+        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 60 : -60));
+        animation.setDuration(200);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                llTopPanel.clearAnimation();
+                flMain.removeView(llTopPanel);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        AndroidUtils.dp(60)
+                );
+                params.topMargin = AndroidUtils.dp(isDirection ? -60 : 0);
+                flMain.addView(llTopPanel, params);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        llTopPanel.startAnimation(animation);
+        isDirection = !isDirection;
+    }
+    private void showLabelCloseDealing(String closePrice, String profit) {
+        closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
+        ((TextView) closeDealingView.findViewById(R.id.tvPrice)).setText(getResources().getString(R.string.of_price) + " " + closePrice + ",\n" + getResources().getString(R.string.profit) + " " + profit);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.topMargin = AndroidUtils.dp(16);
+        params.leftMargin = AndroidUtils.dp(16);
+        rlChart.addView(closeDealingView, params);
+        handler.postDelayed(() -> rlChart.removeView(closeDealingView), INTERVAL_SHOW_LABEL_CLOSE);
+    }
+    private View initialViewOpenDealing() {
+        View v = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
+        ((TextView) v.findViewById(R.id.tvActive)).setText(currActive);
+        ((TextView) v.findViewById(R.id.tvAmount)).setText(currAmount);
+        ((TextView) v.findViewById(R.id.tvTime)).setText(currTime);
+        return v;
+    }
+    private void clearChart(){
+        mChart.highlightValues(null);
+        rightAxis.removeAllLimitLines();
+        mChart.getData().clearValues();
+        mChart.getLineData().clearValues();
+        mChart.invalidate();
+        SymbolHistoryAnswer.nullInstance();
+        SocketAnswer.nullInstance();
+    }
+    private void selectedActive(String symbol){
+        if(sSymbolCurrnet != null && !sSymbolCurrnet.equals("")){
+            tvValueActive.setText(symbol);
+            clearChart();
+            GrandCapitalApplication.closeSocket();
+            requestSymbolHistory(ConventString.getActive(tvValueActive));
+            tvLeftActive.setEnabled(false);
+            tvRightActive.setEnabled(false);
+        }
+    }
+    private void onlyOpenSocketWithoutSymbolHistory(){
+        clearChart();
+        GrandCapitalApplication.openSocket(ConventString.getActive(tvValueActive));
+    }
+    private void parseResponseSignals(String symbol){
+        if(SignalAnswer.getInstance() != null){
+            List<SignalAnswer> list = new ArrayList<>();
+            for(SignalAnswer answer : SignalAnswer.getInstance()) {
+                if (answer.getInstrument().replace("/", "").equals(symbol)) {
+                    list.add(answer);
+                }
+            }
+            if(list.size() != 0 ){
+                rlErrorSignal.setVisibility(View.GONE);
+                tvCurrentActive.setText(symbol);
+                tvCurrentActiveAmount.setText(list.get(0).getCost());
+                for(SignalAnswer answer: list){
+                    if(answer.getTime() == 60){
+                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes1, answer.getSummary());
+                    }else if(answer.getTime() == 300){
+                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes5, answer.getSummary());
+                    }else if(answer.getTime() == 900){
+                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes15, answer.getSummary());
+                    }
+                }
+            }else{
+                rlErrorSignal.setVisibility(View.VISIBLE);
+                tvErrorSignal.setText(getResources().getString(R.string.error_find_signal));
+            }
+        }
+    }
+    private void requestSignals(){
+        Intent intentService = new Intent(getActivity(), SignalService.class);
+        getActivity().startService(intentService);
+    }
+    private void requestSymbolHistory(String symbol){
+        Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
+        intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
+        getActivity().startService(intentService);
+        llProgressBar.setVisibility(View.VISIBLE);
+    }
+    private void requestMakeDealing(String cmd){
+        currActive = tvValueActive.getText().toString();
+        currAmount = etValueAmount.getText().toString();
+        currTime = etValueTime.getText().toString();
+        if(ConventString.getAmountValue(etValueAmount)!= 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).equals("")){
+            Intent intentService = new Intent(getActivity(), MakeDealingService.class);
+            intentService.putExtra(MakeDealingService.CMD, cmd);
+            intentService.putExtra(MakeDealingService.SYMBOL, ConventString.getActive(tvValueActive));
+            intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
+            intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
+            getActivity().startService(intentService);
+        }else{
+            CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
+        }
+    }
+    private synchronized LineDataSet createSetDataChart() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(Color.WHITE);
@@ -507,46 +505,48 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         set.setHighlightEnabled(true);  //  TODO hide Highlight
         set.setHighLightColor(Color.TRANSPARENT);
         return set;
-        //set.getEntryForIndex(set.getEntryCount() - 1)
     }
     private void setDataSymbolHistory(List<SymbolHistoryAnswer> list, final String symbol) {
-        if (threadSymbolHistory != null){
-            threadSymbolHistory.interrupt();
-        }
-        threadSymbolHistory = new Thread(() -> {
-            Log.d(GrandCapitalApplication.TAG_SOCKET, "setDataSymbolHistory size = " + list.size());
-            for (int i = 0; i < list.size() - 1; i++) {
-                int finalI = i;
-                getActivity().runOnUiThread(() -> addEntry(list.get(finalI)));
-                try {
-                    Thread.sleep(25);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        if(list != null && list.size() != 0 ){
+            if (threadSymbolHistory != null){
+                threadSymbolHistory.interrupt();
+            }
+            threadSymbolHistory = new Thread(() -> {
+                Log.d(GrandCapitalApplication.TAG_SOCKET, "setDataSymbolHistory size = " + list.size());
+                for (int i = 0; i < list.size() - 1; i++) {
+                    int finalI = i;
+                    getActivity().runOnUiThread(() -> addEntry(list.get(finalI)));
+                    try {
+                        Thread.sleep(25);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-            if(mChart.getLineData() != null){
-                mChart.moveViewToX(mChart.getData().getXMax());
-                mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
-                /*addLimitLine(mChart.getLineData().getDataSetByIndex(0).getEntryForIndex(
-                        mChart.getLineData().getDataSetByIndex(0).getEntryCount() - 1));*/
-            }
-            GrandCapitalApplication.openSocket(symbol);
-        });
-        threadSymbolHistory.start();
+                if(mChart.getLineData() != null){
+                    mChart.moveViewToX(mChart.getData().getXMax());
+                    mChart.zoom(10f, 0f, mChart.getData().getXMax() + 10f, 0f, YAxis.AxisDependency.RIGHT);
+                    getActivity().runOnUiThread(() -> addCurrentLimitLine(new Entry(ConventDate.genericTimeForChart(list.get(list.size() - 1).getTime()),
+                                                                             Float.valueOf(String.valueOf(list.get(list.size() - 1).getOpen())))));
+                }
+                GrandCapitalApplication.openSocket(symbol);
+            });
+            threadSymbolHistory.start();
+        }
     }
+
     public synchronized void addEntry(final SocketAnswer answer) {
         LineData data = mChart.getData();
         if (data != null) {
             ILineDataSet set = data.getDataSetByIndex(0);
             if (set == null) {
-                set = createSet();
+                set = createSetDataChart();
                 data.addDataSet(set);
             }
             if(answer.getTime() != null){
                 Entry entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())));
                 data.addEntry(entry, 0);
                 data.notifyDataChanged();
-                addLimitLine(entry);
+                addCurrentLimitLine(entry);
                 mChart.notifyDataSetChanged();
                 mChart.invalidate();
             }
@@ -557,7 +557,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         if (data != null) {
             ILineDataSet set = data.getDataSetByIndex(0);
             if (set == null) {
-                set = createSet();
+                set = createSetDataChart();
                 data.addDataSet(set);
             }
             data.addEntry(new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getOpen()))), 0);
@@ -565,17 +565,16 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             mChart.notifyDataSetChanged();
         }
     }
-
-    private void addLimitLine(Entry entry){
-        LimitLine ll1 = new LimitLine(entry.getY(), String.valueOf(entry.getY()));
+    private void addCurrentLimitLine(Entry entry){
+        CustomLimitLine ll1 = new CustomLimitLine(entry.getY(), String.valueOf(entry.getY()));
         ll1.setLineWidth(1.5f);
-        ll1.setTextColor(Color.BLACK);  // backgroung color label
-        ll1.setLineColor(Color.WHITE); // color line
+        ll1.setTextColor(Color.BLACK);
+        ll1.setLineColor(Color.WHITE);
+       // ll1.
         ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
         ll1.setTextSize(10f);
         rightAxis.removeAllLimitLines();
         rightAxis.addLimitLine(ll1);
-
         mChart.highlightValue(entry.getX(), entry.getY(), 0);
     }
 
@@ -614,7 +613,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 setDataSymbolHistory(SymbolHistoryAnswer.getInstance(), ConventString.getActive(tvValueActive));
             }
             else{
-                onlyOpenSocket();
+                onlyOpenSocketWithoutSymbolHistory();
             }
             tvLeftActive.setEnabled(true);
             tvRightActive.setEnabled(true);
@@ -625,10 +624,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(MakeDealingService.RESPONSE);
-            currTimeUnix = Long.valueOf(ConventDate.getTimeStampCurrentDate());
+            mCurrTimeUnix = Long.valueOf(ConventDate.getTimeStampCurrentDate());
             Log.d(TAG, "getTimeStampCurrentDate :" + ConventDate.getTimeStampCurrentDate());
             if (response != null && response.equals("true")) {
-                openDealingView = getViewOpenDealing();
+                openDealingView = initialViewOpenDealing();
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                         RelativeLayout.LayoutParams.WRAP_CONTENT,
                         RelativeLayout.LayoutParams.WRAP_CONTENT
@@ -636,8 +635,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 params.topMargin = AndroidUtils.dp(16);
                 params.leftMargin = AndroidUtils.dp(16);
                 rlChart.addView(openDealingView, params);
-                handler.postDelayed(runnableHideOpenDealingView, INTERVAL_SHOW_LABEL);
-                Dealing dealing = new Dealing(currActive, currAmount, ConventString.getTimeValue(etValueTime) * 60, currTimeUnix);
+                handler.postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
+                Dealing dealing = new Dealing(currActive, currAmount, ConventString.getTimeValue(etValueTime) * 60, mCurrTimeUnix);
                 CheckDealingService.dealings.add(dealing);
             }else{
                 CustomDialog.showDialogInfo(getActivity(),
@@ -646,7 +645,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         }
     }
-
     public class CloseDealingBroadcastReceiver extends BroadcastReceiver {
 
         @Override
@@ -654,8 +652,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             activeClose = intent.getStringExtra(CheckDealingService.ACTIVE);
             amountClose = intent.getStringExtra(CheckDealingService.AMOUNT);
             String closeTime = ConventDate.getConvertDateFromUnix(intent.getLongExtra(CheckDealingService.CLOSE_DATE, -1) * 1000);
-            TerminalFragment.this.closeTime = intent.getLongExtra(CheckDealingService.CLOSE_DATE, -1) * 1000;
-            Log.d(TAG, "active: " + activeClose + ", amount: " + amountClose + ", closeTime: " + closeTime);
+            TerminalFragment.this.mCloseTime = intent.getLongExtra(CheckDealingService.CLOSE_DATE, -1) * 1000;
+            Log.d(TAG, "active: " + activeClose + ", amount: " + amountClose + ", mCloseTime: " + closeTime);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -665,7 +663,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }, 3000);
         }
     }
-
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -681,8 +678,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                             if(closeDealing != null &&
                                     closeDealing.getSymbol().contains(activeClose) &&
                                     closeDealing.getVolumeStr().contains(amountClose) &&
-                                    Math.abs(closeTime - 3600000 - closeDealing.getCloseTimeUnix()) <= 5000) {
-                                showCloseDealingLabel(closeDealing.getClosePrice() + "", closeDealing.getProfitStr());
+                                    Math.abs(mCloseTime - 3600000 - closeDealing.getCloseTimeUnix()) <= 5000) {
+                                showLabelCloseDealing(closeDealing.getClosePrice() + "", closeDealing.getProfitStr());
                                 Log.d(TAG, "closeDealing: " + closeDealing);
                                 break;
                             }
@@ -694,20 +691,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         }
     }
-
-    private void showCloseDealingLabel(String closePrice, String profit) {
-        closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
-        ((TextView) closeDealingView.findViewById(R.id.tvPrice)).setText(getResources().getString(R.string.of_price) + " " + closePrice + ",\n" + getResources().getString(R.string.profit) + " " + profit);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.topMargin = AndroidUtils.dp(16);
-        params.leftMargin = AndroidUtils.dp(16);
-        rlChart.addView(closeDealingView, params);
-        handler.postDelayed(runnableHideClodeDealingView, INTERVAL_SHOW_LABEL_CLOSE);
-    }
-
     public class GetResponseSignalsBroadcastReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {

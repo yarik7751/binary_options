@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.views.items;
+package com.elatesoftware.grandcapital.views.items.items_terminal;
 
 import android.content.Context;
 import android.widget.ImageView;

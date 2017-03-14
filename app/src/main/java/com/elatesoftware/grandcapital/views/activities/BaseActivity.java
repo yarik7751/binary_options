@@ -18,13 +18,11 @@ import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
-import com.elatesoftware.grandcapital.views.fragments.AccountsFragment;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
 import com.elatesoftware.grandcapital.views.fragments.HowItWorksFragment;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuotesFragment;
-import com.elatesoftware.grandcapital.views.fragments.SettingsFragment;
 import com.elatesoftware.grandcapital.views.fragments.SupportFragment;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.elatesoftware.grandcapital.views.fragments.ToolbarFragment;
@@ -33,8 +31,6 @@ import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItemWithMark;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChangePosition;
-
-import java.util.List;
 
 public class BaseActivity extends CustomFontsActivity {
 
@@ -197,14 +193,14 @@ public class BaseActivity extends CustomFontsActivity {
                     case SIGNAL_POSITION:
                         Log.d(TAG, "SIGNAL_POSITION");
                         if(TerminalFragment.isOpen && terminalFragment != null) {
-                            terminalFragment.showTopPanel();
+                            terminalFragment.showSignalsPanel();
                         }
                         break;
                     case TERMINAL_POSITION:
                         Log.d(TAG, "TERMINAL_POSITION");
                         terminalFragment = setTerminalFragment();
-                        if(!terminalFragment.direction) {
-                            terminalFragment.showTopPanel();
+                        if(!terminalFragment.isDirection) {
+                            terminalFragment.showSignalsPanel();
                         }
                         break;
                     case DEALING_POSITION:
