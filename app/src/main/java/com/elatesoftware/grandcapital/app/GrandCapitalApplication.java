@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.app;
 
 import android.app.Application;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -51,7 +52,15 @@ public class GrandCapitalApplication extends Application{
     private static Timer timer;
     private static String symbolCurrent = "";
 
-    static {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
+        GrandCapitalApplication.context = getApplicationContext();
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             @Override
             public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws java.security.cert.CertificateException {
@@ -82,113 +91,125 @@ public class GrandCapitalApplication extends Application{
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
-        GrandCapitalApplication.context = getApplicationContext();
+
         timer = new Timer();
         startTimer();
     }
-
-    public static Context getAppContext() {
-        return GrandCapitalApplication.context;
-    }
-    private static void connectWebSocket() throws URISyntaxException {
-        mClient = new WebSocketClient(new URI(GrandCapitalApi.SOCKET_URL), new Draft_17(), null, 30000){
-            @Override
-            public void onOpen(ServerHandshake handshakedata) {
-                Log.d(TAG_SOCKET, "Open Connect Socket");
-                if(!symbolCurrent.equals("")){
-                    mClient.send(symbolCurrent);
-                    Log.d(TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
-                }
-            }
-            @Override
-            public void onMessage(final String message) {
-                Log.d(TAG_SOCKET, message);
-                if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
-                    return;
-                }
-                answerCurrent = SocketAnswer.getSetInstance(message);
-                if(answerCurrent != null && !answerCurrent.getSymbol().equals(symbolCurrent)){
-                    answerCurrent = null;
-                }
-            }
-            @Override
-            public void onClose(int code, String reason, boolean remote){
-                Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
-                openSocket(symbolCurrent);
-            }
-            @Override
-            public void onError(Exception ex){
-                Log.d(TAG_SOCKET, "Error Connect in Socket - " + ex.toString());
-                openSocket(symbolCurrent);
-            }
-        };
-
-        WebSocketClient.WebSocketClientFactory factory = new DefaultSSLWebSocketClientFactory(GrandCapitalApplication.getSSLContext());
-        mClient.setWebSocketFactory(factory);
-        mClient.connect();
-    }
-
-    private static void sentAnswer(){
-       if(answerCurrent != null && answerCurrent.getTime() != null && answerCurrent.getTime() != 0L){
-           if(answerSave != null && answerSave.getTime() != null && answerSave.getTime() != 0L && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())){
-               answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime())/1000);
-           }
-            TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                TerminalFragment.getInstance().addEntry(answerCurrent);
-            });
-        }
-        answerSave = answerCurrent;
-    }
-     public static void closeSocket(){
+    public static void closeSocket(){
          answerCurrent = null;
          answerSave = null;
          symbolCurrent = "";
-         if (mClient != null && mClient.getReadyState() == WebSocket.READYSTATE.OPEN){
+         if (mClient != null && (mClient.getReadyState() == WebSocket.READYSTATE.OPEN
+                 || mClient.getReadyState() == WebSocket.READYSTATE.CONNECTING
+                 || mClient.getReadyState() == WebSocket.READYSTATE.NOT_YET_CONNECTED)){
              mClient.close();
          }
      }
-    public static void openSocket(final String symbol){
+    public static void closeAndOpenSocket(final String symbol){
         closeSocket();
+        openSocket(symbol);
+    }
+    public static void openSocket(final String symbol){
         symbolCurrent = symbol;
-        if(!symbol.equals("")){
+        if (mClient != null){
+            while(mClient.getReadyState() == WebSocket.READYSTATE.OPEN || mClient.getReadyState() == WebSocket.READYSTATE.CONNECTING){
+
+            }
+        }
+        if(!symbolCurrent.equals("")){
             new SocketTask().execute();
         }
     }
-
     private static void startTimer(){
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 if(!symbolCurrent.equals("") && answerCurrent != null && symbolCurrent.equals(answerCurrent.getSymbol())){
-                    sentAnswer();
+                    if(answerCurrent != null && answerCurrent.getTime() != null && answerCurrent.getTime() != 0L) {
+                        if (answerSave != null && answerSave.getTime() != null && answerSave.getTime() != 0L && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())) {
+                            answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
+                        }
+                        if (TerminalFragment.getInstance() != null) {
+                            if (TerminalFragment.isOpen) {
+                                TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                                    TerminalFragment.getInstance().addEntry(answerCurrent);
+                                });
+                            } else {
+                                TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                                    TerminalFragment.addListBackGroundSocketAnswer(answerCurrent);
+                                });
+                            }
+                        }
+                    }
+                    answerSave = answerCurrent;
                 }
             }
         }, 0, 1000);
     }
 
-    public static SSLContext getSSLContext() {
-        return sc;
-    }
     static class SocketTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params){
             if(mClient == null || mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
                 try {
-                    connectWebSocket();
+                    mClient = new WebSocketClient(new URI(GrandCapitalApi.SOCKET_URL), new Draft_17(), null, 30000){
+                        @Override
+                        public void onOpen(ServerHandshake handshakedata) {
+                            Log.d(TAG_SOCKET, "Open Connect Socket");
+                            if(!symbolCurrent.equals("")){
+                                mClient.send(symbolCurrent);
+                                Log.d(TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
+                            }
+                        }
+                        @Override
+                        public void onMessage(final String message) {
+                            Log.d(TAG_SOCKET, message);
+                            if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
+                                return;
+                            }
+                            answerCurrent = SocketAnswer.getSetInstance(message);
+                            if(answerCurrent != null && !answerCurrent.getSymbol().equals(symbolCurrent)){
+                                answerCurrent = null;
+                            }
+                        }
+                        @Override
+                        public void onClose(int code, String reason, boolean remote){
+                            Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
+                            if(!symbolCurrent.equals("")){
+                                closeAndOpenSocket(symbolCurrent);
+                            }
+                        }
+                        @Override
+                        public void onError(Exception ex){
+                            Log.d(TAG_SOCKET, "Error Connect in Socket - " + ex.toString());
+                            if(!symbolCurrent.equals("")){
+                                closeAndOpenSocket(symbolCurrent);
+                            }
+                        }
+                    };
+                    WebSocketClient.WebSocketClientFactory factory = new DefaultSSLWebSocketClientFactory(GrandCapitalApplication.getSSLContext());
+                    mClient.setWebSocketFactory(factory);
+                    mClient.connect();
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
             }
             return null;
         }
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
+            System.gc();
+        }
+    }
+
+    public static SSLContext getSSLContext() {
+        return sc;
+    }
+    public static Context getAppContext() {
+        return GrandCapitalApplication.context;
     }
 }

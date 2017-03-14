@@ -465,7 +465,7 @@ public class Legend extends ComponentBase {
 
     /**
      * This property is deprecated - Use `horizontalAlignment`, `verticalAlignment`, `orientation`, `drawInside`,
-     * `direction`.
+     * `isDirection`.
      */
     @Deprecated
     public void setPosition(LegendPosition newValue) {
@@ -599,7 +599,7 @@ public class Legend extends ComponentBase {
     }
 
     /**
-     * returns the text direction of the legend
+     * returns the text isDirection of the legend
      *
      * @return
      */
@@ -608,7 +608,7 @@ public class Legend extends ComponentBase {
     }
 
     /**
-     * sets the text direction of the legend
+     * sets the text isDirection of the legend
      *
      * @param pos
      */

@@ -147,6 +147,7 @@ public class SupportFragment extends Fragment {
     public void onStop() {
         handler.removeCallbacks(runnablePollChat);
         getActivity().unregisterReceiver(mChatBroadcastReceiver);
+        super.onStop();
         if(!isChatCreated) {
             return;
         }
@@ -156,7 +157,6 @@ public class SupportFragment extends Fragment {
         //LinkedList<HistoryMessage> copy = gson.fromJson(historyStr, new TypeToken<LinkedList<HistoryMessage>>(){}.getType());
         Log.d(TAG, "historyStr: " + historyStr);
         //Log.d(TAG, "copy.size(): " + copy.size());
-        super.onStop();
     }
 
     private void addYourMessageInView(String message, long unix, boolean addInHistory) {
