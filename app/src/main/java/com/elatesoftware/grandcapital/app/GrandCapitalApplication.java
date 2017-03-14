@@ -95,7 +95,10 @@ public class GrandCapitalApplication extends Application{
         timer = new Timer();
         startTimer();
     }
+
     public static void closeSocket(){
+        TerminalFragment.isAddInChart = false;
+        TerminalFragment.listBackGroundSocketAnswer.clear();
          answerCurrent = null;
          answerSave = null;
          symbolCurrent = "";
@@ -107,9 +110,6 @@ public class GrandCapitalApplication extends Application{
      }
     public static void closeAndOpenSocket(final String symbol){
         closeSocket();
-        openSocket(symbol);
-    }
-    public static void openSocket(final String symbol){
         symbolCurrent = symbol;
         if (mClient != null){
             while(mClient.getReadyState() == WebSocket.READYSTATE.OPEN || mClient.getReadyState() == WebSocket.READYSTATE.CONNECTING){
@@ -120,6 +120,7 @@ public class GrandCapitalApplication extends Application{
             new SocketTask().execute();
         }
     }
+
     private static void startTimer(){
         timer.schedule(new TimerTask() {
             @Override
@@ -130,7 +131,7 @@ public class GrandCapitalApplication extends Application{
                             answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
                         }
                         if (TerminalFragment.getInstance() != null) {
-                            if (TerminalFragment.isOpen) {
+                            if(TerminalFragment.isAddInChart) {
                                 TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
                                     TerminalFragment.getInstance().addEntry(answerCurrent);
                                 });
@@ -158,6 +159,8 @@ public class GrandCapitalApplication extends Application{
                             Log.d(TAG_SOCKET, "Open Connect Socket");
                             if(!symbolCurrent.equals("")){
                                 mClient.send(symbolCurrent);
+                                TerminalFragment.listBackGroundSocketAnswer.clear();
+                                TerminalFragment.isAddInChart = true;
                                 Log.d(TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
                             }
                         }
@@ -176,6 +179,7 @@ public class GrandCapitalApplication extends Application{
                         public void onClose(int code, String reason, boolean remote){
                             Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
                             if(!symbolCurrent.equals("")){
+                                TerminalFragment.listBackGroundSocketAnswer.clear();
                                 closeAndOpenSocket(symbolCurrent);
                             }
                         }
