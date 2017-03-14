@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -40,7 +41,7 @@ import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.views.items.items_terminal.CurrentMarkerView;
+import com.elatesoftware.grandcapital.views.items.items_terminal.CurrentSocketMarkerView;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.items_terminal.CustomLimitLine;
 import com.github.mikephil.charting.charts.LineChart;
@@ -123,6 +124,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private CloseDealingBroadcastReceiver closeDealingBroadcastReceiver;
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
 
+    private CurrentSocketMarkerView mv;
+    private Animation animationMin, animationMax;
+
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
         if (fragment == null) {
@@ -172,6 +176,36 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
 
+        animationMax = AnimationUtils.loadAnimation(getContext(), R.anim.anim_point_scale_max);
+        animationMin = AnimationUtils.loadAnimation(getContext(), R.anim.anim_point_scale_min);
+        animationMin.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mv.img.clearAnimation();
+                mv.img.startAnimation(animationMax);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mv.clearAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        animationMax.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mv.img.clearAnimation();
+                mv.img.startAnimation(animationMin);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
         setSizeHeight();
         initializationChart();
         return parentView;
@@ -209,12 +243,15 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             if(!ConventString.getActive(tvValueActive).equals("") && listActives.size() > 0){
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
                 if(index == 0){
-                    selectedActive(listActives.get(listActives.size() - 1));
+                    sSymbolCurrnet = listActives.get(listActives.size() - 1);
+                    selectedActive();
                 }else{
-                    selectedActive(listActives.get(index - 1));
+                    sSymbolCurrnet = listActives.get(index - 1);
+                    selectedActive();
                 }
             }else{
-                selectedActive(SYMBOL);
+                sSymbolCurrnet = SYMBOL;
+                selectedActive();
             }
             parseResponseSignals(ConventString.getActive(tvValueActive));
         });
@@ -222,12 +259,15 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             if(!ConventString.getActive(tvValueActive).equals("") && listActives.size() > 0){
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
                 if(index == (listActives.size() - 1)){
-                    selectedActive(listActives.get(0));
+                    sSymbolCurrnet = listActives.get(0);
+                    selectedActive();
                 }else{
-                    selectedActive(listActives.get(index  + 1));
+                    sSymbolCurrnet = listActives.get(index  + 1);
+                    selectedActive();
                 }
             }else{
-                selectedActive(SYMBOL);
+                sSymbolCurrnet = SYMBOL;
+                selectedActive();
             }
             parseResponseSignals(ConventString.getActive(tvValueActive));
         });
@@ -250,9 +290,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         registrationBroadcasts();
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
         if(tvValueActive.getText().equals("") || !tvValueActive.getText().equals(SYMBOL)){
-            selectedActive(SYMBOL);
+            selectedActive();
         }
-        if(GrandCapitalApplication.mClient != null && GrandCapitalApplication.mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
+
+        if(GrandCapitalApplication.mClient == null || GrandCapitalApplication.mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
             GrandCapitalApplication.openSocket(ConventString.getActive(tvValueActive));
         }
     }
@@ -331,7 +372,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setDragOffsetX(30f);// TODO norm padding chart in left
         mChart.setDrawMarkers(true);
 
-        CurrentMarkerView mv = new CurrentMarkerView(getContext(), R.layout.item_current_marker);
+        mv = new CurrentSocketMarkerView(getContext(), R.layout.item_current_marker);
         mChart.setMarker(mv);
 
         LineData data = new LineData();
@@ -419,15 +460,17 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         SymbolHistoryAnswer.nullInstance();
         SocketAnswer.nullInstance();
     }
-    private void selectedActive(String symbol){
-        if(sSymbolCurrnet != null && !sSymbolCurrnet.equals("")){
-            tvValueActive.setText(symbol);
-            clearChart();
-            GrandCapitalApplication.closeSocket();
-            requestSymbolHistory(ConventString.getActive(tvValueActive));
-            tvLeftActive.setEnabled(false);
-            tvRightActive.setEnabled(false);
+
+    private void selectedActive(){
+        if(sSymbolCurrnet == null || sSymbolCurrnet.equals("")) {
+            sSymbolCurrnet = SYMBOL;
         }
+        tvValueActive.setText(sSymbolCurrnet);
+        clearChart();
+        GrandCapitalApplication.closeSocket();
+        requestSymbolHistory(ConventString.getActive(tvValueActive));
+        tvLeftActive.setEnabled(false);
+        tvRightActive.setEnabled(false);
     }
     private void onlyOpenSocketWithoutSymbolHistory(){
         clearChart();
@@ -526,9 +569,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 }
                 if(mChart.getLineData() != null){
                     mChart.moveViewToX(mChart.getData().getXMax());
-                    mChart.zoom(10f, 0f, mChart.getData().getXMax() + 10f, 0f, YAxis.AxisDependency.RIGHT);
                     getActivity().runOnUiThread(() -> addCurrentLimitLine(new Entry(ConventDate.genericTimeForChart(list.get(list.size() - 1).getTime()),
-                                                                             Float.valueOf(String.valueOf(list.get(list.size() - 1).getOpen())))));
+                            Float.valueOf(String.valueOf(list.get(list.size() - 1).getOpen())))));
+                    mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
+
                 }
                 GrandCapitalApplication.openSocket(symbol);
             });
@@ -572,12 +616,14 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         ll1.setLineWidth(1.5f);
         ll1.setTextColor(Color.BLACK);
         ll1.setLineColor(Color.WHITE);
-       // ll1.
+        ll1.setTypeLimetLine(CustomLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
         ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
         ll1.setTextSize(10f);
         rightAxis.removeAllLimitLines();
         rightAxis.addLimitLine(ll1);
-        mChart.highlightValue(entry.getX(), entry.getY(), 0);
+        mChart.highlightValue(entry.  getX(), entry.getY(), 0);
+       // mv.startAnimation(animationMin);
+       // startAnimate(mv);
     }
 
     @Override
@@ -598,7 +644,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                             listActives.add(instrument.getSymbol());
                         }
                         if(listActives != null && listActives.size() > 0 && listActives.contains(SYMBOL) && !tvValueActive.getText().equals(SYMBOL)){
-                            selectedActive(listActives.get(listActives.indexOf(SYMBOL)));
+                            sSymbolCurrnet = listActives.get(listActives.indexOf(SYMBOL));
+                            selectedActive();
                         }
                     }
                     ConventString.updateBalance(tvBalance);

@@ -30,4 +30,8 @@ public class CustomLimitLine extends LimitLine {
         mLimit = limit;
         mLabel = label;
     }
+
+    public void setTypeLimetLine(LimitLinesType type){
+        mTypeLimitLine = type;
+    }
 }
