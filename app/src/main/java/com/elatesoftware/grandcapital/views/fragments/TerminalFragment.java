@@ -287,6 +287,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public void onResume() {
         super.onResume();
         isOpen = true;
+        mChart.getData().clearValues();
         mChart.highlightValues(null);
         rightAxis.removeAllLimitLines();
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
@@ -294,7 +295,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         ConventString.updateBalance(tvBalance);
         if(sSymbolCurrent != null && !sSymbolCurrent.equals("")){
             tvValueActive.setText(sSymbolCurrent);
-            mChart.invalidate();
             parseResponseSymbolHistory(false);
         }else{
             changeActive();
@@ -304,11 +304,11 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     }
     @Override
     public void onPause() {
-        isAddInChart = false;
-        super.onPause();
         unregisterBroadcasts();
-        Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
+        isAddInChart = false;
         isOpen = false;
+        super.onPause();
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(true);
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
@@ -316,7 +316,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     }
     @Override
     public void onDestroy() {
-        listBackGroundSocketAnswer.clear();
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
         GrandCapitalApplication.closeSocket();
         super.onDestroy();
@@ -361,7 +360,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         getActivity().unregisterReceiver(closeDealingBroadcastReceiver);
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
     }
-
     private void initializationChart() {
         mChart.setNoDataText(getResources().getString(R.string.request_error_title));
         mChart.setDragDecelerationFrictionCoef(0.95f); // задержка при перетаскивании
@@ -469,9 +467,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.invalidate();
         SymbolHistoryAnswer.nullInstance();
         SocketAnswer.nullInstance();
-    }
-    public static void addListBackGroundSocketAnswer(SocketAnswer answer){
-        listBackGroundSocketAnswer.add(answer);
     }
     private void changeActive(){
         if(sSymbolCurrent == null || sSymbolCurrent.equals("")) {
@@ -690,12 +685,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(SymbolHistoryService.RESPONSE);
-            if(response != null && response.equals("200")){
+            if(response != null && response.equals("200") && SymbolHistoryAnswer.getInstance() != null){
                 parseResponseSymbolHistory(true);
+                listBackGroundSocketAnswer.clear();
             }else{
-                GrandCapitalApplication.closeAndOpenSocket(ConventString.getActive(tvValueActive)); // openSocket
+                GrandCapitalApplication.closeAndOpenSocket(sSymbolCurrent); // open
             }
-            listBackGroundSocketAnswer.clear();
             tvLeftActive.setEnabled(true);
             tvRightActive.setEnabled(true);
             llProgressBar.setVisibility(View.GONE);
@@ -727,7 +722,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         }
     }
     public class CloseDealingBroadcastReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             activeClose = intent.getStringExtra(CheckDealingService.ACTIVE);

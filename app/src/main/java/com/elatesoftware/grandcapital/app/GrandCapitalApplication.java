@@ -137,7 +137,7 @@ public class GrandCapitalApplication extends Application{
                                 });
                             } else {
                                 TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                                    TerminalFragment.addListBackGroundSocketAnswer(answerCurrent);
+                                    TerminalFragment.listBackGroundSocketAnswer.add(answerCurrent);
                                 });
                             }
                         }
@@ -178,8 +178,8 @@ public class GrandCapitalApplication extends Application{
                         @Override
                         public void onClose(int code, String reason, boolean remote){
                             Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
+                            TerminalFragment.listBackGroundSocketAnswer.clear();
                             if(!symbolCurrent.equals("")){
-                                TerminalFragment.listBackGroundSocketAnswer.clear();
                                 closeAndOpenSocket(symbolCurrent);
                             }
                         }

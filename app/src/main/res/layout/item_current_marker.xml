@@ -7,8 +7,8 @@
     android:layout_gravity="center">
 
     <ImageView
-        android:layout_height="30dp"
-        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:layout_width="40dp"
         android:padding="0dp"
         android:background="@drawable/front_elipsa"
         android:id="@+id/imgvMarker" />
