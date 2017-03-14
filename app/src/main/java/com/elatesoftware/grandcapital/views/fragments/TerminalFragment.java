@@ -481,6 +481,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
             intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
             getActivity().startService(intentService);
+            etValueAmount.setText("$0");
+            etValueTime.setText("0 MIN");
         }else{
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
         }
