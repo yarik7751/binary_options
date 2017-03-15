@@ -110,7 +110,8 @@ public class YAxisRenderer extends AxisRenderer {
      * @param fixedPosition
      * @param positions
      */
-    /*protected void drawYLabels(Canvas c, float fixedPosition, float[] positions, float offset) {
+    /*
+    protected void drawYLabels(Canvas c, float fixedPosition, float[] positions, float offset) {
         final int from = mYAxis.isDrawBottomYLabelEntryEnabled() ? 0 : 1;
         final int to = mYAxis.isDrawTopYLabelEntryEnabled()
                 ? mYAxis.mEntryCount
@@ -121,6 +122,7 @@ public class YAxisRenderer extends AxisRenderer {
             c.drawText(text, fixedPosition, positions[i * 2 + 1] + offset, mAxisLabelPaint);
         }
     }*/
+
     protected void drawYLabels(Canvas c, float fixedPosition, float[] positions, float offset) {
         // draw labels
         for (int i = 0; i < mYAxis.mEntryCount; i++) {
@@ -155,7 +157,7 @@ public class YAxisRenderer extends AxisRenderer {
             float posY = pts[1] + height / 2;
 
             c.drawRect(fixedPosition - paddingHoriz, posY - height - paddingVert, fixedPosition + width + paddingHoriz*2, posY + paddingVert, paint);
-            c.drawText(l.getLabel(), fixedPosition, posY, textPaint); /** число текущей точки на оси ОУ*/
+            c.drawText(l.getLabel(), fixedPosition, posY, textPaint); //значение текущей точки на оси ОУ
         }
     }
 
@@ -329,7 +331,6 @@ public class YAxisRenderer extends AxisRenderer {
                 final LimitLine.LimitLabelPosition position = l.getLabelPosition();
 
                 if (position == LimitLine.LimitLabelPosition.RIGHT_TOP) {
-
                     mLimitLinePaint.setTextAlign(Align.RIGHT);
                     c.drawText(label,
                             mViewPortHandler.contentRight() - xOffset,
@@ -339,7 +340,6 @@ public class YAxisRenderer extends AxisRenderer {
                     c.drawText(label,
                             mViewPortHandler.contentRight() - xOffset,
                             pts[1] + yOffset, mLimitLinePaint);
-
                 } else if (position == LimitLine.LimitLabelPosition.LEFT_TOP) {
                     mLimitLinePaint.setTextAlign(Align.LEFT);
                     c.drawText(label,
