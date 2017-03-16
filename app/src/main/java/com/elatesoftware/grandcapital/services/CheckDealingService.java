@@ -1,20 +1,18 @@
 package com.elatesoftware.grandcapital.services;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.models.Dealing;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,6 +39,7 @@ public class CheckDealingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         timer.schedule(new TimerTask() {
+            @SuppressLint("LongLogTag")
             @Override
             public void run() {
                 Log.d(TAG, "dealings.size(): " + dealings.size());
@@ -59,6 +58,7 @@ public class CheckDealingService extends Service {
                         responseIntent.putExtra(ACTIVE, dealings.get(i).active);
                         responseIntent.putExtra(AMOUNT, dealings.get(i).amount);
                         responseIntent.putExtra(CLOSE_DATE, currTime/* - 3600000*/);
+                        //TerminalFragment.getInstance().addEntry();
                         sendBroadcast(responseIntent);
                         dealings.remove(i);
                         CustomSharedPreferences.setAmtCloseDealings(getApplicationContext(), CustomSharedPreferences.getAmtCloseDealings(getApplicationContext()) + 1);

@@ -594,6 +594,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param callListener Should the listener be called for this change
      */
     public void highlightValue(float x, float y, int dataSetIndex, boolean callListener) {
+
         if (dataSetIndex < 0 || dataSetIndex >= mData.getDataSetCount()) {
             highlightValue(null, callListener);
         } else {
@@ -727,10 +728,12 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
             IDataSet set = mData.getDataSetByIndex(highlight.getDataSetIndex());
 
             Entry e = mData.getEntryForHighlight(mIndicesToHighlight[i]);
-            int entryIndex = set.getEntryIndex(e);
-
+            int entryIndex = 0;
+            if(e!=null){
+                 entryIndex = set.getEntryIndex(e);
+            }
             // make sure entry not null
-            if (e == null || entryIndex > set.getEntryCount() * mAnimator.getPhaseX())
+            if (e == null || (entryIndex != 0 && entryIndex > set.getEntryCount() * mAnimator.getPhaseX()))
                 continue;
 
             float[] pos = getMarkerPosition(highlight);

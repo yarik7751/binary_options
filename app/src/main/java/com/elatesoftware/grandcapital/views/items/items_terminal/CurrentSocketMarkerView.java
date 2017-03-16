@@ -1,19 +1,15 @@
 package com.elatesoftware.grandcapital.views.items.items_terminal;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.github.mikephil.charting.components.MarkerView;
-import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
-import com.github.mikephil.charting.utils.Utils;
 
 /**
  * Created by Дарья Высокович on 13.03.2017.

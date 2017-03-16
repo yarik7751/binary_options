@@ -1,8 +1,6 @@
 
 package com.elatesoftware.grandcapital.api.pojo;
 
-import android.graphics.Color;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

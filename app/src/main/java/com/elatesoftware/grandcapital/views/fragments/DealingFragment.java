@@ -19,22 +19,16 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.services.OrdersService;
+import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
-import com.elatesoftware.grandcapital.views.activities.SignInActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingOpenOrdersAdapter;
-import com.elatesoftware.grandcapital.api.GrandCapitalApi;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DealingFragment extends Fragment {
 
@@ -195,7 +189,7 @@ public class DealingFragment extends Fragment {
         List<OrderAnswer> openOrders = new ArrayList();
         for (OrderAnswer order : orders) {
             if(order.getOptionsData() != null) {
-                if(order.getCloseTime().equals("1970-01-01T00:00:00")){
+                if(ConventDate.isCloseDealing(order.getCloseTime())){
                     openOrders.add(order);
                 }else{
                     closeOrders.add(order);

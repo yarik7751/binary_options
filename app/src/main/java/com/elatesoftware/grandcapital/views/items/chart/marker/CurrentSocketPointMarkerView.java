@@ -1,8 +1,6 @@
 package com.elatesoftware.grandcapital.views.items.chart.marker;
 
 import android.content.Context;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.elatesoftware.grandcapital.R;

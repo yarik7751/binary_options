@@ -15,7 +15,6 @@ import com.elatesoftware.grandcapital.services.InOutService;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Created by Ярослав Левшунов on 06.03.2017.

@@ -2,7 +2,6 @@ package com.elatesoftware.grandcapital.views.activities;
 
 import android.net.http.SslError;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;

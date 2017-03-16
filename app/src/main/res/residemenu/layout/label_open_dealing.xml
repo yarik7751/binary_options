@@ -1,91 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="16dp"
-    android:background="@color/open_dealing_background">
+    android:background="@color/open_dealing_background"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
-        android:layout_height="wrap_content"
+        android:id="@+id/tvCloseDealingTitle"
+        style="@style/BoldText"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="14dp"
         android:text="@string/label_open_dealing_title"
-        style="@style/BoldText"
-        android:textSize="16sp"
         android:textColor="@color/dealingListUpOrderColor"
-        android:id="@+id/tvCloseDealingTitle" />
+        android:textSize="16sp" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/active"
-            style="@style/LigthText"
             android:id="@+id/tvActiveTitle"
+            style="@style/LigthText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/active"
             android:textSize="12sp" />
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:text="30"
-            style="@style/BoldText"
             android:id="@+id/tvActive"
-            android:textSize="12sp" />
+            style="@style/BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:textSize="12sp"
+            tools:text="30" />
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/amount"
-            style="@style/LigthText"
             android:id="@+id/tvAmountTitle"
+            style="@style/LigthText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/amount"
             android:textSize="12sp" />
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:text="30"
-            style="@style/BoldText"
             android:id="@+id/tvAmount"
+            style="@style/BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            tools:text="30"
             android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:text="@string/time"
-            style="@style/LigthText"
             android:id="@+id/tvTimeTitle"
+            style="@style/LigthText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time"
             android:textSize="12sp" />
 
         <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:text="30"
-            style="@style/BoldText"
             android:id="@+id/tvTime"
+            style="@style/BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            tools:text="30"
             android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

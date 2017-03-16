@@ -2,7 +2,6 @@ package com.elatesoftware.grandcapital.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.elatesoftware.grandcapital.models.User;
 import com.google.gson.Gson;

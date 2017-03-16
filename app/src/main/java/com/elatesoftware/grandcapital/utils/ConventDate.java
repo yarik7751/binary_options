@@ -100,6 +100,10 @@ public class ConventDate {
             }
         }
     }
+    public static boolean isCloseDealing(String time){
+        return time.equals("1970-01-01T00:00:00");
+    }
+
     public static String getTimeStampCurrentDate() {
         Date date = new Date();
         return String.valueOf(date.getTime() / 1000);
