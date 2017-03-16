@@ -1,4 +1,6 @@
-package com.elatesoftware.grandcapital.views.items.chart.limit;
+package com.elatesoftware.grandcapital.views.items.chart.limit_lines;
+
+import android.graphics.Bitmap;
 
 import com.github.mikephil.charting.components.LimitLine;
 
@@ -13,6 +15,7 @@ public class CustomBaseLimitLine extends LimitLine {
 
     /** label string that is drawn next to the limit line */
     private String mLabel = "";
+    private Bitmap mBitmapIcon = null;
 
     private LimitLinesType mTypeLimitLine = LimitLinesType.LINE_CURRENT_SOCKET;
 
@@ -29,13 +32,26 @@ public class CustomBaseLimitLine extends LimitLine {
         mLimit = limit;
     }
 
-    public CustomBaseLimitLine(float limit, String label) {
+    public CustomBaseLimitLine(float limit, String label, Bitmap bitmap) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
+        mBitmapIcon = bitmap;
     }
 
     public void setTypeLimitLine(LimitLinesType type){
         mTypeLimitLine = type;
+    }
+
+    public LimitLinesType getmTypeLimitLine() {
+        return mTypeLimitLine;
+    }
+
+    public Bitmap getBitmapIcon() {
+        return mBitmapIcon;
+    }
+
+    public void setBitmapIcon(Bitmap bitmapIcon) {
+        this.mBitmapIcon = bitmapIcon;
     }
 }

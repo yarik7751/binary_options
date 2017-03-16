@@ -40,4 +40,7 @@
 
     <color name="close_dealing_background">@color/chat_their_msg</color>
     <color name="open_dealing_background">#99000000</color>
+
+    <color name="color_red_chart">#FD3E3C</color>
+
 </resources>

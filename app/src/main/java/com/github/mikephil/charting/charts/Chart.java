@@ -594,7 +594,6 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param callListener Should the listener be called for this change
      */
     public void highlightValue(float x, float y, int dataSetIndex, boolean callListener) {
-
         if (dataSetIndex < 0 || dataSetIndex >= mData.getDataSetCount()) {
             highlightValue(null, callListener);
         } else {

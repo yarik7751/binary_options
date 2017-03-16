@@ -18,13 +18,13 @@ import com.github.mikephil.charting.utils.MPPointF;
 public class CurrentSocketPointMarkerView extends MarkerView {
 
     public ImageView img;
-    private Animation animationMin, animationMax;
+    //private Animation animationMin, animationMax;
 
-    public CurrentSocketPointMarkerView(Context context, int layoutResource) {
-        super(context, layoutResource);
+    public CurrentSocketPointMarkerView(Context context) {
+        super(context, R.layout.item_current_marker);
         img = (ImageView) findViewById(R.id.imgvMarker);
-        animationMax = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_max);
-        animationMin = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_min);
+        //animationMax = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_max);
+        //animationMin = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_min);
     }
     /*
     public void startAnimate(){

@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
@@ -41,7 +44,8 @@ import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
-import com.elatesoftware.grandcapital.views.items.chart.limit.CustomBaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.chart.marker.CloseDealingPointMarkerView;
 import com.elatesoftware.grandcapital.views.items.chart.marker.CurrentSocketPointMarkerView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
@@ -125,8 +129,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private CloseDealingBroadcastReceiver closeDealingBroadcastReceiver;
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
 
-    private CurrentSocketPointMarkerView mv;
-//    private Animation animationMin, animationMax;
+    private CurrentSocketPointMarkerView currentSocketPointMarkerView;
+    private CloseDealingPointMarkerView dealingPointMarkerView;
 
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
@@ -177,37 +181,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
 
-      //  animationMax = AnimationUtils.loadAnimation(getContext(), R.anim.anim_point_scale_max);
-      //  animationMin = AnimationUtils.loadAnimation(getContext(), R.anim.anim_point_scale_min);
-//        animationMin.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//                mv.img.clearAnimation();
-//                mv.img.startAnimation(animationMax);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                mv.clearAnimation();
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {}
-//        });
-//        animationMax.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {}
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                mv.img.clearAnimation();
-//                mv.img.startAnimation(animationMin);
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {}
-//        });
         setSizeHeight();
+        initializationChart();
         return parentView;
     }
     @Override
@@ -281,7 +256,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         llHigherTerminal.setOnClickListener(v -> {
             requestMakeDealing("0");
         });
-        initializationChart();
     }
     @Override
     public void onResume() {
@@ -366,7 +340,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.setPadding(0,0,0,0);
         mChart.setAutoScaleMinMaxEnabled(true);
         mChart.setScaleYEnabled(false);
-        mChart.setScaleMinima(0.8f, 1f);
+        mChart.setScaleMinima(0.5f, 1f);
         mChart.setDoubleTapToZoomEnabled(false);
         mChart.getDescription().setEnabled(false);// enable description text
         mChart.setTouchEnabled(true);      // enable touch gestures жесты
@@ -377,9 +351,15 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         mChart.getLegend().setEnabled(false);   //Hide the legend
         mChart.setDragOffsetX(30f);// TODO norm padding chart in left
         mChart.setDrawMarkers(true);
+        mChart.getViewPortHandler().setMaximumScaleX(7f);
 
-        mv = new CurrentSocketPointMarkerView(getContext(), R.layout.item_current_marker);
-        mChart.setMarker(mv);
+        currentSocketPointMarkerView = new CurrentSocketPointMarkerView(getContext());
+        currentSocketPointMarkerView.setChartView(mChart);
+        mChart.setMarker(currentSocketPointMarkerView);
+
+//        dealingPointMarkerView = new CloseDealingPointMarkerView(getContext());
+//        dealingPointMarkerView.setChartView(mChart);
+//        mChart.setMarker(dealingPointMarkerView);
 
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
@@ -394,8 +374,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         xAxis.setEnabled(true);
         xAxis.disableAxisLineDashedLine();
         xAxis.setDrawGridLines(true);
-        //xAxis.addLimitLine(new LimitLine());
-        //xAxis.setSpaceMax(10f);
+
+        //xAxis.setGranularity(0.000000001f);
+        //xAxis.setGranularityEnabled(true);
 
         YAxis leftYAxis = mChart.getAxisLeft();      //Ось Y left
         leftYAxis.setEnabled(false);
@@ -406,6 +387,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         rightYAxis.setDrawGridLines(true);
         rightYAxis.disableAxisLineDashedLine();
         rightYAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
+        rightYAxis.setStartAtZero(false);
     }
     private void setSizeHeight() {
         int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
@@ -438,9 +420,11 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         llTopPanel.startAnimation(animation);
         isDirection = !isDirection;
     }
-    private void showLabelCloseDealing(String closePrice, String profit) {
+    private void showLabelCloseDealing(OrderAnswer answer) {
         closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
-        ((TextView) closeDealingView.findViewById(R.id.tvPrice)).setText(getResources().getString(R.string.of_price) + " " + closePrice + ",\n" + getResources().getString(R.string.profit) + " " + profit);
+        ((TextView) closeDealingView.findViewById(R.id.tvPrice))
+                .setText(getResources().getString(R.string.of_price) + " " + answer.getClosePrice() +
+                        ",\n" + getResources().getString(R.string.profit) + " " + answer.getProfitStr());
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT
@@ -458,7 +442,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         return v;
     }
     private void clearChart(){
-        mChart.highlightValues(null);
+        mChart.highlightValues(null); // delete all markers
         rightYAxis.removeAllLimitLines();
         mChart.getData().clearValues();
         mChart.getLineData().clearValues();
@@ -556,6 +540,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         set.setHighLightColor(Color.rgb(244, 117, 117));
         set.setValueTextColor(Color.WHITE);
         set.setValueTextSize(9f);
+        set.setDrawIcons(true);
         set.setDrawValues(false);
         set.setDrawCircles(false);
         set.setDrawCircleHole(false);
@@ -589,9 +574,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 if(mChart.getLineData() != null){
                     mChart.moveViewToX(mChart.getData().getXMax());
                     mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
-                     Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
-                                Float.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen())));
-                     getActivity().runOnUiThread(() -> drawCurrentYLimitLine(entry));
+                     //Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
+                     //           Float.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen())));
+                     //getActivity().runOnUiThread(() -> drawCurrentYLimitLine(entry));
                 }
                 if(isMAkeOpenSocket){
                     GrandCapitalApplication.closeAndOpenSocket(symbol);
@@ -636,7 +621,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                     set = createSetDataChart();
                     data.addDataSet(set);
                 }
-                data.addEntry(new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getOpen()))), 0);
+                data.addEntry(new Entry(ConventDate.genericTimeForChart(answer.getTime()),
+                        Float.valueOf(String.valueOf(answer.getOpen()))), 0);
                 data.notifyDataChanged();
                 mChart.notifyDataSetChanged();
             }
@@ -644,20 +630,17 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     }
 
     private void drawCurrentYLimitLine(Entry entry){
-        CustomBaseLimitLine ll1 = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()));
+        Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.whitevert);
+        CustomBaseLimitLine ll1 = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), icon);
         ll1.setLineWidth(1.5f);
-        ll1.setTextColor(Color.BLACK);
         ll1.setLineColor(Color.WHITE);
         ll1.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
         ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-        ll1.setTextSize(10f);
+
         rightYAxis.removeAllLimitLines();
         rightYAxis.addLimitLine(ll1);
         mChart.highlightValue(entry.getX(), entry.getY(), 0);
-       // mv.startAnimation(animationMin);
-       // startAnimate(mv);
     }
-
     private void drawXLimitLine(Entry entry){
         CustomBaseLimitLine line = new CustomBaseLimitLine(entry.getX());
         line.setLineWidth(1.5f);
@@ -670,6 +653,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         xAxis.addLimitLine(line);
     }
 
+    private void addIconCloseDealing(Entry entry){
+        entry.setIcon(getResources().getDrawable(R.drawable.marker_close_dealing));
+    }
     @Override
     public void onValueSelected(Entry e, Highlight h) {
     }
@@ -745,12 +731,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             String closeTime = ConventDate.getConvertDateFromUnix(intent.getLongExtra(CheckDealingService.CLOSE_DATE, -1) * 1000);
             TerminalFragment.this.mCloseTime = intent.getLongExtra(CheckDealingService.CLOSE_DATE, -1) * 1000;
             Log.d(TAG, "active: " + activeClose + ", amount: " + amountClose + ", mCloseTime: " + closeTime);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intentService = new Intent(getActivity(), OrdersService.class);
-                    getActivity().startService(intentService);
-                }
+            new Handler().postDelayed(() -> {
+                Intent intentService = new Intent(getActivity(), OrdersService.class);
+                getActivity().startService(intentService);
             }, 3000);
         }
     }
@@ -770,7 +753,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                                     closeDealing.getSymbol().contains(activeClose) &&
                                     closeDealing.getVolumeStr().contains(amountClose) &&
                                     Math.abs(mCloseTime - 3600000 - closeDealing.getCloseTimeUnix()) <= 5000) {
-                                showLabelCloseDealing(closeDealing.getClosePrice() + "", closeDealing.getProfitStr());
+                                showLabelCloseDealing(closeDealing);
                                 Log.d(TAG, "closeDealing: " + closeDealing);
                                 break;
                             }

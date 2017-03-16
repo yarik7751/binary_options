@@ -4,11 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.CornerPathEffect;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 
+import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
@@ -133,31 +138,63 @@ public class YAxisRenderer extends AxisRenderer {
             c.drawText(text, fixedPosition, positions[i * 2 + 1] + offset, mAxisLabelPaint);
         }
         // limitline labels
-        List<LimitLine> limitLines = mYAxis.getLimitLines();
+        List<LimitLine> limitLines =  mYAxis.getLimitLines();
         float[] pts = new float[2];
         for (LimitLine l : limitLines) {
-            Paint paint = new Paint();
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.WHITE);
+            if(l instanceof CustomBaseLimitLine){
+                CustomBaseLimitLine line = (CustomBaseLimitLine)l;
+                if(line.getmTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET)){
+                    Paint paint = new Paint();
+                    paint.setStyle(Paint.Style.FILL);
+                    paint.setColor(Color.WHITE);
 
-            Paint textPaint = mAxisLabelPaint;
-            textPaint.setColor(Color.BLACK);
-            textPaint.setTextSize(mAxisLabelPaint.getTextSize());
-            textPaint.setPathEffect(null);
-            textPaint.setTypeface(l.getTypeface());
-            textPaint.setStrokeWidth(0.5f);
-            textPaint.setStyle(l.getTextStyle());
+                    Paint textPaint = mAxisLabelPaint;
+                    textPaint.setColor(Color.BLACK);
+                    textPaint.setTextSize(mAxisLabelPaint.getTextSize() + 5f);
+                    textPaint.setPathEffect(null);
+                    textPaint.setTypeface(l.getTypeface());
+                    textPaint.setStrokeWidth(0.5f);
+                    textPaint.setStyle(l.getTextStyle());
 
-            pts[1] = l.getLimit();
-            mTrans.pointValuesToPixel(pts);
-            float paddingVert = Utils.convertDpToPixel(5);
-            float paddingHoriz = Utils.convertDpToPixel(8);
-            float height = Utils.calcTextHeight(textPaint, l.getLabel());
-            float width = Utils.calcTextWidth(textPaint, l.getLabel());
-            float posY = pts[1] + height / 2;
+                    pts[1] = l.getLimit();
+                    mTrans.pointValuesToPixel(pts);
+                    String strLabel = l.getLabel();
+                    String lastSymbol = "";
+                    if(strLabel.length() > 3){
+                        lastSymbol = strLabel.substring(strLabel.length()-1, strLabel.length());
+                        strLabel = strLabel.substring(0, strLabel.length()-1);
+                    }
+                    Bitmap bitmap = line.getBitmapIcon();
+                    float paddingVert = Utils.convertDpToPixel(8);
+                    float paddingHoriz = Utils.convertDpToPixel(18);
+                    float height = Utils.calcTextHeight(textPaint, strLabel);
+                    float width = Utils.calcTextWidth(textPaint, strLabel);
+                    float posY = pts[1] + height / 2;
 
-            c.drawRect(fixedPosition - paddingHoriz, posY - height - paddingVert, fixedPosition + width + paddingHoriz*2, posY + paddingVert, paint);
-            c.drawText(l.getLabel(), fixedPosition, posY, textPaint); //значение текущей точки на оси ОУ
+                    if (bitmap != null ) {
+                        bitmap = Bitmap.createScaledBitmap(bitmap, 200, 70, false);
+                        c.drawBitmap(bitmap, fixedPosition - paddingHoriz, posY - height - paddingVert, paint);
+                        c.drawText(strLabel, fixedPosition - paddingHoriz/3, posY, textPaint);
+                        if(!lastSymbol.equals("")) {
+                            textPaint.setColor(Color.parseColor("#FD3E3C"));
+                            c.drawText(lastSymbol, fixedPosition - paddingHoriz / 3 + width, posY, textPaint);
+                        }
+
+                    }else{
+                        paddingVert = Utils.convertDpToPixel(5);
+                        paddingHoriz = Utils.convertDpToPixel(8);
+                        c.drawRect(fixedPosition - paddingHoriz, posY - height -
+                                paddingVert, fixedPosition + width + paddingHoriz*2, posY + paddingVert, paint);
+                        c.drawText(strLabel, fixedPosition, posY, textPaint);//значение текущей точки на оси ОУ
+                        if(!lastSymbol.equals("")){
+                            textPaint.setColor(Color.parseColor("#FD3E3C"));
+                            c.drawText(lastSymbol, fixedPosition + width, posY, textPaint);
+                        }
+                    }
+                }else {
+
+                }
+            }
         }
     }
 
