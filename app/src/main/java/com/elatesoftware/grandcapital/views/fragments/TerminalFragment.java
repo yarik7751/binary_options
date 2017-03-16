@@ -16,9 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -57,13 +59,18 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.MPPointF;
+import com.github.mikephil.charting.utils.Utils;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.internal.Util;
+
 import static com.elatesoftware.grandcapital.R.id.rl_chart;
+import static com.elatesoftware.grandcapital.views.activities.BaseActivity.context;
 
 public class TerminalFragment extends Fragment implements OnChartValueSelectedListener {
 
@@ -85,7 +92,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
     private static List<String> listActives = new ArrayList<>();
     public static List<SocketAnswer> listBackGroundSocketAnswer = new ArrayList<>();
-    private static List<Highlight> listSelectedEntries = new ArrayList<>();
+    //private static List<Highlight> listSelectedEntries = new ArrayList<>();
 
     private String currActive, currAmount, currTime;
     private View openDealingView;
@@ -95,6 +102,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     private long mCloseTime;
     private Handler handler = new Handler();
 
+    private CustomBaseLimitLine currentLine;
+    private ImageView imgvPointCurrent;
     private View closeDealingView;
     private TextView tvBalance;
     private TextView tvDeposit;
@@ -131,6 +140,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
     private CurrentSocketPointMarkerView currentSocketPointMarkerView;
     private CloseDealingPointMarkerView dealingPointMarkerView;
+
+    private Animation animationMin, animationMax;
 
     private static TerminalFragment fragment = null;
 
@@ -170,7 +181,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
         llButtons = (LinearLayout) parentView.findViewById(R.id.ll_buttons);
         llDeposit = (LinearLayout) parentView.findViewById(R.id.ll_deposit);
-        rlChart = (RelativeLayout) parentView.findViewById(rl_chart);
+        rlChart = (RelativeLayout) parentView.findViewById(R.id.rl_chart);
         llProgressBar = (LinearLayout) parentView.findViewById(R.id.progress_bar);
         flMain = (FrameLayout) parentView.findViewById(R.id.fl_main);
 
@@ -213,6 +224,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         });
         initializationChart();
+        initializationCurrentPoint();
         etValueAmount.setOnFocusChangeListener((v, hasFocus) -> ConventString.setMaskAmount(etValueAmount, hasFocus));
         etValueTime.setOnFocusChangeListener((v, hasFocus) -> ConventString.setMaskTime(etValueTime, hasFocus));
         tvMinusAmount.setOnClickListener(v -> ConventString.changeAmountValue(etValueAmount, false));
@@ -284,8 +296,12 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
     @Override
     public void onPause() {
+        imgvPointCurrent.setVisibility(View.INVISIBLE);
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         mChart.clearValues();
+        rightYAxis.removeAllLimitLines();
+        xAxis.removeAllLimitLines();
+        //listSelectedEntries.clear();
         listBackGroundSocketAnswer.clear();
         unregisterBroadcasts();
         isAddInChart = false;
@@ -370,10 +386,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         currentSocketPointMarkerView.setChartView(mChart);
         mChart.setMarker(currentSocketPointMarkerView);
 
-//        dealingPointMarkerView = new CloseDealingPointMarkerView(getContext());
-//        dealingPointMarkerView.setChartView(mChart);
-//        mChart.setMarker(dealingPointMarkerView);
-
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
         mChart.setData(data);
@@ -402,7 +414,48 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         rightYAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
         rightYAxis.setStartAtZero(false);
     }
+    private void initializationCurrentPoint(){
+        animationMax = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_max);
+        animationMin = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_min);
+        imgvPointCurrent = new ImageView(getContext());
+        imgvPointCurrent.setVisibility(View.INVISIBLE);
+        imgvPointCurrent.setImageDrawable(getResources().getDrawable(R.drawable.front_elipsa));
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AndroidUtils.dp(40),AndroidUtils.dp(40));
+        rlChart.addView(imgvPointCurrent, params);
+        //startAnimate();
+    }
+    public void startAnimate(){
+        animationMin.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imgvPointCurrent.clearAnimation();
+                imgvPointCurrent.startAnimation(animationMax);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+        imgvPointCurrent.startAnimation(animationMin);
+
+        animationMax.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                imgvPointCurrent.clearAnimation();
+                imgvPointCurrent.startAnimation(animationMin);
+            }
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+    }
     private void setSizeHeight() {
         int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
         rlChart.getLayoutParams().height = (int) (height * 0.6);
@@ -460,9 +513,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         params.topMargin = AndroidUtils.dp(16);
         params.leftMargin = AndroidUtils.dp(16);
         rlChart.addView(closeDealingView, params);
-
-        /*addIconCloseDealing(new Entry(ConventDate.genericTimeForChart(answer.getCloseTimeUnix()),
-                Float.valueOf(String.valueOf(answer.getClosePrice()))));*/
         handler.postDelayed(() -> rlChart.removeView(closeDealingView), INTERVAL_SHOW_LABEL_CLOSE);
     }
 
@@ -475,6 +525,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     }
 
     private void clearChart() {
+        //listSelectedEntries.clear();
+        imgvPointCurrent.setVisibility(View.INVISIBLE);
+        imgvPointCurrent.setX(0);
+        imgvPointCurrent.setY(0);
         mChart.highlightValues(null); // delete all markers
         rightYAxis.removeAllLimitLines();
         mChart.getData().clearValues();
@@ -614,7 +668,10 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
                 Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
                         Float.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen())));
-                getActivity().runOnUiThread(() -> drawCurrentYLimitLine(entry));
+                getActivity().runOnUiThread(() -> {
+                    imgvPointCurrent.setVisibility(View.VISIBLE);
+                    drawCurrentYLimitLine(entry);
+                });
             }
             if (isMAkeOpenSocket) {
                 GrandCapitalApplication.closeAndOpenSocket(symbol);
@@ -669,26 +726,27 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     }
 
     private void drawCurrentYLimitLine(Entry entry) {
-        Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.whitevert);
-        CustomBaseLimitLine ll1 = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), icon);
-        ll1.setLineWidth(1.5f);
-        ll1.setLineColor(Color.WHITE);
-        ll1.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
-        ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-
-        rightYAxis.removeAllLimitLines();
-        rightYAxis.addLimitLine(ll1);
-        /*if(listSelectedEntries != null && listSelectedEntries.size() != 0){
-            List<Highlight> listTemp = new ArrayList<>();
-            listTemp = listSelectedEntries;
-            Highlight current = new Highlight(entry.getX(), entry.getY(), 0);
-            listTemp.add(current);
-            mChart.highlightValues();
-        }else{*/
-            mChart.highlightValue(entry.getX(), entry.getY(), 0);
-        //}
+        //mChart.highlightValue(entry.getX(), entry.getY(), 0);
+        if(currentLine != null){
+            rightYAxis.removeLimitLine(currentLine);
+        }
+        Bitmap iconLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.whitevert);
+        currentLine = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), iconLabel);
+        currentLine.setLineWidth(1.5f);
+        currentLine.setLineColor(Color.WHITE);
+        currentLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
+        currentLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        rightYAxis.addLimitLine(currentLine);
+        updateCurrentPoint(entry);
     }
 
+    private void updateCurrentPoint(Entry entry){
+        if(imgvPointCurrent != null){
+            MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
+            imgvPointCurrent.setX(point.getX() - imgvPointCurrent.getWidth()/2);
+            imgvPointCurrent.setY(point.getY() - imgvPointCurrent.getHeight()/2);
+        }
+    }
     private void drawXLimitLine(Entry entry) {
         CustomBaseLimitLine line = new CustomBaseLimitLine(entry.getX());
         line.setLineWidth(1.5f);
@@ -699,14 +757,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         xAxis.addLimitLine(line);
         xAxis.removeAllLimitLines();
         xAxis.addLimitLine(line);
-    }
-
-    private void addIconCloseDealing(Entry entry) {
-        if(listSelectedEntries != null){
-            listSelectedEntries.add(new Highlight(entry.getX(), entry.getY(), 0));
-        }
-        //mChart.highlightValue(entry.getX(), entry.getY(), 0);
-        //entry.setIcon(getResources().getDrawable(R.drawable.marker_close_dealing));
     }
 
     @Override
@@ -774,6 +824,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 CheckDealingService.dealings.add(dealing);
                 etValueAmount.setText("$0");
                 etValueTime.setText("0 MIN");
+
+
+
             } else {
                 CustomDialog.showDialogInfo(getActivity(),
                         getResources().getString(R.string.error),

@@ -13,6 +13,7 @@ import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.components.YAxis.YAxisLabelPosition;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.MPPointD;
 import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.Utils;
@@ -128,7 +129,7 @@ public class YAxisRenderer extends AxisRenderer {
         for (LimitLine l : limitLines) {
             if(l instanceof CustomBaseLimitLine) {
                 CustomBaseLimitLine line = (CustomBaseLimitLine) l;
-                if (line.getmTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET)) {
+                if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET)) {
                     Paint paint = new Paint();
                     paint.setStyle(Paint.Style.FILL);
                     paint.setColor(Color.WHITE);
@@ -149,7 +150,10 @@ public class YAxisRenderer extends AxisRenderer {
                         lastSymbol = strLabel.substring(strLabel.length() - 1, strLabel.length());
                         strLabel = strLabel.substring(0, strLabel.length() - 1);
                     }
-                    Bitmap bitmap = line.getBitmapIcon();
+                    Bitmap bitmapLabel = line.getBitmapIconLabel();
+                    //Bitmap bitmapPoint = line.getmBitmapIconPoint();
+                    //Entry entry = line.getEntry();
+
                     float paddingVert = Utils.convertDpToPixel(8);
                     float paddingHoriz = Utils.convertDpToPixel(18);
                     float height = Utils.calcTextHeight(textPaint, strLabel);
@@ -159,14 +163,15 @@ public class YAxisRenderer extends AxisRenderer {
                     float height_marker = height + paddingVert;
                     float width_marker = 200f;
 
-                    if (bitmap != null) {
-                        bitmap = Bitmap.createScaledBitmap(bitmap, (int) width_marker, (int) height_marker, false);
-                        c.drawBitmap(bitmap, fixedPosition - paddingHoriz, posY - height_marker + paddingVert / 2, paint);
+                    if (bitmapLabel != null /*&& bitmapPoint != null && line.getEntry() != null*/) {
+                        bitmapLabel = Bitmap.createScaledBitmap(bitmapLabel, (int) width_marker, (int) height_marker, false);
+                        c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz, posY - height_marker + paddingVert / 2, paint);
                         c.drawText(strLabel, fixedPosition - paddingHoriz / 3, posY, textPaint);
                         if (!lastSymbol.equals("")) {
                             textPaint.setColor(Color.parseColor("#FD3E3C"));
                             c.drawText(lastSymbol, fixedPosition - paddingHoriz / 3 + width, posY, textPaint);
                         }
+                        //c.drawBitmap(bitmapPoint, fixedPosition - entry.getX(), fixedPosition - entry.getY(), paint);
 
                     } else {
                         paddingVert = Utils.convertDpToPixel(5);
