@@ -18,6 +18,7 @@
     <string name="error_incorrent_login_input">Please input login</string>
     <string name="connection_not_secure">Your connection is not private. Do you want to continue?</string>
     <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="cancel">CANCEL</string>
     <string name="cancel_dont_show">CANCEL, DON"T ASK AGAIN</string>
     <string name="ok">OK</string>

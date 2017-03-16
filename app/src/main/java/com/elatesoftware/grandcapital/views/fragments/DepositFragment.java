@@ -38,7 +38,7 @@ public class DepositFragment  extends Fragment {
     private RecyclerView rvIoOut;
     private Button btnDeposit;
     private TextView tvWithdraw;
-    private LinearLayout llProgress;
+    private LinearLayout llProgress, llWithdraw;
 
     private ArrayList<InOutAnswer> deposits;
     private ArrayList<InOutAnswer> withdraws;
@@ -68,21 +68,26 @@ public class DepositFragment  extends Fragment {
         rvIoOut = (RecyclerView) view.findViewById(R.id.rv_inout);
         btnDeposit = (Button) view.findViewById(R.id.btn_deposit);
         tvWithdraw = (TextView) view.findViewById(R.id.tv_withdraw);
+        llWithdraw = (LinearLayout) view.findViewById(R.id.ll_withdraw);
 
-        btnDeposit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/deposit"));
-                startActivity(browserIntent);
-            }
+        btnDeposit.setOnClickListener(v -> {
+            BaseActivity.sMainTagFragment = DepositFragment.class.getName();
+            WebFragment webFragment = WebFragment.getInstance("http://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/deposit");
+            BaseActivity.addNextFragment(webFragment);
+            /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/deposit"));
+            startActivity(browserIntent);*/
         });
 
-        tvWithdraw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/withdraw"));
-                startActivity(browserIntent);
-            }
+        tvWithdraw.setOnClickListener(v -> {
+
+        });
+
+        llWithdraw.setOnClickListener(v -> {
+            BaseActivity.sMainTagFragment = DepositFragment.class.getName();
+            WebFragment webFragment = WebFragment.getInstance("http://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/withdraw");
+            BaseActivity.addNextFragment(webFragment);
+            /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/withdraw"));
+            startActivity(browserIntent);*/
         });
 
         rvIoOut.setLayoutManager(new LinearLayoutManager(getContext()));

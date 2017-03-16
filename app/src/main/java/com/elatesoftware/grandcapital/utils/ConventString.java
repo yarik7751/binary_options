@@ -107,4 +107,12 @@ public class ConventString {
                 break;
         }
     }
+
+    public static String getRoundNumber(double number) {
+        String format = String.format("%.5f", number);
+        while(format.charAt(format.length() - 1) == '0' || format.charAt(format.length() - 1) == '.') {
+            format = format.substring(0, format.length() - 2);
+        }
+        return format;
+    }
 }

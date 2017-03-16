@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.ConventString;
 
 public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapter {
 
@@ -21,8 +22,8 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
 
         FragmentDealingViewHolder orderHolder = (FragmentDealingViewHolder) holder;
         orderHolder.mFirstColumn.setText(orderList.get(position).getSymbol());
-        orderHolder.mSecondColumn.setText(String.valueOf(orderList.get(position).getOpenPrice()));
-        orderHolder.mThirdColumn.setText(String.valueOf(orderList.get(position).getClosePrice()));
+        orderHolder.mSecondColumn.setText(ConventString.getRoundNumber(orderList.get(position).getOpenPrice()));
+        orderHolder.mThirdColumn.setText(ConventString.getRoundNumber(orderList.get(position).getClosePrice()));
 
         /**объем приходит умноженный на 100*/
         double amount = ((double) orderList.get(position).getVolume()) / 100;

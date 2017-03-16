@@ -27,6 +27,7 @@ import com.elatesoftware.grandcapital.views.fragments.QuotesFragment;
 import com.elatesoftware.grandcapital.views.fragments.SupportFragment;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.elatesoftware.grandcapital.views.fragments.ToolbarFragment;
+import com.elatesoftware.grandcapital.views.fragments.WebFragment;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
@@ -40,6 +41,7 @@ public class BaseActivity extends CustomFontsActivity {
     public static FragmentManager fragmentManager;
     public static Context context;
     public static String sMainTagFragment = "";
+    public static String sCurrentTagFragment = "";
 
     public ResideMenu mResideMenu;
     private ResideMenuItem mTerminal;
@@ -342,13 +344,33 @@ public class BaseActivity extends CustomFontsActivity {
             BaseActivity.getToolbar().deselectAll();
             BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
         }
+        if(sMainTagFragment.equals(DepositFragment.class.getName())) {
+            BaseActivity.getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_deposit));
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+            BaseActivity.getToolbar().deselectAll();
+        }
         sMainTagFragment = "";
+    }
+
+    private static boolean setBackActionByCurrFragment() {
+        if(sCurrentTagFragment.equals(WebFragment.class.getName())) {
+            if(WebFragment.sWebFragment.wvWeb.canGoBack()) {
+                WebFragment.sWebFragment.wvWeb.goBack();
+                return false;
+            }
+            return true;
+        }
+        return true;
     }
 
     @Override
     public void onBackPressed() {
         if(mResideMenu.isOpened()) {
             mResideMenu.closeMenu();
+        }
+        if(!setBackActionByCurrFragment()) {
+            sCurrentTagFragment = "";
+            return;
         }
         if(backToRootFragment) {
             if(!TextUtils.isEmpty(sMainTagFragment)) {

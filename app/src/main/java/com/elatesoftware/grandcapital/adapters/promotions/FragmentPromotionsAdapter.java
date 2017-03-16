@@ -17,6 +17,7 @@ import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuestionFragment;
+import com.elatesoftware.grandcapital.views.fragments.WebFragment;
 
 /**
  * Created by Ярослав Левшунов on 24.02.2017.
@@ -47,8 +48,11 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
         promotionsViewHolder.imgLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(binaryOptionAnswer.getElements().get(position).getPic()));
-                context.startActivity(browserIntent);
+                BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
+                WebFragment webFragment = WebFragment.getInstance(binaryOptionAnswer.getElements().get(position).getPic());
+                BaseActivity.addNextFragment(webFragment);
+                /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(binaryOptionAnswer.getElements().get(position).getPic()));
+                context.startActivity(browserIntent);*/
             }
         });
         promotionsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {

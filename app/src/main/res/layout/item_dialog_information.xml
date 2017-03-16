@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingRight="20dp"
-    android:paddingBottom="20dp"
     android:orientation="vertical"
     android:background="@color/dialog_bg">
 
@@ -52,19 +51,21 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:gravity="right|bottom">
 
         <TextView
             android:id="@+id/tvOk"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             style="@style/LigthText"
             android:textColor="@color/dealingListUpOrderColor"
             android:text="@string/ok"
-            android:paddingRight="16dp"
+            android:padding="8dp"
+            android:layout_marginRight="16dp"
             android:textSize="14sp"/>
     </LinearLayout>
 </LinearLayout>

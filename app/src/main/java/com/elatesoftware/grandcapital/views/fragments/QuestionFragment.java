@@ -44,9 +44,6 @@ public class QuestionFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        BaseActivity.getToolbar().setPageTitle(mHeader);
-        BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_EMPTY_FRAGMENT);
-        BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_BACK_PRESSED);
         TextView contentText  = (TextView) view.findViewById(R.id.fragment_question_content);
         contentText.setText(mContent);
         Log.d(TAG, "mContent: " + mContent);

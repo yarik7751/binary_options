@@ -2,7 +2,9 @@ package com.elatesoftware.grandcapital.adapters.dealing;
 
 import android.support.v7.widget.RecyclerView;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.utils.ConventString;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -20,8 +22,10 @@ public class FragmentDealingCloseOrdersAdapter extends FragmentDealingOrdersAdap
         FragmentDealingViewHolder orderHolder = (FragmentDealingViewHolder) holder;
 
         orderHolder.mFirstColumn.setText(orderList.get(position).getSymbol());
-        orderHolder.mSecondColumn.setText(String.valueOf(orderList.get(position).getOpenPrice()));
-        orderHolder.mThirdColumn.setText(String.valueOf(orderList.get(position).getClosePrice()));
+        double openPrice = orderList.get(position).getOpenPrice();
+        double closePrice = orderList.get(position).getClosePrice();
+        orderHolder.mSecondColumn.setText(ConventString.getRoundNumber(openPrice));
+        orderHolder.mThirdColumn.setText(ConventString.getRoundNumber(closePrice));
 
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
         orderHolder.mFourthColumn.setText(String.format("$%s", numberFormat.format(((double)orderList.get(position).getVolume()) / 100)));
