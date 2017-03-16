@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.fragments.QuestionFragment">
+    tools:context=".views.fragments.QuestionFragment"
+    android:background="@drawable/bg">
 
     <ScrollView
         android:layout_width="match_parent"

@@ -11,6 +11,8 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.fragments.HowItWorksFragment;
+import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuestionFragment;
 
 public class FragmentHowItWorksListAdapter extends GrandCapitalListAdapter {
@@ -62,6 +64,7 @@ public class FragmentHowItWorksListAdapter extends GrandCapitalListAdapter {
             bundle.putString(QuestionFragment.HEADER_TEXT, mQuestionsNames[position]);
             bundle.putString(QuestionFragment.CONTENT_TEXT, mQuestionsContent[position]);
 
+            BaseActivity.sMainTagFragment = HowItWorksFragment.class.getName();
             QuestionFragment questionFragment = new QuestionFragment();
             questionFragment.setArguments(bundle);
             BaseActivity.addNextFragment(questionFragment);

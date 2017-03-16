@@ -15,6 +15,7 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuestionFragment;
 
 /**
@@ -57,6 +58,7 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
                 bundle.putString(QuestionFragment.HEADER_TEXT, binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
                 bundle.putString(QuestionFragment.CONTENT_TEXT, binaryOptionAnswer.getElements().get(position).getLongDescription());
 
+                BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
                 QuestionFragment questionFragment = new QuestionFragment();
                 questionFragment.setArguments(bundle);
                 BaseActivity.addNextFragment(questionFragment);

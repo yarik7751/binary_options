@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,6 +38,9 @@ public class BaseActivity extends CustomFontsActivity {
     public static final String TAG = "BaseActivity_TAG";
 
     public static FragmentManager fragmentManager;
+    public static Context context;
+    public static String sMainTagFragment = "";
+
     public ResideMenu mResideMenu;
     private ResideMenuItem mTerminal;
     private ResideMenuItem mSupport;
@@ -78,6 +82,7 @@ public class BaseActivity extends CustomFontsActivity {
             finish();
         } else {
             fragmentManager = getSupportFragmentManager();
+            context = this;
             setupMenu();
             if (savedInstanceState == null) {
                 toolbar = new ToolbarFragment();
@@ -98,6 +103,10 @@ public class BaseActivity extends CustomFontsActivity {
         mResideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);
         mResideMenu.setScaleValue(0.75f);
         addItems();
+    }
+
+    public void setDealings() {
+        mDealing.setValue(CustomSharedPreferences.getAmtCloseDealings(this));
     }
 
     private void addItems() {
@@ -136,7 +145,8 @@ public class BaseActivity extends CustomFontsActivity {
     private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
         @Override
         public void openMenu() {
-            mDealing.setValue(9);
+            //mDealing.setValue(9);
+            setDealings();
             mResideMenu.setScrolling(true);
         }
         @Override
@@ -222,11 +232,7 @@ public class BaseActivity extends CustomFontsActivity {
 
     public static void changeMainFragment(Fragment targetFragment) {
         backToRootFragment = true;
-        //int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-        //Log.d(TAG, "BackStackEntryCount 1: " + backStackEntryCount);
         fragmentManager.popBackStack();
-        //backStackEntryCount = fragmentManager.getBackStackEntryCount();
-        //Log.d(TAG, "BackStackEntryCount 2: " + backStackEntryCount);
         onSwitchFragment(targetFragment, targetFragment.getClass().getName(), true, true, R.id.content);
         Log.d(TAG, "BackStackEntryCount: " + fragmentManager.getBackStackEntryCount());
     }
@@ -236,13 +242,18 @@ public class BaseActivity extends CustomFontsActivity {
     }
 
     public static TerminalFragment setTerminalFragment() {
+        Log.d(TAG, "setTerminalFragment()");
+        TerminalFragment fragment = TerminalFragment.getInstance();
         if(backToRootFragment) {
             clearFragmentBackStack();
             Log.d(TAG, "clearFragmentBackStack()");
         }
         backToRootFragment = false;
-        TerminalFragment fragment = TerminalFragment.getInstance();
-        onSwitchFragment(fragment, fragment.getClass().getName(), false, true, R.id.content);
+        if(fragmentManager.findFragmentByTag(fragment.getClass().getName()) == null) {
+            onSwitchFragment(fragment, fragment.getClass().getName(), false, true, R.id.content);
+        } else {
+            setToolBarTerminalInfo();
+        }
         return fragment;
     }
 
@@ -258,7 +269,7 @@ public class BaseActivity extends CustomFontsActivity {
         if(anim) {
             tr.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         }
-        tr.replace(res, fragment, tag);
+        tr.add(res, fragment, tag);
         if (add) {
             try {
                 tr.addToBackStack(tag);
@@ -269,7 +280,7 @@ public class BaseActivity extends CustomFontsActivity {
         tr.commit();
     }
 
-    private void changeToolbarFragment(Fragment targetFragment) {
+    private static void changeToolbarFragment(Fragment targetFragment) {
         //Опасно! Не ясно, что делает эта строка
        // mResideMenu.clearIgnoredViewList();
         fragmentManager.beginTransaction()
@@ -284,7 +295,13 @@ public class BaseActivity extends CustomFontsActivity {
     }
 
     public static ToolbarFragment getToolbar(){
-        return toolbar;
+        if(toolbar != null) {
+            return toolbar;
+        } else {
+            toolbar = new ToolbarFragment();
+            changeToolbarFragment(toolbar);
+            return toolbar;
+        }
     }
 
     private boolean isAuth() {
@@ -299,26 +316,61 @@ public class BaseActivity extends CustomFontsActivity {
         startService(intentMyIntentService);
     }
 
+    private static void setToolBarTerminalInfo() {
+        BaseActivity.getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_terminal));
+        BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+            BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+        });
+        try {
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+            BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+        }
+    }
+
+    private static void setToolbarInfoByTag() {
+        if(sMainTagFragment.equals(PromotionsFragment.class.getName())) {
+            BaseActivity.getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_promotions));
+            BaseActivity.getToolbar().hideTabs();
+            BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
+        }
+        if(sMainTagFragment.equals(HowItWorksFragment.class.getName())) {
+            BaseActivity.getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_how_it_works));
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+            BaseActivity.getToolbar().deselectAll();
+            BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
+        }
+        sMainTagFragment = "";
+    }
+
     @Override
     public void onBackPressed() {
         if(mResideMenu.isOpened()) {
             mResideMenu.closeMenu();
         }
+        if(backToRootFragment) {
+            if(!TextUtils.isEmpty(sMainTagFragment)) {
+                setToolbarInfoByTag();
+            } else {
+                Log.d(TAG, "backToRootFragment (onBackPressed): true");
+                setToolBarTerminalInfo();
+                backToRootFragment = false;
+            }
+        }
+        super.onBackPressed();
         int backStackEntryCount = fragmentManager.getBackStackEntryCount();
         Log.d(TAG, "BackStackEntryCount (onBackPressed): " + backStackEntryCount);
-        if(backStackEntryCount == 0) {
+        /*if(backStackEntryCount == 0) {
             if(backToRootFragment) {
                 setTerminalFragment();
             } else {
                 super.onBackPressed();
             }
         } else {
-            try {
-                super.onBackPressed();
-            } catch (IllegalStateException e) {
-                super.onBackPressed();
-            }
-        }
+            super.onBackPressed();
+        }*/
     }
 
     @Override

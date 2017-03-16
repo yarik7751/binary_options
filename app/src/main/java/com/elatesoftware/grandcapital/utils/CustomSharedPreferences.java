@@ -17,6 +17,7 @@ public class CustomSharedPreferences {
      private static final String SHARED_PREFERENCES_USER = "USER";
      private static final String SHARED_PREFERENCES_CHAT_HISTORY = "SHARED_PREFERENCES_CHAT_HISTORY";
      private static final String SHARED_PREFERENCES_SELECTED_QUOTES = "SHARED_PREFERENCES_SELECTED_QUOTES";
+     private static final String SHARED_PREFERENCES_CLOSE_DEALINGS = "SHARED_PREFERENCES_CLOSE_DEALINGS";
 
     public static boolean isSaveUserInPreferences(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
@@ -75,5 +76,15 @@ public class CustomSharedPreferences {
     public static String getSelectedQuotes(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return sharedPreferences.getString(SHARED_PREFERENCES_SELECTED_QUOTES, "");
+    }
+
+    public static void setAmtCloseDealings(Context context, int amt) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt(SHARED_PREFERENCES_CLOSE_DEALINGS, amt).commit();
+    }
+
+    public static int getAmtCloseDealings(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(SHARED_PREFERENCES_CLOSE_DEALINGS, 0);
     }
 }

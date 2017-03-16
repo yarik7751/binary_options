@@ -10,6 +10,7 @@ import android.util.Log;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.models.Dealing;
 import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class CheckDealingService extends Service {
                         responseIntent.putExtra(CLOSE_DATE, currTime/* - 3600000*/);
                         sendBroadcast(responseIntent);
                         dealings.remove(i);
+                        CustomSharedPreferences.setAmtCloseDealings(getApplicationContext(), CustomSharedPreferences.getAmtCloseDealings(getApplicationContext()) + 1);
                         break;
                     }
                 }

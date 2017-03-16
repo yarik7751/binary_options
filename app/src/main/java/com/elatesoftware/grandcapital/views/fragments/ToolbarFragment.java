@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
+import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.ToolTabsView;
@@ -76,7 +77,7 @@ public class ToolbarFragment extends Fragment {
         int[] drawableResources = {
                 R.drawable.signal,
                 R.drawable.terminal,
-                R.drawable.order,
+                CustomSharedPreferences.getAmtCloseDealings(getContext()) == 0 ? R.drawable.order : R.drawable.order_active,
                 R.drawable.arrowdown,
                 R.drawable.quotes
         };
@@ -100,8 +101,16 @@ public class ToolbarFragment extends Fragment {
         if (burgerType == BURGER_BACK_PRESSED) {
             imgBurger.getLayoutParams().width = AndroidUtils.dp(48);
             imgBurger.getLayoutParams().height = AndroidUtils.dp(48);
-            imgBurger.setImageResource(R.drawable.ic_keyboard_arrow_left_white_48dp);
+            imgBurger.setImageResource(R.drawable.ic_keyboard_arrow_left_white_36dp);
         }
+    }
+
+    public void setDealingSelectIcon() {
+        mTabLayout.setIcon(BaseActivity.DEALING_POSITION, R.drawable.order_active);
+    }
+
+    public void setDealingIcon() {
+        mTabLayout.setIcon(BaseActivity.DEALING_POSITION, R.drawable.order);
     }
 
     public void switchTab(int position) {

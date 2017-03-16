@@ -10,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.services.OrdersService;
+import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.SignInActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -35,6 +37,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DealingFragment extends Fragment {
+
+    public static final String TAG = "DealingFragment_Logs";
 
     private TabLayout mTabs;
     private RecyclerView mRecyclerView;
@@ -55,12 +59,20 @@ public class DealingFragment extends Fragment {
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
     private static int currentTabPosition = 0;
 
+    public static boolean sIsOpen = false;
+
     private static DealingFragment fragment = null;
     public static DealingFragment getInstance() {
         if (fragment == null) {
             fragment = new DealingFragment();
         }
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sIsOpen = true;
     }
 
     @Override
@@ -74,6 +86,10 @@ public class DealingFragment extends Fragment {
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_dealing));
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
         BaseActivity.getToolbar().switchTab(BaseActivity.DEALING_POSITION);
+
+        CustomSharedPreferences.setAmtCloseDealings(getContext(), 0);
+        ((BaseActivity) getActivity()).setDealings();
+        BaseActivity.getToolbar().setDealingIcon();
 
         mListLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_list);
         mNoOrdersLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_no_elements_layout);
@@ -122,6 +138,7 @@ public class DealingFragment extends Fragment {
 
     private void updateData() {
         Intent intentService = new Intent(getActivity(), OrdersService.class);
+        intentService.putExtra(OrdersService.FRAGMENT, "");
         getActivity().startService(intentService);
     }
 
@@ -227,7 +244,9 @@ public class DealingFragment extends Fragment {
 
     @Override
     public void onStop() {
+        Log.d(TAG, "onStop()");
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
+        sIsOpen = false;
         super.onStop();
     }
 }

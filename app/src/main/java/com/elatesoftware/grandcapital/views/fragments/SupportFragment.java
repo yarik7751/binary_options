@@ -157,6 +157,7 @@ public class SupportFragment extends Fragment {
         //LinkedList<HistoryMessage> copy = gson.fromJson(historyStr, new TypeToken<LinkedList<HistoryMessage>>(){}.getType());
         Log.d(TAG, "historyStr: " + historyStr);
         //Log.d(TAG, "copy.size(): " + copy.size());
+
     }
 
     private void addYourMessageInView(String message, long unix, boolean addInHistory) {

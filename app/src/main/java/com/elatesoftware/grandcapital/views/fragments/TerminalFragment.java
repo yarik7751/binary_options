@@ -168,7 +168,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         llTopPanel = (LinearLayout) parentView.findViewById(R.id.ll_top_panel);
 
         llButtons = (LinearLayout) parentView.findViewById(R.id.ll_buttons);
-        llDeposit = (LinearLayout) parentView .findViewById(R.id.ll_deposit);
+        llDeposit = (LinearLayout) parentView.findViewById(R.id.ll_deposit);
         rlChart = (RelativeLayout) parentView.findViewById(rl_chart);
         llProgressBar = (LinearLayout) parentView.findViewById(R.id.progress_bar);
         flMain = (FrameLayout) parentView.findViewById(R.id.fl_main);
@@ -181,6 +181,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
 
+        etValueAmount.clearFocus();
+        etValueTime.clearFocus();
+
         setSizeHeight();
         initializationChart();
         return parentView;
@@ -191,19 +194,19 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_terminal));
         BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
-            BaseActivity.getToolbar().switchTab(1);
+            BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
         try {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
-            BaseActivity.getToolbar().switchTab(1);
-        } catch (Exception ignored){
+            BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+        } catch (Exception ignored) {
             ignored.printStackTrace();
         }
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
-            if(etValueAmount.isFocused()) {
+            if (etValueAmount.isFocused()) {
                 ConventString.setMaskAmount(etValueAmount, isOpen1);
             }
-            if(etValueTime.isFocused()) {
+            if (etValueTime.isFocused()) {
                 ConventString.setMaskTime(etValueTime, isOpen1);
             }
         });
@@ -320,7 +323,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         getActivity().registerReceiver(closeDealingBroadcastReceiver, intentFilterCloseDealing);
 
         mOrdersBroadcastReceiver = new GetResponseOrdersBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
+        IntentFilter intentFilter = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS + OrdersService.FRAGMENT_TERMINAL);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
     }
@@ -401,7 +404,8 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         animation.setDuration(200);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -413,9 +417,23 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 );
                 params.topMargin = AndroidUtils.dp(isDirection ? -60 : 0);
                 flMain.addView(llTopPanel, params);
+
+                if (!isDirection) {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!isDirection) {
+                                BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+                                showSignalsPanel();
+                            }
+                        }
+                    }, 3000);
+                }
             }
+
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
         llTopPanel.startAnimation(animation);
         isDirection = !isDirection;
@@ -523,8 +541,6 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
             intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
             getActivity().startService(intentService);
-            etValueAmount.setText("$0");
-            etValueTime.setText("0 MIN");
         }else{
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
         }
@@ -716,7 +732,9 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
                 handler.postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
                 Dealing dealing = new Dealing(currActive, currAmount, ConventString.getTimeValue(etValueTime) * 60, mCurrTimeUnix);
                 CheckDealingService.dealings.add(dealing);
-            }else{
+                etValueAmount.setText("$0");
+                etValueTime.setText("0 MIN");
+            } else {
                 CustomDialog.showDialogInfo(getActivity(),
                         getResources().getString(R.string.error),
                         getResources().getString(R.string.request_error_text));
@@ -726,15 +744,21 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
     public class CloseDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            ((BaseActivity) getActivity()).setDealings();
+            BaseActivity.getToolbar().setDealingSelectIcon();
             activeClose = intent.getStringExtra(CheckDealingService.ACTIVE);
             amountClose = intent.getStringExtra(CheckDealingService.AMOUNT);
             String closeTime = ConventDate.getConvertDateFromUnix(intent.getLongExtra(CheckDealingService.CLOSE_DATE, -1) * 1000);
             TerminalFragment.this.mCloseTime = intent.getLongExtra(CheckDealingService.CLOSE_DATE, -1) * 1000;
             Log.d(TAG, "active: " + activeClose + ", amount: " + amountClose + ", mCloseTime: " + closeTime);
-            new Handler().postDelayed(() -> {
-                Intent intentService = new Intent(getActivity(), OrdersService.class);
-                getActivity().startService(intentService);
-            }, 3000);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intentService = new Intent(getActivity(), OrdersService.class);
+                    intentService.putExtra(OrdersService.FRAGMENT, OrdersService.FRAGMENT_TERMINAL);
+                    getActivity().startService(intentService);
+                }
+            }, 4000);
         }
     }
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
