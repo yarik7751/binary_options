@@ -314,7 +314,7 @@ public class TerminalFragment extends Fragment {
         ConventString.updateBalance(tvBalance);
         if (sSymbolCurrent != null && !sSymbolCurrent.equals("")) {
             tvValueActive.setText(sSymbolCurrent);
-            parseResponseSymbolHistory(false);
+            parseResponseSymbolHistory(true);
         } else {
             changeActive();
         }
@@ -340,7 +340,7 @@ public class TerminalFragment extends Fragment {
     @Override
     public void onDestroy() {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
-        //GrandCapitalApplication.closeSocket();
+        GrandCapitalApplication.closeSocket();
         super.onDestroy();
     }
 
@@ -868,15 +868,15 @@ public class TerminalFragment extends Fragment {
                     if (OrderAnswer.getInstance() != null) {
                         List<OrderAnswer> orders = OrderAnswer.getInstance();
                         List<OrderAnswer> closeOrders = DealingFragment.findOrders(orders, DealingFragment.CLOSE_TAB_POSITION);
-                        Log.d(TAG, "closeOrders.size(): " + closeOrders.size());
-                        Log.d(TAG, "closeOrders: " + closeOrders);
+                        //Log.d(TAG, "closeOrders.size(): " + closeOrders.size());
+                        //Log.d(TAG, "closeOrders: " + closeOrders);
                         for (OrderAnswer closeDealing : closeOrders) {
                             if (closeDealing != null && activeClose != null && amountClose != null && mCloseTime != 0 &&
                                     closeDealing.getSymbol().contains(activeClose) &&
                                     closeDealing.getVolumeStr().contains(amountClose) &&
                                     Math.abs(mCloseTime - 3600000 - closeDealing.getCloseTimeUnix()) <= 5000) {
                                 showLabelCloseDealing(closeDealing);
-                                Log.d(TAG, "closeDealing: " + closeDealing);
+                                //Log.d(TAG, "closeDealing: " + closeDealing);
                                 break;
                             }
                         }

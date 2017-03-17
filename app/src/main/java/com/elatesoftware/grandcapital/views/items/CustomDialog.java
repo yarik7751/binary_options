@@ -104,7 +104,6 @@ public class CustomDialog {
             }
         });
         tvMaybe.setOnClickListener(listnerMaybe);
-
         dialog.show();
     }
 

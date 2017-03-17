@@ -101,6 +101,9 @@ public class GrandCapitalApplication extends Application{
                  || mClient.getReadyState() == WebSocket.READYSTATE.CONNECTING
                  || mClient.getReadyState() == WebSocket.READYSTATE.NOT_YET_CONNECTED)){
              mClient.close();
+             while(mClient.getReadyState() == WebSocket.READYSTATE.OPEN || mClient.getReadyState() == WebSocket.READYSTATE.CONNECTING){
+
+             }
          }
      }
     public static void closeAndOpenSocket(final String symbol){

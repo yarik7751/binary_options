@@ -99,23 +99,27 @@ public class GrandCapitalApi {
      }
 
     public static String getOrders() {
-        Call<List<OrderAnswer>> call = getApiService().getOrders(User.getInstance().getLogin());
-        Response<List<OrderAnswer>> response = null;
-        String result = null;
-        try {
-            response = call.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(response != null){
-            if(response.code() == 200) {
-                List<OrderAnswer> list = response.body();
-                Collections.sort(list, (o1, o2) -> o2.getOpenTime().compareTo(o1.getOpenTime()));
-                OrderAnswer.setInstance(list);
+        if(User.getInstance() != null && User.getInstance().getLogin() != null){
+            Call<List<OrderAnswer>> call = getApiService().getOrders(User.getInstance().getLogin());
+            Response<List<OrderAnswer>> response = null;
+            String result = null;
+            try {
+                response = call.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            result = String.valueOf(response.code());
+            if(response != null){
+                if(response.code() == 200) {
+                    List<OrderAnswer> list = response.body();
+                    Collections.sort(list, (o1, o2) -> o2.getOpenTime().compareTo(o1.getOpenTime()));
+                    OrderAnswer.setInstance(list);
+                }
+                result = String.valueOf(response.code());
+            }
+            return result;
+        }else{
+            return "";
         }
-        return result;
     }
     public static String getInfoUser() {
         Call<InfoAnswer> call = getApiService().getInfo(User.getInstance().getLogin());

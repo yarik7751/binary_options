@@ -77,12 +77,6 @@ public class BaseActivity extends CustomFontsActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
 
-        mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(mInfoBroadcastReceiver, intentFilter);
-        timer = new Timer();
-
         if (!isAuth()) {
             Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
             startActivity(intent);
@@ -105,6 +99,12 @@ public class BaseActivity extends CustomFontsActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        timer = new Timer();
+        mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(mInfoBroadcastReceiver, intentFilter);
+
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -113,11 +113,12 @@ public class BaseActivity extends CustomFontsActivity {
             }
         }, 0, 1000);
     }
+
     @Override
-    protected void onDestroy() {
-        unregisterReceiver(mInfoBroadcastReceiver);
+    protected void onPause() {
         timer.cancel();
-        super.onDestroy();
+        super.onPause();
+        unregisterReceiver(mInfoBroadcastReceiver);
     }
 
     @Override
@@ -137,11 +138,10 @@ public class BaseActivity extends CustomFontsActivity {
                 setToolBarTerminalInfo();
                 backToRootFragment = false;
             }
+            super.onBackPressed();
+        } else {
+            goHome();
         }
-        //super.onBackPressed();
-        goHome();
-        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-        Log.d(TAG, "BackStackEntryCount (onBackPressed): " + backStackEntryCount);
     }
 
     private void setupMenu() {
@@ -428,6 +428,4 @@ public class BaseActivity extends CustomFontsActivity {
             }
         }
     }
-
-
 }
