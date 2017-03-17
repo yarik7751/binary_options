@@ -380,11 +380,10 @@ public class BaseActivity extends CustomFontsActivity {
                 setToolBarTerminalInfo();
                 backToRootFragment = false;
             }
+            super.onBackPressed();
+        } else {
+            goHome();
         }
-        //super.onBackPressed();
-        goHome();
-        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-        Log.d(TAG, "BackStackEntryCount (onBackPressed): " + backStackEntryCount);
     }
 
     private void goHome() {
