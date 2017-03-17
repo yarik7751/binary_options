@@ -66,6 +66,7 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import okhttp3.internal.Util;
 
@@ -197,6 +198,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
         etValueTime.clearFocus();
 
         setSizeHeight();
+
         return parentView;
     }
 
@@ -884,6 +886,7 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
             }
         }
     }
+
     public class GetResponseSignalsBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

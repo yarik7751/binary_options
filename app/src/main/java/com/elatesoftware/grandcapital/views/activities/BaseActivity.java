@@ -381,18 +381,16 @@ public class BaseActivity extends CustomFontsActivity {
                 backToRootFragment = false;
             }
         }
-        super.onBackPressed();
+        //super.onBackPressed();
+        goHome();
         int backStackEntryCount = fragmentManager.getBackStackEntryCount();
         Log.d(TAG, "BackStackEntryCount (onBackPressed): " + backStackEntryCount);
-        /*if(backStackEntryCount == 0) {
-            if(backToRootFragment) {
-                setTerminalFragment();
-            } else {
-                super.onBackPressed();
-            }
-        } else {
-            super.onBackPressed();
-        }*/
+    }
+
+    private void goHome() {
+        Intent showOptions = new Intent(Intent.ACTION_MAIN);
+        showOptions.addCategory(Intent.CATEGORY_HOME);
+        startActivity(showOptions);
     }
 
     @Override

@@ -61,7 +61,7 @@ public class WebFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        BaseActivity.getToolbar().setPageTitle(" ");
+        BaseActivity.getToolbar().setPageTitle(getContext().getResources().getString(R.string.app_name));
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_EMPTY_FRAGMENT);
         BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_BACK_PRESSED);
 
@@ -90,6 +90,12 @@ public class WebFragment extends Fragment {
             builder.setNegativeButton(getString(R.string.no), (dialog, which) -> handler.cancel());
             builder.setPositiveButton(getString(R.string.yes), (dialog, which) -> handler.proceed());
             builder.show();
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            BaseActivity.getToolbar().setPageTitle(view.getTitle());
         }
     }
 
