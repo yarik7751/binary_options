@@ -29,6 +29,9 @@
     <color name="dealingListUpOrderColor">#00bc97</color>
     <color name="dealingListDownOrderColor">#fb3150</color>
 
+    <color name="chart_label_up_color">#9900bc97</color>
+    <color name="chart_label_down_color">#99fb3150</color>
+
     <color name="chart_line_selected_horizontal_with_marker">#158376</color>
     <color name="chart_values">#B9C5CB</color>
     <color name="color_text_deposit">#FEC528</color>
