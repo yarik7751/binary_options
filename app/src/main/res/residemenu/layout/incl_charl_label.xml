@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:minWidth="40dp"
+        android:background="@drawable/chart_label_up_background"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/img_dealing_position"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginLeft="4dp"
+            android:src="@drawable/down"/>
+
+        <TextView
+            android:id="@+id/tv_dealing_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="8dp"
+            android:text=":34"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <!--<android.support.v7.widget.CardView
+        android:id="@+id/cv_chart_label"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:minWidth="40dp"
+        card_view:cardBackgroundColor="@color/dealingListUpOrderColor"
+        card_view:cardCornerRadius="10dp">
+
+    </android.support.v7.widget.CardView>-->
+</LinearLayout>

@@ -199,6 +199,15 @@ public class TerminalFragment extends Fragment implements OnChartValueSelectedLi
 
         setSizeHeight();
 
+        View v = LayoutInflater.from(getContext()).inflate(R.layout.incl_charl_label, null);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.topMargin = AndroidUtils.dp(30);
+        params.leftMargin = AndroidUtils.dp(30);
+        rlChart.addView(v, params);
+
         return parentView;
     }
 
