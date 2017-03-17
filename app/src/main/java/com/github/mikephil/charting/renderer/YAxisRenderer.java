@@ -68,7 +68,6 @@ public class YAxisRenderer extends AxisRenderer {
         float xPos = 0f;
 
         if (dependency == AxisDependency.LEFT) {
-
             if (labelPosition == YAxisLabelPosition.OUTSIDE_CHART) {
                 mAxisLabelPaint.setTextAlign(Align.RIGHT);
                 xPos = mViewPortHandler.offsetLeft() - xoffset;
@@ -76,9 +75,7 @@ public class YAxisRenderer extends AxisRenderer {
                 mAxisLabelPaint.setTextAlign(Align.LEFT);
                 xPos = mViewPortHandler.offsetLeft() + xoffset;
             }
-
         } else {
-
             if (labelPosition == YAxisLabelPosition.OUTSIDE_CHART) {
                 mAxisLabelPaint.setTextAlign(Align.LEFT);
                 xPos = mViewPortHandler.contentRight() + xoffset;
@@ -87,7 +84,6 @@ public class YAxisRenderer extends AxisRenderer {
                 xPos = mViewPortHandler.contentRight() - xoffset;
             }
         }
-
         drawYLabels(c, xPos, positions, yoffset);
     }
 
@@ -171,8 +167,6 @@ public class YAxisRenderer extends AxisRenderer {
                             textPaint.setColor(Color.parseColor("#FD3E3C"));
                             c.drawText(lastSymbol, fixedPosition - paddingHoriz / 3 + width, posY, textPaint);
                         }
-                        //c.drawBitmap(bitmapPoint, fixedPosition - entry.getX(), fixedPosition - entry.getY(), paint);
-
                     } else {
                         paddingVert = Utils.convertDpToPixel(5);
                         paddingHoriz = Utils.convertDpToPixel(8);
@@ -245,10 +239,8 @@ public class YAxisRenderer extends AxisRenderer {
      * @return
      */
     protected Path linePath(Path p, int i, float[] positions) {
-
         p.moveTo(mViewPortHandler.offsetLeft(), positions[i + 1]);
         p.lineTo(mViewPortHandler.contentRight(), positions[i + 1]);
-
         return p;
     }
 
@@ -392,9 +384,7 @@ public class YAxisRenderer extends AxisRenderer {
                     c.drawText(label,
                             mViewPortHandler.contentLeft() + xOffset,
                             pts[1] - yOffset + labelLineHeight, mLimitLinePaint);
-
                 } else {
-
                     mLimitLinePaint.setTextAlign(Align.LEFT);
                     c.drawText(label,
                             mViewPortHandler.offsetLeft() + xOffset,

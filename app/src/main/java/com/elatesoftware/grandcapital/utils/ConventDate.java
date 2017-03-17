@@ -105,11 +105,15 @@ public class ConventDate {
     }
 
     public static String getTimeStampCurrentDate() {
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
         Date date = new Date();
         return String.valueOf(date.getTime() / 1000);
     }
     public static String getTimeStampLastDate() {
+        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date date = new Date();
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
         date.setMinutes(date.getMinutes() - 30);
         return String.valueOf(date.getTime() / 1000);
     }

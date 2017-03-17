@@ -93,7 +93,6 @@ public class GrandCapitalApplication extends Application{
     }
 
     public static void closeSocket(){
-        TerminalFragment.isAddInChart = false;
         TerminalFragment.listBackGroundSocketAnswer.clear();
          answerCurrent = null;
          answerSave = null;
@@ -121,24 +120,26 @@ public class GrandCapitalApplication extends Application{
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(!symbolCurrent.equals("") && answerCurrent != null && symbolCurrent.equals(answerCurrent.getSymbol())){
-                    if(answerCurrent != null && answerCurrent.getTime() != null && answerCurrent.getTime() != 0L) {
-                        if (answerSave != null && answerSave.getTime() != null && answerSave.getTime() != 0L && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())) {
-                            answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
-                        }
-                        if (TerminalFragment.getInstance() != null) {
-                            if(TerminalFragment.isAddInChart) {
-                                TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                                    TerminalFragment.getInstance().addEntry(answerCurrent);
-                                });
-                            } else {
-                                TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                                    TerminalFragment.listBackGroundSocketAnswer.add(answerCurrent);
-                                });
+                if(TerminalFragment.getInstance() != null){
+                    if(!symbolCurrent.equals("") && answerCurrent != null && symbolCurrent.equals(answerCurrent.getSymbol())){
+                        if(answerCurrent != null && answerCurrent.getTime() != null && answerCurrent.getTime() != 0L) {
+                            if (answerSave != null && answerSave.getTime() != null && answerSave.getTime() != 0L && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())) {
+                                answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
+                            }
+                            if (TerminalFragment.getInstance() != null) {
+                                if(TerminalFragment.isAddInChart) {
+                                    TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                                        TerminalFragment.getInstance().addEntry(answerCurrent);
+                                    });
+                                } else {
+                                    TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                                        TerminalFragment.listBackGroundSocketAnswer.add(answerCurrent);
+                                    });
+                                }
                             }
                         }
+                        answerSave = answerCurrent;
                     }
-                    answerSave = answerCurrent;
                 }
             }
         }, 0, 1000);
@@ -156,7 +157,6 @@ public class GrandCapitalApplication extends Application{
                             if(!symbolCurrent.equals("")){
                                 mClient.send(symbolCurrent);
                                 TerminalFragment.listBackGroundSocketAnswer.clear();
-                                TerminalFragment.isAddInChart = true;
                                 Log.d(TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
                             }
                         }
@@ -174,6 +174,7 @@ public class GrandCapitalApplication extends Application{
                         @Override
                         public void onClose(int code, String reason, boolean remote){
                             Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
+
                             TerminalFragment.listBackGroundSocketAnswer.clear();
                             if(!symbolCurrent.equals("")){
                                 closeAndOpenSocket(symbolCurrent);
@@ -205,7 +206,6 @@ public class GrandCapitalApplication extends Application{
             System.gc();
         }
     }
-
     public static SSLContext getSSLContext() {
         return sc;
     }

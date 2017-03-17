@@ -18,6 +18,7 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
+import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
@@ -34,10 +35,13 @@ import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
 import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItemWithMark;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChangePosition;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class BaseActivity extends CustomFontsActivity {
 
     public static final String TAG = "BaseActivity_TAG";
-
+    private static Timer timer;
     public static FragmentManager fragmentManager;
     public static Context context;
     public static String sMainTagFragment = "";
@@ -77,6 +81,7 @@ public class BaseActivity extends CustomFontsActivity {
         IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mInfoBroadcastReceiver, intentFilter);
+        timer = new Timer();
 
         if (!isAuth()) {
             Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
@@ -95,6 +100,48 @@ public class BaseActivity extends CustomFontsActivity {
                 startService(new Intent(this, CheckDealingService.class));
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Intent intentService = new Intent(BaseActivity.this, OrdersService.class);
+                startService(intentService);
+            }
+        }, 0, 1000);
+    }
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mInfoBroadcastReceiver);
+        timer.cancel();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mResideMenu.isOpened()) {
+            mResideMenu.closeMenu();
+        }
+        if(!setBackActionByCurrFragment()) {
+            sCurrentTagFragment = "";
+            return;
+        }
+        if(backToRootFragment) {
+            if(!TextUtils.isEmpty(sMainTagFragment)) {
+                setToolbarInfoByTag();
+            } else {
+                Log.d(TAG, "backToRootFragment (onBackPressed): true");
+                setToolBarTerminalInfo();
+                backToRootFragment = false;
+            }
+        }
+        //super.onBackPressed();
+        goHome();
+        int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+        Log.d(TAG, "BackStackEntryCount (onBackPressed): " + backStackEntryCount);
     }
 
     private void setupMenu() {
@@ -363,39 +410,10 @@ public class BaseActivity extends CustomFontsActivity {
         return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        if(mResideMenu.isOpened()) {
-            mResideMenu.closeMenu();
-        }
-        if(!setBackActionByCurrFragment()) {
-            sCurrentTagFragment = "";
-            return;
-        }
-        if(backToRootFragment) {
-            if(!TextUtils.isEmpty(sMainTagFragment)) {
-                setToolbarInfoByTag();
-            } else {
-                Log.d(TAG, "backToRootFragment (onBackPressed): true");
-                setToolBarTerminalInfo();
-                backToRootFragment = false;
-            }
-            super.onBackPressed();
-        } else {
-            goHome();
-        }
-    }
-
     private void goHome() {
         Intent showOptions = new Intent(Intent.ACTION_MAIN);
         showOptions.addCategory(Intent.CATEGORY_HOME);
         startActivity(showOptions);
-    }
-
-    @Override
-    protected void onDestroy() {
-        unregisterReceiver(mInfoBroadcastReceiver);
-        super.onDestroy();
     }
 
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {

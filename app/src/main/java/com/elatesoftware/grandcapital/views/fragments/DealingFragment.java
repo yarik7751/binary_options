@@ -33,11 +33,11 @@ import java.util.List;
 public class DealingFragment extends Fragment {
 
     public static final String TAG = "DealingFragment_Logs";
+    private static List<OrderAnswer> currentOrders = new ArrayList<>();
 
     private TabLayout mTabs;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private TextView mFirstColumnHeader;
     private TextView mSecondColumnHeader;
     private TextView mThirdColumnHeader;
@@ -64,12 +64,6 @@ public class DealingFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        sIsOpen = true;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_dealing, container, false);
     }
@@ -91,13 +85,31 @@ public class DealingFragment extends Fragment {
 
         initTabs();
         initListHeaders();
-        updateData();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sIsOpen = true;
+        mOrdersBroadcastReceiver = new GetResponseOrdersBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onPause() {
+        Log.d(TAG, "onPause()");
+        getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
+        sIsOpen = false;
+        super.onPause();
+
     }
 
     private void initTabs() {
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.ordersListOpen);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this.getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mTabs = (TabLayout) getView().findViewById(R.id.dealingTabs);
@@ -107,17 +119,12 @@ public class DealingFragment extends Fragment {
                 currentTabPosition = mTabs.getSelectedTabPosition();
                 mProgressLayout.setVisibility(View.VISIBLE);
                 mListLayout.setVisibility(View.INVISIBLE);
-                updateData();
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
-
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
     }
@@ -128,12 +135,6 @@ public class DealingFragment extends Fragment {
         mThirdColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_3);
         mFourthColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_4);
         mFifthColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_5);
-    }
-
-    private void updateData() {
-        Intent intentService = new Intent(getActivity(), OrdersService.class);
-        intentService.putExtra(OrdersService.FRAGMENT, "");
-        getActivity().startService(intentService);
     }
 
     private void onFailRequest() {
@@ -211,7 +212,7 @@ public class DealingFragment extends Fragment {
                 if(response.equals("200")){
                     if(OrderAnswer.getInstance() != null){
                         List<OrderAnswer> orders = OrderAnswer.getInstance();
-                        List<OrderAnswer> currentOrders = findOrders(orders, currentTabPosition);
+                        currentOrders = findOrders(orders, currentTabPosition); // TODO check and  save position scrolling
                         checkOrders(currentOrders);
                         mAdapter = currentTabPosition == OPEN_TAB_POSITION
                                 ? new FragmentDealingOpenOrdersAdapter(currentOrders)
@@ -225,22 +226,5 @@ public class DealingFragment extends Fragment {
                 onFailRequest();
             }
         }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mOrdersBroadcastReceiver = new GetResponseOrdersBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
-    }
-
-    @Override
-    public void onStop() {
-        Log.d(TAG, "onStop()");
-        getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
-        sIsOpen = false;
-        super.onStop();
     }
 }

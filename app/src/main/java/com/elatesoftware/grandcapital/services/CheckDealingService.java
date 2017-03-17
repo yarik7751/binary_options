@@ -39,19 +39,18 @@ public class CheckDealingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         timer.schedule(new TimerTask() {
-            @SuppressLint("LongLogTag")
             @Override
             public void run() {
-                Log.d(TAG, "dealings.size(): " + dealings.size());
+                //Log.d(TAG, "dealings.size(): " + dealings.size());
                 for(int i = 0; i < dealings.size(); i++) {
                     long currTime = Long.valueOf(ConventDate.getTimeStampCurrentDate());
                     long difference = currTime - dealings.get(i).createTime;
-                    Log.d(TAG, "dealings(" + i + "): " + dealings.get(i));
-                    Log.d(TAG, "currTimeUnix: " + System.currentTimeMillis());
-                    Log.d(TAG, "currTime    : " + currTime);
-                    Log.d(TAG, "difference: " + difference);
+                    //Log.d(TAG, "dealings(" + i + "): " + dealings.get(i));
+                    //Log.d(TAG, "currTimeUnix: " + System.currentTimeMillis());
+                    //Log.d(TAG, "currTime    : " + currTime);
+                    //Log.d(TAG, "difference: " + difference);
                     if(difference >= dealings.get(i).timeMin) {
-                        Log.d(TAG, "CLOSE dealings(" + i + "): " + dealings.get(i));
+                        //Log.d(TAG, "CLOSE dealings(" + i + "): " + dealings.get(i));
                         Intent responseIntent = new Intent();
                         responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
                         responseIntent.setAction(ACTION_SERVICE_CHECK_DEALINGS);

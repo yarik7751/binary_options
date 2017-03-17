@@ -98,10 +98,12 @@ public class ToolTabsView extends LinearLayout {
     public void showTab(int position) {
         Log.d(TAG, "showTab");
         View v = llTabs.getChildAt(position);
-        if(v.getVisibility() == GONE) {
-            v.setVisibility(VISIBLE);
+        if(v != null){
+            if(v.getVisibility() == GONE) {
+                v.setVisibility(VISIBLE);
+            }
+            setNumbers();
         }
-        setNumbers();
     }
 
     public void showAllTabs() {
