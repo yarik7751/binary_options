@@ -7,6 +7,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -228,6 +229,25 @@ public class OrderAnswer {
 
     public void setVolume(Integer volume) {
         this.volume = volume;
+    }
+
+    public static List<OrderAnswer> filterOrders(List<OrderAnswer> orders, int currentTabPosition) {
+        List<OrderAnswer> closeOrders = new ArrayList();
+        List<OrderAnswer> openOrders = new ArrayList();
+        for (OrderAnswer order : orders) {
+            if(order.getOptionsData() != null) {
+                if(ConventDate.isCloseDealing(order.getCloseTime())){
+                    openOrders.add(order);
+                }else{
+                    closeOrders.add(order);
+                }
+            }
+        }
+        if (currentTabPosition == 0) {
+            return openOrders;
+        }else{
+            return closeOrders;
+        }
     }
 
 }

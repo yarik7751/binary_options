@@ -38,6 +38,18 @@ public class SocketAnswer {
     @Expose
     private Long time;
 
+    public SocketAnswer(String symbol, Double bid, Long digits, Double ask, Long count, Double point, Double high, Double low, Long time) {
+        this.symbol = symbol;
+        this.bid = bid;
+        this.digits = digits;
+        this.ask = ask;
+        this.count = count;
+        this.point = point;
+        this.high = high;
+        this.low = low;
+        this.time = time;
+    }
+
     private static SocketAnswer answersInstance = null;
     public static SocketAnswer getInstance() {
         return answersInstance;

@@ -129,6 +129,10 @@
     <string name="signal_b">BUY</string>
     <string name="signal_sb">STRONG BUY</string>
 
+    <string name="zero_min">0 MIN</string>
+    <string name="zero_dollars">$0</string>
+
+    <string name="attention">Внимание!</string>
 
     <string name="balance">Balance:</string>
     <string name="link_company">https://grandcapital.ru</string>

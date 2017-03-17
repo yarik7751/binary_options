@@ -81,7 +81,6 @@ public class WebFragment extends Fragment {
     }
 
     private class MyWebViewClient extends WebViewClient {
-
         @Override
         public void onReceivedSslError(final WebView view, final SslErrorHandler handler, SslError error) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -98,5 +97,4 @@ public class WebFragment extends Fragment {
             BaseActivity.getToolbar().setPageTitle(view.getTitle());
         }
     }
-
 }

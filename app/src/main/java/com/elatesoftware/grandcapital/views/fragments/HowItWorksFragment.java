@@ -90,7 +90,6 @@ public class HowItWorksFragment extends Fragment {
     }
 
     public class GetResponseQuestionsBroadcastReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(QuestionsService.RESPONSE);

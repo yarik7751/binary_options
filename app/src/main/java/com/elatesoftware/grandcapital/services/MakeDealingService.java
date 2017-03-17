@@ -36,6 +36,8 @@ public class MakeDealingService extends IntentService {
         responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
         responseIntent.putExtra(RESPONSE, response);
         responseIntent.putExtra(SYMBOL, intent.getStringExtra(SYMBOL));
+        responseIntent.putExtra(VOLUME, intent.getStringExtra(VOLUME));
+        responseIntent.putExtra(EXPIRATION, intent.getStringExtra(EXPIRATION));
         sendBroadcast(responseIntent);
     }
 }

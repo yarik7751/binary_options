@@ -185,25 +185,6 @@ public class DealingFragment extends Fragment {
         mFifthColumnHeader.setText(getString(R.string.dealing_page_close_income));
     }
 
-    public static List<OrderAnswer> findOrders(List<OrderAnswer> orders, int currentTabPosition) {
-        List<OrderAnswer> closeOrders = new ArrayList();
-        List<OrderAnswer> openOrders = new ArrayList();
-        for (OrderAnswer order : orders) {
-            if(order.getOptionsData() != null) {
-                if(ConventDate.isCloseDealing(order.getCloseTime())){
-                    openOrders.add(order);
-                }else{
-                    closeOrders.add(order);
-                }
-            }
-        }
-        if (currentTabPosition == OPEN_TAB_POSITION) {
-            return openOrders;
-        }else{
-            return closeOrders;
-        }
-    }
-
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -212,7 +193,7 @@ public class DealingFragment extends Fragment {
                 if(response.equals("200")){
                     if(OrderAnswer.getInstance() != null){
                         List<OrderAnswer> orders = OrderAnswer.getInstance();
-                        currentOrders = findOrders(orders, currentTabPosition); // TODO check and  save position scrolling
+                        currentOrders = OrderAnswer.filterOrders(orders, currentTabPosition); // TODO check and  save position scrolling
                         checkOrders(currentOrders);
                         mAdapter = currentTabPosition == OPEN_TAB_POSITION
                                 ? new FragmentDealingOpenOrdersAdapter(currentOrders)
