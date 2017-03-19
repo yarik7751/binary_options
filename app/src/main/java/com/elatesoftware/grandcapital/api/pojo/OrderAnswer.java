@@ -3,6 +3,7 @@ package com.elatesoftware.grandcapital.api.pojo;
 import javax.annotation.Generated;
 
 import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -243,7 +244,7 @@ public class OrderAnswer {
                 }
             }
         }
-        if (currentTabPosition == 0) {
+        if (currentTabPosition == DealingFragment.OPEN_TAB_POSITION) {
             return openOrders;
         }else{
             return closeOrders;

@@ -1,18 +1,17 @@
 package com.elatesoftware.grandcapital.services;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.models.Dealing;
-import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
-import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
+import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,19 +20,20 @@ public class CheckDealingService extends Service {
     public static final String TAG = "CheckDealingService_Logs";
 
     private static Timer timer;
-
-    public static ArrayList<Dealing> dealings = new ArrayList<>();
+    public static  int countCloseDealingLast;
+    public static  List<OrderAnswer> listOpenDealingLast;
     public static final String ACTION_SERVICE_CHECK_DEALINGS = "com.elatesoftware.grandcapital.services.CheckDealingService";
-    public static final String ACTIVE = "ACTIVE";
-    public static final String AMOUNT = "AMOUNT";
-    public static final String CLOSE_DATE = "CLOSE_DATE";
+    public static final String TICKET = "TICKET";
+    public static final String INDEX = "INDEX";
 
-    private final int INTERVAL = 1000;
+    private final static int INTERVAL = 1000;
 
     @Override
     public void onCreate() {
         super.onCreate();
         timer = new Timer();
+        listOpenDealingLast = new ArrayList<>();
+        countCloseDealingLast = 0;
     }
 
     @Override
@@ -41,28 +41,56 @@ public class CheckDealingService extends Service {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                //Log.d(TAG, "dealings.size(): " + dealings.size());
-                for(int i = 0; i < dealings.size(); i++) {
-                    long currTime = Long.valueOf(ConventDate.getTimeStampCurrentDate());
-                    long difference = currTime - dealings.get(i).createTime;
-                    //Log.d(TAG, "dealings(" + i + "): " + dealings.get(i));
-                    //Log.d(TAG, "currTimeUnix: " + System.currentTimeMillis());
-                    //Log.d(TAG, "currTime    : " + currTime);
-                    //Log.d(TAG, "difference: " + difference);
-                    if(difference >= dealings.get(i).timeMin) {
-                        //Log.d(TAG, "CLOSE dealings(" + i + "): " + dealings.get(i));
-                        Intent responseIntent = new Intent();
-                        responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
-                        responseIntent.setAction(ACTION_SERVICE_CHECK_DEALINGS);
-                        responseIntent.putExtra(ACTIVE, dealings.get(i).active);
-                        responseIntent.putExtra(AMOUNT, dealings.get(i).amount);
-                        responseIntent.putExtra(CLOSE_DATE, currTime/* - 3600000*/);
-                        //TerminalFragment.getInstance().addEntry();
-                        sendBroadcast(responseIntent);
-                        dealings.remove(i);
-                        CustomSharedPreferences.setAmtCloseDealings(getApplicationContext(), CustomSharedPreferences.getAmtCloseDealings(getApplicationContext()) + 1);
-                        break;
+                if(OrderAnswer.getInstance() != null){
+                    List<OrderAnswer> listCurrentClose = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
+                    List<OrderAnswer> listCurrentOpen = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
+
+                    if(listCurrentClose != null && listCurrentClose.size() != 0) {
+                        if(listOpenDealingLast != null && listOpenDealingLast.size() != 0){
+                            if(listCurrentClose.size() != countCloseDealingLast){
+                                for(OrderAnswer orderAnswerOpen : listOpenDealingLast){
+                                    for(OrderAnswer orderAnswerClose : listCurrentClose){
+                                        if((int)orderAnswerClose.getTicket() == orderAnswerOpen.getTicket()){
+                                            Intent responseIntent = new Intent();
+                                            responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
+                                            responseIntent.setAction(ACTION_SERVICE_CHECK_DEALINGS);
+                                            responseIntent.putExtra(TICKET, orderAnswerClose.getTicket());
+                                            responseIntent.putExtra(INDEX, listCurrentClose.indexOf(orderAnswerClose));
+                                            sendBroadcast(responseIntent);
+                                            CustomSharedPreferences.setAmtCloseDealings(getApplicationContext(), CustomSharedPreferences.getAmtCloseDealings(getApplicationContext()) + 1);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        listOpenDealingLast = listCurrentOpen;
+                        countCloseDealingLast = listCurrentClose.size();
                     }
+
+
+//                        for(int i = 0; i < dealings.size(); i++) {
+//                            long currTime = Long.valueOf(ConventDate.getTimeStampCurrentDate());
+//                            long difference = currTime - dealings.get(i).createTime;
+//                            //Log.d(TAG, "dealings(" + i + "): " + dealings.get(i));
+//                            //Log.d(TAG, "currTimeUnix: " + System.currentTimeMillis());
+//                            //Log.d(TAG, "currTime    : " + currTime);
+//                            //Log.d(TAG, "difference: " + difference);
+//                            if(difference >= dealings.get(i).timeMin) {
+//                                //Log.d(TAG, "CLOSE dealings(" + i + "): " + dealings.get(i));
+//                                Intent responseIntent = new Intent();
+//                                responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
+//                                responseIntent.setAction(ACTION_SERVICE_CHECK_DEALINGS);
+//                                responseIntent.putExtra(ACTIVE, dealings.get(i).active);
+//                                responseIntent.putExtra(AMOUNT, dealings.get(i).amount);
+//                                responseIntent.putExtra(CLOSE_DATE, currTime/* - 3600000*/);
+//                                //TerminalFragment.getInstance().addEntry();
+//                                sendBroadcast(responseIntent);
+//                                dealings.remove(i);
+//                                CustomSharedPreferences.setAmtCloseDealings(getApplicationContext(), CustomSharedPreferences.getAmtCloseDealings(getApplicationContext()) + 1);
+//                                break;
+//                            }
+//                        }
                 }
             }
         }, 0, INTERVAL);
