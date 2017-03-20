@@ -55,6 +55,7 @@
 
     <!--Error request retrofit-->
     <string name="request_error_title">The request failed</string>
+    <string name="request_error_request">The request failed. Please try again</string>
     <string name="request_error_text">What went wrong, we could not complete your request. Please try again</string>
     <string name="request_error_message_button">OK</string>
     <string name="grandcapital_icon_description">GrandCapital icon</string>

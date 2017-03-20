@@ -31,6 +31,7 @@ public class ConventDate {
     }
     public static String getConventDate(String date) {
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        //dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));//
         Date resultDate = null;
         try {
             resultDate = dateFormat.parse(date);
@@ -46,6 +47,7 @@ public class ConventDate {
 
     public static long stringToUnix(String date) {
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
         Date resultDate = null;
         try {
             resultDate = dateFormat.parse(date);
@@ -62,6 +64,7 @@ public class ConventDate {
     public static String getConvertDateFromUnix(long unix) {
         String dateStr = "";
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
         Date date = new Date(unix);
         dateStr = dateFormat.format(date);
         return dateStr;
@@ -77,6 +80,8 @@ public class ConventDate {
         if(currentTime == 0L){
             return false;
         }else{
+             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+             formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
              Date currentDate = new Date(currentTime);
              Date newDate = new Date(newTime);
             if((currentDate.getSeconds() == newDate.getSeconds()) ||
@@ -87,6 +92,7 @@ public class ConventDate {
             }
         }
     }
+
     public static boolean equalsTimeSocket(long currentTime, long newTime) {
         if(currentTime == 0L){
             return false;
@@ -100,6 +106,20 @@ public class ConventDate {
             }
         }
     }
+    public static boolean equalsTimeDealing(long currentTime, long newTime) {
+        if(currentTime == 0L){
+            return false;
+        }else{
+            Date currentDate = new Date(currentTime);
+            Date newDate = new Date(newTime);
+            if((newDate.getSeconds() - currentDate.getSeconds() < 1)){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+
     public static boolean isCloseDealing(String time){
         return time.equals("1970-01-01T00:00:00");
     }
