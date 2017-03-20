@@ -91,6 +91,7 @@ public class BaseActivity extends CustomFontsActivity {
                 terminalFragment = setTerminalFragment();
                 getInfoUser();
                 startService(new Intent(this, CheckDealingService.class));
+
             }
         }
     }

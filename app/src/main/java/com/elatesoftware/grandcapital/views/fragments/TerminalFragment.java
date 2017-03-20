@@ -45,6 +45,7 @@ import com.elatesoftware.grandcapital.services.SignalService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.views.CustomAnimationDrawable;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -105,7 +106,6 @@ public class TerminalFragment extends Fragment {
     public static List<OrderAnswer> listCurrentClosingDealings = new ArrayList<>();
 
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
-    //private Handler handler;
 
     private View closeDealingView;
     private View openDealingView;
@@ -144,8 +144,6 @@ public class TerminalFragment extends Fragment {
     private GetResponseSignalsBroadcastReceiver mSignalsBroadcastReceiver;
     private GetResponseCloseDealingBroadcastReceiver mCloseDealingBroadcastReceiver;
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
-
-    //private Animation animationMin, animationMax;
 
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
@@ -292,6 +290,7 @@ public class TerminalFragment extends Fragment {
         isOpen = true;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
         registerBroadcasts();
+        requestOrders();
         ConventString.updateBalance(tvBalance);
         if (sSymbolCurrent != null && !sSymbolCurrent.equals("")) {
             tvValueActive.setText(sSymbolCurrent);
@@ -431,7 +430,7 @@ public class TerminalFragment extends Fragment {
         Log.d(TAG, "initRocketAnimation()");
         for(int i = 10; i >= 3; i--) {
             Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
-            rocketAnimation.addFrame(new BitmapDrawable(getPaddingImage(image, i)), INTERVAL_ITEM);
+            rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
         }
 
         rocketAnimation.setAnimationEndListner(new CustomAnimationDrawable.AnimationEndListner() {
@@ -443,14 +442,13 @@ public class TerminalFragment extends Fragment {
             }
         });
     }
-
     private void initRocketAnimationBack() {
         rocketAnimationBack = new CustomAnimationDrawable();
         rocketAnimationBack.setOneShot(true);
         Log.d(TAG, "initRocketAnimationBack()");
         for(int i = 3; i <= 10; i++) {
             Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
-            rocketAnimationBack.addFrame(new BitmapDrawable(getPaddingImage(image, i)), INTERVAL_ITEM);
+            rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
         }
         rocketAnimationBack.setAnimationEndListner(new CustomAnimationDrawable.AnimationEndListner() {
             @Override
@@ -461,51 +459,6 @@ public class TerminalFragment extends Fragment {
             }
         });
     }
-
-    private Bitmap getPaddingImage(Bitmap image, int persent) {
-        float width = (float) (image.getWidth() * (persent/10.0));
-        float height = (float) (image.getHeight() * (persent/10.0));
-        Bitmap smallImage = Bitmap.createScaledBitmap(image, (int) width, (int) height, false);
-        Bitmap paddingImage = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(paddingImage);
-        canvas.drawBitmap(
-                smallImage,
-                paddingImage.getWidth() / 2 - smallImage.getWidth() / 2,
-                paddingImage.getHeight() / 2 - smallImage.getHeight() / 2,
-                null
-        );
-        return paddingImage;
-    }
-
-//    public void startAnimate(){
-//        animationMin.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {
-//
-//            }
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                imgPointCurrent.clearAnimation();
-//                imgPointCurrent.startAnimation(animationMax);
-//            }
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {}
-//        });
-//        imgPointCurrent.startAnimation(animationMin);
-//
-//        animationMax.setAnimationListener(new Animation.AnimationListener() {
-//            @Override
-//            public void onAnimationStart(Animation animation) {}
-//
-//            @Override
-//            public void onAnimationEnd(Animation animation) {
-//                imgPointCurrent.clearAnimation();
-//                imgPointCurrent.startAnimation(animationMin);
-//            }
-//            @Override
-//            public void onAnimationRepeat(Animation animation) {}
-//        });
-//    }
 
     private void setSizeHeight() {
         int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
@@ -909,14 +862,28 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(OrderAnswer.getInstance() != null){
-                CheckDealingService.setListOrderAnswer(OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION));
+                List<OrderAnswer> listOpenDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION);
+                /*ILineDataSet set_open = mChart.getData().getDataSetByIndex(0);
+                for(OrderAnswer orderAnswer : listOpenDealings){
+                    for(int i = 0; i < set_open.getEntryCount(); i++){
+                        Entry entry = set_open.getEntryForIndex(i);
+                        if(ConventDate.equalsTimeDealing(ConventDate.genericTimeForChartLabels(entry.getX()), ConventDate.stringToUnix(orderAnswer.getOpenTime()))){
+                            entry.setIcon(drawMarkerDealing);
+                            entry.setData(orderAnswer);
+                        }
+                    }
+                }
+                mChart.getData().notifyDataChanged();
+                mChart.notifyDataSetChanged();
+                mChart.invalidate();*/
+                CheckDealingService.setListOrderAnswer(listOpenDealings);
                 if(listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0){
                     List<OrderAnswer> listClosedDealing = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
                      for(OrderAnswer order: listClosedDealing){
                          for(OrderAnswer orderStack: listCurrentClosingDealings){
                              if((int)order.getTicket() == orderStack.getTicket()){
                                  ILineDataSet set = mChart.getData().getDataSetByIndex(0);
-                                 for(int i = set.getEntryCount()-1; i >= 0; i--){
+                                 for(int i = 0; i< set.getEntryCount(); i++){
                                      Entry entry = set.getEntryForIndex(i);
                                      if(entry.getData()!= null && entry.getData() instanceof Long){
                                          Long timeData = Long.valueOf(String.valueOf(entry.getData()));
