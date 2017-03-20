@@ -22,10 +22,9 @@ public class CustomBaseLimitLine extends LimitLine {
 
     public enum LimitLinesType {
         LINE_CURRENT_SOCKET,
-        LINE_VERTICAL_DEALING_ACTIVE,
         LINE_HORIZONTAL_DEALING_ACTIVE,
+        LINE_VERTICAL_DEALING_ACTIVE,
         LINE_VERTICAL_DEALING_PASS,
-        LINE_HORIZONTAL_DEALING_PASS
     }
 
     public CustomBaseLimitLine(float limit) {

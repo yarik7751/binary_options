@@ -112,7 +112,7 @@ public class ConventDate {
         }else{
             Date currentDate = new Date(currentTime);
             Date newDate = new Date(newTime);
-            if((newDate.getSeconds() - currentDate.getSeconds() < 1)){
+            if((newDate.getSeconds() - currentDate.getSeconds() <= 2)){
                 return true;
             }else{
                 return false;

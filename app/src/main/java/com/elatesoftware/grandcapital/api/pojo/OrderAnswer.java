@@ -67,11 +67,26 @@ public class OrderAnswer {
     @Expose
     private Integer volume;
 
-    @Override
-    public String toString() {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        String volumeStr = String.format("$%s", numberFormat.format((volume) / 100));
-        return "symbol: " + symbol + ", closePrice: " + closePrice + ", volume: " + volumeStr + ", closeTime: " + getCloseTime() + "\n";
+    public OrderAnswer(Double closePrice, String closeTime, Integer cmd, Double commission, String expiration,
+                       String openTime, Double profit, Double swaps, Double taxes, Integer volume, Double tp,
+                       Integer ticket, String symbol, Double sl, OptionsData optionsData, Double openPrice, Double commissionAgent) {
+        this.closePrice = closePrice;
+        this.closeTime = closeTime;
+        this.cmd = cmd;
+        this.commission = commission;
+        this.expiration = expiration;
+        this.openTime = openTime;
+        this.profit = profit;
+        this.swaps = swaps;
+        this.taxes = taxes;
+        this.volume = volume;
+        this.tp = tp;
+        this.ticket = ticket;
+        this.symbol = symbol;
+        this.sl = sl;
+        this.optionsData = optionsData;
+        this.openPrice = openPrice;
+        this.commissionAgent = commissionAgent;
     }
 
     private static List<OrderAnswer> ordersInstance = null;
@@ -250,5 +265,10 @@ public class OrderAnswer {
             return closeOrders;
         }
     }
-
+    @Override
+    public String toString() {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+        String volumeStr = String.format("$%s", numberFormat.format((volume) / 100));
+        return "symbol: " + symbol + ", closePrice: " + closePrice + ", volume: " + volumeStr + ", closeTime: " + getCloseTime() + "\n";
+    }
 }

@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.services.OrdersService;
-import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -102,7 +101,10 @@ public class DealingFragment extends Fragment {
         super.onPause();
 
     }
-
+    private void requestOrders(){
+        Intent intentService = new Intent(getActivity(), OrdersService.class);
+        getActivity().startService(intentService);
+    }
     private void cleanCloseDealings() {
         CustomSharedPreferences.setAmtCloseDealings(getContext(), 0);
         ((BaseActivity) getActivity()).setDealings();
@@ -120,6 +122,7 @@ public class DealingFragment extends Fragment {
         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                requestOrders();
                 currentTabPosition = mTabs.getSelectedTabPosition();
                 if(currentTabPosition == CLOSE_TAB_POSITION) {
                     cleanCloseDealings();
@@ -142,15 +145,6 @@ public class DealingFragment extends Fragment {
         mThirdColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_3);
         mFourthColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_4);
         mFifthColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_5);
-    }
-
-    private void onFailRequest() {
-        if (isAdded()) {
-            mProgressLayout.setVisibility(View.GONE);
-            CustomDialog.showDialogInfo(getActivity(),
-                    getString(R.string.request_error_title),
-                    getString(R.string.request_error_text));
-        }
     }
 
     private void checkOrders(List<OrderAnswer> currentOrders) {
@@ -200,7 +194,7 @@ public class DealingFragment extends Fragment {
                 if(response.equals("200")){
                     if(OrderAnswer.getInstance() != null){
                         List<OrderAnswer> orders = OrderAnswer.getInstance();
-                        currentOrders = OrderAnswer.filterOrders(orders, currentTabPosition); // TODO check and  save position scrolling
+                        currentOrders = OrderAnswer.filterOrders(orders, currentTabPosition);
                         checkOrders(currentOrders);
                         /*mAdapter = currentTabPosition == OPEN_TAB_POSITION
                                 ? new FragmentDealingOpenOrdersAdapter(currentOrders)
@@ -226,7 +220,12 @@ public class DealingFragment extends Fragment {
                     setListHeader(currentTabPosition);
                 }
             } else {
-                onFailRequest();
+                if (isAdded()) {
+                    mProgressLayout.setVisibility(View.GONE);
+                    CustomDialog.showDialogInfo(getActivity(),
+                            getString(R.string.request_error_title),
+                            getString(R.string.request_error_text));
+                }
             }
         }
     }

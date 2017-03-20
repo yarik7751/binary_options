@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,6 @@ import com.elatesoftware.grandcapital.views.CustomAnimationDrawable;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
-import com.elatesoftware.grandcapital.views.items.chart.marker.CurrentSocketPointMarkerView;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -59,6 +59,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.gson.Gson;
 import com.github.mikephil.charting.utils.MPPointF;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
@@ -93,13 +94,15 @@ public class TerminalFragment extends Fragment {
     private YAxis rightYAxis;
     private XAxis xAxis;
     private CustomBaseLimitLine currentLine;
-    private CurrentSocketPointMarkerView currentSocketPointMarkerView;
+    //private List<CustomBaseLimitLine> dealingsXLine = new ArrayList<>();
+    //private CurrentSocketPointMarkerView currentSocketPointMarkerView;
 
     private Thread threadSymbolHistory;
     private Handler handlerOpenDealingView;
     private Handler handlerCloseDealingView;
     private static List<String> listActives = new ArrayList<>();
     public static List<SocketAnswer> listBackGroundSocketAnswer = new ArrayList<>();
+    public static List<OrderAnswer> listCurrentClosingDealings = new ArrayList<>();
 
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
     //private Handler handler;
@@ -144,26 +147,6 @@ public class TerminalFragment extends Fragment {
 
     //private Animation animationMin, animationMax;
 
-    /*private Runnable runnableRocketAnimation = new Runnable() {
-        @Override
-        public void run() {
-            initRocketAnimation();
-            imgPointCurrent.setBackgroundDrawable(rocketAnimation);
-            rocketAnimation.start();
-            handler.postDelayed(runnableRocketAnimationBack, INTERVAL);
-        }
-    };
-
-    private Runnable runnableRocketAnimationBack = new Runnable() {
-        @Override
-        public void run() {
-            initRocketAnimationBack();
-            imgPointCurrent.setBackgroundDrawable(rocketAnimationBack);
-            rocketAnimationBack.start();
-            handler.postDelayed(runnableRocketAnimation, INTERVAL);
-        }
-    };*/
-
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
         if (fragment == null) {
@@ -180,7 +163,6 @@ public class TerminalFragment extends Fragment {
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
 
         drawMarkerDealing = getResources().getDrawable(R.drawable.marker_close_dealing);
-        //handler = new Handler();
 
         mChart = (LineChart) parentView.findViewById(R.id.chart);
         tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
@@ -397,13 +379,13 @@ public class TerminalFragment extends Fragment {
         mChart.setPinchZoom(true);      // if disabled, scaling can be done on x- and y-axis separately
         mChart.setBackgroundColor(Color.TRANSPARENT); // set an alternative background color
         mChart.getLegend().setEnabled(false);   //Hide the legend
-        mChart.setDragOffsetX(30f);// TODO norm padding chart in left
+        mChart.setDragOffsetX(100f);// TODO norm padding chart in left
         mChart.setDrawMarkers(true);
         mChart.getViewPortHandler().setMaximumScaleX(7f);
-
+/*
         currentSocketPointMarkerView = new CurrentSocketPointMarkerView(getContext());
         currentSocketPointMarkerView.setChartView(mChart);
-        mChart.setMarker(currentSocketPointMarkerView);
+        mChart.setMarker(currentSocketPointMarkerView);*/
 
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
@@ -433,17 +415,14 @@ public class TerminalFragment extends Fragment {
         rightYAxis.setStartAtZero(false);
     }
     private void initializationCurrentPoint(){
-        //animationMax = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_max);
-        //animationMin = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_min);
         initRocketAnimation();
-        //initRocketAnimationBack();
         imgPointCurrent = new ImageView(getContext());
+        imgPointCurrent.setVisibility(View.GONE);
         imgPointCurrent.setId(R.id.img);
         imgPointCurrent.setImageDrawable(rocketAnimation);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AndroidUtils.dp(40),AndroidUtils.dp(40));
         rlChart.addView(imgPointCurrent, params);
         rocketAnimation.start();
-        //handler.postDelayed(runnableRocketAnimationBack, INTERVAL);
     }
 
     private void initRocketAnimation() {
@@ -657,6 +636,11 @@ public class TerminalFragment extends Fragment {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
         }
     }
+    private void requestOrders() {
+        Intent intentService = new Intent(getActivity(), OrdersService.class);
+        getActivity().startService(intentService);
+    }
+
     private synchronized LineDataSet createSetDataChart() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -782,33 +766,42 @@ public class TerminalFragment extends Fragment {
         currentLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
         currentLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
         rightYAxis.addLimitLine(currentLine);
-
-        //currentSocketPointMarkerView.startAnimation(animationMin);
-       /* Highlight[] highlight =  mChart.getHighlighted();
-        if(highlight != null && highlight.length != 0){
-
-        }*/
         drawCurrentPoint(entry);
     }
+   /* private void drawDealingsXLimitLine() {
+        if(dealingsXLine != null && dealingsXLine.size() != 0){
+            for(CustomBaseLimitLine line : dealingsXLine){
+                rightYAxis.removeLimitLine(line);
+            }
+        }
+        for(OrderAnswer order : listOpenDealings){
+            Bitmap iconLabel = null;
+            Entry entry = new Entry(ConventDate.genericTimeForChart(ConventDate.stringToUnix(order.getCloseTime())), Float.valueOf(String.valueOf(order.getOpenPrice())), null, null);
+            CustomBaseLimitLine limitLine = new CustomBaseLimitLine(entry.getX(), String.valueOf(entry.getY()), iconLabel);
+            if(order.getCmd() == 0){
+                iconLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_vert);
+                limitLine.setLineColor(getResources().getColor(R.color.chat_green));
+            }else{
+                iconLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_vert);
+                limitLine.setLineColor(getResources().getColor(R.color.color_red_chart));
+            }
+            limitLine.setBitmapIconLabel(iconLabel);
+            limitLine.setLineWidth(1.0f);
+            limitLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
+            limitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+            xAxis.addLimitLine(limitLine);
+            dealingsXLine.add(limitLine);
+        }
+    }*/
 
     private void drawCurrentPoint(Entry entry){
         if(imgPointCurrent != null){
+            imgPointCurrent.setVisibility(View.VISIBLE);
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth()/2);
             imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight()/2);
-        }
+       }
     }
-//    private void drawXLimitLine(Entry entry) {
-//        CustomBaseLimitLine line = new CustomBaseLimitLine(entry.getX());
-//        line.setLineWidth(1.5f);
-//        line.setTextColor(Color.BLACK);
-//        line.setLineColor(Color.WHITE);
-//        line.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
-//        line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-//        xAxis.addLimitLine(line);
-//        xAxis.removeAllLimitLines();
-//        xAxis.addLimitLine(line);
-//    }
 
     private void showViewOpenDealing(String active, String amount, String time) {
         ((TextView) openDealingView.findViewById(R.id.tvActive)).setText(active);
@@ -890,6 +883,7 @@ public class TerminalFragment extends Fragment {
             String response = intent.getStringExtra(MakeDealingService.RESPONSE);
             if (response != null && response.equals("true")) {
                 Log.d(GrandCapitalApplication.TAG_SOCKET, "openDealing");
+                requestOrders();
                 typePoint = 1;
                 showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
@@ -907,36 +901,43 @@ public class TerminalFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             ((BaseActivity) getActivity()).setDealings();
             BaseActivity.getToolbar().setDealingSelectIcon();
-            if(OrderAnswer.getInstance() != null){
-                OrderAnswer orderAnswer = OrderAnswer.getInstance().get(intent.getIntExtra(CheckDealingService.INDEX, 0));
-                if(orderAnswer != null && orderAnswer.getTicket() == intent.getIntExtra(CheckDealingService.TICKET, 0)){
-                    ILineDataSet set = mChart.getData().getDataSetByIndex(0);
-                    for(int i = set.getEntryCount()-1; i >= 0; i--){
-                        Entry entry = set.getEntryForIndex(i);
-                        if(entry.getData()!= null && entry.getData() instanceof Long){
-                            Long timeData = Long.valueOf(String.valueOf(entry.getData()));
-                            if(ConventDate.equalsTimeDealing(timeData/1000, ConventDate.stringToUnix(orderAnswer.getOpenTime()))){
-                                entry.setIcon(null);
-                                entry.setData(null);
-                                mChart.getData().notifyDataChanged();
-                                mChart.notifyDataSetChanged();
-                                mChart.invalidate();
-                                Log.d(GrandCapitalApplication.TAG_SOCKET, "closeDealing");
-                                typePoint = 2;
-                                showViewCloseDealing(orderAnswer);
-                            }
-                        }
-                    }
-                }
-            }
+            listCurrentClosingDealings.add(new Gson().fromJson(intent.getStringExtra(CheckDealingService.RESPONSE), OrderAnswer.class));
+            new Handler().postDelayed(() -> requestOrders(), 4000);
         }
     }
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String response = intent.getStringExtra(OrdersService.RESPONSE);
-            if (response != null && response.equals("200") && OrderAnswer.getInstance() != null) {
-
+            if(OrderAnswer.getInstance() != null){
+                CheckDealingService.setListOrderAnswer(OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION));
+                if(listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0){
+                    List<OrderAnswer> listClosedDealing = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
+                     for(OrderAnswer order: listClosedDealing){
+                         for(OrderAnswer orderStack: listCurrentClosingDealings){
+                             if((int)order.getTicket() == orderStack.getTicket()){
+                                 ILineDataSet set = mChart.getData().getDataSetByIndex(0);
+                                 for(int i = set.getEntryCount()-1; i >= 0; i--){
+                                     Entry entry = set.getEntryForIndex(i);
+                                     if(entry.getData()!= null && entry.getData() instanceof Long){
+                                         Long timeData = Long.valueOf(String.valueOf(entry.getData()));
+                                         if(ConventDate.equalsTimeDealing(timeData / 1000, ConventDate.stringToUnix(order.getOpenTime()))){
+                                             Log.d(GrandCapitalApplication.TAG_SOCKET, "closeDealing");
+                                             entry.setIcon(null);
+                                             entry.setData(null);
+                                             mChart.getData().notifyDataChanged();
+                                             mChart.notifyDataSetChanged();
+                                             mChart.invalidate();
+                                             typePoint = 2;
+                                             showViewCloseDealing(order);
+                                             break;
+                                         }
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                    listCurrentClosingDealings.clear();
+                }
             }
         }
     }

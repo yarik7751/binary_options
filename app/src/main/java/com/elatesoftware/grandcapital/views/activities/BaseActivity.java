@@ -41,7 +41,6 @@ import java.util.TimerTask;
 public class BaseActivity extends CustomFontsActivity {
 
     public static final String TAG = "BaseActivity_TAG";
-    private static Timer timer;
     public static FragmentManager fragmentManager;
     public static Context context;
     public static String sMainTagFragment = "";
@@ -99,24 +98,14 @@ public class BaseActivity extends CustomFontsActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        timer = new Timer();
         mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mInfoBroadcastReceiver, intentFilter);
-
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Intent intentService = new Intent(BaseActivity.this, OrdersService.class);
-                startService(intentService);
-            }
-        }, 0, 1000);
     }
 
     @Override
     protected void onPause() {
-        timer.cancel();
         super.onPause();
         unregisterReceiver(mInfoBroadcastReceiver);
     }
