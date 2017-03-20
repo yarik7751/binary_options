@@ -66,7 +66,6 @@ import com.github.mikephil.charting.utils.MPPointF;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class TerminalFragment extends Fragment {
@@ -290,7 +289,6 @@ public class TerminalFragment extends Fragment {
         isOpen = true;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
         registerBroadcasts();
-        requestOrders();
         ConventString.updateBalance(tvBalance);
         if (sSymbolCurrent != null && !sSymbolCurrent.equals("")) {
             tvValueActive.setText(sSymbolCurrent);
@@ -370,6 +368,7 @@ public class TerminalFragment extends Fragment {
         mChart.setAutoScaleMinMaxEnabled(true);
         mChart.setScaleYEnabled(false);
         mChart.setScaleMinima(0.5f, 1f);
+
         mChart.setDoubleTapToZoomEnabled(false);
         mChart.getDescription().setEnabled(false);// enable description text
         mChart.setTouchEnabled(true);      // enable touch gestures жесты
@@ -648,12 +647,12 @@ public class TerminalFragment extends Fragment {
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
                         break;
                 }
-                typePoint = 0;
                 data.addEntry(entry, 0);
                 data.notifyDataChanged();
                 mChart.notifyDataSetChanged();
                 mChart.invalidate();
                 drawCurrentYLimitLine(entry);
+                typePoint = POINT_SIMPLY;
             }
         }
     }
@@ -721,6 +720,7 @@ public class TerminalFragment extends Fragment {
         rightYAxis.addLimitLine(currentLine);
         drawCurrentPoint(entry);
     }
+
    /* private void drawDealingsXLimitLine() {
         if(dealingsXLine != null && dealingsXLine.size() != 0){
             for(CustomBaseLimitLine line : dealingsXLine){
@@ -837,7 +837,7 @@ public class TerminalFragment extends Fragment {
             if (response != null && response.equals("true")) {
                 Log.d(GrandCapitalApplication.TAG_SOCKET, "openDealing");
                 requestOrders();
-                typePoint = 1;
+                typePoint = POINT_OPEN_DEALING;
                 showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));
@@ -894,7 +894,7 @@ public class TerminalFragment extends Fragment {
                                              mChart.getData().notifyDataChanged();
                                              mChart.notifyDataSetChanged();
                                              mChart.invalidate();
-                                             typePoint = 2;
+                                             typePoint = POINT_CLOSE_DEALING;
                                              showViewCloseDealing(order);
                                              break;
                                          }

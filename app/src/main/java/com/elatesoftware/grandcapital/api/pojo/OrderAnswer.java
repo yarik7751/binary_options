@@ -67,28 +67,6 @@ public class OrderAnswer {
     @Expose
     private Integer volume;
 
-    public OrderAnswer(Double closePrice, String closeTime, Integer cmd, Double commission, String expiration,
-                       String openTime, Double profit, Double swaps, Double taxes, Integer volume, Double tp,
-                       Integer ticket, String symbol, Double sl, OptionsData optionsData, Double openPrice, Double commissionAgent) {
-        this.closePrice = closePrice;
-        this.closeTime = closeTime;
-        this.cmd = cmd;
-        this.commission = commission;
-        this.expiration = expiration;
-        this.openTime = openTime;
-        this.profit = profit;
-        this.swaps = swaps;
-        this.taxes = taxes;
-        this.volume = volume;
-        this.tp = tp;
-        this.ticket = ticket;
-        this.symbol = symbol;
-        this.sl = sl;
-        this.optionsData = optionsData;
-        this.openPrice = openPrice;
-        this.commissionAgent = commissionAgent;
-    }
-
     private static List<OrderAnswer> ordersInstance = null;
     public static List<OrderAnswer> getInstance() {
         return ordersInstance;
