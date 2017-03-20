@@ -6,7 +6,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +45,7 @@ import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventString;
+import com.elatesoftware.grandcapital.views.CustomAnimationDrawable;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
@@ -72,6 +76,8 @@ public class TerminalFragment extends Fragment {
     private final static int INTERVAL_SHOW_LABEL = 5000;
     private final static int INTERVAL_SHOW_LABEL_CLOSE = 5000;
 
+    private final int INTERVAL_ITEM = 100;
+
     private final static String SYMBOL = "EURUSD";
     private static String sSymbolCurrent = "";
 
@@ -94,6 +100,9 @@ public class TerminalFragment extends Fragment {
     private Handler handlerCloseDealingView;
     private static List<String> listActives = new ArrayList<>();
     public static List<SocketAnswer> listBackGroundSocketAnswer = new ArrayList<>();
+
+    private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
+    //private Handler handler;
 
     private View closeDealingView;
     private View openDealingView;
@@ -135,6 +144,26 @@ public class TerminalFragment extends Fragment {
 
     //private Animation animationMin, animationMax;
 
+    /*private Runnable runnableRocketAnimation = new Runnable() {
+        @Override
+        public void run() {
+            initRocketAnimation();
+            imgPointCurrent.setBackgroundDrawable(rocketAnimation);
+            rocketAnimation.start();
+            handler.postDelayed(runnableRocketAnimationBack, INTERVAL);
+        }
+    };
+
+    private Runnable runnableRocketAnimationBack = new Runnable() {
+        @Override
+        public void run() {
+            initRocketAnimationBack();
+            imgPointCurrent.setBackgroundDrawable(rocketAnimationBack);
+            rocketAnimationBack.start();
+            handler.postDelayed(runnableRocketAnimation, INTERVAL);
+        }
+    };*/
+
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
         if (fragment == null) {
@@ -151,6 +180,7 @@ public class TerminalFragment extends Fragment {
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
 
         drawMarkerDealing = getResources().getDrawable(R.drawable.marker_close_dealing);
+        //handler = new Handler();
 
         mChart = (LineChart) parentView.findViewById(R.id.chart);
         tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
@@ -405,12 +435,69 @@ public class TerminalFragment extends Fragment {
     private void initializationCurrentPoint(){
         //animationMax = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_max);
         //animationMin = AnimationUtils.loadAnimation(context, R.anim.anim_point_scale_min);
+        initRocketAnimation();
+        //initRocketAnimationBack();
         imgPointCurrent = new ImageView(getContext());
         imgPointCurrent.setId(R.id.img);
-        imgPointCurrent.setImageDrawable(getResources().getDrawable(R.drawable.front_elipsa));
+        imgPointCurrent.setImageDrawable(rocketAnimation);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AndroidUtils.dp(40),AndroidUtils.dp(40));
         rlChart.addView(imgPointCurrent, params);
+        rocketAnimation.start();
+        //handler.postDelayed(runnableRocketAnimationBack, INTERVAL);
     }
+
+    private void initRocketAnimation() {
+        rocketAnimation = new CustomAnimationDrawable();
+        rocketAnimation.setOneShot(true);
+        Log.d(TAG, "initRocketAnimation()");
+        for(int i = 10; i >= 3; i--) {
+            Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
+            rocketAnimation.addFrame(new BitmapDrawable(getPaddingImage(image, i)), INTERVAL_ITEM);
+        }
+
+        rocketAnimation.setAnimationEndListner(new CustomAnimationDrawable.AnimationEndListner() {
+            @Override
+            public void animationEnd() {
+                initRocketAnimationBack();
+                imgPointCurrent.setBackgroundDrawable(rocketAnimationBack);
+                rocketAnimationBack.start();
+            }
+        });
+    }
+
+    private void initRocketAnimationBack() {
+        rocketAnimationBack = new CustomAnimationDrawable();
+        rocketAnimationBack.setOneShot(true);
+        Log.d(TAG, "initRocketAnimationBack()");
+        for(int i = 3; i <= 10; i++) {
+            Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
+            rocketAnimationBack.addFrame(new BitmapDrawable(getPaddingImage(image, i)), INTERVAL_ITEM);
+        }
+        rocketAnimationBack.setAnimationEndListner(new CustomAnimationDrawable.AnimationEndListner() {
+            @Override
+            public void animationEnd() {
+                initRocketAnimation();
+                imgPointCurrent.setBackgroundDrawable(rocketAnimation);
+                rocketAnimation.start();
+            }
+        });
+    }
+
+    private Bitmap getPaddingImage(Bitmap image, int persent) {
+        float width = (float) (image.getWidth() * (persent/10.0));
+        float height = (float) (image.getHeight() * (persent/10.0));
+        Bitmap smallImage = Bitmap.createScaledBitmap(image, (int) width, (int) height, false);
+        Bitmap paddingImage = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(paddingImage);
+        canvas.drawBitmap(
+                smallImage,
+                paddingImage.getWidth() / 2 - smallImage.getWidth() / 2,
+                paddingImage.getHeight() / 2 - smallImage.getHeight() / 2,
+                null
+        );
+        return paddingImage;
+    }
+
 //    public void startAnimate(){
 //        animationMin.setAnimationListener(new Animation.AnimationListener() {
 //            @Override
