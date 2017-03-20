@@ -394,6 +394,7 @@ public class BaseActivity extends CustomFontsActivity {
         if(sMainTagFragment.equals(DepositFragment.class.getName())) {
             BaseActivity.getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_deposit));
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+            BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
             BaseActivity.getToolbar().deselectAll();
         }
         sMainTagFragment = "";

@@ -37,7 +37,8 @@ public class DealingFragment extends Fragment {
 
     private TabLayout mTabs;
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private FragmentDealingOpenOrdersAdapter mAdapterOpen;
+    private FragmentDealingCloseOrdersAdapter mAdapterClose;
     private TextView mFirstColumnHeader;
     private TextView mSecondColumnHeader;
     private TextView mThirdColumnHeader;
@@ -75,10 +76,6 @@ public class DealingFragment extends Fragment {
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
         BaseActivity.getToolbar().switchTab(BaseActivity.DEALING_POSITION);
 
-        CustomSharedPreferences.setAmtCloseDealings(getContext(), 0);
-        ((BaseActivity) getActivity()).setDealings();
-        BaseActivity.getToolbar().setDealingIcon();
-
         mListLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_list);
         mNoOrdersLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_no_elements_layout);
         mProgressLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_progress_bar);
@@ -106,6 +103,12 @@ public class DealingFragment extends Fragment {
 
     }
 
+    private void cleanCloseDealings() {
+        CustomSharedPreferences.setAmtCloseDealings(getContext(), 0);
+        ((BaseActivity) getActivity()).setDealings();
+        BaseActivity.getToolbar().setDealingIcon();
+    }
+
     private void initTabs() {
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.ordersListOpen);
         mRecyclerView.setHasFixedSize(true);
@@ -113,10 +116,14 @@ public class DealingFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mTabs = (TabLayout) getView().findViewById(R.id.dealingTabs);
+        mTabs.getTabAt(currentTabPosition).select();
         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 currentTabPosition = mTabs.getSelectedTabPosition();
+                if(currentTabPosition == CLOSE_TAB_POSITION) {
+                    cleanCloseDealings();
+                }
                 mProgressLayout.setVisibility(View.VISIBLE);
                 mListLayout.setVisibility(View.INVISIBLE);
             }
@@ -195,12 +202,27 @@ public class DealingFragment extends Fragment {
                         List<OrderAnswer> orders = OrderAnswer.getInstance();
                         currentOrders = OrderAnswer.filterOrders(orders, currentTabPosition); // TODO check and  save position scrolling
                         checkOrders(currentOrders);
-                        mAdapter = currentTabPosition == OPEN_TAB_POSITION
+                        /*mAdapter = currentTabPosition == OPEN_TAB_POSITION
                                 ? new FragmentDealingOpenOrdersAdapter(currentOrders)
-                                : new FragmentDealingCloseOrdersAdapter(currentOrders);
+                                : new FragmentDealingCloseOrdersAdapter(currentOrders);*/
+                        if(currentTabPosition == OPEN_TAB_POSITION) {
+                            if(mAdapterOpen == null) {
+                                mAdapterClose = null;
+                                mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders);
+                                mRecyclerView.setAdapter(mAdapterOpen);
+                            } else {
+                                mAdapterOpen.updateAdapter(currentOrders);
+                            }
+                        } else {
+                            mAdapterOpen = null;
+                            if(mAdapterClose == null) {
+                                mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
+                                mRecyclerView.setAdapter(mAdapterClose);
+                            }
+                            cleanCloseDealings();
+                        }
                     }
                     mProgressLayout.setVisibility(View.GONE);
-                    mRecyclerView.setAdapter(mAdapter);
                     setListHeader(currentTabPosition);
                 }
             } else {

@@ -1,8 +1,11 @@
 package com.elatesoftware.grandcapital.views.items.chart.marker;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ImageView;
 
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.elatesoftware.grandcapital.R;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.Entry;
@@ -14,6 +17,8 @@ import com.github.mikephil.charting.utils.MPPointF;
  */
 
 public class CurrentSocketPointMarkerView extends MarkerView {
+
+    public final static String TAG = "CurrentSocketPointMarkerView_Logs";
 
     public ImageView img;
     //private Animation animationMin, animationMax;
