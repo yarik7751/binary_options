@@ -21,25 +21,28 @@
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="20dp"
+        android:layout_width="wrap_content"
+        android:minWidth="20dp"
         android:layout_height="20dp"
         android:layout_marginLeft="12dp"
         android:gravity="center"
-        android:id="@+id/badge_layout"
-        android:background="@drawable/badge_shadow">
+        android:id="@+id/badge_layout">
 
         <LinearLayout
             android:orientation="horizontal"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="wrap_content"
+            android:minWidth="20dp"
+            android:layout_height="20dp"
             android:gravity="center"
-            android:background="@drawable/circlelayout">
+            android:background="@drawable/chart_label_down_background">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:id="@+id/menu_badge"
-                tools:text="8"
+                android:singleLine="true"
+                tools:text="27"
                 android:textColor="#ffffff"
                 android:textSize="12sp" />
         </LinearLayout>

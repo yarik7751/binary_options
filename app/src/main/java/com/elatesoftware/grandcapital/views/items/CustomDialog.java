@@ -75,6 +75,7 @@ public class CustomDialog {
             Intent intent = new Intent(activity.getApplicationContext(), SignInActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             activity.startActivity(intent);
+            dialog.cancel();
             activity.finish();
         });
         tvCancel.setOnClickListener(v -> {

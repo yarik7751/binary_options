@@ -15,7 +15,7 @@ import java.util.List;
 
 class FragmentDealingOrdersAdapter extends GrandCapitalListAdapter {
 
-    List<OrderAnswer> orderList;
+    protected List<OrderAnswer> orderList;
 
     static final int DOWN_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListDownOrderColor);
     static final int UP_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListUpOrderColor);
