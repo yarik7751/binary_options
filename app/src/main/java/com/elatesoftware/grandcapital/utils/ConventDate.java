@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.elatesoftware.grandcapital.R;
 
@@ -16,6 +17,9 @@ import java.util.TimeZone;
  */
 
 public class ConventDate {
+
+    public static final String TAG = "ConventDate_Logs";
+
     private final static int DIFFERENSE = 1100;
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final String timeZone = "GMT+00:00:00";
@@ -34,6 +38,8 @@ public class ConventDate {
     }
     public static String getConventDate(String date) {
         //dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));//
+        //sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        sdf.setTimeZone(TimeZone.getTimeZone("EET"));
         Date resultDate = null;
         try {
             resultDate = sdf.parse(date);
