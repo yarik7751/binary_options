@@ -753,6 +753,8 @@ public class TerminalFragment extends Fragment {
                                         mChart.invalidate();
                                         typePoint = POINT_CLOSE_DEALING;
                                         CustomSharedPreferences.setAmtCloseDealings(getContext(), CustomSharedPreferences.getAmtCloseDealings(getContext()) + 1);
+                                        ((BaseActivity) getActivity()).setDealings();
+                                        BaseActivity.getToolbar().setDealingSelectIcon();
                                         showViewCloseDealing(order);
                                         break;
                                     }
@@ -906,8 +908,6 @@ public class TerminalFragment extends Fragment {
     public class GetResponseCloseDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            ((BaseActivity) getActivity()).setDealings();
-            BaseActivity.getToolbar().setDealingSelectIcon();
             listCurrentClosingDealings.add(new Gson().fromJson(intent.getStringExtra(CheckDealingService.RESPONSE), OrderAnswer.class));
             new Handler().postDelayed(() -> requestOrders(), 4000);
         }

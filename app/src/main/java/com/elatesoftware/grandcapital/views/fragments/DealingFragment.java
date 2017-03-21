@@ -81,6 +81,7 @@ public class DealingFragment extends Fragment {
 
         initTabs();
         initListHeaders();
+        cleanCloseDealings();
     }
 
     @Override
@@ -125,7 +126,7 @@ public class DealingFragment extends Fragment {
                 requestOrders();
                 currentTabPosition = mTabs.getSelectedTabPosition();
                 if(currentTabPosition == CLOSE_TAB_POSITION) {
-                    cleanCloseDealings();
+
                 }
                 mProgressLayout.setVisibility(View.VISIBLE);
                 mListLayout.setVisibility(View.INVISIBLE);
@@ -213,7 +214,7 @@ public class DealingFragment extends Fragment {
                                 mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
                                 mRecyclerView.setAdapter(mAdapterClose);
                             }
-                            cleanCloseDealings();
+                            //cleanCloseDealings();
                         }
                     }
                     mProgressLayout.setVisibility(View.GONE);
