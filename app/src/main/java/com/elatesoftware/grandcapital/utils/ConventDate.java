@@ -131,24 +131,6 @@ public class ConventDate {
             return false;
         }
     }
-    public static boolean equalsTimeDealingSaveOpenPoints(long time1, String date2) {
-        //sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
-        long time2 = 0;
-        Date date1 = new Date(time1);
-        date1.setHours(date1.getHours() - 4);
-        time1 = date1.getTime()/1000;
-        try {
-            time2 = sdf.parse(date2).getTime() / 1000;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if ((time1 - time2 <= DIFFERENSE && time1 - time2 >= 0) || (time2 - time1 <= DIFFERENSE && time2 - time1 >= 0)){
-            return true;
-        }else{
-            return false;
-        }
-    }
-
     public static boolean isCloseDealing(String time){
         return time.equals("1970-01-01T00:00:00");
     }
@@ -176,7 +158,7 @@ public class ConventDate {
     }
     public static float getTimeForXLimitLine(float time, int expiration){
         long timeCurrent = ConventDate.genericTimeForChartLabels(time);
-        Date date = new Date(timeCurrent / 1000);
+        Date date = new Date(timeCurrent);
         date.setMinutes(date.getMinutes() + expiration);
         return genericTimeForChart(date.getTime());
     }

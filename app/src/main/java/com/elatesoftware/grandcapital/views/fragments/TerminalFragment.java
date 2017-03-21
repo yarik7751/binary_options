@@ -385,7 +385,7 @@ public class TerminalFragment extends Fragment {
         mChart.setPinchZoom(true);      // if disabled, scaling can be done on x- and y-axis separately
         mChart.setBackgroundColor(Color.TRANSPARENT); // set an alternative background color
         mChart.getLegend().setEnabled(false);   //Hide the legend
-        mChart.setDragOffsetX(100f);// TODO norm padding chart in left
+        mChart.setDragOffsetX(300f);// TODO norm padding chart in left
         mChart.setDrawMarkers(true);
         mChart.getViewPortHandler().setMaximumScaleX(7f);
 /*
@@ -612,7 +612,7 @@ public class TerminalFragment extends Fragment {
                         break;
                     case POINT_OPEN_DEALING:
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawableMarkerDealing, answer.getTime());
-                        //drawDealingsXLimitLine(entry);
+                        drawDealingsXLimitLine(entry);
                         break;
                     case POINT_SIMPLY:
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
