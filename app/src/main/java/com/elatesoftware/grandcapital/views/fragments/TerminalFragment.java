@@ -826,7 +826,6 @@ public class TerminalFragment extends Fragment {
                             showViewCloseDealing(order);
                             ((BaseActivity) getActivity()).setDealings();
                             BaseActivity.getToolbar().setDealingSelectIcon();
-                            break;
                         }
                     }
                 }
