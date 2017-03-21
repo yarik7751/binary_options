@@ -243,6 +243,17 @@ public class OrderAnswer {
             return closeOrders;
         }
     }
+    public static List<OrderAnswer> filterOrdersOpenOrClose(List<OrderAnswer> orders, int currentTabPosition, String symbol){
+        List<OrderAnswer> list = filterOrders(orders, currentTabPosition);
+        List<OrderAnswer> rezultList = new ArrayList<>();
+        for(OrderAnswer order: list){
+            if(order.getSymbol().equals(symbol)){
+                rezultList.add(order);
+            }
+        }
+        return rezultList;
+    }
+
     @Override
     public String toString() {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);

@@ -16,8 +16,11 @@ import java.util.TimeZone;
  */
 
 public class ConventDate {
-
+    private final static int DIFFERENSE = 1100;
+    private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final String timeZone = "GMT+00:00:00";
     private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
+
     public static float genericTimeForChart(long currentTimePoint){
         return (float)(currentTimePoint - BIG_DATE_FOR_EQUALS);
     }
@@ -30,11 +33,10 @@ public class ConventDate {
         return (date.getTime());
     }
     public static String getConventDate(String date) {
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         //dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));//
         Date resultDate = null;
         try {
-            resultDate = dateFormat.parse(date);
+            resultDate = sdf.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -46,11 +48,10 @@ public class ConventDate {
     }
 
     public static long stringToUnix(String date) {
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
         Date resultDate = null;
         try {
-            resultDate = dateFormat.parse(date);
+            resultDate = sdf.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -60,28 +61,29 @@ public class ConventDate {
             return -1;
         }
     }
-
-    public static String getConvertDateFromUnix(long unix) {
-        String dateStr = "";
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
-        Date date = new Date(unix);
-        dateStr = dateFormat.format(date);
-        return dateStr;
+    public static long getConvertDateInMilliseconds(String strDate) {
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        Date date = null;
+        try {
+            date = sdf.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.getTime()/1000;
     }
 
     public static String convertDateFromMilSecHHMM(long time) {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
         Date date = new Date(time);
-        formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
+        formatter.setTimeZone(TimeZone.getTimeZone(timeZone));
         return formatter.format(date);
     }
+
     public static boolean equalsTimeSymbols(long currentTime, long newTime) {
         if(currentTime == 0L){
             return false;
         }else{
-             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-             formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
+             sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
              Date currentDate = new Date(currentTime);
              Date newDate = new Date(newTime);
             if((currentDate.getSeconds() == newDate.getSeconds()) ||
@@ -92,7 +94,6 @@ public class ConventDate {
             }
         }
     }
-
     public static boolean equalsTimeSocket(long currentTime, long newTime) {
         if(currentTime == 0L){
             return false;
@@ -106,43 +107,78 @@ public class ConventDate {
             }
         }
     }
-    public static boolean equalsTimeDealing(long currentTime, long newTime) {
-        if(currentTime == 0L){
-            return false;
+    public static boolean equalsTimeDealing(String date) {
+        long currTime = ConventDate.getCurrentDateMilliseconds();
+        long orderTime = ConventDate.getConvertDateInMilliseconds(date);
+        if (currTime - orderTime <= DIFFERENSE){
+            return true;
         }else{
-            Date currentDate = new Date(currentTime);
-            Date newDate = new Date(newTime);
-            if((newDate.getSeconds() - currentDate.getSeconds() <= 2)){
-                return true;
-            }else{
-                return false;
-            }
+            return false;
+        }
+    }
+    public static boolean equalsTimeDealingPoint(long time1, String date2) {
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        long time2 = 0;
+        try {
+            time1 = time1 / 1000;
+            time2 = sdf.parse(date2).getTime() / 1000;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if ((time1 - time2 <= DIFFERENSE && time1 - time2 >= 0) || (time2 - time1 <= DIFFERENSE && time2 - time1 >= 0)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public static boolean equalsTimeDealingSaveOpenPoints(long time1, String date2) {
+        //sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        long time2 = 0;
+        Date date1 = new Date(time1);
+        date1.setHours(date1.getHours() - 4);
+        time1 = date1.getTime()/1000;
+        try {
+            time2 = sdf.parse(date2).getTime() / 1000;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if ((time1 - time2 <= DIFFERENSE && time1 - time2 >= 0) || (time2 - time1 <= DIFFERENSE && time2 - time1 >= 0)){
+            return true;
+        }else{
+            return false;
         }
     }
 
     public static boolean isCloseDealing(String time){
         return time.equals("1970-01-01T00:00:00");
     }
-
-    public static String getTimeStampCurrentDate() {
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
+    public static long getCurrentDateMilliseconds(){
         Date date = new Date();
+        date.setHours(date.getHours() - 1);    // TODO
+        return date.getTime()/1000;
+    }
+    public static String getTimeStampCurrentDate() {
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        Date date = new Date();                // TODO
         return String.valueOf(date.getTime() / 1000);
     }
     public static String getTimeStampLastDate() {
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date date = new Date();
-        formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
-        date.setMinutes(date.getMinutes() - 30);
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        date.setMinutes(date.getMinutes() - 30); // TODO
         return String.valueOf(date.getTime() / 1000);
     }
     public static long getTimePlusOneSecond(long time) {
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date date = new Date(time);
-        formatter.setTimeZone(TimeZone.getTimeZone("GMT+00:00:00"));
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
         date.setSeconds(date.getSeconds() + 1);
         return date.getTime();
+    }
+    public static float getTimeForXLimitLine(float time, int expiration){
+        long timeCurrent = ConventDate.genericTimeForChartLabels(time);
+        Date date = new Date(timeCurrent / 1000);
+        date.setMinutes(date.getMinutes() + expiration);
+        return genericTimeForChart(date.getTime());
     }
     public static String getChatDateByUnix(Context context, long unix) {
         Calendar calendarChat = Calendar.getInstance();

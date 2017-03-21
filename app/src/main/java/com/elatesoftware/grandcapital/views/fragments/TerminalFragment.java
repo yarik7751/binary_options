@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -16,7 +14,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +34,7 @@ import com.elatesoftware.grandcapital.api.pojo.SignalAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.models.Dealing;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.MakeDealingService;
@@ -47,6 +45,7 @@ import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.utils.ConventString;
+import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.CustomAnimationDrawable;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
@@ -75,17 +74,18 @@ public class TerminalFragment extends Fragment {
     public final static String TAG_CLOSE_DEALING = "closeDealingView";
 
     private final static int INTERVAL_SHOW_LABEL = 5000;
-    private final static int INTERVAL_SHOW_LABEL_CLOSE = 5000;
-
     private final int INTERVAL_ITEM = 100;
 
     private final static String SYMBOL = "EURUSD";
     private static String sSymbolCurrent = "";
+    private static double mCurrentValueY = 0;
+    private static Dealing currentDealing;
 
     private static int typePoint = 0;
     private final static int POINT_SIMPLY = 0;
     private final static int POINT_OPEN_DEALING = 1;
     private final static int POINT_CLOSE_DEALING = 2;
+
     public static boolean isAddInChart = false;
     public static boolean isOpen = false;
     public boolean isDirection = true;
@@ -135,7 +135,10 @@ public class TerminalFragment extends Fragment {
     private TextView tvErrorSignal;
     private RelativeLayout rlErrorSignal;
 
-    private Drawable drawMarkerDealing;
+    private Drawable drawableMarkerDealing;
+    private Bitmap bitmapIconCurrentLimitLabel;
+    private Bitmap bitmapIconGreenXLabel;
+    private Bitmap bitmapIconRedXLabel;
 
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
@@ -159,7 +162,10 @@ public class TerminalFragment extends Fragment {
         BaseActivity.backToRootFragment = false;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
 
-        drawMarkerDealing = getResources().getDrawable(R.drawable.marker_close_dealing);
+        drawableMarkerDealing = getResources().getDrawable(R.drawable.marker_close_dealing);
+        bitmapIconCurrentLimitLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.whitevert);
+        bitmapIconGreenXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_vert);
+        bitmapIconRedXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_vert);
 
         mChart = (LineChart) parentView.findViewById(R.id.chart);
         tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
@@ -281,14 +287,14 @@ public class TerminalFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "onResume Terminal");
         llProgressBar.setVisibility(View.VISIBLE);
         handlerOpenDealingView = new Handler();
         handlerCloseDealingView = new Handler();
-        clearChart();
-        Log.d(GrandCapitalApplication.TAG_SOCKET, "onResume Terminal");
         isOpen = true;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
         registerBroadcasts();
+        clearChart();
         ConventString.updateBalance(tvBalance);
         if (sSymbolCurrent != null && !sSymbolCurrent.equals("")) {
             tvValueActive.setText(sSymbolCurrent);
@@ -296,6 +302,7 @@ public class TerminalFragment extends Fragment {
         } else {
             changeActive();
         }
+
         tvLeftActive.setEnabled(true);
         tvRightActive.setEnabled(true);
     }
@@ -305,7 +312,7 @@ public class TerminalFragment extends Fragment {
         isAddInChart = false;
         listBackGroundSocketAnswer.clear();
         if (threadSymbolHistory != null) {
-        threadSymbolHistory.interrupt();
+            threadSymbolHistory.interrupt();
         }
         clearChart();
         unregisterBroadcasts();
@@ -359,9 +366,10 @@ public class TerminalFragment extends Fragment {
         getActivity().unregisterReceiver(mCloseDealingBroadcastReceiver);
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
     }
+
     private void initializationChart() {
         mChart.setNoDataText(getResources().getString(R.string.request_error_title));
-        mChart.setDragDecelerationFrictionCoef(0.95f); // задержка при перетаскивании
+        //mChart.setDragDecelerationFrictionCoef(0.95f); // задержка при перетаскивании
         mChart.setHighlightPerDragEnabled(false);
         mChart.setHighlightPerTapEnabled(false);
         mChart.setPadding(0, 0, 0, 0);
@@ -389,7 +397,7 @@ public class TerminalFragment extends Fragment {
         data.setValueTextColor(Color.WHITE);
         mChart.setData(data);
 
-        xAxis = mChart.getXAxis();  //Ось Х
+        xAxis = mChart.getXAxis();
         xAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
         xAxis.setTextColor(getResources().getColor(R.color.chart_values));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -412,22 +420,21 @@ public class TerminalFragment extends Fragment {
         rightYAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
         rightYAxis.setStartAtZero(false);
     }
-    private void initializationCurrentPoint(){
+    private void initializationCurrentPoint() {
         initRocketAnimation();
         imgPointCurrent = new ImageView(getContext());
         imgPointCurrent.setVisibility(View.GONE);
         imgPointCurrent.setId(R.id.img);
         imgPointCurrent.setImageDrawable(rocketAnimation);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AndroidUtils.dp(40),AndroidUtils.dp(40));
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AndroidUtils.dp(40), AndroidUtils.dp(40));
         rlChart.addView(imgPointCurrent, params);
         rocketAnimation.start();
     }
-
     private void initRocketAnimation() {
         rocketAnimation = new CustomAnimationDrawable();
         rocketAnimation.setOneShot(true);
         Log.d(TAG, "initRocketAnimation()");
-        for(int i = 10; i >= 3; i--) {
+        for (int i = 10; i >= 3; i--) {
             Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
             rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
         }
@@ -445,7 +452,7 @@ public class TerminalFragment extends Fragment {
         rocketAnimationBack = new CustomAnimationDrawable();
         rocketAnimationBack.setOneShot(true);
         Log.d(TAG, "initRocketAnimationBack()");
-        for(int i = 3; i <= 10; i++) {
+        for (int i = 3; i <= 10; i++) {
             Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
             rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
         }
@@ -465,7 +472,339 @@ public class TerminalFragment extends Fragment {
         llDeposit.getLayoutParams().height = (int) (height * 0.28);
         llButtons.getLayoutParams().height = (int) (height * 0.11);
     }
-    public void showSignalsPanel() {
+    private synchronized LineDataSet createSetDataChart() {
+        LineDataSet set = new LineDataSet(null, "Dynamic Data");
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set.setColor(Color.WHITE);
+        set.setCircleColor(Color.WHITE);
+        set.setLineWidth(1.7f);
+        set.setFillAlpha(50);
+        set.setFillColor(ColorTemplate.getHoloBlue());
+        set.setHighLightColor(Color.rgb(244, 117, 117));
+        set.setValueTextColor(Color.WHITE);
+        set.setValueTextSize(9f);
+        set.setDrawIcons(true);
+        set.setDrawValues(false);
+        set.setDrawCircles(false);
+        set.setDrawCircleHole(false);
+        set.setDrawFilled(true);
+        set.setFillColor(Color.WHITE);
+        set.setFillAlpha(50);
+
+        set.setHighlightEnabled(true); // selected point
+        set.setDrawHighlightIndicators(false);//
+        return set;
+    }
+    private void clearChart() {
+        typePoint = POINT_SIMPLY;
+        mChart.highlightValues(null);
+        mChart.clearValues();
+        rightYAxis.removeAllLimitLines();
+        xAxis.removeAllLimitLines();
+    }
+
+    private void changeActive() {
+        if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
+            sSymbolCurrent = SYMBOL;
+        }
+        tvValueActive.setText(sSymbolCurrent);
+        clearChart();
+        SymbolHistoryAnswer.nullInstance();
+        SocketAnswer.nullInstance();
+        GrandCapitalApplication.closeSocket();
+        requestSymbolHistory(ConventString.getActive(tvValueActive));
+        requestOrders();
+        tvLeftActive.setEnabled(false);
+        tvRightActive.setEnabled(false);
+    }
+    private void parseResponseSymbolHistory() {
+        if (SymbolHistoryAnswer.getInstance() != null && SymbolHistoryAnswer.getInstance().size() != 0) {
+            List<SocketAnswer> list;
+            if (listBackGroundSocketAnswer != null && listBackGroundSocketAnswer.size() != 0) {
+                list = listBackGroundSocketAnswer.subList(0, listBackGroundSocketAnswer.size());
+                Log.d(GrandCapitalApplication.TAG_SOCKET, "add from background in list socketanswer size = " + (list.size() - 1));
+                for (SocketAnswer item : list) {
+                    addSocketAnswerInSymbol(item);
+                }
+                listBackGroundSocketAnswer.clear();
+            }
+            drawDataSymbolHistory(SymbolHistoryAnswer.getInstance(), ConventString.getActive(tvValueActive));
+        } else {
+            listBackGroundSocketAnswer.clear();
+            isAddInChart = true;
+        }
+        llProgressBar.setVisibility(View.GONE);
+    }
+    private void parseResponseSignals(String symbol) {
+        if (SignalAnswer.getInstance() != null) {
+            List<SignalAnswer> list = new ArrayList<>();
+            for (SignalAnswer answer : SignalAnswer.getInstance()) {
+                if (answer.getInstrument().replace("/", "").equals(symbol)) {
+                    list.add(answer);
+                }
+            }
+            if (list.size() != 0) {
+                rlErrorSignal.setVisibility(View.GONE);
+                tvCurrentActive.setText(symbol);
+                tvCurrentActiveAmount.setText(list.get(0).getCost());
+                for (SignalAnswer answer : list) {
+                    if (answer.getTime() == 60) {
+                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes1, answer.getSummary());
+                    } else if (answer.getTime() == 300) {
+                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes5, answer.getSummary());
+                    } else if (answer.getTime() == 900) {
+                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes15, answer.getSummary());
+                    }
+                }
+            } else {
+                rlErrorSignal.setVisibility(View.VISIBLE);
+                tvErrorSignal.setText(getResources().getString(R.string.error_find_signal));
+            }
+        }
+    }
+
+    private void requestSignals() {
+        Intent intentService = new Intent(getActivity(), SignalService.class);
+        getActivity().startService(intentService);
+    }
+    private void requestSymbolHistory(String symbol) {
+        Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
+        intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
+        getActivity().startService(intentService);
+    }
+    private void requestMakeDealing(String lowerOrHeight) {
+        if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).equals("")) {
+            Intent intentService = new Intent(getActivity(), MakeDealingService.class);
+            intentService.putExtra(MakeDealingService.CMD, lowerOrHeight);
+            intentService.putExtra(MakeDealingService.SYMBOL, ConventString.getActive(tvValueActive));
+            intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
+            intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
+            getActivity().startService(intentService);
+        } else {
+            CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
+        }
+    }
+    private void requestOrders() {
+        Intent intentService = new Intent(getActivity(), OrdersService.class);
+        getActivity().startService(intentService);
+    }
+
+    public void addSocketAnswerInSymbol(SocketAnswer item) {
+        if (SymbolHistoryAnswer.getInstance() != null) {
+            SymbolHistoryAnswer.getInstance().add(new SymbolHistoryAnswer(item.getHigh(), item.getBid(), item.getAsk(), item.getLow(), item.getTime()));
+        }
+    }
+    public synchronized void addEntry(final SocketAnswer answer) {
+        if (answer != null && answer.getTime() != null && answer.getAsk() != null) {
+            LineData data = mChart.getData();
+
+            if (data != null) {
+                ILineDataSet set = data.getDataSetByIndex(0);
+                if (set == null) {
+                    set = createSetDataChart();
+                    data.addDataSet(set);
+                }
+                addSocketAnswerInSymbol(answer);
+                Entry entry;
+                switch (typePoint) {
+                    case POINT_CLOSE_DEALING:
+                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawableMarkerDealing, null);
+                        break;
+                    case POINT_OPEN_DEALING:
+                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawableMarkerDealing, answer.getTime());
+                        //drawDealingsXLimitLine(entry);
+                        break;
+                    case POINT_SIMPLY:
+                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
+                        break;
+                    default:
+                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
+                        break;
+                }
+                data.addEntry(entry, 0);
+                data.notifyDataChanged();
+                mChart.notifyDataSetChanged();
+                mChart.invalidate();
+                drawCurrentYLimitLine(entry);
+                typePoint = POINT_SIMPLY;
+                mCurrentValueY = answer.getAsk();
+                currentDealing = null;
+            }
+        }
+    }
+    public void addEntry(SymbolHistoryAnswer answer) {
+        if (answer != null && answer.getTime() != null && answer.getOpen() != null) {
+            LineData data = mChart.getData();
+            if (data != null) {
+                ILineDataSet set = data.getDataSetByIndex(0);
+                if (set == null) {
+                    set = createSetDataChart();
+                    data.addDataSet(set);
+                }
+                Entry entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()),
+                        Float.valueOf(String.valueOf(answer.getOpen())), null, null);
+                data.addEntry(entry, 0);
+                data.notifyDataChanged();
+                mChart.notifyDataSetChanged();
+            }
+        }
+    }
+
+     private void drawDealingsXLimitLine(Entry entry) {
+         /*if(dealingsXLine != null && dealingsXLine.size() != 0){
+             for(CustomBaseLimitLine line : dealingsXLine){
+                 rightYAxis.removeLimitLine(line);
+             }
+         }*/
+         if(currentDealing != null && currentDealing.getExpiration() != 0){
+             Bitmap iconLabel = null;
+             String label = "";
+             CustomBaseLimitLine limitLine = new CustomBaseLimitLine(ConventDate.getTimeForXLimitLine(entry.getX(), currentDealing.getExpiration()), label, iconLabel);
+             if(currentDealing.getCmd().equals("0") && mCurrentValueY < entry.getY()){
+                 iconLabel = bitmapIconGreenXLabel;
+                 limitLine.setLineColor(getResources().getColor(R.color.chat_green));
+             }else{
+                 iconLabel = bitmapIconRedXLabel;
+                 limitLine.setLineColor(getResources().getColor(R.color.color_red_chart));
+             }
+             limitLine.setBitmapIconLabel(iconLabel);
+             limitLine.setLineWidth(1.0f);
+             //limitLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
+             limitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+             xAxis.addLimitLine(limitLine);
+             //dealingsXLine.add(limitLine);
+         }
+     }
+
+    private void drawDataSymbolHistory(List<SymbolHistoryAnswer> listSymbol, final String symbol) {
+        if (threadSymbolHistory != null) {
+            threadSymbolHistory.interrupt();
+        }
+        threadSymbolHistory = new Thread(() -> {
+            Log.d(GrandCapitalApplication.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
+            if (listSymbol != null && listSymbol.size() != 0) {
+                for (int i = 0; i < listSymbol.size() - 1; i++) {
+                    int finalI = i;
+                    getActivity().runOnUiThread(() -> {
+                        addEntry(listSymbol.get(finalI));
+                    });
+                    try {
+                        Thread.sleep(25);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            if (mChart.getLineData() != null) {
+                mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
+                mChart.moveViewToX(mChart.getData().getXMax());
+                Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
+                        Float.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen())), null, null);
+                getActivity().runOnUiThread(() -> {
+                    drawCurrentYLimitLine(entry);
+                });
+            }
+            GrandCapitalApplication.closeAndOpenSocket(symbol);
+            isAddInChart = true;
+        });
+        threadSymbolHistory.start();
+    }
+    private void drawCurrentYLimitLine(Entry entry) {
+        //mChart.highlightValue(entry.getX(), entry.getY(), 0);
+        if (currentLine != null) {
+            rightYAxis.removeLimitLine(currentLine);
+        }
+        currentLine = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), bitmapIconCurrentLimitLabel);
+        currentLine.setLineWidth(1.0f);
+        currentLine.setLineColor(Color.WHITE);
+        currentLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
+        currentLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        rightYAxis.addLimitLine(currentLine);
+        drawCurrentPoint(entry);
+    }
+    private void drawCurrentPoint(Entry entry) {
+        if (imgPointCurrent != null) {
+            imgPointCurrent.setVisibility(View.VISIBLE);
+            MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
+            imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+            imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+        }
+    }
+
+    private void closingOpenDealings() {
+        if (listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0) {
+            List<OrderAnswer> listClosedDealing = OrderAnswer.filterOrdersOpenOrClose(OrderAnswer.getInstance(),
+                    DealingFragment.CLOSE_TAB_POSITION, ConventString.getActive(tvValueActive));
+            for (OrderAnswer order : listClosedDealing) {
+                for (OrderAnswer orderStack : listCurrentClosingDealings) {
+                    if ((int) order.getTicket() == orderStack.getTicket()) {
+                        ILineDataSet set = mChart.getData().getDataSetByIndex(0);
+                        if (set != null) {
+                            for (int i = set.getEntryCount() - 1; i >= 0; i--) {
+                                Entry entry = set.getEntryForIndex(i);
+                                if (entry.getData() != null && entry.getData() instanceof Long) {
+                                    Long timeDataOpenPoint = Long.valueOf(String.valueOf(entry.getData()));
+                                    if (ConventDate.equalsTimeDealingPoint(timeDataOpenPoint, orderStack.getOpenTime())) {
+                                        Log.d(GrandCapitalApplication.TAG_SOCKET, "closeDealing");
+                                        entry.setIcon(null);
+                                        entry.setData(null);
+                                        mChart.getData().notifyDataChanged();
+                                        mChart.notifyDataSetChanged();
+                                        mChart.invalidate();
+                                        typePoint = POINT_CLOSE_DEALING;
+                                        CustomSharedPreferences.setAmtCloseDealings(getContext(), CustomSharedPreferences.getAmtCloseDealings(getContext()) + 1);
+                                        showViewCloseDealing(order);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            listCurrentClosingDealings.clear();
+        }
+    }
+
+    private void showViewOpenDealing(String active, String amount, String time) {
+        ((TextView) openDealingView.findViewById(R.id.tvActive)).setText(active);
+        ((TextView) openDealingView.findViewById(R.id.tvAmount)).setText(amount);
+        ((TextView) openDealingView.findViewById(R.id.tvTime)).setText(time);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.topMargin = AndroidUtils.dp(16);
+        params.leftMargin = AndroidUtils.dp(16);
+
+        if (rlChart.findViewWithTag("openDealingView") != null) {
+            rlChart.updateViewLayout(openDealingView, params);
+        } else {
+            rlChart.addView(openDealingView, params);
+        }
+        handlerOpenDealingView.postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
+    }
+    private void showViewCloseDealing(OrderAnswer answer) {
+        if (answer != null) {
+            ((TextView) closeDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
+            ((TextView) closeDealingView.findViewById(R.id.tvPriceValue)).setText(String.valueOf(answer.getClosePrice()));
+            ((TextView) closeDealingView.findViewById(R.id.tvProfitValue)).setText(String.valueOf(answer.getProfitStr()));
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.topMargin = AndroidUtils.dp(16);
+            params.leftMargin = AndroidUtils.dp(16);
+
+            if (rlChart.findViewWithTag("closeDealingView") != null) {
+                rlChart.updateViewLayout(closeDealingView, params);
+            } else {
+                rlChart.addView(closeDealingView, params);
+            }
+            handlerCloseDealingView.postDelayed(() -> rlChart.removeView(closeDealingView), INTERVAL_SHOW_LABEL);
+        }
+    }
+    public  void showSignalsPanel() {
         parseResponseSignals(ConventString.getActive(tvValueActive));
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 60 : -60));
         animation.setDuration(200);
@@ -501,298 +840,6 @@ public class TerminalFragment extends Fragment {
         });
         llTopPanel.startAnimation(animation);
         isDirection = !isDirection;
-    }
-
-    private void clearChart() {
-        mChart.highlightValues(null);
-        mChart.clearValues();
-        rightYAxis.removeAllLimitLines();
-        xAxis.removeAllLimitLines();
-    }
-    private void changeActive() {
-        if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
-            sSymbolCurrent = SYMBOL;
-        }
-        tvValueActive.setText(sSymbolCurrent);
-        clearChart();
-        SymbolHistoryAnswer.nullInstance();
-        SocketAnswer.nullInstance();
-        GrandCapitalApplication.closeSocket();
-        requestSymbolHistory(ConventString.getActive(tvValueActive));
-        tvLeftActive.setEnabled(false);
-        tvRightActive.setEnabled(false);
-    }
-    private void parseResponseSymbolHistory() {
-        if (SymbolHistoryAnswer.getInstance() != null && SymbolHistoryAnswer.getInstance().size() != 0) {
-            List<SocketAnswer> list;
-            if (listBackGroundSocketAnswer != null && listBackGroundSocketAnswer.size() != 0) {
-                list = listBackGroundSocketAnswer.subList(0, listBackGroundSocketAnswer.size());
-                Log.d(GrandCapitalApplication.TAG_SOCKET, "add from background in list socketanswer size = " + (list.size() - 1));
-                for (SocketAnswer item : list) {
-                    addSocketAnswerInSymbol(item);
-                }
-                listBackGroundSocketAnswer.clear();
-            }
-            drawDataSymbolHistory(SymbolHistoryAnswer.getInstance(), ConventString.getActive(tvValueActive));
-        }else{
-            listBackGroundSocketAnswer.clear();
-            isAddInChart = true;
-        }
-        llProgressBar.setVisibility(View.GONE);
-    }
-    private void parseResponseSignals(String symbol) {
-        if (SignalAnswer.getInstance() != null) {
-            List<SignalAnswer> list = new ArrayList<>();
-            for (SignalAnswer answer : SignalAnswer.getInstance()) {
-                if (answer.getInstrument().replace("/", "").equals(symbol)) {
-                    list.add(answer);
-                }
-            }
-            if (list.size() != 0) {
-                rlErrorSignal.setVisibility(View.GONE);
-                tvCurrentActive.setText(symbol);
-                tvCurrentActiveAmount.setText(list.get(0).getCost());
-                for (SignalAnswer answer : list) {
-                    if (answer.getTime() == 60) {
-                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes1, answer.getSummary());
-                    } else if (answer.getTime() == 300) {
-                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes5, answer.getSummary());
-                    } else if (answer.getTime() == 900) {
-                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes15, answer.getSummary());
-                    }
-                }
-            } else {
-                rlErrorSignal.setVisibility(View.VISIBLE);
-                tvErrorSignal.setText(getResources().getString(R.string.error_find_signal));
-            }
-        }
-    }
-    private void requestSignals() {
-        Intent intentService = new Intent(getActivity(), SignalService.class);
-        getActivity().startService(intentService);
-    }
-    private void requestSymbolHistory(String symbol) {
-        Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
-        intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
-        getActivity().startService(intentService);
-    }
-    private void requestMakeDealing(String lowerOrHeight){
-        if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).equals("")) {
-            Intent intentService = new Intent(getActivity(), MakeDealingService.class);
-            intentService.putExtra(MakeDealingService.CMD, lowerOrHeight);
-            intentService.putExtra(MakeDealingService.SYMBOL, ConventString.getActive(tvValueActive));
-            intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
-            intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
-            getActivity().startService(intentService);
-        } else {
-            CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
-        }
-    }
-    private void requestOrders() {
-        Intent intentService = new Intent(getActivity(), OrdersService.class);
-        getActivity().startService(intentService);
-    }
-
-    private synchronized LineDataSet createSetDataChart() {
-        LineDataSet set = new LineDataSet(null, "Dynamic Data");
-        set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(Color.WHITE);
-        set.setCircleColor(Color.WHITE);
-        set.setLineWidth(1.7f);
-        set.setFillAlpha(50);
-        set.setFillColor(ColorTemplate.getHoloBlue());
-        set.setHighLightColor(Color.rgb(244, 117, 117));
-        set.setValueTextColor(Color.WHITE);
-        set.setValueTextSize(9f);
-        set.setDrawIcons(true);
-        set.setDrawValues(false);
-        set.setDrawCircles(false);
-        set.setDrawCircleHole(false);
-        set.setDrawFilled(true);
-        set.setFillColor(Color.WHITE);
-        set.setFillAlpha(50);
-
-        set.setHighlightEnabled(true); // selected point
-        set.setDrawHighlightIndicators(false);//
-        return set;
-    }
-
-    public void addSocketAnswerInSymbol(SocketAnswer item) {
-        if (SymbolHistoryAnswer.getInstance() != null) {
-            SymbolHistoryAnswer.getInstance().add(new SymbolHistoryAnswer(item.getHigh(), item.getBid(), item.getAsk(), item.getLow(), item.getTime()));
-        }
-    }
-    public synchronized void addEntry(final SocketAnswer answer) {
-        if (answer != null && answer.getTime() != null && answer.getAsk() != null) {
-            LineData data = mChart.getData();
-            if (data != null) {
-                ILineDataSet set = data.getDataSetByIndex(0);
-                if (set == null) {
-                    set = createSetDataChart();
-                    data.addDataSet(set);
-                }
-                addSocketAnswerInSymbol(answer);
-                Entry entry;
-                switch (typePoint){
-                    case POINT_CLOSE_DEALING:
-                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawMarkerDealing, null);
-                        break;
-                    case POINT_OPEN_DEALING:
-                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawMarkerDealing, answer.getTime());
-                        break;
-                    case POINT_SIMPLY:
-                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
-                        break;
-                    default:
-                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
-                        break;
-                }
-                data.addEntry(entry, 0);
-                data.notifyDataChanged();
-                mChart.notifyDataSetChanged();
-                mChart.invalidate();
-                drawCurrentYLimitLine(entry);
-                typePoint = POINT_SIMPLY;
-            }
-        }
-    }
-    public void addEntry(SymbolHistoryAnswer answer) {
-        if (answer != null && answer.getTime() != null && answer.getOpen() != null) {
-            LineData data = mChart.getData();
-            if (data != null) {
-                ILineDataSet set = data.getDataSetByIndex(0);
-                if (set == null) {
-                    set = createSetDataChart();
-                    data.addDataSet(set);
-                }
-                data.addEntry(new Entry(ConventDate.genericTimeForChart(answer.getTime()),
-                        Float.valueOf(String.valueOf(answer.getOpen())), null, null), 0);
-                data.notifyDataChanged();
-                mChart.notifyDataSetChanged();
-            }
-        }
-    }
-
-    private void drawDataSymbolHistory(List<SymbolHistoryAnswer> listSymbol, final String symbol) {
-        if (threadSymbolHistory != null) {
-            threadSymbolHistory.interrupt();
-        }
-        threadSymbolHistory = new Thread(() -> {
-            Log.d(GrandCapitalApplication.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
-            if (listSymbol != null && listSymbol.size() != 0) {
-                for (int i = 0; i < listSymbol.size() - 1; i++) {
-                    int finalI = i;
-                    getActivity().runOnUiThread(() -> {
-                        addEntry(listSymbol.get(finalI));
-                    });
-                    try {
-                        Thread.sleep(25);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            if (mChart.getLineData() != null) {
-                mChart.moveViewToX(mChart.getData().getXMax());
-                mChart.zoom(10f, 0f, mChart.getData().getXMax(), 0f, YAxis.AxisDependency.RIGHT);
-                Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
-                        Float.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen())), null, null);
-                getActivity().runOnUiThread(() -> {
-                    drawCurrentYLimitLine(entry);
-                });
-            }
-            GrandCapitalApplication.closeAndOpenSocket(symbol);
-            isAddInChart = true;
-        });
-        threadSymbolHistory.start();
-    }
-    private void drawCurrentYLimitLine(Entry entry) {
-        //mChart.highlightValue(entry.getX(), entry.getY(), 0);
-        if(currentLine != null){
-            rightYAxis.removeLimitLine(currentLine);
-        }
-        Bitmap iconLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.whitevert);
-        currentLine = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), iconLabel);
-        currentLine.setLineWidth(1.0f);
-        currentLine.setLineColor(Color.WHITE);
-        currentLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
-        currentLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-        rightYAxis.addLimitLine(currentLine);
-        drawCurrentPoint(entry);
-    }
-
-   /* private void drawDealingsXLimitLine() {
-        if(dealingsXLine != null && dealingsXLine.size() != 0){
-            for(CustomBaseLimitLine line : dealingsXLine){
-                rightYAxis.removeLimitLine(line);
-            }
-        }
-        for(OrderAnswer order : listOpenDealings){
-            Bitmap iconLabel = null;
-            Entry entry = new Entry(ConventDate.genericTimeForChart(ConventDate.stringToUnix(order.getCloseTime())), Float.valueOf(String.valueOf(order.getOpenPrice())), null, null);
-            CustomBaseLimitLine limitLine = new CustomBaseLimitLine(entry.getX(), String.valueOf(entry.getY()), iconLabel);
-            if(order.getCmd() == 0){
-                iconLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_vert);
-                limitLine.setLineColor(getResources().getColor(R.color.chat_green));
-            }else{
-                iconLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_vert);
-                limitLine.setLineColor(getResources().getColor(R.color.color_red_chart));
-            }
-            limitLine.setBitmapIconLabel(iconLabel);
-            limitLine.setLineWidth(1.0f);
-            limitLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
-            limitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
-            xAxis.addLimitLine(limitLine);
-            dealingsXLine.add(limitLine);
-        }
-    }*/
-
-    private void drawCurrentPoint(Entry entry){
-        if(imgPointCurrent != null){
-            imgPointCurrent.setVisibility(View.VISIBLE);
-            MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
-            imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth()/2);
-            imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight()/2);
-       }
-    }
-
-    private void showViewOpenDealing(String active, String amount, String time) {
-        ((TextView) openDealingView.findViewById(R.id.tvActive)).setText(active);
-        ((TextView) openDealingView.findViewById(R.id.tvAmount)).setText(amount);
-        ((TextView) openDealingView.findViewById(R.id.tvTime)).setText(time);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.topMargin = AndroidUtils.dp(16);
-        params.leftMargin = AndroidUtils.dp(16);
-
-        if (rlChart.findViewWithTag("openDealingView") != null) {
-            rlChart.updateViewLayout(openDealingView, params);
-        } else {
-            rlChart.addView(openDealingView, params);
-        }
-        handlerOpenDealingView.postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
-    }
-    private void showViewCloseDealing(OrderAnswer answer) {
-        if (answer != null) {
-            ((TextView) closeDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
-            ((TextView) closeDealingView.findViewById(R.id.tvPriceValue)).setText(String.valueOf(answer.getClosePrice()));
-            ((TextView) closeDealingView.findViewById(R.id.tvProfitValue)).setText(String.valueOf(answer.getProfitStr()));
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.topMargin = AndroidUtils.dp(16);
-            params.leftMargin = AndroidUtils.dp(16);
-
-            if (rlChart.findViewWithTag("closeDealingView") != null) {
-                rlChart.updateViewLayout(closeDealingView, params);
-            }else{
-                rlChart.addView(closeDealingView, params);
-            }
-            handlerCloseDealingView.postDelayed(() -> rlChart.removeView(closeDealingView), INTERVAL_SHOW_LABEL_CLOSE);
-        }
     }
 
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
@@ -837,6 +884,13 @@ public class TerminalFragment extends Fragment {
             if (response != null && response.equals("true")) {
                 Log.d(GrandCapitalApplication.TAG_SOCKET, "openDealing");
                 requestOrders();
+                if(currentDealing == null){
+                    currentDealing = new Dealing();
+                }
+                currentDealing.setSymbol(intent.getStringExtra(MakeDealingService.SYMBOL));
+                currentDealing.setCmd(intent.getStringExtra(MakeDealingService.CMD));
+                currentDealing.setExpiration(Double.valueOf(intent.getStringExtra(MakeDealingService.EXPIRATION)).intValue());
+                currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
                 typePoint = POINT_OPEN_DEALING;
                 showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
@@ -861,50 +915,11 @@ public class TerminalFragment extends Fragment {
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(OrderAnswer.getInstance() != null){
-                List<OrderAnswer> listOpenDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION);
-                /*ILineDataSet set_open = mChart.getData().getDataSetByIndex(0);
-                for(OrderAnswer orderAnswer : listOpenDealings){
-                    for(int i = 0; i < set_open.getEntryCount(); i++){
-                        Entry entry = set_open.getEntryForIndex(i);
-                        if(ConventDate.equalsTimeDealing(ConventDate.genericTimeForChartLabels(entry.getX()), ConventDate.stringToUnix(orderAnswer.getOpenTime()))){
-                            entry.setIcon(drawMarkerDealing);
-                            entry.setData(orderAnswer);
-                        }
-                    }
-                }
-                mChart.getData().notifyDataChanged();
-                mChart.notifyDataSetChanged();
-                mChart.invalidate();*/
+            if (OrderAnswer.getInstance() != null) {
+                List<OrderAnswer> listOpenDealings = OrderAnswer.filterOrdersOpenOrClose(OrderAnswer.getInstance(),
+                        DealingFragment.OPEN_TAB_POSITION, ConventString.getActive(tvValueActive));
                 CheckDealingService.setListOrderAnswer(listOpenDealings);
-                if(listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0){
-                    List<OrderAnswer> listClosedDealing = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
-                     for(OrderAnswer order: listClosedDealing){
-                         for(OrderAnswer orderStack: listCurrentClosingDealings){
-                             if((int)order.getTicket() == orderStack.getTicket()){
-                                 ILineDataSet set = mChart.getData().getDataSetByIndex(0);
-                                 for(int i = 0; i< set.getEntryCount(); i++){
-                                     Entry entry = set.getEntryForIndex(i);
-                                     if(entry.getData()!= null && entry.getData() instanceof Long){
-                                         Long timeData = Long.valueOf(String.valueOf(entry.getData()));
-                                         if(ConventDate.equalsTimeDealing(timeData / 1000, ConventDate.stringToUnix(order.getOpenTime()))){
-                                             Log.d(GrandCapitalApplication.TAG_SOCKET, "closeDealing");
-                                             entry.setIcon(null);
-                                             entry.setData(null);
-                                             mChart.getData().notifyDataChanged();
-                                             mChart.notifyDataSetChanged();
-                                             mChart.invalidate();
-                                             typePoint = POINT_CLOSE_DEALING;
-                                             showViewCloseDealing(order);
-                                             break;
-                                         }
-                                     }
-                                 }
-                             }
-                         }
-                     }
-                    listCurrentClosingDealings.clear();
-                }
+                closingOpenDealings();
             }
         }
     }

@@ -89,9 +89,7 @@ public class BaseActivity extends CustomFontsActivity {
                 changeToolbarFragment(toolbar);
                 //changeMainFragment(TerminalFragment.getInstance());
                 terminalFragment = setTerminalFragment();
-                getInfoUser();
                 startService(new Intent(this, CheckDealingService.class));
-
             }
         }
     }
@@ -103,6 +101,8 @@ public class BaseActivity extends CustomFontsActivity {
         IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mInfoBroadcastReceiver, intentFilter);
+        requestOrders();
+        getInfoUser();
     }
 
     @Override
@@ -147,7 +147,10 @@ public class BaseActivity extends CustomFontsActivity {
     public void setDealings() {
         mDealing.setValue(CustomSharedPreferences.getAmtCloseDealings(this));
     }
-
+    private void requestOrders() {
+        Intent intentService = new Intent(BaseActivity.this, OrdersService.class);
+        startService(intentService);
+    }
     private void addItems() {
         mTerminal = new ResideMenuItem(this, getString(R.string.menu_item_terminal));
         mDealing = new ResideMenuItemWithMark(this, getString(R.string.menu_item_dealing));
