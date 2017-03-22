@@ -43,6 +43,8 @@ public class ConventDate {
         Date resultDate = null;
         try {
             resultDate = sdf.parse(date);
+            //resultDate.setHours(resultDate.getHours() - 2);
+            //resultDate.setTime(resultDate.getTime() + getIterationTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -82,8 +84,15 @@ public class ConventDate {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
         formatter.setTimeZone(TimeZone.getTimeZone(timeZone));
         Date date = new Date(time);
-        date.setHours(date.getHours() + 1);
+        date.setHours(date.getHours() - 2);
+        date.setTime(date.getTime() + getIterationTime());
         return formatter.format(date);
+    }
+
+    private static int getIterationTime() {
+        long rawOffset = TimeZone.getDefault().getRawOffset();
+        Log.d(TAG, "localTimezone: " + rawOffset);
+        return (int) rawOffset;
     }
 
     public static boolean equalsTimeSymbols(long currentTime, long newTime) {
