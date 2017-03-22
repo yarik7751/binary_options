@@ -148,7 +148,7 @@ public class YAxisRenderer extends AxisRenderer {
                     }
                     Bitmap bitmapLabel = line.getBitmapIconLabel();
 
-                    float paddingVert = Utils.convertDpToPixel(8);
+                    float paddingVert = Utils.convertDpToPixel(15);
                     float paddingHoriz = Utils.convertDpToPixel(18);
                     float height = Utils.calcTextHeight(textPaint, strLabel);
                     float width = Utils.calcTextWidth(textPaint, strLabel);
