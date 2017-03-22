@@ -7,11 +7,9 @@ import android.support.annotation.Nullable;
 
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;

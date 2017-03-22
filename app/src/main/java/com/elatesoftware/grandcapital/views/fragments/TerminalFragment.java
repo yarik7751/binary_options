@@ -97,7 +97,7 @@ public class TerminalFragment extends Fragment {
     private YAxis rightYAxis;
     private XAxis xAxis;
     private CustomBaseLimitLine currentLine;
-    //private List<CustomBaseLimitLine> dealingsXLine = new ArrayList<>();
+    private List<CustomBaseLimitLine> mListDealingXLine = new ArrayList<>();
 
     private Thread threadSymbolHistory;
     private Handler handlerOpenDealingView;
@@ -405,9 +405,10 @@ public class TerminalFragment extends Fragment {
         xAxis.setAvoidFirstLastClipping(false);
         xAxis.setValueFormatter((value, axis) -> ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(value)));
         xAxis.setEnabled(true);
+        xAxis.setTextSize(9);
         xAxis.disableAxisLineDashedLine();
         xAxis.setDrawGridLines(true);
-        xAxis.setSpaceMax(600000f);
+        xAxis.setSpaceMax(600000f); // space free on x
 
         //xAxis.setXOffset(300f);
         //xAxis.setSpaceMax(600f);
@@ -422,6 +423,7 @@ public class TerminalFragment extends Fragment {
         rightYAxis.setAxisLineColor(getResources().getColor(R.color.chart_values));
         rightYAxis.setTextColor(getResources().getColor(R.color.chart_values));
         rightYAxis.setEnabled(true);
+        rightYAxis.setTextSize(9);
         rightYAxis.setDrawGridLines(true);
         rightYAxis.disableAxisLineDashedLine();
         rightYAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
@@ -710,15 +712,10 @@ public class TerminalFragment extends Fragment {
     }
 
     private void drawDealingsXLimitLine(Entry entry) {
-         /*if(dealingsXLine != null && dealingsXLine.size() != 0){
-             for(CustomBaseLimitLine line : dealingsXLine){
-                 rightYAxis.removeLimitLine(line);
-             }
-         }*/
         if (currentDealing != null && currentDealing.getExpiration() != 0) {
             Bitmap iconLabel = null;
-            String label = "";
-            CustomBaseLimitLine limitLine = new CustomBaseLimitLine(ConventDate.getTimeForXLimitLine(entry.getX(), currentDealing.getExpiration()), label, iconLabel);
+            CustomBaseLimitLine limitLine = new CustomBaseLimitLine(ConventDate.getTimeForXLimitLine(entry.getX(), currentDealing.getExpiration()),
+                    "", iconLabel);
             if (currentDealing.getCmd().equals("0") && mCurrentValueY < entry.getY()) {
                 iconLabel = bitmapIconGreenXLabel;
                 limitLine.setLineColor(getResources().getColor(R.color.chat_green));
@@ -728,10 +725,10 @@ public class TerminalFragment extends Fragment {
             }
             limitLine.setBitmapIconLabel(iconLabel);
             limitLine.setLineWidth(1.0f);
-            //limitLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
+            limitLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
             limitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
             xAxis.addLimitLine(limitLine);
-            //dealingsXLine.add(limitLine);
+            mListDealingXLine.add(limitLine);
         }
     }
 
@@ -767,9 +764,7 @@ public class TerminalFragment extends Fragment {
         });
         threadSymbolHistory.start();
     }
-
     private void drawCurrentYLimitLine(Entry entry) {
-        //mChart.highlightValue(entry.getX(), entry.getY(), 0);
         if (currentLine != null) {
             rightYAxis.removeLimitLine(currentLine);
         }
@@ -781,7 +776,6 @@ public class TerminalFragment extends Fragment {
         rightYAxis.addLimitLine(currentLine);
         drawCurrentPoint(entry);
     }
-
     private void drawCurrentPoint(Entry entry) {
         if (imgPointCurrent != null) {
             imgPointCurrent.setVisibility(View.VISIBLE);
@@ -790,13 +784,23 @@ public class TerminalFragment extends Fragment {
             imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
         }
     }
+    private void removeLimitLineX(Entry entry) {
+        if (mListDealingXLine != null && mListDealingXLine.size() != 0) {
+            for (CustomBaseLimitLine line : mListDealingXLine) {
+                if ((line.getLimit() - entry.getX() <= 1000 && line.getLimit() - entry.getX() >= 0) ||
+                        (entry.getX() - line.getLimit() >= 0 && entry.getX() - line.getLimit() <= 1000)) {
+                    rightYAxis.removeLimitLine(line);
+                }
+            }
+        }
+    }
 
     private void closingOpenDealings() {
         List<OrderAnswer> listAllClosedDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
         if (listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0) {
             for (OrderAnswer order : listAllClosedDealings) {
                 for (OrderAnswer orderStack : listCurrentClosingDealings) {
-                    if ((int) order.getTicket() ==  (int)orderStack.getTicket()) {
+                    if ((int) order.getTicket() == (int) orderStack.getTicket()) {
                         if (ConventString.getActive(tvValueActive).equals(orderStack.getSymbol())) {
                             ILineDataSet set = mChart.getData().getDataSetByIndex(0);
                             if (set != null) {
@@ -816,12 +820,13 @@ public class TerminalFragment extends Fragment {
                                             showViewCloseDealing(order);
                                             ((BaseActivity) getActivity()).setDealings();
                                             BaseActivity.getToolbar().setDealingSelectIcon();
+                                            //removeLimitLineX(orderStack.getCloseTimeUnix());
                                             break;
                                         }
                                     }
                                 }
                             }
-                        }else{
+                        } else {
                             CustomSharedPreferences.setAmtCloseDealings(getContext(), CustomSharedPreferences.getAmtCloseDealings(getContext()) + 1);
                             showViewCloseDealing(order);
                             ((BaseActivity) getActivity()).setDealings();
@@ -852,7 +857,6 @@ public class TerminalFragment extends Fragment {
         }
         handlerOpenDealingView.postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
     }
-
     private void showViewCloseDealing(OrderAnswer answer) {
         if (answer != null) {
             ((TextView) closeDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
@@ -873,7 +877,6 @@ public class TerminalFragment extends Fragment {
             handlerCloseDealingView.postDelayed(() -> rlChart.removeView(closeDealingView), INTERVAL_SHOW_LABEL);
         }
     }
-
     public void showSignalsPanel() {
         parseResponseSignals(ConventString.getActive(tvValueActive));
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 60 : -60));
@@ -933,7 +936,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseSymbolHistoryBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -948,7 +950,6 @@ public class TerminalFragment extends Fragment {
             tvRightActive.setEnabled(true);
         }
     }
-
     public class GetResponseOpenDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -975,7 +976,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseCloseDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -983,7 +983,6 @@ public class TerminalFragment extends Fragment {
             new Handler().postDelayed(() -> requestOrders(), 4000);
         }
     }
-
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -994,7 +993,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseSignalsBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

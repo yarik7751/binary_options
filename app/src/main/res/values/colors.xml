@@ -45,5 +45,6 @@
     <color name="open_dealing_background">#99000000</color>
 
     <color name="color_red_chart">#FD3E3C</color>
+    <color name="color_notification">#FD4A69</color>
 
 </resources>

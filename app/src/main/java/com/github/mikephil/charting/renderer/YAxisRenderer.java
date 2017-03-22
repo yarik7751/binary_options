@@ -147,8 +147,6 @@ public class YAxisRenderer extends AxisRenderer {
                         strLabel = strLabel.substring(0, strLabel.length() - 1);
                     }
                     Bitmap bitmapLabel = line.getBitmapIconLabel();
-                    //Bitmap bitmapPoint = line.getmBitmapIconPoint();
-                    //Entry entry = line.getEntry();
 
                     float paddingVert = Utils.convertDpToPixel(8);
                     float paddingHoriz = Utils.convertDpToPixel(18);
@@ -159,7 +157,7 @@ public class YAxisRenderer extends AxisRenderer {
                     float height_marker = height + paddingVert;
                     float width_marker = 200f;
 
-                    if (bitmapLabel != null /*&& bitmapPoint != null && line.getEntry() != null*/) {
+                    if (bitmapLabel != null) {
                         bitmapLabel = Bitmap.createScaledBitmap(bitmapLabel, (int) width_marker, (int) height_marker, false);
                         c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz, posY - height_marker + paddingVert / 2, paint);
                         c.drawText(strLabel, fixedPosition - paddingHoriz / 3, posY, textPaint);
@@ -221,15 +219,12 @@ public class YAxisRenderer extends AxisRenderer {
             drawZeroLine(c);
         }
     }
-
     protected RectF mGridClippingRect = new RectF();
-
     public RectF getGridClippingRect() {
         mGridClippingRect.set(mViewPortHandler.getContentRect());
         mGridClippingRect.inset(0.f, -mAxis.getGridLineWidth());
         return mGridClippingRect;
     }
-
     /**
      * Calculates the path for a grid line.
      *
@@ -252,7 +247,6 @@ public class YAxisRenderer extends AxisRenderer {
      * @return
      */
     protected float[] getTransformedPositions() {
-
         if(mGetTransformedPositionsBuffer.length != mYAxis.mEntryCount * 2){
             mGetTransformedPositionsBuffer = new float[mYAxis.mEntryCount * 2];
         }
@@ -346,8 +340,7 @@ public class YAxisRenderer extends AxisRenderer {
             limitLinePath.reset();
             // c.drawLines(pts, mLimitLinePaint);
 
-            String label = l.getLabel();
-            label = "";     /** убирает текст над линией*/
+            String label = "";     /** убирает текст над линией*/
             // if drawing the limit-value label is enabled
             if (label != null && !label.equals("")) {
 
@@ -365,21 +358,18 @@ public class YAxisRenderer extends AxisRenderer {
                 final LimitLine.LimitLabelPosition position = l.getLabelPosition();
 
                 if (position == LimitLine.LimitLabelPosition.RIGHT_TOP) {
-
                     mLimitLinePaint.setTextAlign(Align.RIGHT);
                     c.drawText(label,
                             mViewPortHandler.contentRight() - xOffset,
                             pts[1] - yOffset + labelLineHeight, mLimitLinePaint);
 
                 } else if (position == LimitLine.LimitLabelPosition.RIGHT_BOTTOM) {
-
                     mLimitLinePaint.setTextAlign(Align.RIGHT);
                     c.drawText(label,
                             mViewPortHandler.contentRight() - xOffset,
                             pts[1] + yOffset, mLimitLinePaint);
 
                 } else if (position == LimitLine.LimitLabelPosition.LEFT_TOP) {
-
                     mLimitLinePaint.setTextAlign(Align.LEFT);
                     c.drawText(label,
                             mViewPortHandler.contentLeft() + xOffset,

@@ -33,6 +33,7 @@ public class ConventDate {
     public static long genericTimeForChartLabels(float currentTimePoint){
         return (BIG_DATE_FOR_EQUALS + (long) currentTimePoint);
     }
+
     private static long getBigTimeForEquals(){
         Date date = new Date();
         date.setHours(date.getHours() - 12);
@@ -84,7 +85,7 @@ public class ConventDate {
         //Log.d(TAG, TimeZone.getDefault().getDisplayName(false, TimeZone.SHORT));
         formatter.setTimeZone(TimeZone.getTimeZone(timeZone));
         Date date = new Date(time);
-        date.setHours(date.getHours() - 2);
+        date.setHours(date.getHours() - 1);
         return formatter.format(date);
     }
 
