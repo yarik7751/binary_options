@@ -82,6 +82,7 @@ import java.util.TimerTask;
 import butterknife.BindBitmap;
 import butterknife.BindColor;
 import butterknife.BindDrawable;
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -110,40 +111,40 @@ public class TerminalFragment extends Fragment {
     public boolean isDirection = true;
 
     private Unbinder unbinder;
-    @Nullable  @BindView(R.id.chart) LineChart mChart;
-    @Nullable  @BindView(R.id.tvBalanceTerminal) TextView tvBalance;
-    @Nullable  @BindView(R.id.tvDepositTerminal) TextView tvDeposit;
-    @Nullable  @BindView(R.id.tvLeftTabActiveTerminal) TextView tvLeftActive;
-    @Nullable  @BindView(R.id.tvRightTabActiveTerminal) TextView tvRightActive;
-    @Nullable  @BindView(R.id.tvValueTabActiveTerminal) TextView tvValueActive;
-    @Nullable  @BindView(R.id.tvMinusTabAmountTerminal) TextView tvMinusAmount;
-    @Nullable  @BindView(R.id.tvPlusTabAmountTerminal) TextView tvPlusAmount;
-    @Nullable  @BindView(R.id.tvValueTabAmountTerminal) EditText etValueAmount;
-    @Nullable  @BindView(R.id.tvMinusTabTimeTerminal) TextView tvMinusTime;
-    @Nullable  @BindView(R.id.tvPlusTabTimeTerminal) TextView tvPlusTime;
-    @Nullable  @BindView(R.id.tvValueTabTimeTerminal) EditText etValueTime;
-    @Nullable  @BindView(R.id.llLowerTerminal) LinearLayout llLowerTerminal;
-    @Nullable  @BindView(R.id.llHigherTerminal) LinearLayout llHigherTerminal;
-    @Nullable  @BindView(R.id.ll_buttons) LinearLayout llButtons;
-    @Nullable  @BindView(R.id.ll_deposit) LinearLayout llDeposit;
-    @Nullable  @BindView(R.id.progress_bar) LinearLayout llProgressBar;
-    @Nullable  @BindView(R.id.rl_chart) RelativeLayout rlChart;
-    @Nullable  @BindView(R.id.fl_main)  FrameLayout flMain;
-    @Nullable  @BindView(R.id.ll_top_panel) LinearLayout llTopPanel;
-    @Nullable  @BindView(R.id.tv_currency) TextView tvCurrentActive;
-    @Nullable  @BindView(R.id.tv_amout)  TextView tvCurrentActiveAmount;
-    @Nullable  @BindView(R.id.tv_time1_value) TextView tvSignalMinutes1;
-    @Nullable  @BindView(R.id.tv_time2_value) TextView tvSignalMinutes5;
-    @Nullable  @BindView(R.id.tv_time3_value) TextView tvSignalMinutes15;
-    @Nullable  @BindView(R.id.tvErrorSignal) TextView tvErrorSignal;
-    @Nullable  @BindView(R.id.rlErrorSignal) RelativeLayout rlErrorSignal;
-    @Nullable  @BindView(R.id.tvValueRewardTerminal) TextView tvValueRewardTerminal;
-    @Nullable  @BindDrawable(R.drawable.marker_close_dealing) Drawable drawableMarkerDealing;
-    @Nullable  @BindBitmap(R.drawable.whitevert) Bitmap bitmapIconCurrentLimitLabel;
-    @Nullable  @BindBitmap(R.drawable.green_vert) Bitmap bitmapIconGreenXLabel;
-    @Nullable  @BindBitmap(R.drawable.red_vert) Bitmap bitmapIconRedXLabel;
-    @Nullable  @BindColor(R.color.color_red_chart) int colorRed;
-    @Nullable  @BindColor(R.color.chat_green) int colorGreen;
+    @BindView(R.id.chart) LineChart mChart;
+    @BindView(R.id.tvBalanceTerminal) TextView tvBalance;
+    @BindView(R.id.tvDepositTerminal) TextView tvDeposit;
+    @BindView(R.id.tvLeftTabActiveTerminal) TextView tvLeftActive;
+    @BindView(R.id.tvRightTabActiveTerminal) TextView tvRightActive;
+    @BindView(R.id.tvValueTabActiveTerminal) TextView tvValueActive;
+    @BindView(R.id.tvMinusTabAmountTerminal) TextView tvMinusAmount;
+    @BindView(R.id.tvPlusTabAmountTerminal) TextView tvPlusAmount;
+    @BindView(R.id.tvValueTabAmountTerminal) EditText etValueAmount;
+    @BindView(R.id.tvMinusTabTimeTerminal) TextView tvMinusTime;
+    @BindView(R.id.tvPlusTabTimeTerminal) TextView tvPlusTime;
+    @BindView(R.id.tvValueTabTimeTerminal) EditText etValueTime;
+    @BindView(R.id.llLowerTerminal) LinearLayout llLowerTerminal;
+    @BindView(R.id.llHigherTerminal) LinearLayout llHigherTerminal;
+    @BindView(R.id.ll_buttons) LinearLayout llButtons;
+    @BindView(R.id.ll_deposit) LinearLayout llDeposit;
+    @BindView(R.id.progress_bar) LinearLayout llProgressBar;
+    @BindView(R.id.rl_chart) RelativeLayout rlChart;
+    @BindView(R.id.fl_main)  FrameLayout flMain;
+    @BindView(R.id.ll_top_panel) LinearLayout llTopPanel;
+    @BindView(R.id.tv_currency) TextView tvCurrentActive;
+    @BindView(R.id.tv_amout)  TextView tvCurrentActiveAmount;
+    @BindView(R.id.tv_time1_value) TextView tvSignalMinutes1;
+    @BindView(R.id.tv_time2_value) TextView tvSignalMinutes5;
+    @BindView(R.id.tv_time3_value) TextView tvSignalMinutes15;
+    @BindView(R.id.tvErrorSignal) TextView tvErrorSignal;
+    @BindView(R.id.rlErrorSignal) RelativeLayout rlErrorSignal;
+    @BindView(R.id.tvValueRewardTerminal) TextView tvValueRewardTerminal;
+    @BindDrawable(R.drawable.marker_close_dealing) Drawable drawableMarkerDealing;
+    @BindBitmap(R.drawable.whitevert) Bitmap bitmapIconCurrentLimitLabel;
+    @BindBitmap(R.drawable.green_vert) Bitmap bitmapIconGreenXLabel;
+    @BindBitmap(R.drawable.red_vert) Bitmap bitmapIconRedXLabel;
+    @BindColor(R.color.color_red_chart) int colorRed;
+    @BindColor(R.color.chat_green) int colorGreen;
 
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
     private Dialog dialogOpenAccount;
@@ -676,7 +677,7 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-    private void parseClosingDealings(List<OrderAnswer> listAllClosedDealings){
+    private void parseClosingDealings(List<OrderAnswer> listAllClosedDealings, List<OrderAnswer> listOpenDealingsCurrentActive){
         if(listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0){
             for(OrderAnswer order : listCurrentClosingDealings){
                 for(OrderAnswer orderClosed : listAllClosedDealings){
@@ -684,6 +685,7 @@ public class TerminalFragment extends Fragment {
                         updateViewCloseDealing(orderClosed);
                         if(orderClosed.getSymbol().equals(ConventString.getActive(tvValueActive))){
                             redrawPointsDealings(order);
+                            drawAllDealingsLimitLines(listOpenDealingsCurrentActive);
                         }
                         break;
                     }
@@ -716,7 +718,8 @@ public class TerminalFragment extends Fragment {
                         break;
                     case POINT_OPEN_DEALING:
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawableMarkerDealing, answer.getTime());
-                        drawXLimitLine();
+                        drawXLimitLine(currentDealing);
+                        currentDealing = null;
                         break;
                     case POINT_SIMPLY:
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
@@ -796,7 +799,7 @@ public class TerminalFragment extends Fragment {
         }
         threadSymbolHistory = new Thread(() -> {
             Log.d(GrandCapitalApplication.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
-            if (listSymbol != null && listSymbol.size() != 0) {
+            if (listSymbol.size() != 0) {
                 for (int i = 0; i < listSymbol.size() - 1; i++) {
                     int finalI = i;
                     getActivity().runOnUiThread(() -> {
@@ -846,24 +849,20 @@ public class TerminalFragment extends Fragment {
             if(mListDealingXLine == null){
                 mListDealingXLine = new ArrayList<>();
             }
+            mListDealingXLine.clear();
             for(OrderAnswer orderAnswer : list){
-                CustomBaseLimitLine limitLine = new CustomBaseLimitLine(ConventDate.genericTimeForChart(
-                        ConventDate.getConvertDateInMilliseconds(orderAnswer.getOptionsData().getExpirationTime()) * 1000),
-                        new Gson().toJson(orderAnswer), null);
-                limitLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
-                xAxis.addLimitLine(limitLine);
-                mListDealingXLine.add(limitLine);
+                drawXLimitLine(orderAnswer);
             }
         }
     }
-    private void drawXLimitLine() {
-        if (currentDealing != null) {
+    private void drawXLimitLine(OrderAnswer orderAnswer) {
+        if (orderAnswer != null) {
             Bitmap iconLabel = null;
             CustomBaseLimitLine limitLine = new CustomBaseLimitLine(ConventDate.genericTimeForChart(
-                    ConventDate.getConvertDateInMilliseconds(currentDealing.getOptionsData().getExpirationTime()) * 1000),
-                    new Gson().toJson(currentDealing), iconLabel);
-            if(currentDealing.getCmd() == 0 && currentDealing.getOpenPrice() < mCurrentValueY ||
-                    currentDealing.getCmd() == 1 && currentDealing.getOpenPrice() > mCurrentValueY ){
+                    ConventDate.getConvertDateInMilliseconds(orderAnswer.getOptionsData().getExpirationTime()) * 1000),
+                    new Gson().toJson(orderAnswer), iconLabel);
+            if(orderAnswer.getCmd() == 0 && orderAnswer.getOpenPrice() < mCurrentValueY ||
+                    orderAnswer.getCmd() == 1 && orderAnswer.getOpenPrice() > mCurrentValueY ){
                 iconLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.green_vert);
                 limitLine.setLineColor(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.chat_green));
             }else{
@@ -874,7 +873,6 @@ public class TerminalFragment extends Fragment {
             limitLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
             xAxis.addLimitLine(limitLine);
             mListDealingXLine.add(limitLine);
-            currentDealing = null;
         }
     }
 
@@ -1057,11 +1055,12 @@ public class TerminalFragment extends Fragment {
                 List<OrderAnswer> listOpenDealingsCurrentActive = OrderAnswer.filterOrdersCurrentActive(listAllOpenDealings,
                         DealingFragment.OPEN_TAB_POSITION, ConventString.getActive(tvValueActive));
                 List<OrderAnswer> listAllClosedDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
-
                 CheckDealingService.setListOrderAnswer(listAllOpenDealings);
-                parseClosingDealings(listAllClosedDealings);
-
-                //drawAllDealingsLimitLines(listOpenDealingsCurrentActive); // TODO
+                if(listOpenDealingsCurrentActive != null && listOpenDealingsCurrentActive.size() != 0 &&
+                        (mListDealingXLine == null || mListDealingXLine.size() == 0)){
+                    drawAllDealingsLimitLines(listOpenDealingsCurrentActive);
+                }
+                parseClosingDealings(listAllClosedDealings, listOpenDealingsCurrentActive);
             }
         }
     }
