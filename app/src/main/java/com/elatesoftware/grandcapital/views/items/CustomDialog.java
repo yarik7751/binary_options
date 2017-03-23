@@ -115,19 +115,12 @@ public class CustomDialog {
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_open_account);
 
-        Button btnOpenAccaunt = (Button) dialog.findViewById(R.id.btn_open_accaunt);
+        Button btnOpenAccount = (Button) dialog.findViewById(R.id.btn_open_accaunt);
         TextView tvLater = (TextView) dialog.findViewById(R.id.tv_later);
 
-        tvLater.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-        btnOpenAccaunt.setOnClickListener(listnerOpenAccount);
-
+        tvLater.setOnClickListener(v -> dialog.cancel());
+        btnOpenAccount.setOnClickListener(listnerOpenAccount);
         dialog.show();
-
         return dialog;
     }
 }

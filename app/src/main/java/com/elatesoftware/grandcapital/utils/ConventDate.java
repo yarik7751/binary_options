@@ -20,7 +20,7 @@ public class ConventDate {
 
     public static final String TAG = "ConventDate_Logs";
 
-    private final static int DIFFERENSE = 1100;
+    private final static int DIFFERENSE = 1800;
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final String timeZone = "GMT+00:00:00";
     private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
@@ -153,18 +153,18 @@ public class ConventDate {
     }
     public static long getCurrentDateMilliseconds(){
         Date date = new Date();
-        date.setHours(date.getHours() - 1);    // TODO
+        date.setHours(date.getHours() - 1);
         return date.getTime()/1000;
     }
     public static String getTimeStampCurrentDate() {
         sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
-        Date date = new Date();                // TODO
+        Date date = new Date();
         return String.valueOf(date.getTime() / 1000);
     }
     public static String getTimeStampLastDate() {
         Date date = new Date();
         sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
-        date.setMinutes(date.getMinutes() - 30); // TODO
+        date.setMinutes(date.getMinutes() - 30);
         return String.valueOf(date.getTime() / 1000);
     }
     public static long getTimePlusOneSecond(long time) {

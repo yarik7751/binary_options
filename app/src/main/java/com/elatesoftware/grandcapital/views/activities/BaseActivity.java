@@ -88,8 +88,9 @@ public class BaseActivity extends CustomFontsActivity {
             if (savedInstanceState == null) {
                 toolbar = new ToolbarFragment();
                 changeToolbarFragment(toolbar);
-                //changeMainFragment(TerminalFragment.getInstance());
+                    //changeMainFragment(TerminalFragment.getInstance());
                 terminalFragment = setTerminalFragment();
+                getInfoUser();
                 startService(new Intent(this, CheckDealingService.class));
             }
         }
@@ -103,7 +104,6 @@ public class BaseActivity extends CustomFontsActivity {
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mInfoBroadcastReceiver, intentFilter);
         requestOrders();
-        getInfoUser();
     }
 
     @Override
@@ -237,38 +237,35 @@ public class BaseActivity extends CustomFontsActivity {
     };
 
     public void setMain(int i) {
-        getToolbar().mTabLayout.setOnChangePosition(new OnChangePosition() {
-            @Override
-            public void changePosition() {
-                Log.d(TAG, "mTabLayout.setOnChangePosition");
+        getToolbar().mTabLayout.setOnChangePosition(() -> {
+            Log.d(TAG, "mTabLayout.setOnChangePosition");
 
-                switch (i){
-                    case SIGNAL_POSITION:
-                        Log.d(TAG, "SIGNAL_POSITION");
-                        if(TerminalFragment.isOpen && terminalFragment != null) {
-                            terminalFragment.showSignalsPanel();
-                        }
-                        break;
-                    case TERMINAL_POSITION:
-                        Log.d(TAG, "TERMINAL_POSITION");
-                        terminalFragment = setTerminalFragment();
-                        if(!terminalFragment.isDirection) {
-                            terminalFragment.showSignalsPanel();
-                        }
-                        break;
-                    case DEALING_POSITION:
-                        Log.d(TAG, "DEALING_POSITION");
-                        changeMainFragment(new DealingFragment());
-                        break;
-                    case REFRESH_POSITION:
-                        Log.d(TAG, "REFRESH_POSITION");
-                        //??????
-                        break;
-                    case QUOTES_POSITION:
-                        Log.d(TAG, "QUOTES_POSITION");
-                        changeMainFragment(new QuotesFragment());
-                        break;
-                }
+            switch (i){
+                case SIGNAL_POSITION:
+                    Log.d(TAG, "SIGNAL_POSITION");
+                    if(TerminalFragment.isOpen && terminalFragment != null) {
+                        terminalFragment.showSignalsPanel();
+                    }
+                    break;
+                case TERMINAL_POSITION:
+                    Log.d(TAG, "TERMINAL_POSITION");
+                    terminalFragment = setTerminalFragment();
+                    if(!terminalFragment.isDirection) {
+                        terminalFragment.showSignalsPanel();
+                    }
+                    break;
+                case DEALING_POSITION:
+                    Log.d(TAG, "DEALING_POSITION");
+                    changeMainFragment(new DealingFragment());
+                    break;
+                case REFRESH_POSITION:
+                    Log.d(TAG, "REFRESH_POSITION");
+                    //??????
+                    break;
+                case QUOTES_POSITION:
+                    Log.d(TAG, "QUOTES_POSITION");
+                    changeMainFragment(new QuotesFragment());
+                    break;
             }
         });
     }
@@ -418,15 +415,6 @@ public class BaseActivity extends CustomFontsActivity {
                 if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals("200") && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals("200")){
                     mResideMenu.refreshBalanceUser();
                     mResideMenu.refreshNameUser();
-                    CustomSharedPreferences.updateInfoUser(getApplicationContext());
-                    if(InfoAnswer.getInstance() != null) {
-                        if(InfoAnswer.getInstance().getServerName().contains("demo") && CustomSharedPreferences.getIntervalAdvertising(context) <= 0) {
-                            CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, 0);
-                        } else if(!InfoAnswer.getInstance().getServerName().contains("demo")) {
-                            CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, -1);
-                        }
-                        Log.d(TAG, "IntervalAdvertising: " + CustomSharedPreferences.getIntervalAdvertising(getApplicationContext()));
-                    }
                 }
             }
         }

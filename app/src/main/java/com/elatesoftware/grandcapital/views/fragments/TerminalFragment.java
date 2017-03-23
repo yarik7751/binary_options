@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.BinderThread;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -38,7 +39,6 @@ import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.Dealing;
-import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.MakeDealingService;
@@ -73,6 +73,15 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindBitmap;
+import butterknife.BindBool;
+import butterknife.BindDrawable;
+import butterknife.BindInt;
+import butterknife.BindString;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public class TerminalFragment extends Fragment {
 
     public final static String TAG = "TerminalFragment_Logs";
@@ -96,56 +105,56 @@ public class TerminalFragment extends Fragment {
     public static boolean isOpen = false;
     public boolean isDirection = true;
 
-    private Dialog dialogOpenAccaunt;
+    private Unbinder unbinder;
+    @Nullable  @BindView(R.id.chart) LineChart mChart;
+    @Nullable  @BindView(R.id.tvBalanceTerminal) TextView tvBalance;
+    @Nullable  @BindView(R.id.tvDepositTerminal) TextView tvDeposit;
+    @Nullable  @BindView(R.id.tvLeftTabActiveTerminal) TextView tvLeftActive;
+    @Nullable  @BindView(R.id.tvRightTabActiveTerminal) TextView tvRightActive;
+    @Nullable  @BindView(R.id.tvValueTabActiveTerminal) TextView tvValueActive;
+    @Nullable  @BindView(R.id.tvMinusTabAmountTerminal) TextView tvMinusAmount;
+    @Nullable  @BindView(R.id.tvPlusTabAmountTerminal) TextView tvPlusAmount;
+    @Nullable  @BindView(R.id.tvValueTabAmountTerminal) EditText etValueAmount;
+    @Nullable  @BindView(R.id.tvMinusTabTimeTerminal) TextView tvMinusTime;
+    @Nullable  @BindView(R.id.tvPlusTabTimeTerminal) TextView tvPlusTime;
+    @Nullable  @BindView(R.id.tvValueTabTimeTerminal) EditText etValueTime;
+    @Nullable  @BindView(R.id.llLowerTerminal) LinearLayout llLowerTerminal;
+    @Nullable  @BindView(R.id.llHigherTerminal) LinearLayout llHigherTerminal;
+    @Nullable  @BindView(R.id.ll_buttons) LinearLayout llButtons;
+    @Nullable  @BindView(R.id.ll_deposit) LinearLayout llDeposit;
+    @Nullable  @BindView(R.id.progress_bar) LinearLayout llProgressBar;
+    @Nullable  @BindView(R.id.rl_chart) RelativeLayout rlChart;
+    @Nullable  @BindView(R.id.fl_main)  FrameLayout flMain;
+    @Nullable  @BindView(R.id.ll_top_panel) LinearLayout llTopPanel;
+    @Nullable  @BindView(R.id.tv_currency) TextView tvCurrentActive;
+    @Nullable  @BindView(R.id.tv_amount)  TextView tvCurrentActiveAmount;
+    @Nullable  @BindView(R.id.tv_time1_value) TextView tvSignalMinutes1;
+    @Nullable  @BindView(R.id.tv_time2_value) TextView tvSignalMinutes5;
+    @Nullable  @BindView(R.id.tv_time3_value) TextView tvSignalMinutes15;
+    @Nullable  @BindView(R.id.tvErrorSignal) TextView tvErrorSignal;
+    @Nullable  @BindView(R.id.rlErrorSignal) RelativeLayout rlErrorSignal;
+    @Nullable  @BindView(R.id.tvValueRewardTerminal) TextView tvValueRewardTerminal;
 
-    private LineChart mChart;
+    @Nullable  @BindDrawable(R.drawable.marker_close_dealing) Drawable drawableMarkerDealing;
+    @Nullable  @BindBitmap(R.drawable.whitevert) Bitmap bitmapIconCurrentLimitLabel;
+    @Nullable  @BindBitmap(R.drawable.green_vert) Bitmap bitmapIconGreenXLabel;
+    @Nullable  @BindBitmap(R.drawable.red_vert) Bitmap bitmapIconRedXLabel;
+
     private YAxis rightYAxis;
     private XAxis xAxis;
     private CustomBaseLimitLine currentLine;
     private List<CustomBaseLimitLine> mListDealingXLine = new ArrayList<>();
 
     private Thread threadSymbolHistory;
-    private Handler handlerOpenDealingView;
-    private Handler handlerCloseDealingView;
     private static List<String> listActives = new ArrayList<>();
     public static List<SocketAnswer> listBackGroundSocketAnswer = new ArrayList<>();
     public static List<OrderAnswer> listCurrentClosingDealings = new ArrayList<>();
 
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
-
+    private Dialog dialogOpenAccount;
     private View closeDealingView;
     private View openDealingView;
     private ImageView imgPointCurrent;
-    private TextView tvBalance;
-    private TextView tvDeposit;
-    private TextView tvLeftActive;
-    private TextView tvRightActive;
-    private TextView tvValueActive;
-    private TextView tvMinusAmount;
-    private TextView tvPlusAmount;
-    private EditText etValueAmount;
-    private TextView tvMinusTime;
-    private TextView tvPlusTime;
-    private EditText etValueTime;
-    private LinearLayout llLowerTerminal;
-    private LinearLayout llHigherTerminal;
-    private LinearLayout llButtons, llDeposit;
-    private LinearLayout llProgressBar;
-    private RelativeLayout rlChart;
-    private FrameLayout flMain;
-    private LinearLayout llTopPanel;
-    private TextView tvCurrentActive;
-    private TextView tvCurrentActiveAmount;
-    private TextView tvSignalMinutes1;
-    private TextView tvSignalMinutes5;
-    private TextView tvSignalMinutes15;
-    private TextView tvErrorSignal;
-    private RelativeLayout rlErrorSignal;
-
-    private Drawable drawableMarkerDealing;
-    private Bitmap bitmapIconCurrentLimitLabel;
-    private Bitmap bitmapIconGreenXLabel;
-    private Bitmap bitmapIconRedXLabel;
 
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
@@ -155,7 +164,6 @@ public class TerminalFragment extends Fragment {
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
 
     private static TerminalFragment fragment = null;
-
     public static TerminalFragment getInstance() {
         if (fragment == null) {
             fragment = new TerminalFragment();
@@ -166,48 +174,10 @@ public class TerminalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
+        unbinder = ButterKnife.bind(this, parentView);
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onCreateView Terminal");
         BaseActivity.backToRootFragment = false;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
-
-        drawableMarkerDealing = getResources().getDrawable(R.drawable.marker_close_dealing);
-        bitmapIconCurrentLimitLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.whitevert);
-        bitmapIconGreenXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_vert);
-        bitmapIconRedXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_vert);
-
-        mChart = (LineChart) parentView.findViewById(R.id.chart);
-        tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
-        tvDeposit = (TextView) parentView.findViewById(R.id.tvDepositTerminal);
-
-        tvLeftActive = (TextView) parentView.findViewById(R.id.tvLeftTabActiveTerminal);
-        tvRightActive = (TextView) parentView.findViewById(R.id.tvRightTabActiveTerminal);
-        tvValueActive = (TextView) parentView.findViewById(R.id.tvValueTabActiveTerminal);
-
-        tvMinusAmount = (TextView) parentView.findViewById(R.id.tvMinusTabAmountTerminal);
-        tvPlusAmount = (TextView) parentView.findViewById(R.id.tvPlusTabAmountTerminal);
-        etValueAmount = (EditText) parentView.findViewById(R.id.tvValueTabAmountTerminal);
-
-        tvMinusTime = (TextView) parentView.findViewById(R.id.tvMinusTabTimeTerminal);
-        tvPlusTime = (TextView) parentView.findViewById(R.id.tvPlusTabTimeTerminal);
-        etValueTime = (EditText) parentView.findViewById(R.id.tvValueTabTimeTerminal);
-
-        llLowerTerminal = (LinearLayout) parentView.findViewById(R.id.llLowerTerminal);
-        llHigherTerminal = (LinearLayout) parentView.findViewById(R.id.llHigherTerminal);
-        llTopPanel = (LinearLayout) parentView.findViewById(R.id.ll_top_panel);
-
-        llButtons = (LinearLayout) parentView.findViewById(R.id.ll_buttons);
-        llDeposit = (LinearLayout) parentView.findViewById(R.id.ll_deposit);
-        rlChart = (RelativeLayout) parentView.findViewById(R.id.rl_chart);
-        llProgressBar = (LinearLayout) parentView.findViewById(R.id.progress_bar);
-        flMain = (FrameLayout) parentView.findViewById(R.id.fl_main);
-
-        tvSignalMinutes1 = (TextView) parentView.findViewById(R.id.tv_time1_value);
-        tvSignalMinutes5 = (TextView) parentView.findViewById(R.id.tv_time2_value);
-        tvSignalMinutes15 = (TextView) parentView.findViewById(R.id.tv_time3_value);
-        tvCurrentActive = (TextView) parentView.findViewById(R.id.tv_currency);
-        tvCurrentActiveAmount = (TextView) parentView.findViewById(R.id.tv_amout);
-        tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
-        rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
 
         openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
         closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
@@ -217,8 +187,8 @@ public class TerminalFragment extends Fragment {
 
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
-
         setSizeHeight();
+
         return parentView;
     }
 
@@ -231,6 +201,7 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
+
         try {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
@@ -283,7 +254,6 @@ public class TerminalFragment extends Fragment {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
         llLowerTerminal.setOnClickListener(v -> {
-            //CustomDialog.showDialogOpenAccount(getActivity(), null);
             requestMakeDealing("1");
 
         });
@@ -293,14 +263,11 @@ public class TerminalFragment extends Fragment {
         initializationChart();
         initializationCurrentPoint();
     }
-
     @Override
     public void onResume() {
         super.onResume();
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onResume Terminal");
         llProgressBar.setVisibility(View.VISIBLE);
-        handlerOpenDealingView = new Handler();
-        handlerCloseDealingView = new Handler();
         isOpen = true;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
         registerBroadcasts();
@@ -312,11 +279,9 @@ public class TerminalFragment extends Fragment {
         } else {
             changeActive();
         }
-
         tvLeftActive.setEnabled(true);
         tvRightActive.setEnabled(true);
     }
-
     @Override
     public void onPause() {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
@@ -331,7 +296,11 @@ public class TerminalFragment extends Fragment {
         super.onPause();
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(true);
     }
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
     @Override
     public void onDestroy() {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
@@ -370,7 +339,6 @@ public class TerminalFragment extends Fragment {
         intentFilterOrders.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilterOrders);
     }
-
     private void unregisterBroadcasts() {
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
@@ -475,7 +443,6 @@ public class TerminalFragment extends Fragment {
             }
         });
     }
-
     private void initializationCurrentPoint() {
         initRocketAnimation();
         imgPointCurrent = new ImageView(getContext());
@@ -486,7 +453,6 @@ public class TerminalFragment extends Fragment {
         rlChart.addView(imgPointCurrent, params);
         rocketAnimation.start();
     }
-
     private void initRocketAnimation() {
         rocketAnimation = new CustomAnimationDrawable();
         rocketAnimation.setOneShot(true);
@@ -496,31 +462,23 @@ public class TerminalFragment extends Fragment {
             rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
         }
 
-        rocketAnimation.setAnimationEndListner(new CustomAnimationDrawable.AnimationEndListner() {
-            @Override
-            public void animationEnd() {
-                initRocketAnimationBack();
-                imgPointCurrent.setBackgroundDrawable(rocketAnimationBack);
-                rocketAnimationBack.start();
-            }
+        rocketAnimation.setAnimationEndListner(() -> {
+            initRocketAnimationBack();
+            imgPointCurrent.setBackgroundDrawable(rocketAnimationBack);
+            rocketAnimationBack.start();
         });
     }
-
     private void initRocketAnimationBack() {
         rocketAnimationBack = new CustomAnimationDrawable();
         rocketAnimationBack.setOneShot(true);
-        //Log.d(TAG, "initRocketAnimationBack()");
         for (int i = 3; i <= 10; i++) {
             Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
             rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
         }
-        rocketAnimationBack.setAnimationEndListner(new CustomAnimationDrawable.AnimationEndListner() {
-            @Override
-            public void animationEnd() {
-                initRocketAnimation();
-                imgPointCurrent.setBackgroundDrawable(rocketAnimation);
-                rocketAnimation.start();
-            }
+        rocketAnimationBack.setAnimationEndListner(() -> {
+            initRocketAnimation();
+            imgPointCurrent.setBackgroundDrawable(rocketAnimation);
+            rocketAnimation.start();
         });
     }
 
@@ -553,7 +511,6 @@ public class TerminalFragment extends Fragment {
         set.setDrawHighlightIndicators(false);//
         return set;
     }
-
     private void clearChart() {
         typePoint = POINT_SIMPLY;
         mChart.highlightValues(null);
@@ -561,7 +518,6 @@ public class TerminalFragment extends Fragment {
         rightYAxis.removeAllLimitLines();
         xAxis.removeAllLimitLines();
     }
-
     private void changeActive() {
         if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
             sSymbolCurrent = SYMBOL;
@@ -595,7 +551,6 @@ public class TerminalFragment extends Fragment {
         }
         llProgressBar.setVisibility(View.GONE);
     }
-
     private void parseResponseSignals(String symbol) {
         if (SignalAnswer.getInstance() != null) {
             List<SignalAnswer> list = new ArrayList<>();
@@ -628,13 +583,11 @@ public class TerminalFragment extends Fragment {
         Intent intentService = new Intent(getActivity(), SignalService.class);
         getActivity().startService(intentService);
     }
-
     private void requestSymbolHistory(String symbol) {
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
         intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
         getActivity().startService(intentService);
     }
-
     private void requestMakeDealing(String lowerOrHeight) {
         if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).equals("")) {
             if(ConventString.getTimeValue(etValueTime) > 2880) {
@@ -651,7 +604,6 @@ public class TerminalFragment extends Fragment {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
         }
     }
-
     private void requestOrders() {
         Intent intentService = new Intent(getActivity(), OrdersService.class);
         getActivity().startService(intentService);
@@ -662,7 +614,6 @@ public class TerminalFragment extends Fragment {
             SymbolHistoryAnswer.getInstance().add(new SymbolHistoryAnswer(item.getHigh(), item.getBid(), item.getAsk(), item.getLow(), item.getTime()));
         }
     }
-
     public synchronized void addEntry(final SocketAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getAsk() != null) {
             LineData data = mChart.getData();
@@ -701,7 +652,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public void addEntry(SymbolHistoryAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getOpen() != null) {
             LineData data = mChart.getData();
@@ -740,7 +690,6 @@ public class TerminalFragment extends Fragment {
             mListDealingXLine.add(limitLine);
         }
     }
-
     private void drawDataSymbolHistory(List<SymbolHistoryAnswer> listSymbol, final String symbol) {
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
@@ -830,24 +779,6 @@ public class TerminalFragment extends Fragment {
                                             ((BaseActivity) getActivity()).setDealings();
                                             BaseActivity.getToolbar().setDealingSelectIcon();
                                             //removeLimitLineX(orderStack.getCloseTimeUnix());
-                                            if (CustomSharedPreferences.getIntervalAdvertising(getContext()) >= 0) {
-                                                CustomSharedPreferences.setIntervalAdvertising(getContext(), CustomSharedPreferences.getIntervalAdvertising(getContext()) + 1);
-                                                Log.d(TAG, "IntervalAdvertising1: " + CustomSharedPreferences.getIntervalAdvertising(getContext()));
-                                                if (CustomSharedPreferences.getIntervalAdvertising(getContext()) >= 3) {
-                                                    CustomSharedPreferences.setIntervalAdvertising(getContext(), 0);
-                                                    dialogOpenAccaunt = CustomDialog.showDialogOpenAccount(getActivity(), new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View v) {
-                                                        /*BaseActivity.sMainTagFragment = TerminalFragment.class.getName();
-                                                        WebFragment webFragment = WebFragment.getInstance("https://grand.capital/4");
-                                                        BaseActivity.addNextFragment(webFragment);*/
-                                                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grand.capital/4"));
-                                                            startActivity(browserIntent);
-                                                            dialogOpenAccaunt.cancel();
-                                                        }
-                                                    });
-                                                }
-                                            }
                                             break;
                                         }
                                     }
@@ -859,10 +790,26 @@ public class TerminalFragment extends Fragment {
                             ((BaseActivity) getActivity()).setDealings();
                             BaseActivity.getToolbar().setDealingSelectIcon();
                         }
+                        showViewOpenRealAccount();
                     }
                 }
             }
             listCurrentClosingDealings.clear();
+        }
+    }
+
+    private void showViewOpenRealAccount(){
+        if (CustomSharedPreferences.getIntervalAdvertising(getContext()) >= 0) {
+            CustomSharedPreferences.setIntervalAdvertising(getContext(), CustomSharedPreferences.getIntervalAdvertising(getContext()) + 1);
+            Log.d(TAG, "IntervalAdvertising1: " + CustomSharedPreferences.getIntervalAdvertising(getContext()));
+            if (CustomSharedPreferences.getIntervalAdvertising(getContext()) >= 3) {
+                CustomSharedPreferences.setIntervalAdvertising(getContext(), 0);
+                dialogOpenAccount = CustomDialog.showDialogOpenAccount(getActivity(), v -> {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grand.capital/4"));
+                    startActivity(browserIntent);
+                    dialogOpenAccount.cancel();
+                });
+            }
         }
     }
 
@@ -882,9 +829,8 @@ public class TerminalFragment extends Fragment {
         } else {
             rlChart.addView(openDealingView, params);
         }
-        handlerOpenDealingView.postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
+        new Handler().postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
     }
-
     private void showViewCloseDealing(OrderAnswer answer) {
         if (answer != null) {
             ((TextView) closeDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
@@ -902,10 +848,9 @@ public class TerminalFragment extends Fragment {
             } else {
                 rlChart.addView(closeDealingView, params);
             }
-            handlerCloseDealingView.postDelayed(() -> rlChart.removeView(closeDealingView), INTERVAL_SHOW_LABEL);
+            new Handler().postDelayed(() -> rlChart.removeView(closeDealingView), INTERVAL_SHOW_LABEL);
         }
     }
-
     public void showSignalsPanel() {
         parseResponseSignals(ConventString.getActive(tvValueActive));
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 60 : -60));
@@ -965,7 +910,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseSymbolHistoryBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -980,7 +924,6 @@ public class TerminalFragment extends Fragment {
             tvRightActive.setEnabled(true);
         }
     }
-
     public class GetResponseOpenDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1007,7 +950,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseCloseDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1015,7 +957,6 @@ public class TerminalFragment extends Fragment {
             new Handler().postDelayed(() -> requestOrders(), 4000);
         }
     }
-
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1026,7 +967,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseSignalsBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

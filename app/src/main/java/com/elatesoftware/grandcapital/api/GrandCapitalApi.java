@@ -1,5 +1,7 @@
 package com.elatesoftware.grandcapital.api;
 
+import android.util.Log;
+
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
@@ -13,6 +15,8 @@ import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventToJson;
+import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
@@ -122,20 +126,31 @@ public class GrandCapitalApi {
         }
     }
     public static String getInfoUser() {
-        Call<InfoAnswer> call = getApiService().getInfo(User.getInstance().getLogin());
-        Response<InfoAnswer> response = null;
         String result = null;
-        try {
-            response = call.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(response != null){
-            if(response.code() == 200) {
-                InfoAnswer.setInstance(response.body());
-                User.getInstance().setUserName(InfoAnswer.getInstance().getName());
+        if(User.getInstance()!= null && User.getInstance().getLogin() != null && !User.getInstance().getLogin().isEmpty()){
+            Call<InfoAnswer> call = getApiService().getInfo(User.getInstance().getLogin());
+            Response<InfoAnswer> response = null;
+            try {
+                response = call.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            result = String.valueOf(response.code());
+            if(response != null){
+                if(response.code() == 200) {
+                    InfoAnswer.setInstance(response.body());
+                    User.getInstance().setUserName(InfoAnswer.getInstance().getName());
+                    CustomSharedPreferences.updateInfoUser(GrandCapitalApplication.getAppContext());
+                    if(InfoAnswer.getInstance() != null) {
+                        if(InfoAnswer.getInstance().getServerName().contains("demo") && CustomSharedPreferences.getIntervalAdvertising(GrandCapitalApplication.getAppContext()) <= 0) {
+                            CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, 0);
+                        } else if(!InfoAnswer.getInstance().getServerName().contains("demo")) {
+                            CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, -1);
+                        }
+                        Log.d(GrandCapitalApplication.TAG_SOCKET, "IntervalAdvertising: " + CustomSharedPreferences.getIntervalAdvertising(GrandCapitalApplication.getAppContext()));
+                    }
+                }
+                result = String.valueOf(response.code());
+            }
         }
         return result;
     }
