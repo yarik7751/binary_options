@@ -53,8 +53,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:gravity="right|bottom">
 
         <TextView
@@ -66,6 +66,6 @@
             android:text="@string/ok"
             android:padding="8dp"
             android:layout_marginRight="16dp"
-            android:textSize="14sp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
 </LinearLayout>

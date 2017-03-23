@@ -75,6 +75,7 @@ public class CustomDialog {
             Intent intent = new Intent(activity.getApplicationContext(), SignInActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             activity.startActivity(intent);
+            CustomSharedPreferences.setIntervalAdvertising(activity.getApplicationContext(), -1);
             dialog.cancel();
             activity.finish();
         });
@@ -108,7 +109,7 @@ public class CustomDialog {
         dialog.show();
     }
 
-    public static void showDialogOpenAccount(Activity activity, View.OnClickListener listnerOpenAccount) {
+    public static Dialog showDialogOpenAccount(Activity activity, View.OnClickListener listnerOpenAccount) {
         Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
@@ -126,5 +127,7 @@ public class CustomDialog {
         btnOpenAccaunt.setOnClickListener(listnerOpenAccount);
 
         dialog.show();
+
+        return dialog;
     }
 }

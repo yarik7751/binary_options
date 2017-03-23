@@ -138,6 +138,7 @@ public class ConventDate {
         try {
             time1 = time1 / 1000;
             time2 = sdf.parse(date2).getTime() / 1000;
+            long dif = Math.abs(time1 - time2);
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -94,14 +94,10 @@ public class ToolbarFragment extends Fragment {
     public void setBurgerType(int _burgerType) {
         burgerType = _burgerType;
         if (burgerType == BURGER_OPEN_MENU) {
-            imgBurger.getLayoutParams().width = AndroidUtils.dp(40);
-            imgBurger.getLayoutParams().height = AndroidUtils.dp(32);
             imgBurger.setImageResource(R.drawable.menu_icon);
         }
         if (burgerType == BURGER_BACK_PRESSED) {
-            imgBurger.getLayoutParams().width = AndroidUtils.dp(48);
-            imgBurger.getLayoutParams().height = AndroidUtils.dp(48);
-            imgBurger.setImageResource(R.drawable.ic_keyboard_arrow_left_white_36dp);
+            imgBurger.setImageResource(R.drawable.ic_back);
         }
     }
 

@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
@@ -418,6 +419,14 @@ public class BaseActivity extends CustomFontsActivity {
                     mResideMenu.refreshBalanceUser();
                     mResideMenu.refreshNameUser();
                     CustomSharedPreferences.updateInfoUser(getApplicationContext());
+                    if(InfoAnswer.getInstance() != null) {
+                        if(InfoAnswer.getInstance().getServerName().contains("demo") && CustomSharedPreferences.getIntervalAdvertising(context) <= 0) {
+                            CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, 0);
+                        } else if(!InfoAnswer.getInstance().getServerName().contains("demo")) {
+                            CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, -1);
+                        }
+                        Log.d(TAG, "IntervalAdvertising: " + CustomSharedPreferences.getIntervalAdvertising(getApplicationContext()));
+                    }
                 }
             }
         }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.design.widget.TextInputLayout;
 
 import android.os.Bundle;
@@ -51,8 +52,10 @@ public class SignInActivity extends CustomFontsActivity {
         tvForgotPassword = (TextView) findViewById(R.id.forgot_password_link);
 
         tvSignUp.setOnClickListener(v -> {
-            Intent i = new Intent(getApplicationContext(), SignUpActivity.class);
-            startActivity(i);
+            /*Intent i = new Intent(getApplicationContext(), SignUpActivity.class);
+            startActivity(i);*/
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grand.capital/4"));
+            startActivity(browserIntent);
         });
         btnSignIn.setOnClickListener(view -> signIn());
         tilLogin.setErrorEnabled(true);
@@ -81,16 +84,19 @@ public class SignInActivity extends CustomFontsActivity {
 
     public void signIn() {
         btnSignIn.setEnabled(false);
-        llProgress.setVisibility(View.VISIBLE);
         if (checkConnection()) {
             final String login = etLogin.getText().toString();
             String password = etPassword.getText().toString();
             if (checkInput(login, password)) {
+                llProgress.setVisibility(View.VISIBLE);
                 Intent intentMyIntentService = new Intent(this, SignInService.class);
                 startService(intentMyIntentService.putExtra(SignInService.LOGIN, login)
                                                   .putExtra(SignInService.PASSWORD, password));
+            } else {
+                llProgress.setVisibility(View.GONE);
+                btnSignIn.setEnabled(true);
             }
-        }else {
+        } else {
             llProgress.setVisibility(View.GONE);
             btnSignIn.setEnabled(true);
             CustomDialog.showDialogInfo(this, getString(R.string.no_internet_connection_title),
@@ -112,6 +118,7 @@ public class SignInActivity extends CustomFontsActivity {
                         User currentUser = new User(login, AuthorizationAnswer.getInstance().getServerName(),
                                                            AuthorizationAnswer.getInstance().getToken());
                         CustomSharedPreferences.saveUser(getApplicationContext(), currentUser);
+                        CustomSharedPreferences.setIntervalAdvertising(SignInActivity.this, -1);
                         showTerminalActivity();
                     }
                 }

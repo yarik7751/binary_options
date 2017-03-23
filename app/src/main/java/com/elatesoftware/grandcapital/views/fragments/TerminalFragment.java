@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -36,6 +38,7 @@ import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.Dealing;
+import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.MakeDealingService;
@@ -92,6 +95,8 @@ public class TerminalFragment extends Fragment {
     public static boolean isAddInChart = false;
     public static boolean isOpen = false;
     public boolean isDirection = true;
+
+    private Dialog dialogOpenAccaunt;
 
     private LineChart mChart;
     private YAxis rightYAxis;
@@ -485,7 +490,7 @@ public class TerminalFragment extends Fragment {
     private void initRocketAnimation() {
         rocketAnimation = new CustomAnimationDrawable();
         rocketAnimation.setOneShot(true);
-        Log.d(TAG, "initRocketAnimation()");
+        //Log.d(TAG, "initRocketAnimation()");
         for (int i = 10; i >= 3; i--) {
             Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
             rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
@@ -504,7 +509,7 @@ public class TerminalFragment extends Fragment {
     private void initRocketAnimationBack() {
         rocketAnimationBack = new CustomAnimationDrawable();
         rocketAnimationBack.setOneShot(true);
-        Log.d(TAG, "initRocketAnimationBack()");
+        //Log.d(TAG, "initRocketAnimationBack()");
         for (int i = 3; i <= 10; i++) {
             Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
             rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
@@ -632,6 +637,10 @@ public class TerminalFragment extends Fragment {
 
     private void requestMakeDealing(String lowerOrHeight) {
         if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).equals("")) {
+            if(ConventString.getTimeValue(etValueTime) > 2880) {
+                CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.error_max_time));
+                return;
+            }
             Intent intentService = new Intent(getActivity(), MakeDealingService.class);
             intentService.putExtra(MakeDealingService.CMD, lowerOrHeight);
             intentService.putExtra(MakeDealingService.SYMBOL, ConventString.getActive(tvValueActive));
@@ -821,6 +830,24 @@ public class TerminalFragment extends Fragment {
                                             ((BaseActivity) getActivity()).setDealings();
                                             BaseActivity.getToolbar().setDealingSelectIcon();
                                             //removeLimitLineX(orderStack.getCloseTimeUnix());
+                                            if (CustomSharedPreferences.getIntervalAdvertising(getContext()) >= 0) {
+                                                CustomSharedPreferences.setIntervalAdvertising(getContext(), CustomSharedPreferences.getIntervalAdvertising(getContext()) + 1);
+                                                Log.d(TAG, "IntervalAdvertising1: " + CustomSharedPreferences.getIntervalAdvertising(getContext()));
+                                                if (CustomSharedPreferences.getIntervalAdvertising(getContext()) >= 3) {
+                                                    CustomSharedPreferences.setIntervalAdvertising(getContext(), 0);
+                                                    dialogOpenAccaunt = CustomDialog.showDialogOpenAccount(getActivity(), new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View v) {
+                                                        /*BaseActivity.sMainTagFragment = TerminalFragment.class.getName();
+                                                        WebFragment webFragment = WebFragment.getInstance("https://grand.capital/4");
+                                                        BaseActivity.addNextFragment(webFragment);*/
+                                                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grand.capital/4"));
+                                                            startActivity(browserIntent);
+                                                            dialogOpenAccaunt.cancel();
+                                                        }
+                                                    });
+                                                }
+                                            }
                                             break;
                                         }
                                     }
@@ -857,6 +884,7 @@ public class TerminalFragment extends Fragment {
         }
         handlerOpenDealingView.postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
     }
+
     private void showViewCloseDealing(OrderAnswer answer) {
         if (answer != null) {
             ((TextView) closeDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
@@ -877,6 +905,7 @@ public class TerminalFragment extends Fragment {
             handlerCloseDealingView.postDelayed(() -> rlChart.removeView(closeDealingView), INTERVAL_SHOW_LABEL);
         }
     }
+
     public void showSignalsPanel() {
         parseResponseSignals(ConventString.getActive(tvValueActive));
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 60 : -60));
@@ -936,6 +965,7 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
+
     public class GetResponseSymbolHistoryBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -950,6 +980,7 @@ public class TerminalFragment extends Fragment {
             tvRightActive.setEnabled(true);
         }
     }
+
     public class GetResponseOpenDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -976,6 +1007,7 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
+
     public class GetResponseCloseDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -983,6 +1015,7 @@ public class TerminalFragment extends Fragment {
             new Handler().postDelayed(() -> requestOrders(), 4000);
         }
     }
+
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -993,6 +1026,7 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
+
     public class GetResponseSignalsBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
