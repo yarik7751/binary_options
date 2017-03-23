@@ -80,7 +80,17 @@ public class ConventDate {
         }
         return date.getTime()/1000;
     }
-
+    public static long getConvertDateInMillisecondDealing(String strDate) {
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        Date date = null;
+        try {
+            date = sdf.parse(strDate);
+            date.setTime(date.getTime() + getIterationTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date.getTime()/1000;
+    }
     public static String convertDateFromMilSecHHMM(long time) {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
         formatter.setTimeZone(TimeZone.getTimeZone(timeZone));
@@ -168,6 +178,14 @@ public class ConventDate {
         sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
         date.setMinutes(date.getMinutes() - 30);
         return String.valueOf(date.getTime() / 1000);
+    }
+    public static String getTimeCloseDealing(int expiration) {
+        Date date = new Date();
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        date.setHours(date.getHours() + 2);
+        //date.setTime(date.getTime() + getIterationTime());
+        date.setMinutes(date.getMinutes() + expiration);
+        return sdf.format(date);
     }
     public static long getTimePlusOneSecond(long time) {
         Date date = new Date(time);

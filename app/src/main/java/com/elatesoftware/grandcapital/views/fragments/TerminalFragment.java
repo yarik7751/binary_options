@@ -91,8 +91,8 @@ public class TerminalFragment extends Fragment {
 
     private final static String SYMBOL = "EURUSD";
     private static String sSymbolCurrent = "";
-    private static double mCurrentValueY = 0;
-    private static Dealing currentDealing;
+    private static float mCurrentValueY = 0;
+    private static OrderAnswer currentDealing;
 
     private static int typePoint = 0;
     private final static int POINT_SIMPLY = 0;
@@ -313,7 +313,7 @@ public class TerminalFragment extends Fragment {
        timerDrawing.schedule(new TimerTask() {
             @Override
             public void run() {
-                // TODO redraw limit lines
+
             }
         }, 1000, 1000);
     }
@@ -624,7 +624,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     private void parseClosingDealings(List<OrderAnswer> listAllClosedDealings){
         if(listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0){
             for(OrderAnswer order : listCurrentClosingDealings){
@@ -665,6 +664,7 @@ public class TerminalFragment extends Fragment {
                         break;
                     case POINT_OPEN_DEALING:
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawableMarkerDealing, answer.getTime());
+                        currentDealing.setOpenPrice(Double.valueOf(String.valueOf(answer.getAsk())));
                         drawXLimitLine(entry);
                         break;
                     case POINT_SIMPLY:
@@ -680,8 +680,7 @@ public class TerminalFragment extends Fragment {
                 mChart.invalidate();
                 drawCurrentYLimitLine(entry);
                 typePoint = POINT_SIMPLY;
-                mCurrentValueY = answer.getAsk();
-                currentDealing = null;
+                mCurrentValueY = Float.valueOf(String.valueOf(answer.getAsk()));
             }
         }
     }
@@ -724,7 +723,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     private void drawDataSymbolHistory(List<SymbolHistoryAnswer> listSymbol, final String symbol) {
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
@@ -745,8 +743,9 @@ public class TerminalFragment extends Fragment {
                 }
             }
             if (mChart.getLineData() != null) {
+                mCurrentValueY = Float.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen()));
                 Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
-                        Float.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen())), null, null);
+                        mCurrentValueY, null, null);
                 mChart.zoom(8.6f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
                 getActivity().runOnUiThread(() -> {
                     drawCurrentYLimitLine(entry);
@@ -800,9 +799,10 @@ public class TerminalFragment extends Fragment {
         }
     }
     private void drawXLimitLine(Entry entry) {
-        if (currentDealing != null && currentDealing.getExpiration() != 0) {
+        if (currentDealing != null) {
             Bitmap iconLabel = null;
-            CustomBaseLimitLine limitLine = new CustomBaseLimitLine(ConventDate.getTimeForXLimitLine(entry.getX(), currentDealing.getExpiration()),
+            CustomBaseLimitLine limitLine = new CustomBaseLimitLine(ConventDate.genericTimeForChart(
+                    ConventDate.getConvertDateInMilliseconds(currentDealing.getExpiration()) * 1000),
                     "", iconLabel);
             if (currentDealing.getCmd().equals("0") && mCurrentValueY < entry.getY()) {
                 iconLabel = bitmapIconGreenXLabel;
@@ -817,6 +817,7 @@ public class TerminalFragment extends Fragment {
             limitLine.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
             xAxis.addLimitLine(limitLine);
             mListDealingXLine.add(limitLine);
+            currentDealing = null;
         }
     }
 
@@ -953,11 +954,11 @@ public class TerminalFragment extends Fragment {
                 Log.d(GrandCapitalApplication.TAG_SOCKET, "openDealing");
                 requestOrders();
                 if (currentDealing == null) {
-                    currentDealing = new Dealing();
+                    currentDealing = new OrderAnswer();
                 }
                 currentDealing.setSymbol(intent.getStringExtra(MakeDealingService.SYMBOL));
-                currentDealing.setCmd(intent.getStringExtra(MakeDealingService.CMD));
-                currentDealing.setExpiration(Double.valueOf(intent.getStringExtra(MakeDealingService.EXPIRATION)).intValue());
+                currentDealing.setCmd(Integer.valueOf(intent.getStringExtra(MakeDealingService.CMD)));
+                currentDealing.setExpiration(ConventDate.getTimeCloseDealing(Double.valueOf(intent.getStringExtra(MakeDealingService.EXPIRATION)).intValue()));
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
                 typePoint = POINT_OPEN_DEALING;
                 showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
@@ -966,8 +967,7 @@ public class TerminalFragment extends Fragment {
                 etValueAmount.setText(getResources().getString(R.string.zero_dollars));
                 etValueTime.setText(getResources().getString(R.string.zero_min));
             } else {
-                CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error),
-                        getResources().getString(R.string.request_error_request));
+                CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.request_error_request));
             }
         }
     }
