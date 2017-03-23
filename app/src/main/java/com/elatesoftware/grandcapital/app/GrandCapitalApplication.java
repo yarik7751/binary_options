@@ -93,7 +93,7 @@ public class GrandCapitalApplication extends Application{
     }
 
     public static void closeSocket(){
-        TerminalFragment.listBackGroundSocketAnswer.clear();
+        TerminalFragment.listSocketPointsBackGround.clear();
          answerCurrent = null;
          answerSave = null;
          symbolCurrent = "";
@@ -136,7 +136,7 @@ public class GrandCapitalApplication extends Application{
                                     });
                                 } else {
                                     TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                                        TerminalFragment.listBackGroundSocketAnswer.add(answerCurrent);
+                                        TerminalFragment.listSocketPointsBackGround.add(answerCurrent);
                                     });
                                 }
                             }
@@ -159,7 +159,7 @@ public class GrandCapitalApplication extends Application{
                             Log.d(TAG_SOCKET, "Open Connect Socket");
                             if(!symbolCurrent.equals("")){
                                 mClient.send(symbolCurrent);
-                                TerminalFragment.listBackGroundSocketAnswer.clear();
+                                TerminalFragment.listSocketPointsBackGround.clear();
                                 Log.d(TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
                             }
                         }
@@ -178,7 +178,7 @@ public class GrandCapitalApplication extends Application{
                         public void onClose(int code, String reason, boolean remote){
                             Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
 
-                            TerminalFragment.listBackGroundSocketAnswer.clear();
+                            TerminalFragment.listSocketPointsBackGround.clear();
                             if(!symbolCurrent.equals("")){
                                 closeAndOpenSocket(symbolCurrent);
                             }

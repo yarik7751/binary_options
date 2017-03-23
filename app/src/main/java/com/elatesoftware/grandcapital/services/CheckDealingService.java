@@ -33,7 +33,7 @@ public class CheckDealingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-       /* timer.schedule(new TimerTask() {
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 if(listOrderAnswer != null && listOrderAnswer.size() != 0){
@@ -50,7 +50,7 @@ public class CheckDealingService extends Service {
                     }
                 }
             }
-        }, 0, INTERVAL);*/
+        }, 0, INTERVAL);
         return super.onStartCommand(intent, flags, startId);
     }
 

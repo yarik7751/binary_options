@@ -243,7 +243,7 @@ public class OrderAnswer {
             return closeOrders;
         }
     }
-    public static List<OrderAnswer> filterOrdersOpenOrClose(List<OrderAnswer> orders, int currentTabPosition, String symbol){
+    public static List<OrderAnswer> filterOrdersCurrentActive(List<OrderAnswer> orders, int currentTabPosition, String symbol){
         List<OrderAnswer> list = filterOrders(orders, currentTabPosition);
         List<OrderAnswer> rezultList = new ArrayList<>();
         for(OrderAnswer order: list){

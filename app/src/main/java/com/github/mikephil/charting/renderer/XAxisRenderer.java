@@ -242,7 +242,7 @@ public class XAxisRenderer extends AxisRenderer {
                             strLabel = String.valueOf(ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(line.getLimit())));
 
                             float paddingVert = Utils.convertDpToPixel(35);
-                            float paddingHoriz = Utils.convertDpToPixel(8);
+                            float paddingHoriz = Utils.convertDpToPixel(5);
                             float height = Utils.calcTextHeight(textPaint, strLabel);
                             float width = Utils.calcTextWidth(textPaint, strLabel);
                             float posX = pts[0];
