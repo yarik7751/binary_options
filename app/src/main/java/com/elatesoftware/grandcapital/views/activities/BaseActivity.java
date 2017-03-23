@@ -103,7 +103,6 @@ public class BaseActivity extends CustomFontsActivity {
         IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mInfoBroadcastReceiver, intentFilter);
-        //requestOrders();
     }
 
     @Override

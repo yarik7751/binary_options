@@ -33,6 +33,16 @@ public class OptionsData {
     @Expose
     private Integer winPay;
 
+    public OptionsData() {
+        this.earlyCommission = 0;
+        this.earlyPay = 0;
+        this.expirationTime = "";
+        this.lossPay = 0;
+        this.nillPay = 0;
+        this.optionType = 0;
+        this.winPay = 0;
+    }
+
     public Integer getEarlyCommission() {
         return earlyCommission;
     }

@@ -16,7 +16,7 @@ public class CustomBaseLimitLine extends LimitLine {
 
     /** label string that is drawn next to the limit line */
     private String mLabel = "";
-    private Bitmap mBitmapIconLabel = null;
+    private Bitmap mBitmap = null;
 
     private LimitLinesType mTypeLimitLine = LimitLinesType.LINE_CURRENT_SOCKET;
 
@@ -32,13 +32,11 @@ public class CustomBaseLimitLine extends LimitLine {
         mLimit = limit;
     }
 
-    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapLabel/*, Bitmap bitmapIconPoint, Entry entry*/) {
+    public CustomBaseLimitLine(float limit, String label, Bitmap bitmap) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
-        mBitmapIconLabel = bitmapLabel;
-        //mBitmapIconPoint = bitmapIconPoint;
-        //mEntry = entry;
+        mBitmap = bitmap;
     }
 
     public void setTypeLimitLine(LimitLinesType type){
@@ -49,11 +47,11 @@ public class CustomBaseLimitLine extends LimitLine {
         return mTypeLimitLine;
     }
 
-    public Bitmap getBitmapIconLabel() {
-        return mBitmapIconLabel;
+    public Bitmap getmBitmap() {
+        return mBitmap;
     }
 
-    public void setBitmapIconLabel(Bitmap bitmapIcon) {
-        this.mBitmapIconLabel = bitmapIcon;
+    public void setmBitmap(Bitmap mBitmap) {
+        this.mBitmap = mBitmap;
     }
 }

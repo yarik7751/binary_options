@@ -80,17 +80,7 @@ public class ConventDate {
         }
         return date.getTime()/1000;
     }
-    public static long getConvertDateInMillisecondDealing(String strDate) {
-        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
-        Date date = null;
-        try {
-            date = sdf.parse(strDate);
-            date.setTime(date.getTime() + getIterationTime());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date.getTime()/1000;
-    }
+
     public static String convertDateFromMilSecHHMM(long time) {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
         formatter.setTimeZone(TimeZone.getTimeZone(timeZone));
@@ -193,12 +183,7 @@ public class ConventDate {
         date.setSeconds(date.getSeconds() + 1);
         return date.getTime();
     }
-    public static float getTimeForXLimitLine(float time, int expiration){
-        long timeCurrent = ConventDate.genericTimeForChartLabels(time);
-        Date date = new Date(timeCurrent);
-        date.setMinutes(date.getMinutes() + expiration);
-        return genericTimeForChart(date.getTime());
-    }
+
     public static String getChatDateByUnix(Context context, long unix) {
         Calendar calendarChat = Calendar.getInstance();
         calendarChat.setTimeInMillis(unix);

@@ -1,6 +1,7 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,6 +9,8 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
@@ -126,6 +129,11 @@ public class YAxisRenderer extends AxisRenderer {
             if(l instanceof CustomBaseLimitLine) {
                 CustomBaseLimitLine line = (CustomBaseLimitLine) l;
                 if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET)) {
+
+                    line.setLineWidth(1.0f);
+                    line.setLineColor(Color.WHITE);
+                    line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+
                     Paint paint = new Paint();
                     paint.setStyle(Paint.Style.FILL);
                     paint.setColor(Color.WHITE);
@@ -146,7 +154,8 @@ public class YAxisRenderer extends AxisRenderer {
                         lastSymbol = strLabel.substring(strLabel.length() - 1, strLabel.length());
                         strLabel = strLabel.substring(0, strLabel.length() - 1);
                     }
-                    Bitmap bitmapLabel = line.getBitmapIconLabel();
+
+                    Bitmap bitmapLabel =  line.getmBitmap();
 
                     float paddingVert = Utils.convertDpToPixel(15);
                     float paddingHoriz = Utils.convertDpToPixel(18);
@@ -313,9 +322,7 @@ public class YAxisRenderer extends AxisRenderer {
         limitLinePath.reset();
 
         for (int i = 0; i < limitLines.size(); i++) {
-
             LimitLine l = limitLines.get(i);
-
             if (!l.isEnabled())
                 continue;
 
@@ -324,8 +331,9 @@ public class YAxisRenderer extends AxisRenderer {
             mLimitLineClippingRect.inset(0.f, -l.getLineWidth());
             c.clipRect(mLimitLineClippingRect);
 
+            mLimitLinePaint.setStrokeWidth(1.0f);
             mLimitLinePaint.setStyle(Paint.Style.STROKE);
-            mLimitLinePaint.setColor(l.getLineColor());
+            mLimitLinePaint.setColor(Color.WHITE);
             mLimitLinePaint.setStrokeWidth(l.getLineWidth());
             mLimitLinePaint.setPathEffect(l.getDashPathEffect());
 
