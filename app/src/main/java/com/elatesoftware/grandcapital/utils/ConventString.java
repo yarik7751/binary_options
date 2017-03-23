@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.utils;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -65,12 +66,18 @@ public class ConventString {
     }
     public static double getAmountValue(EditText v) {
         String valueStr = v.getText().toString();
+        if(TextUtils.isEmpty(valueStr)) {
+            valueStr = "0";
+        }
         valueStr = valueStr.replaceAll("[^0-9.]", "");
         return Double.valueOf(valueStr);
     }
 
     public static int getTimeValue(EditText v) {
         String valueStr = v.getText().toString();
+        if(TextUtils.isEmpty(valueStr)) {
+            valueStr = "0";
+        }
         valueStr = valueStr.replaceAll("[^0-9]", "");
         return Integer.parseInt(valueStr);
     }

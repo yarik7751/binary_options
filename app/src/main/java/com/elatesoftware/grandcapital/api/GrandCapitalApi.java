@@ -3,6 +3,7 @@ package com.elatesoftware.grandcapital.api;
 import android.util.Log;
 
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
+import com.elatesoftware.grandcapital.api.pojo.EarlyClosureAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
@@ -268,6 +269,25 @@ public class GrandCapitalApi {
         if(response != null) {
             if(response.code() == 200) {
                 QuestionsAnswer.setInstance(response.body());
+            }
+            result = String.valueOf(response.code());
+        }
+
+        return result;
+    }
+
+    public static String getEarlyClosureAnswer() {
+        Call<EarlyClosureAnswer> call = getApiService().getEarlyClosureAnswer();
+        Response<EarlyClosureAnswer> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null) {
+            if(response.code() == 200) {
+                EarlyClosureAnswer.setInstance(response.body());
             }
             result = String.valueOf(response.code());
         }

@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.api;
 
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
+import com.elatesoftware.grandcapital.api.pojo.EarlyClosureAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
@@ -65,4 +66,7 @@ interface IGrandCapitalApi {
 
     @GET("https://grandcapital.net/api/technical_summary/")
     Call<List<SignalAnswer>> getSignals();
+
+    @GET("/my/webtrader/api/account/options/info/")
+    Call<EarlyClosureAnswer> getEarlyClosureAnswer();
 }

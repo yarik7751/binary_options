@@ -53,6 +53,7 @@
         <service android:name=".services.MakeDealingService"/>
         <service android:name=".services.SignalService"/>
         <service android:name=".services.CheckDealingService"/>
+        <service android:name=".services.EarlyClosureService"></service>
 
     </application>
 </manifest>

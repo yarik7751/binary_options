@@ -177,7 +177,11 @@ public class OrderAnswer {
 
     public String getProfitStr() {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        return String.format("$%s", numberFormat.format((profit) / 100));
+        String sign = "";
+        if(getProfit() < 0){
+            sign = "-";
+        }
+        return String.format(sign + "$%s", numberFormat.format(Math.abs(getProfit())));
     }
 
     public void setProfit(Double profit) {

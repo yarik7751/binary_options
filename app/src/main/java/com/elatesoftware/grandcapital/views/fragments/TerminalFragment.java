@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,6 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.api.pojo.EarlyClosureAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
@@ -39,6 +42,7 @@ import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.Dealing;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
+import com.elatesoftware.grandcapital.services.EarlyClosureService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.MakeDealingService;
 import com.elatesoftware.grandcapital.services.OrdersService;
@@ -160,6 +164,7 @@ public class TerminalFragment extends Fragment {
     private GetResponseSignalsBroadcastReceiver mSignalsBroadcastReceiver;
     private GetResponseCloseDealingBroadcastReceiver mCloseDealingBroadcastReceiver;
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
+    private GetResponseEarlyClosureBroadcastReceiver mEarlyClosureBroadcastReceiver;
 
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
@@ -213,13 +218,56 @@ public class TerminalFragment extends Fragment {
             if (etValueTime.isFocused()) {
                 ConventString.setMaskTime(etValueTime, isOpen1);
             }
+            /*if(!isOpen1) {
+                requestEarlyClosure();
+            }*/
         });
         etValueAmount.setOnFocusChangeListener((v, hasFocus) -> ConventString.setMaskAmount(etValueAmount, hasFocus));
         etValueTime.setOnFocusChangeListener((v, hasFocus) -> ConventString.setMaskTime(etValueTime, hasFocus));
-        tvMinusAmount.setOnClickListener(v -> ConventString.changeAmountValue(etValueAmount, false));
-        tvPlusAmount.setOnClickListener(v -> ConventString.changeAmountValue(etValueAmount, true));
-        tvPlusTime.setOnClickListener(v -> ConventString.changeTimeValue(etValueTime, true));
-        tvMinusTime.setOnClickListener(v -> ConventString.changeTimeValue(etValueTime, false));
+
+        etValueAmount.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                requestEarlyClosure();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        etValueTime.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                requestEarlyClosure();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        tvMinusAmount.setOnClickListener(v -> {
+            ConventString.changeAmountValue(etValueAmount, false);
+            requestEarlyClosure();
+        });
+        tvPlusAmount.setOnClickListener(v -> {
+            ConventString.changeAmountValue(etValueAmount, true);
+            requestEarlyClosure();
+        });
+        tvPlusTime.setOnClickListener(v -> {
+            ConventString.changeTimeValue(etValueTime, true);
+            requestEarlyClosure();
+        });
+        tvMinusTime.setOnClickListener(v -> {
+            ConventString.changeTimeValue(etValueTime, false);
+            requestEarlyClosure();
+        });
+
         tvLeftActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).equals("") && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
@@ -347,6 +395,11 @@ public class TerminalFragment extends Fragment {
         IntentFilter intentFilterOrders = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
         intentFilterOrders.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilterOrders);
+
+        mEarlyClosureBroadcastReceiver = new GetResponseEarlyClosureBroadcastReceiver();
+        IntentFilter intentFilterOrdersEarlyClosure = new IntentFilter(EarlyClosureService.ACTION_SERVICE_EARLY_CLOSURE);
+        intentFilterOrdersEarlyClosure.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mEarlyClosureBroadcastReceiver, intentFilterOrdersEarlyClosure);
     }
     private void unregisterBroadcasts() {
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
@@ -355,6 +408,7 @@ public class TerminalFragment extends Fragment {
         getActivity().unregisterReceiver(mSignalsBroadcastReceiver);
         getActivity().unregisterReceiver(mCloseDealingBroadcastReceiver);
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
+        getActivity().unregisterReceiver(mEarlyClosureBroadcastReceiver);
     }
 
     private void initializationChart() {
@@ -553,11 +607,6 @@ public class TerminalFragment extends Fragment {
         Intent intentService = new Intent(getActivity(), SignalService.class);
         getActivity().startService(intentService);
     }
-    private void requestSymbolHistory(String symbol) {
-        Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
-        intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
-        getActivity().startService(intentService);
-    }
     private void requestMakeDealing(String lowerOrHeight) {
         if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).equals("")) {
             if(ConventString.getTimeValue(etValueTime) > 2880) {
@@ -639,6 +688,17 @@ public class TerminalFragment extends Fragment {
             }
             listCurrentClosingDealings.clear();
         }
+    }
+
+    private void requestEarlyClosure() {
+        Intent intent = new Intent(getActivity(), EarlyClosureService.class);
+        getActivity().startService(intent);
+    }
+
+    private void requestSymbolHistory(String symbol) {
+        Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
+        intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
+        getActivity().startService(intentService);
     }
 
     private void addSocketAnswerInSymbol(SocketAnswer item) {
@@ -1001,6 +1061,40 @@ public class TerminalFragment extends Fragment {
                 CustomDialog.showDialogInfo(getActivity(),
                         getResources().getString(R.string.error),
                         getResources().getString(R.string.request_error_text));
+            }
+        }
+    }
+
+    public class GetResponseEarlyClosureBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String response = intent.getStringExtra(SignalService.RESPONSE);
+            if (response != null || response.equals("200")) {
+                for(int i = 0; i < EarlyClosureAnswer.getInstance().getInstruments().size(); i++) {
+                    Instrument instrument = EarlyClosureAnswer.getInstance().getInstruments().get(i);
+                    if(instrument.getSymbol().contains(tvValueActive.getText().toString())) {
+                        String typeOption = InfoAnswer.getInstance().getGroup().getOptionsStyle();
+                        Log.d(TAG, typeOption);
+                        int percent = 100;
+                        if(typeOption.contains("american")) {
+                            percent = instrument.getWinFull();
+                        } else if(typeOption.contains("european")) {
+                            int timeValue = ConventString.getTimeValue(etValueTime);
+                            if(timeValue < 5) {
+                                percent = instrument.getWinLt5();
+                            } else if(timeValue >= 5 && timeValue < 15) {
+                                percent = instrument.getWin5();
+                            } else if(timeValue >= 15 && timeValue < 30) {
+                                percent = instrument.getWin15();
+                            } else {
+                                percent = instrument.getWin30();
+                            }
+                        }
+                        double earlyClosure = ConventString.getAmountValue(etValueAmount) * percent / 100.000;
+                        tvValueRewardTerminal.setText(earlyClosure + "(" + percent + "%)");
+                    }
+                }
             }
         }
     }
