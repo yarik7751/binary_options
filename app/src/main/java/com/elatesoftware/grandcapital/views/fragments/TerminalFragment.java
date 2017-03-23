@@ -903,16 +903,22 @@ public class TerminalFragment extends Fragment {
                 RelativeLayout.LayoutParams.WRAP_CONTENT,
                 RelativeLayout.LayoutParams.WRAP_CONTENT
         );
+        //params.addRule(RelativeLayout.ALIGN_PARENT_END, );
         params.topMargin = AndroidUtils.dp(16);
         params.leftMargin = AndroidUtils.dp(16);
 
-        if (rlChart.findViewWithTag("openDealingView") != null) {
+        View vCloseDealings = rlChart.findViewWithTag(TAG_CLOSE_DEALING);
+        if(vCloseDealings != null) {
+            rlChart.removeView(vCloseDealings);
+        }
+        if (rlChart.findViewWithTag(TAG_OPEN_DEALING) != null) {
             rlChart.updateViewLayout(openDealingView, params);
         } else {
             rlChart.addView(openDealingView, params);
         }
         new Handler().postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
     }
+
     private void showViewCloseDealing(OrderAnswer answer) {
         if (answer != null) {
             ((TextView) closeDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
@@ -925,7 +931,11 @@ public class TerminalFragment extends Fragment {
             params.topMargin = AndroidUtils.dp(16);
             params.leftMargin = AndroidUtils.dp(16);
 
-            if (rlChart.findViewWithTag("closeDealingView") != null) {
+            View vOpenDealings = rlChart.findViewWithTag(TAG_OPEN_DEALING);
+            if(vOpenDealings != null) {
+                rlChart.removeView(vOpenDealings);
+            }
+            if (rlChart.findViewWithTag(TAG_CLOSE_DEALING) != null) {
                 rlChart.updateViewLayout(closeDealingView, params);
             } else {
                 rlChart.addView(closeDealingView, params);
@@ -935,6 +945,9 @@ public class TerminalFragment extends Fragment {
     }
     public void showSignalsPanel() {
         parseResponseSignals(ConventString.getActive(tvValueActive));
+        if(!isDirection) {
+            BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+        }
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 60 : -60));
         animation.setDuration(200);
         animation.setAnimationListener(new Animation.AnimationListener() {
@@ -1070,12 +1083,12 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(SignalService.RESPONSE);
-            if (response != null || response.equals("200")) {
+            if (response != null && response.equals("200") && EarlyClosureAnswer.getInstance() != null) {
                 for(int i = 0; i < EarlyClosureAnswer.getInstance().getInstruments().size(); i++) {
                     Instrument instrument = EarlyClosureAnswer.getInstance().getInstruments().get(i);
                     if(instrument.getSymbol().contains(tvValueActive.getText().toString())) {
                         String typeOption = InfoAnswer.getInstance().getGroup().getOptionsStyle();
-                        Log.d(TAG, typeOption);
+                        //Log.d(TAG, typeOption);
                         int percent = 100;
                         if(typeOption.contains("american")) {
                             percent = instrument.getWinFull();
