@@ -21,7 +21,7 @@ public class ConventDate {
 
     public static final String TAG = "ConventDate_Logs";
 
-    private final static int DIFFERENSE = 1800;
+    private final static int DIFFERENSE = 2000;
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final String timeZone = "GMT+00:00:00";
     private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();

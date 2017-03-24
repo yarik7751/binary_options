@@ -3,7 +3,6 @@ package com.elatesoftware.grandcapital.views.items.chart.limit_lines;
 import android.graphics.Bitmap;
 
 import com.github.mikephil.charting.components.LimitLine;
-import com.github.mikephil.charting.data.Entry;
 
 /**
  * Created by Дарья Высокович on 14.03.2017.
@@ -16,27 +15,23 @@ public class CustomBaseLimitLine extends LimitLine {
 
     /** label string that is drawn next to the limit line */
     private String mLabel = "";
-    private Bitmap mBitmap = null;
+    private Bitmap mBitmapLabelX = null;
+    private Bitmap mBitmapLabelY = null;
 
     private LimitLinesType mTypeLimitLine = LimitLinesType.LINE_CURRENT_SOCKET;
 
     public enum LimitLinesType {
         LINE_CURRENT_SOCKET,
-        LINE_HORIZONTAL_DEALING_ACTIVE,
         LINE_VERTICAL_DEALING_ACTIVE,
         LINE_VERTICAL_DEALING_PASS,
     }
 
-    public CustomBaseLimitLine(float limit) {
-        super(limit);
-        mLimit = limit;
-    }
-
-    public CustomBaseLimitLine(float limit, String label, Bitmap bitmap) {
+    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX, Bitmap bitmapY) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
-        mBitmap = bitmap;
+        mBitmapLabelX = bitmapX;
+        mBitmapLabelY = bitmapY;
     }
 
     public void setTypeLimitLine(LimitLinesType type){
@@ -47,11 +42,19 @@ public class CustomBaseLimitLine extends LimitLine {
         return mTypeLimitLine;
     }
 
-    public Bitmap getmBitmap() {
-        return mBitmap;
+    public Bitmap getmBitmapLabelX() {
+        return mBitmapLabelX;
     }
 
-    public void setmBitmap(Bitmap mBitmap) {
-        this.mBitmap = mBitmap;
+    public void setmBitmapLabelX(Bitmap mBitmapLabelX) {
+        this.mBitmapLabelX = mBitmapLabelX;
+    }
+
+    public Bitmap getmBitmapLabelY() {
+        return mBitmapLabelY;
+    }
+
+    public void setmBitmapLabelY(Bitmap mBitmapLabelY) {
+        this.mBitmapLabelY = mBitmapLabelY;
     }
 }

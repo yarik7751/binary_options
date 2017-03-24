@@ -1,7 +1,6 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,14 +8,11 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
-import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.components.YAxis.YAxisLabelPosition;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.MPPointD;
 import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.Utils;
@@ -155,7 +151,7 @@ public class YAxisRenderer extends AxisRenderer {
                         strLabel = strLabel.substring(0, strLabel.length() - 1);
                     }
 
-                    Bitmap bitmapLabel =  line.getmBitmap();
+                    Bitmap bitmapLabel =  line.getmBitmapLabelX();
 
                     float paddingVert = Utils.convertDpToPixel(15);
                     float paddingHoriz = Utils.convertDpToPixel(18);

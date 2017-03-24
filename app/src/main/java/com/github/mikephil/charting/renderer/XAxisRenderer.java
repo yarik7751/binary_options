@@ -2,7 +2,6 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,11 +9,8 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
-import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -49,13 +45,11 @@ public class XAxisRenderer extends AxisRenderer {
         mAxisLabelPaint.setTextAlign(Align.CENTER);
         mAxisLabelPaint.setTextSize(Utils.convertDpToPixel(10f));
     }
-
     protected void setupGridPaint() {
         mGridPaint.setColor(mXAxis.getGridColor());
         mGridPaint.setStrokeWidth(mXAxis.getGridLineWidth());
         mGridPaint.setPathEffect(mXAxis.getGridDashPathEffect());
     }
-
     @Override
     public void computeAxis(float min, float max, boolean inverted) {
 
@@ -82,13 +76,11 @@ public class XAxisRenderer extends AxisRenderer {
 
         computeAxisValues(min, max);
     }
-
     @Override
     protected void computeAxisValues(float min, float max) {
         super.computeAxisValues(min, max);
         computeSize();
     }
-
     protected void computeSize() {
 
         String longest = mXAxis.getLongestLabel();
@@ -115,7 +107,6 @@ public class XAxisRenderer extends AxisRenderer {
         FSize.recycleInstance(labelRotatedSize);
         FSize.recycleInstance(labelSize);
     }
-
     @Override
     public void renderAxisLabels(Canvas c) {
 
@@ -159,17 +150,13 @@ public class XAxisRenderer extends AxisRenderer {
         }
         MPPointF.recycleInstance(pointF);
     }
-
     @Override
     public void renderAxisLine(Canvas c) {
-
         if (!mXAxis.isDrawAxisLineEnabled() || !mXAxis.isEnabled())
             return;
-
         mAxisLinePaint.setColor(mXAxis.getAxisLineColor());
         mAxisLinePaint.setStrokeWidth(mXAxis.getAxisLineWidth());
         mAxisLinePaint.setPathEffect(mXAxis.getAxisLineDashPathEffect());
-
         if (mXAxis.getPosition() == XAxisPosition.TOP
                 || mXAxis.getPosition() == XAxisPosition.TOP_INSIDE
                 || mXAxis.getPosition() == XAxisPosition.BOTH_SIDED) {
@@ -177,7 +164,6 @@ public class XAxisRenderer extends AxisRenderer {
                     mViewPortHandler.contentTop(), mViewPortHandler.contentRight(),
                     mViewPortHandler.contentTop(), mAxisLinePaint);
         }
-
         if (mXAxis.getPosition() == XAxisPosition.BOTTOM
                 || mXAxis.getPosition() == XAxisPosition.BOTTOM_INSIDE
                 || mXAxis.getPosition() == XAxisPosition.BOTH_SIDED) {
@@ -186,7 +172,6 @@ public class XAxisRenderer extends AxisRenderer {
                     mViewPortHandler.contentBottom(), mAxisLinePaint);
         }
     }
-
     /**
      * draws the x-labels on the specified y-position
      *
@@ -222,8 +207,8 @@ public class XAxisRenderer extends AxisRenderer {
                     }
                 }
                 drawLabel(c, label, x, pos, anchor, labelRotationAngleDegrees);
-
                 List<LimitLine> limitLines = mXAxis.getLimitLines();
+
                 float[] pts = new float[2];
 
                 Paint paint = new Paint();
@@ -240,7 +225,8 @@ public class XAxisRenderer extends AxisRenderer {
                     if (l instanceof CustomBaseLimitLine) {
                         CustomBaseLimitLine line = (CustomBaseLimitLine) l;
                         OrderAnswer orderAnswer = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                        Bitmap iconLabel = line.getmBitmap();
+                        Bitmap iconLabelX = line.getmBitmapLabelX();
+                        Bitmap iconLabelY = line.getmBitmapLabelY();
 
                         line.setLineWidth(1.0f);
                         line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
@@ -258,14 +244,17 @@ public class XAxisRenderer extends AxisRenderer {
                         float width_marker = width + paddingHoriz;
 
                         if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
-
+                            line.enableDashedLine(10f, 10f, 0f);
                         }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
-
+                            line.enableDashedLine(0f, 0f, 0f);
                         }
-                        if (iconLabel != null) {
-                            iconLabel = Bitmap.createScaledBitmap(iconLabel, (int) width_marker, (int) height_marker, false);
-                            c.drawBitmap(iconLabel, posX - width_marker / 2, pos - height_marker / 4, paint);
+                        if (iconLabelX != null /*&& iconLabelY != null*/) {
+                            iconLabelX = Bitmap.createScaledBitmap(iconLabelX, (int) width_marker, (int) height_marker, false);
+                            c.drawBitmap(iconLabelX, posX - width_marker / 2, pos - height_marker / 4, paint);
                             c.drawText(strLabel, posX, pos + paddingVert/4, textPaint);
+
+                            //iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_marker, (int) height_marker, false);
+                           // c.drawBitmap(iconLabelY, posX - width_marker / 2, Float.valueOf(String.valueOf(orderAnswer.getOpenPrice())), paint);
                         }
                     }
                 }
@@ -276,7 +265,6 @@ public class XAxisRenderer extends AxisRenderer {
     protected void drawLabel(Canvas c, String formattedLabel, float x, float y, MPPointF anchor, float angleDegrees) {
         Utils.drawXAxisValue(c, formattedLabel, x, y, mAxisLabelPaint, anchor, angleDegrees);
     }
-
     @Override
     public void renderGridLines(Canvas c) {
 
@@ -304,10 +292,8 @@ public class XAxisRenderer extends AxisRenderer {
         gridLinePath.reset();
 
         for (int i = 0; i < positions.length; i += 2) {
-
             drawGridLine(c, positions[i], positions[i + 1], gridLinePath);
         }
-
         c.restoreToCount(clipRestoreCount);
     }
 
@@ -316,7 +302,6 @@ public class XAxisRenderer extends AxisRenderer {
         mGridClippingRect.inset(-mAxis.getGridLineWidth(), 0.f);
         return mGridClippingRect;
     }
-
     /**
      * Draws the grid line at the specified position using the provided path.
      *
@@ -385,20 +370,13 @@ public class XAxisRenderer extends AxisRenderer {
         mLimitLinePaint.setStrokeWidth(limitLine.getLineWidth());
         mLimitLinePaint.setPathEffect(limitLine.getDashPathEffect());
         mLimitLinePaint.setStyle(Paint.Style.STROKE);
-
         mLimitLinePaint.setColor(limitLine.getLineColor());
-/*
-        CustomBaseLimitLine line = (CustomBaseLimitLine) limitLine;
-        OrderAnswer orderAnswer = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-        if(orderAnswer.getCmd() == 0 && orderAnswer.getOpenPrice() < TerminalFragment.getInstance().mCurrentValueY ||
-                orderAnswer.getCmd() == 1 && orderAnswer.getOpenPrice() > TerminalFragment.getInstance().mCurrentValueY ){
-            mLimitLinePaint.setColor(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.chat_green));
-            line.setLineColor(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.chat_green));
-        }else{
-            mLimitLinePaint.setColor(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.color_red_chart));
-            line.setLineColor(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.color_red_chart));
+        CustomBaseLimitLine line = (CustomBaseLimitLine)limitLine;
+        if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
+            line.enableDashedLine(10f, 10f, 0f);
+        }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
+            line.enableDashedLine(0f, 0f, 0f);
         }
-*/
         c.drawPath(mLimitLinePath, mLimitLinePaint);
     }
 

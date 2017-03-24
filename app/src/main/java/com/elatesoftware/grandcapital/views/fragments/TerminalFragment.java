@@ -41,7 +41,6 @@ import com.elatesoftware.grandcapital.api.pojo.SignalAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
-import com.elatesoftware.grandcapital.models.Dealing;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.EarlyClosureService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
@@ -59,7 +58,6 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -76,13 +74,10 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindBitmap;
 import butterknife.BindColor;
 import butterknife.BindDrawable;
-import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -146,6 +141,9 @@ public class TerminalFragment extends Fragment {
     @BindColor(R.color.color_red_chart) int colorRed;
     @BindColor(R.color.chat_green) int colorGreen;
 
+    private Bitmap bitmapIconRedYLabel;
+    private Bitmap bitmapIconGreenYLabel;
+
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
     private Dialog dialogOpenAccount;
     private View closeDealingView;
@@ -188,11 +186,8 @@ public class TerminalFragment extends Fragment {
 
         openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
         closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
-
         openDealingView.setTag(TAG_OPEN_DEALING);
         closeDealingView.setTag(TAG_CLOSE_DEALING);
-
-        setSizeHeight();
         return parentView;
     }
 
@@ -205,7 +200,6 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
-
         try {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
@@ -312,6 +306,7 @@ public class TerminalFragment extends Fragment {
         });
         initializationChart();
         initializationCurrentPoint();
+        setSizeHeight();
     }
     @Override
     public void onResume() {
@@ -757,21 +752,6 @@ public class TerminalFragment extends Fragment {
         }
     }
 
-    private void redrawXLimitLines(){
-        if(mListDealingXLine != null && mListDealingXLine.size() != 0){
-            for(CustomBaseLimitLine line : mListDealingXLine){
-                OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
-                        order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
-                    line.setmBitmap(bitmapIconGreenXLabel);
-                    line.setLineColor(colorGreen);
-                }else{
-                    line.setmBitmap(bitmapIconRedXLabel);
-                    line.setLineColor(colorRed);
-                }
-            }
-        }
-    }
     private void redrawPointsDealings(OrderAnswer order){
         if (mChart.getData() != null) {
             ILineDataSet set = mChart.getData().getDataSetByIndex(0);
@@ -830,7 +810,7 @@ public class TerminalFragment extends Fragment {
         if (currentLine != null) {
             rightYAxis.removeLimitLine(currentLine);
         }
-        currentLine = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), bitmapIconCurrentLimitLabel);
+        currentLine = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), bitmapIconCurrentLimitLabel, null);
         currentLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
         rightYAxis.addLimitLine(currentLine);
         drawCurrentPoint(entry);
@@ -855,21 +835,43 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
+    private void redrawXLimitLines(){
+        if(mListDealingXLine != null && mListDealingXLine.size() != 0){
+            for(CustomBaseLimitLine line : mListDealingXLine){
+                OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+                if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
+                        order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
+                    line.setmBitmapLabelX(bitmapIconGreenXLabel);
+                    line.setLineColor(colorGreen);
+                    line.setmBitmapLabelY(bitmapIconGreenYLabel);
+                }else{
+                    line.setmBitmapLabelX(bitmapIconRedXLabel);
+                    line.setLineColor(colorRed);
+                    line.setmBitmapLabelY(bitmapIconRedYLabel);
+                }
+            }
+        }
+    }
     private void drawXLimitLine(OrderAnswer orderAnswer) {
         if (orderAnswer != null) {
-            Bitmap iconLabel = null;
+            Bitmap iconLabelX = null;
+            Bitmap iconLabelY = null;
             CustomBaseLimitLine limitLine = new CustomBaseLimitLine(ConventDate.genericTimeForChart(
                     ConventDate.getConvertDateInMilliseconds(orderAnswer.getOptionsData().getExpirationTime()) * 1000),
-                    new Gson().toJson(orderAnswer), iconLabel);
+                    new Gson().toJson(orderAnswer), iconLabelX, iconLabelY);
             if(orderAnswer.getCmd() == 0 && orderAnswer.getOpenPrice() < mCurrentValueY ||
                     orderAnswer.getCmd() == 1 && orderAnswer.getOpenPrice() > mCurrentValueY ){
-                iconLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.green_vert);
-                limitLine.setLineColor(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.chat_green));
+                iconLabelX = bitmapIconGreenXLabel;
+                limitLine.setLineColor(colorGreen);
+                iconLabelY = bitmapIconGreenYLabel;
             }else{
-                iconLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.red_vert);
-                limitLine.setLineColor(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.color_red_chart));
+                iconLabelX = bitmapIconRedXLabel;
+                limitLine.setLineColor(colorRed);
+                iconLabelY = bitmapIconRedYLabel;
             }
-            limitLine.setmBitmap(iconLabel);
+            limitLine.enableDashedLine(10f, 10f, 0f);
+            limitLine.setmBitmapLabelX(iconLabelX);
+            limitLine.setmBitmapLabelY(iconLabelY);
             limitLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
             xAxis.addLimitLine(limitLine);
             mListDealingXLine.add(limitLine);
