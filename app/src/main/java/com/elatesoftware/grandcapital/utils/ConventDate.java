@@ -173,7 +173,6 @@ public class ConventDate {
         Date date = new Date();
         sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
         date.setHours(date.getHours() + 2);
-        //date.setTime(date.getTime() + getIterationTime());
         date.setMinutes(date.getMinutes() + expiration);
         return sdf.format(date);
     }

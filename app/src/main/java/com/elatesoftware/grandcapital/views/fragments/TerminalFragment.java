@@ -85,7 +85,7 @@ public class TerminalFragment extends Fragment {
     private final static String SYMBOL = "EURUSD";
     private static String sSymbolCurrent = "";
     public static double mCurrentValueY = 0;
-    private static OrderAnswer currentDealing = new OrderAnswer();
+    private OrderAnswer currentDealing = new OrderAnswer();
 
     private static int typePoint = 0;
     private final static int POINT_SIMPLY = 0;
@@ -161,14 +161,10 @@ public class TerminalFragment extends Fragment {
 
     private Drawable drawableMarkerDealing;
     private Bitmap bitmapIconCurrentLimitLabel;
-
     private Bitmap bitmapIconGreenXLabel;
     private Bitmap bitmapIconRedXLabel;
-
     private Bitmap bitmapIconRedYLabel;
     private Bitmap bitmapIconGreenYLabel;
-    private Bitmap bitmapIconCmdLower;
-    private Bitmap bitmapIconCmdHeight;
 
     private int colorRed;
     private int colorGreen;
@@ -177,9 +173,9 @@ public class TerminalFragment extends Fragment {
     private Dialog dialogOpenAccount;
     private View closeDealingView;
     private View openDealingView;
-    private ImageView imgPointCurrent;
     private YAxis rightYAxis;
     private XAxis xAxis;
+    private ImageView imgPointCurrent;
     private CustomBaseLimitLine currentLineSocket;
     private CustomBaseLimitLine currentLineDealing;
 
@@ -222,10 +218,6 @@ public class TerminalFragment extends Fragment {
 
         bitmapIconRedYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(getContext()).inflate(R.layout.incl_chart_label_red, null));
         bitmapIconGreenYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(getContext()).inflate(R.layout.incl_chart_label_green, null));
-        //bitmapIconRedYLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.chart_label_down_background);
-        //bitmapIconGreenYLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.chart_label_up_background);
-        bitmapIconCmdLower = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.down);
-        bitmapIconCmdHeight = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.up);
 
         mChart = (LineChart) parentView.findViewById(R.id.chart);
         tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
@@ -773,8 +765,9 @@ public class TerminalFragment extends Fragment {
                         break;
                     case POINT_OPEN_DEALING:
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawableMarkerDealing, answer.getTime());
-                        drawXLimitLine(currentDealing);
+                        OrderAnswer order = currentDealing;
                         currentDealing = null;
+                        drawXLimitLine(order);
                         break;
                     case POINT_SIMPLY:
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
@@ -1084,12 +1077,12 @@ public class TerminalFragment extends Fragment {
                 if (currentDealing == null) {
                     currentDealing = new OrderAnswer();
                 }
+                currentDealing.setOpenPrice(mCurrentValueY);
                 currentDealing.setSymbol(intent.getStringExtra(MakeDealingService.SYMBOL));
                 currentDealing.setCmd(Integer.valueOf(intent.getStringExtra(MakeDealingService.CMD)));
                 OptionsData optionsData = new OptionsData();
                 optionsData.setExpirationTime(ConventDate.getTimeCloseDealing(Double.valueOf(intent.getStringExtra(MakeDealingService.EXPIRATION)).intValue()));
                 currentDealing.setOptionsData(optionsData);
-                currentDealing.setOpenPrice(mCurrentValueY);
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
                 typePoint = POINT_OPEN_DEALING;
                 showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
@@ -1118,11 +1111,11 @@ public class TerminalFragment extends Fragment {
                         DealingFragment.OPEN_TAB_POSITION, ConventString.getActive(tvValueActive));
                 List<OrderAnswer> listAllClosedDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
                 CheckDealingService.setListOrderAnswer(listAllOpenDealings);
+                parseClosingDealings(listAllClosedDealings, listOpenDealingsCurrentActive);
                 if(listOpenDealingsCurrentActive != null && listOpenDealingsCurrentActive.size() != 0 &&
                         (mListDealingXLine == null || mListDealingXLine.size() == 0)){
                     drawAllDealingsLimitLines(listOpenDealingsCurrentActive);
                 }
-                parseClosingDealings(listAllClosedDealings, listOpenDealingsCurrentActive);
             }
         }
     }

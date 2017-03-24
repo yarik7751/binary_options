@@ -244,7 +244,7 @@ public class XAxisRenderer extends AxisRenderer {
                             mTrans.pointValuesToPixel(pts);
 
                             float posX = pts[0];
-                            float posYLabel =  pts[1];
+                            float posYLabel = pts[1];
 
                             float paddingVert = Utils.convertDpToPixel(35);
                             float paddingHoriz = Utils.convertDpToPixel(5);
@@ -253,15 +253,15 @@ public class XAxisRenderer extends AxisRenderer {
                             float height_marker = height + paddingVert;
                             float width_marker = width + paddingHoriz;
 
-                            float paddingVert1 = Utils.convertDpToPixel(10);
-                            float paddingHoriz1 = Utils.convertDpToPixel(20);
+                            float paddingVert1 = Utils.convertDpToPixel(12);
+                            float paddingHoriz1 = Utils.convertDpToPixel(24);
                             float height1 = Utils.calcTextHeight(textPaint, strLabelY);
                             float width1 = Utils.calcTextWidth(textPaint, strLabelY);
                             float height_marker1 = height1 + paddingVert1;
                             float width_marker1 = width1 + paddingHoriz1;
 
-                            float height_marker2 = Utils.convertDpToPixel(10);
-                            float width_marker2 = Utils.convertDpToPixel(10);
+                            float height_marker2 = Utils.convertDpToPixel(12);
+                            float width_marker2 = Utils.convertDpToPixel(12);
 
                             if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
                                 line.enableDashedLine(10f, 10f, 0f);
@@ -278,7 +278,8 @@ public class XAxisRenderer extends AxisRenderer {
 
                                 c.drawBitmap(iconLabelY, posX - width_marker1 / 2, posYLabel - height_marker1/2, paint);
                                 c.drawBitmap(iconCMD, posX - width_marker2*4/3, posYLabel - height_marker2/2, paint);
-                                //c.drawText(strLabelY, posX, pos + heightYLabel, textPaint);
+                                c.drawText(strLabelY, posX - width_marker1 /2 + width_marker2*5/2 , posYLabel + height1, textPaint);
+
                             }
                         }
                     }
@@ -396,11 +397,13 @@ public class XAxisRenderer extends AxisRenderer {
         mLimitLinePaint.setPathEffect(limitLine.getDashPathEffect());
         mLimitLinePaint.setStyle(Paint.Style.STROKE);
         mLimitLinePaint.setColor(limitLine.getLineColor());
-        CustomBaseLimitLine line = (CustomBaseLimitLine)limitLine;
-        if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
-            line.enableDashedLine(10f, 10f, 0f);
-        }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
-            line.enableDashedLine(0f, 0f, 0f);
+        if(limitLine instanceof CustomBaseLimitLine){
+            CustomBaseLimitLine line = (CustomBaseLimitLine) limitLine;
+            if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
+                line.enableDashedLine(10f, 10f, 0f);
+            }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
+                line.enableDashedLine(0f, 0f, 0f);
+            }
         }
         c.drawPath(mLimitLinePath, mLimitLinePaint);
     }
@@ -416,6 +419,21 @@ public class XAxisRenderer extends AxisRenderer {
             float xOffset = limitLine.getLineWidth() + limitLine.getXOffset();
             final LimitLine.LimitLabelPosition labelPosition = limitLine.getLabelPosition();
 
+//            if (labelPosition == LimitLine.LimitLabelPosition.RIGHT_TOP) {
+//                final float labelLineHeight = Utils.calcTextHeight(mLimitLinePaint, label);
+//                mLimitLinePaint.setTextAlign(Align.LEFT);
+//                c.drawText(label, position[0] + xOffset, mViewPortHandler.contentTop() + yOffset + labelLineHeight, mLimitLinePaint);
+//            } else if (labelPosition == LimitLine.LimitLabelPosition.RIGHT_BOTTOM) {
+//                mLimitLinePaint.setTextAlign(Align.LEFT);
+//                c.drawText(label, position[0] + xOffset, mViewPortHandler.contentBottom() - yOffset, mLimitLinePaint);
+//            } else if (labelPosition == LimitLine.LimitLabelPosition.LEFT_TOP) {
+//                mLimitLinePaint.setTextAlign(Align.RIGHT);
+//                final float labelLineHeight = Utils.calcTextHeight(mLimitLinePaint, label);
+//                c.drawText(label, position[0] - xOffset, mViewPortHandler.contentTop() + yOffset + labelLineHeight, mLimitLinePaint);
+//            } else {
+//                mLimitLinePaint.setTextAlign(Align.RIGHT);
+//                c.drawText(label, position[0] - xOffset, mViewPortHandler.contentBottom() - yOffset, mLimitLinePaint);
+//            }
         }
     }
 }
