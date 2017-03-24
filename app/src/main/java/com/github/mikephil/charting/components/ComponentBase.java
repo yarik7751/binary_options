@@ -3,6 +3,7 @@ package com.github.mikephil.charting.components;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.view.View;
 
 import com.github.mikephil.charting.utils.Utils;
 
@@ -170,4 +171,5 @@ public abstract class ComponentBase {
     public boolean isEnabled() {
         return mEnabled;
     }
+
 }

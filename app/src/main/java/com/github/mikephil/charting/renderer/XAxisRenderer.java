@@ -2,6 +2,7 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,7 +10,9 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.components.LimitLine;
@@ -38,9 +41,7 @@ public class XAxisRenderer extends AxisRenderer {
 
     public XAxisRenderer(ViewPortHandler viewPortHandler, XAxis xAxis, Transformer trans) {
         super(viewPortHandler, trans, xAxis);
-
         this.mXAxis = xAxis;
-
         mAxisLabelPaint.setColor(Color.BLACK);
         mAxisLabelPaint.setTextAlign(Align.CENTER);
         mAxisLabelPaint.setTextSize(Utils.convertDpToPixel(10f));
@@ -97,7 +98,6 @@ public class XAxisRenderer extends AxisRenderer {
                 labelWidth,
                 labelHeight,
                 mXAxis.getLabelRotationAngle());
-
 
         mXAxis.mLabelWidth = Math.round(labelWidth);
         mXAxis.mLabelHeight = Math.round(labelHeight);
@@ -200,61 +200,86 @@ public class XAxisRenderer extends AxisRenderer {
                         if (width > mViewPortHandler.offsetRight() * 2 && x + width > mViewPortHandler.getChartWidth()) {
                             x -= width / 2;
                         }
-                        // avoid clipping of the first
                     } else if (i == 0) {
                         float width = Utils.calcTextWidth(mAxisLabelPaint, label);
                         x += width / 2;
                     }
                 }
                 drawLabel(c, label, x, pos, anchor, labelRotationAngleDegrees);
+
                 List<LimitLine> limitLines = mXAxis.getLimitLines();
+                if(limitLines != null && limitLines.size()!= 0){
+                    float[] pts = new float[2];
+                    Paint paint = new Paint();
+                    paint.setStyle(Paint.Style.FILL);
+                    paint.setColor(Color.WHITE);
 
-                float[] pts = new float[2];
+                    Paint textPaint = mAxisLabelPaint;
+                    textPaint.setColor(Color.WHITE);
+                    textPaint.setTextSize(mAxisLabelPaint.getTextSize());
+                    textPaint.setPathEffect(null);
+                    textPaint.setStrokeWidth(0.5f);
 
-                Paint paint = new Paint();
-                paint.setStyle(Paint.Style.FILL);
-                paint.setColor(Color.WHITE);
+                    for (LimitLine l : limitLines) {
+                        if (l instanceof CustomBaseLimitLine) {
+                            CustomBaseLimitLine line = (CustomBaseLimitLine) l;
+                            OrderAnswer orderAnswer = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
 
-                Paint textPaint = mAxisLabelPaint;
-                textPaint.setColor(Color.WHITE);
-                textPaint.setTextSize(mAxisLabelPaint.getTextSize());
-                textPaint.setPathEffect(null);
-                textPaint.setStrokeWidth(0.5f);
+                            String strLabelX = String.valueOf(ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(line.getLimit())));
+                            String strLabelY = ":32";
+                            Bitmap iconLabelX = line.getmBitmapLabelX();
+                            Bitmap iconLabelY = line.getmBitmapLabelY();
+                            Bitmap iconCMD = null;
+                            if(orderAnswer.getCmd() == 1){
+                                iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.down);
+                            }else{
+                                iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
+                            }
 
-                for (LimitLine l : limitLines) {
-                    if (l instanceof CustomBaseLimitLine) {
-                        CustomBaseLimitLine line = (CustomBaseLimitLine) l;
-                        OrderAnswer orderAnswer = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                        Bitmap iconLabelX = line.getmBitmapLabelX();
-                        Bitmap iconLabelY = line.getmBitmapLabelY();
+                            line.setLineWidth(1.0f);
+                            line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
 
-                        line.setLineWidth(1.0f);
-                        line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+                            pts[0] = l.getLimit();
+                            pts[1] =  Float.valueOf(String.valueOf(orderAnswer.getOpenPrice()));
+                            mTrans.pointValuesToPixel(pts);
 
-                        pts[0] = l.getLimit();
-                        mTrans.pointValuesToPixel(pts);
-                        String strLabel = String.valueOf(ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(line.getLimit())));
+                            float posX = pts[0];
+                            float posYLabel =  pts[1];
 
-                        float paddingVert = Utils.convertDpToPixel(35);
-                        float paddingHoriz = Utils.convertDpToPixel(5);
-                        float height = Utils.calcTextHeight(textPaint, strLabel);
-                        float width = Utils.calcTextWidth(textPaint, strLabel);
-                        float posX = pts[0];
-                        float height_marker = height + paddingVert;
-                        float width_marker = width + paddingHoriz;
+                            float paddingVert = Utils.convertDpToPixel(35);
+                            float paddingHoriz = Utils.convertDpToPixel(5);
+                            float height = Utils.calcTextHeight(textPaint, strLabelX);
+                            float width = Utils.calcTextWidth(textPaint, strLabelX);
+                            float height_marker = height + paddingVert;
+                            float width_marker = width + paddingHoriz;
 
-                        if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
-                            line.enableDashedLine(10f, 10f, 0f);
-                        }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
-                            line.enableDashedLine(0f, 0f, 0f);
-                        }
-                        if (iconLabelX != null /*&& iconLabelY != null*/) {
-                            iconLabelX = Bitmap.createScaledBitmap(iconLabelX, (int) width_marker, (int) height_marker, false);
-                            c.drawBitmap(iconLabelX, posX - width_marker / 2, pos - height_marker / 4, paint);
-                            c.drawText(strLabel, posX, pos + paddingVert/4, textPaint);
+                            float paddingVert1 = Utils.convertDpToPixel(10);
+                            float paddingHoriz1 = Utils.convertDpToPixel(20);
+                            float height1 = Utils.calcTextHeight(textPaint, strLabelY);
+                            float width1 = Utils.calcTextWidth(textPaint, strLabelY);
+                            float height_marker1 = height1 + paddingVert1;
+                            float width_marker1 = width1 + paddingHoriz1;
 
-                            //iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_marker, (int) height_marker, false);
-                           // c.drawBitmap(iconLabelY, posX - width_marker / 2, Float.valueOf(String.valueOf(orderAnswer.getOpenPrice())), paint);
+                            float height_marker2 = Utils.convertDpToPixel(10);
+                            float width_marker2 = Utils.convertDpToPixel(10);
+
+                            if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
+                                line.enableDashedLine(10f, 10f, 0f);
+                            }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
+                                line.enableDashedLine(0f, 0f, 0f);
+                            }
+                            if (iconLabelX != null && iconLabelY != null && iconCMD != null) {
+                                iconLabelX = Bitmap.createScaledBitmap(iconLabelX, (int) width_marker, (int) height_marker, false);
+                                iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_marker1, (int) height_marker1, false);
+                                iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_marker2, (int) height_marker2, false);
+
+                                c.drawBitmap(iconLabelX, posX - width_marker / 2, pos - height_marker / 4, paint);
+                                c.drawText(strLabelX, posX, pos + paddingVert/4, textPaint);
+
+                                c.drawBitmap(iconLabelY, posX - width_marker1 / 2, posYLabel - height_marker1/2, paint);
+                                c.drawBitmap(iconCMD, posX - width_marker2*4/3, posYLabel - height_marker2/2, paint);
+                                //c.drawText(strLabelY, posX, pos + heightYLabel, textPaint);
+                            }
                         }
                     }
                 }
@@ -314,7 +339,6 @@ public class XAxisRenderer extends AxisRenderer {
 
         gridLinePath.moveTo(x, mViewPortHandler.contentBottom());
         gridLinePath.lineTo(x, mViewPortHandler.contentTop());
-
         // draw a path because lines don't support dashing on lower android versions
         c.drawPath(gridLinePath, mGridPaint);
 
@@ -334,26 +358,27 @@ public class XAxisRenderer extends AxisRenderer {
         position[0] = 0;
         position[1] = 0;
 
+
         for (int i = 0; i < limitLines.size(); i++) {
-
             LimitLine l = limitLines.get(i);
-
             if (!l.isEnabled())
                 continue;
-
             int clipRestoreCount = c.save();
+
+            position[0] = l.getLimit();
+            if(l instanceof CustomBaseLimitLine){
+                OrderAnswer orderAnswer = new Gson().fromJson(l.getLabel(), OrderAnswer.class);
+                position[1] =  Float.valueOf(String.valueOf(orderAnswer.getOpenPrice()));
+            }else{
+                position[1] = 0.f;
+            }
             mLimitLineClippingRect.set(mViewPortHandler.getContentRect());
             mLimitLineClippingRect.inset(-l.getLineWidth(), 0.f);
             c.clipRect(mLimitLineClippingRect);
 
-            position[0] = l.getLimit();
-            position[1] = 0.f;
-
             mTrans.pointValuesToPixel(position);
-
             renderLimitLineLine(c, l, position);
             renderLimitLineLabel(c, l, position, 2.f + l.getYOffset());
-
             c.restoreToCount(clipRestoreCount);
         }
     }
@@ -382,79 +407,15 @@ public class XAxisRenderer extends AxisRenderer {
 
     public void renderLimitLineLabel(Canvas c, LimitLine limitLine, float[] position, float yOffset) {
         String label = limitLine.getLabel();
-        // if drawing the limit-value label is enabled
         if (label != null && !label.equals("")) {
             mLimitLinePaint.setStyle(limitLine.getTextStyle());
             mLimitLinePaint.setPathEffect(null);
             mLimitLinePaint.setColor(limitLine.getTextColor());
             mLimitLinePaint.setStrokeWidth(0.5f);
             mLimitLinePaint.setTextSize(limitLine.getTextSize());
-
             float xOffset = limitLine.getLineWidth() + limitLine.getXOffset();
             final LimitLine.LimitLabelPosition labelPosition = limitLine.getLabelPosition();
-/*
-            CustomBaseLimitLine line = (CustomBaseLimitLine) limitLine;
-            OrderAnswer orderAnswer = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-            Bitmap iconLabel = null;
-            if(orderAnswer.getCmd() == 0 && orderAnswer.getOpenPrice() < line.getCurrentY() ||
-                    orderAnswer.getCmd() == 1 && orderAnswer.getOpenPrice() > line.getCurrentY() ){
-                iconLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.green_vert);
-                line.setLineColor(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.chat_green));
-            }else{
-                iconLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.red_vert);
-                line.setLineColor(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.color_red_chart));
-            }
-            line.setLineWidth(1.0f);
-            line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
 
-            Paint paint = new Paint();
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.WHITE);
-
-            Paint textPaint = mAxisLabelPaint;
-            textPaint.setColor(Color.WHITE);
-            textPaint.setTextSize(mAxisLabelPaint.getTextSize());
-            textPaint.setPathEffect(null);
-            textPaint.setStrokeWidth(0.5f);
-            float[] pts = new float[2];
-            pts[0] = limitLine.getLimit();
-            mTrans.pointValuesToPixel(pts);
-            String strLabel = String.valueOf(ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(line.getLimit())));
-
-            float paddingVert = Utils.convertDpToPixel(35);
-            float paddingHoriz = Utils.convertDpToPixel(5);
-            float height = Utils.calcTextHeight(textPaint, strLabel);
-            float width = Utils.calcTextWidth(textPaint, strLabel);
-            float posX = pts[0];
-            float height_marker = height + paddingVert;
-            float width_marker = width + paddingHoriz;
-
-            if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
-
-            }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
-
-            }
-            if (iconLabel != null) {
-                iconLabel = Bitmap.createScaledBitmap(iconLabel, (int) width_marker, (int) height_marker, false);
-                c.drawBitmap(iconLabel, posX - width_marker / 2, yOffset - height_marker / 4, paint);
-                c.drawText(strLabel, posX, yOffset + paddingVert/4, textPaint);
-            }*/
-/*
-           if (labelPosition == LimitLine.LimitLabelPosition.RIGHT_TOP) {
-                final float labelLineHeight = Utils.calcTextHeight(mLimitLinePaint, label);
-                mLimitLinePaint.setTextAlign(Align.LEFT);
-                c.drawText(label, position[0] + xOffset, mViewPortHandler.contentTop() + yOffset + labelLineHeight, mLimitLinePaint);
-            } else if (labelPosition == LimitLine.LimitLabelPosition.RIGHT_BOTTOM) {
-                mLimitLinePaint.setTextAlign(Align.LEFT);
-                c.drawText(label, position[0] + xOffset, mViewPortHandler.contentBottom() - yOffset, mLimitLinePaint);
-            } else if (labelPosition == LimitLine.LimitLabelPosition.LEFT_TOP) {
-                mLimitLinePaint.setTextAlign(Align.RIGHT);
-                final float labelLineHeight = Utils.calcTextHeight(mLimitLinePaint, label);
-                c.drawText(label, position[0] - xOffset, mViewPortHandler.contentTop() + yOffset + labelLineHeight, mLimitLinePaint);
-            } else {
-                mLimitLinePaint.setTextAlign(Align.RIGHT);
-                c.drawText(label, position[0] - xOffset, mViewPortHandler.contentBottom() - yOffset, mLimitLinePaint);
-            }*/
         }
     }
 }

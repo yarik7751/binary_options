@@ -18,10 +18,11 @@ public class CustomBaseLimitLine extends LimitLine {
     private Bitmap mBitmapLabelX = null;
     private Bitmap mBitmapLabelY = null;
 
-    private LimitLinesType mTypeLimitLine = LimitLinesType.LINE_CURRENT_SOCKET;
+    private LimitLinesType mTypeLimitLine = LimitLinesType.LINE_HORIZONTAL_CURRENT_SOCKET;
 
     public enum LimitLinesType {
-        LINE_CURRENT_SOCKET,
+        LINE_HORIZONTAL_CURRENT_SOCKET,
+        LINE_HORIZONTAL_CURRENT_DEALING,
         LINE_VERTICAL_DEALING_ACTIVE,
         LINE_VERTICAL_DEALING_PASS,
     }
@@ -56,5 +57,13 @@ public class CustomBaseLimitLine extends LimitLine {
 
     public void setmBitmapLabelY(Bitmap mBitmapLabelY) {
         this.mBitmapLabelY = mBitmapLabelY;
+    }
+
+    public String getmLabel() {
+        return mLabel;
+    }
+
+    public void setmLabel(String mLabel) {
+        this.mLabel = mLabel;
     }
 }

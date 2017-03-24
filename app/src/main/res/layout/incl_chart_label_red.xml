@@ -18,14 +18,13 @@
             android:id="@+id/img_dealing_position"
             android:layout_width="14dp"
             android:layout_height="14dp"
-            android:layout_marginLeft="4dp"
-            android:src="@drawable/down"/>
+            android:layout_marginLeft="4dp"/>
 
         <TextView
             android:id="@+id/tv_dealing_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
+            android:layout_marginLeft="6dp"
             android:layout_marginRight="8dp"
             tools:text=":34"
             android:textColor="@android:color/white"

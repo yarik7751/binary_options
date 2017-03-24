@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -20,7 +19,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -42,7 +40,6 @@ import com.elatesoftware.grandcapital.api.pojo.SignalAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
-import com.elatesoftware.grandcapital.models.Dealing;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.EarlyClosureService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
@@ -60,16 +57,14 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.ChartTouchListener;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.MPPointD;
 import com.google.gson.Gson;
 import com.github.mikephil.charting.utils.MPPointF;
 
@@ -77,16 +72,6 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import butterknife.BindBitmap;
-import butterknife.BindColor;
-import butterknife.BindDrawable;
-import butterknife.BindInt;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 public class TerminalFragment extends Fragment {
 
@@ -111,44 +96,82 @@ public class TerminalFragment extends Fragment {
     public static boolean isOpen = false;
     public boolean isDirection = true;
 
-    private Unbinder unbinder;
-    @BindView(R.id.chart) LineChart mChart;
-    @BindView(R.id.tvBalanceTerminal) TextView tvBalance;
-    @BindView(R.id.tvDepositTerminal) TextView tvDeposit;
-    @BindView(R.id.tvLeftTabActiveTerminal) TextView tvLeftActive;
-    @BindView(R.id.tvRightTabActiveTerminal) TextView tvRightActive;
-    @BindView(R.id.tvValueTabActiveTerminal) TextView tvValueActive;
-    @BindView(R.id.tvMinusTabAmountTerminal) TextView tvMinusAmount;
-    @BindView(R.id.tvPlusTabAmountTerminal) TextView tvPlusAmount;
-    @BindView(R.id.tvValueTabAmountTerminal) EditText etValueAmount;
-    @BindView(R.id.tvMinusTabTimeTerminal) TextView tvMinusTime;
-    @BindView(R.id.tvPlusTabTimeTerminal) TextView tvPlusTime;
-    @BindView(R.id.tvValueTabTimeTerminal) EditText etValueTime;
-    @BindView(R.id.llLowerTerminal) LinearLayout llLowerTerminal;
-    @BindView(R.id.llHigherTerminal) LinearLayout llHigherTerminal;
-    @BindView(R.id.ll_buttons) LinearLayout llButtons;
-    @BindView(R.id.ll_deposit) LinearLayout llDeposit;
-    @BindView(R.id.progress_bar) LinearLayout llProgressBar;
-    @BindView(R.id.rl_chart) RelativeLayout rlChart;
-    @BindView(R.id.fl_main)  FrameLayout flMain;
-    @BindView(R.id.ll_top_panel) LinearLayout llTopPanel;
-    @BindView(R.id.tv_currency) TextView tvCurrentActive;
-    @BindView(R.id.tv_amout)  TextView tvCurrentActiveAmount;
-    @BindView(R.id.tv_time1_value) TextView tvSignalMinutes1;
-    @BindView(R.id.tv_time2_value) TextView tvSignalMinutes5;
-    @BindView(R.id.tv_time3_value) TextView tvSignalMinutes15;
-    @BindView(R.id.tvErrorSignal) TextView tvErrorSignal;
-    @BindView(R.id.rlErrorSignal) RelativeLayout rlErrorSignal;
-    @BindView(R.id.tvValueRewardTerminal) TextView tvValueRewardTerminal;
-    @BindDrawable(R.drawable.marker_close_dealing) Drawable drawableMarkerDealing;
-    @BindBitmap(R.drawable.whitevert) Bitmap bitmapIconCurrentLimitLabel;
-    @BindBitmap(R.drawable.green_vert) Bitmap bitmapIconGreenXLabel;
-    @BindBitmap(R.drawable.red_vert) Bitmap bitmapIconRedXLabel;
-    @BindColor(R.color.color_red_chart) int colorRed;
-    @BindColor(R.color.chat_green) int colorGreen;
+  //  private Unbinder unbinder;
+   /*@Nullable @BindView(R.id.chart) LineChart mChart;
+   @Nullable @BindView(R.id.tvBalanceTerminal) TextView tvBalance;
+   @Nullable @BindView(R.id.tvDepositTerminal) TextView tvDeposit;
+   @Nullable @BindView(R.id.tvLeftTabActiveTerminal) TextView tvLeftActive;
+   @Nullable @BindView(R.id.tvRightTabActiveTerminal) TextView tvRightActive;
+   @Nullable @BindView(R.id.tvValueTabActiveTerminal) TextView tvValueActive;
+   @Nullable @BindView(R.id.tvMinusTabAmountTerminal) TextView tvMinusAmount;
+   @Nullable @BindView(R.id.tvPlusTabAmountTerminal) TextView tvPlusAmount;
+   @Nullable @BindView(R.id.tvValueTabAmountTerminal) EditText etValueAmount;
+   @Nullable @BindView(R.id.tvMinusTabTimeTerminal) TextView tvMinusTime;
+   @Nullable @BindView(R.id.tvPlusTabTimeTerminal) TextView tvPlusTime;
+   @Nullable @BindView(R.id.tvValueTabTimeTerminal) EditText etValueTime;
+   @Nullable @BindView(R.id.llLowerTerminal) LinearLayout llLowerTerminal;
+   @Nullable @BindView(R.id.llHigherTerminal) LinearLayout llHigherTerminal;
+   @Nullable @BindView(R.id.ll_buttons) LinearLayout llButtons;
+   @Nullable @BindView(R.id.ll_deposit) LinearLayout llDeposit;
+   @Nullable @BindView(R.id.progress_bar) LinearLayout llProgressBar;
+   @Nullable @BindView(R.id.rl_chart) RelativeLayout rlChart;
+   @Nullable @BindView(R.id.fl_main)  FrameLayout flMain;
+   @Nullable @BindView(R.id.ll_top_panel) LinearLayout llTopPanel;
+   @Nullable @BindView(R.id.tv_currency) TextView tvCurrentActive;
+   @Nullable @BindView(R.id.tv_amout)  TextView tvCurrentActiveAmount;
+   @Nullable @BindView(R.id.tv_time1_value) TextView tvSignalMinutes1;
+   @Nullable @BindView(R.id.tv_time2_value) TextView tvSignalMinutes5;
+   @Nullable @BindView(R.id.tv_time3_value) TextView tvSignalMinutes15;
+   @Nullable @BindView(R.id.tvErrorSignal) TextView tvErrorSignal;
+   @Nullable @BindView(R.id.rlErrorSignal) RelativeLayout rlErrorSignal;
+   @Nullable @BindView(R.id.tvValueRewardTerminal) TextView tvValueRewardTerminal;
+   @Nullable @BindDrawable(R.drawable.marker_close_dealing) Drawable drawableMarkerDealing;
+   @Nullable @BindBitmap(R.drawable.whitevert) Bitmap bitmapIconCurrentLimitLabel;
+   @Nullable @BindBitmap(R.drawable.green_vert) Bitmap bitmapIconGreenXLabel;
+   @Nullable @BindBitmap(R.drawable.red_vert) Bitmap bitmapIconRedXLabel;
+   @Nullable @BindColor(R.color.color_red_chart) int colorRed;
+   @Nullable @BindColor(R.color.chat_green)      int colorGreen;*/
+    private LineChart mChart;
+    private TextView tvBalance;
+    private TextView tvDeposit;
+    private TextView tvLeftActive;
+    private TextView tvRightActive;
+    private TextView tvValueActive;
+    private TextView tvMinusAmount;
+    private TextView tvPlusAmount;
+    private EditText etValueAmount;
+    private TextView tvMinusTime;
+    private TextView tvPlusTime;
+    private EditText etValueTime;
+    private LinearLayout llLowerTerminal;
+    private LinearLayout llHigherTerminal;
+    private LinearLayout llButtons, llDeposit;
+    private LinearLayout llProgressBar;
+    private RelativeLayout rlChart;
+    private FrameLayout flMain;
+    private LinearLayout llTopPanel;
+    private TextView tvCurrentActive;
+    private TextView tvCurrentActiveAmount;
+    private TextView tvSignalMinutes1;
+    private TextView tvSignalMinutes5;
+    private TextView tvSignalMinutes15;
+    private TextView tvErrorSignal;
+    private RelativeLayout rlErrorSignal;
+    private TextView tvValueRewardTerminal;
+
+    private Drawable drawableMarkerDealing;
+    private Bitmap bitmapIconCurrentLimitLabel;
+
+    private Bitmap bitmapIconGreenXLabel;
+    private Bitmap bitmapIconRedXLabel;
 
     private Bitmap bitmapIconRedYLabel;
     private Bitmap bitmapIconGreenYLabel;
+    private Bitmap bitmapIconCmdLower;
+    private Bitmap bitmapIconCmdHeight;
+
+    private int colorRed;
+    private int colorGreen;
 
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
     private Dialog dialogOpenAccount;
@@ -157,7 +180,8 @@ public class TerminalFragment extends Fragment {
     private ImageView imgPointCurrent;
     private YAxis rightYAxis;
     private XAxis xAxis;
-    private CustomBaseLimitLine currentLine;
+    private CustomBaseLimitLine currentLineSocket;
+    private CustomBaseLimitLine currentLineDealing;
 
     private Thread threadSymbolHistory;
 
@@ -185,18 +209,66 @@ public class TerminalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
-        unbinder = ButterKnife.bind(this, parentView);
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onCreateView Terminal");
         BaseActivity.backToRootFragment = false;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
 
+        drawableMarkerDealing = getResources().getDrawable(R.drawable.marker_close_dealing);
+        bitmapIconCurrentLimitLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.whitevert);
+        bitmapIconGreenXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_vert);
+        bitmapIconRedXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_vert);
+        colorGreen = getResources().getColor(R.color.chat_green);
+        colorRed = getResources().getColor(R.color.color_red_chart);
+
+        bitmapIconRedYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(getContext()).inflate(R.layout.incl_chart_label_red, null));
+        bitmapIconGreenYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(getContext()).inflate(R.layout.incl_chart_label_green, null));
+        //bitmapIconRedYLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.chart_label_down_background);
+        //bitmapIconGreenYLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.chart_label_up_background);
+        bitmapIconCmdLower = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.down);
+        bitmapIconCmdHeight = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.up);
+
+        mChart = (LineChart) parentView.findViewById(R.id.chart);
+        tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
+        tvDeposit = (TextView) parentView.findViewById(R.id.tvDepositTerminal);
+
+        tvLeftActive = (TextView) parentView.findViewById(R.id.tvLeftTabActiveTerminal);
+        tvRightActive = (TextView) parentView.findViewById(R.id.tvRightTabActiveTerminal);
+        tvValueActive = (TextView) parentView.findViewById(R.id.tvValueTabActiveTerminal);
+
+        tvMinusAmount = (TextView) parentView.findViewById(R.id.tvMinusTabAmountTerminal);
+        tvPlusAmount = (TextView) parentView.findViewById(R.id.tvPlusTabAmountTerminal);
+        etValueAmount = (EditText) parentView.findViewById(R.id.tvValueTabAmountTerminal);
+
+        tvMinusTime = (TextView) parentView.findViewById(R.id.tvMinusTabTimeTerminal);
+        tvPlusTime = (TextView) parentView.findViewById(R.id.tvPlusTabTimeTerminal);
+        etValueTime = (EditText) parentView.findViewById(R.id.tvValueTabTimeTerminal);
+
+        llLowerTerminal = (LinearLayout) parentView.findViewById(R.id.llLowerTerminal);
+        llHigherTerminal = (LinearLayout) parentView.findViewById(R.id.llHigherTerminal);
+        llTopPanel = (LinearLayout) parentView.findViewById(R.id.ll_top_panel);
+
+        llButtons = (LinearLayout) parentView.findViewById(R.id.ll_buttons);
+        llDeposit = (LinearLayout) parentView.findViewById(R.id.ll_deposit);
+        rlChart = (RelativeLayout) parentView.findViewById(R.id.rl_chart);
+        llProgressBar = (LinearLayout) parentView.findViewById(R.id.progress_bar);
+        flMain = (FrameLayout) parentView.findViewById(R.id.fl_main);
+
+        tvSignalMinutes1 = (TextView) parentView.findViewById(R.id.tv_time1_value);
+        tvSignalMinutes5 = (TextView) parentView.findViewById(R.id.tv_time2_value);
+        tvSignalMinutes15 = (TextView) parentView.findViewById(R.id.tv_time3_value);
+        tvCurrentActive = (TextView) parentView.findViewById(R.id.tv_currency);
+        tvCurrentActiveAmount = (TextView) parentView.findViewById(R.id.tv_amout);
+        tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
+        rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
+        tvValueRewardTerminal = (TextView) parentView.findViewById(R.id.tvValueRewardTerminal);
+
         openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
         closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
+
         openDealingView.setTag(TAG_OPEN_DEALING);
         closeDealingView.setTag(TAG_CLOSE_DEALING);
         return parentView;
     }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -236,7 +308,6 @@ public class TerminalFragment extends Fragment {
                 ConventString.setMaskTime(etValueTime, hasFocus);
             }
         });
-
         etValueAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -249,7 +320,6 @@ public class TerminalFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {}
         });
-
         etValueTime.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -262,7 +332,6 @@ public class TerminalFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {}
         });
-
         tvMinusAmount.setOnClickListener(v -> {
             ConventString.changeAmountValue(etValueAmount, false);
         });
@@ -316,8 +385,8 @@ public class TerminalFragment extends Fragment {
         });
         initializationChart();
         initializationCurrentPoint();
+        setSizeHeight();
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -350,11 +419,6 @@ public class TerminalFragment extends Fragment {
         isOpen = false;
         super.onPause();
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(true);
-    }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
     }
     @Override
     public void onDestroy() {
@@ -411,6 +475,8 @@ public class TerminalFragment extends Fragment {
 
     private void initializationChart() {
         mChart.setNoDataText(getResources().getString(R.string.request_error_title));
+        mChart.setDragDecelerationFrictionCoef(0.3f);
+        mChart.setDragDecelerationEnabled(true);
         mChart.setHighlightPerDragEnabled(false);
         mChart.setHighlightPerTapEnabled(false);
         mChart.setPadding(0, 0, 0, 0);
@@ -463,48 +529,25 @@ public class TerminalFragment extends Fragment {
         rightYAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
         rightYAxis.setStartAtZero(false);
 
-        mChart.setOnChartGestureListener(new OnChartGestureListener() {
-            @Override
-            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
+        mChart.setOnTouchListener((v, event) -> {
+            if(mListDealingXLine != null && mListDealingXLine.size() != 0){
+                float tappedX = event.getX();
+                float tappedY = event.getY();
+                MPPointD point = mChart.getTransformer(YAxis.AxisDependency.RIGHT).getValuesByTouchPoint(tappedX, tappedY);
+                for(CustomBaseLimitLine line: mListDealingXLine){
+                    if((line.getLimit() - point.x <= 7000 && line.getLimit() - point.x >= 0) ||
+                            (point.x - line.getLimit() <= 7000 && point.x - line.getLimit() >= 0)){
+                        for(CustomBaseLimitLine l: mListDealingXLine){
+                            l.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
+                        }
+                        line.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE);
+                        break;
+                    }
+                }
             }
-
-            @Override
-            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
-            }
-
-            @Override
-            public void onChartLongPressed(MotionEvent me) {
-
-            }
-
-            @Override
-            public void onChartDoubleTapped(MotionEvent me) {
-
-            }
-
-            @Override
-            public void onChartSingleTapped(MotionEvent me) {
-
-            }
-
-            @Override
-            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-
-            }
-
-            @Override
-            public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-            }
-
-            @Override
-            public void onChartTranslate(MotionEvent me, float dX, float dY) {
-
-            }
+            return false;
         });
     }
-
     private void initializationCurrentPoint() {
         initRocketAnimation();
         imgPointCurrent = new ImageView(getContext());
@@ -744,7 +787,7 @@ public class TerminalFragment extends Fragment {
                 data.notifyDataChanged();
                 mChart.notifyDataSetChanged();
                 mChart.invalidate();
-                drawCurrentYLimitLine(entry);
+                drawSocketCurrentYLimitLine(entry);
                 typePoint = POINT_SIMPLY;
                 mCurrentValueY = answer.getAsk();
                 redrawXLimitLines();
@@ -815,7 +858,7 @@ public class TerminalFragment extends Fragment {
                         Float.valueOf(String.valueOf(mCurrentValueY)), null, null);
                 mChart.zoom(8.6f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
                 getActivity().runOnUiThread(() -> {
-                    drawCurrentYLimitLine(entry);
+                    drawSocketCurrentYLimitLine(entry);
                 });
             }
             GrandCapitalApplication.closeAndOpenSocket(symbol);
@@ -823,13 +866,13 @@ public class TerminalFragment extends Fragment {
         });
         threadSymbolHistory.start();
     }
-    private void drawCurrentYLimitLine(Entry entry) {
-        if (currentLine != null) {
-            rightYAxis.removeLimitLine(currentLine);
+    private void drawSocketCurrentYLimitLine(Entry entry) {
+        if (currentLineSocket != null) {
+            rightYAxis.removeLimitLine(currentLineSocket);
         }
-        currentLine = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), bitmapIconCurrentLimitLabel, null);
-        currentLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_CURRENT_SOCKET);
-        rightYAxis.addLimitLine(currentLine);
+        currentLineSocket = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), bitmapIconCurrentLimitLabel, null);
+        currentLineSocket.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_CURRENT_SOCKET);
+        rightYAxis.addLimitLine(currentLineSocket);
         drawCurrentPoint(entry);
     }
     private void drawCurrentPoint(Entry entry) {
@@ -1063,7 +1106,7 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             listCurrentClosingDealings.add(new Gson().fromJson(intent.getStringExtra(CheckDealingService.RESPONSE), OrderAnswer.class));
-            new Handler().postDelayed(() -> requestOrders(), 3000);
+            new Handler().postDelayed(() -> requestOrders(), 2000);
         }
     }
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
