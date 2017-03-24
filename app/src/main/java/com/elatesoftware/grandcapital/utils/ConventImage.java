@@ -30,4 +30,20 @@ public class ConventImage {
         );
         return paddingImage;
     }
+
+    public static Bitmap loadBitmapFromView(View v) {
+        if(v == null) {
+            return null;
+        }
+        v.setDrawingCacheEnabled(true);
+        v.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        v.layout(0, 0, v.getMeasuredWidth(), v.getMeasuredHeight());
+        v.buildDrawingCache(true);
+        Bitmap bitmap = Bitmap.createBitmap(v.getDrawingCache(true));
+        if(bitmap.isRecycled()) {
+            bitmap.recycle();
+        }
+        return bitmap;
+    }
 }

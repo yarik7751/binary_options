@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:background="@color/dialog_bg">
+    android:background="@color/dialog_bg"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:paddingBottom="8dp"
-        android:background="@drawable/shadow">
+        android:background="@drawable/shadow"
+        android:paddingBottom="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:background="@color/dialog_bg"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
             <TextView
-                android:layout_height="wrap_content"
+                android:id="@+id/tvToolbarDialog"
+                style="@style/BoldText"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/open_account_title"
-                style="@style/BoldText"
-                android:textSize="16sp"
-                android:id="@+id/tvToolbarDialog" />
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -52,56 +52,58 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:orientation="vertical"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:orientation="vertical">
 
         <TextView
-            android:layout_height="wrap_content"
+            android:id="@+id/tvInfoMsg"
+            style="@style/LigthText"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="@string/open_account_message"
-            style="@style/LigthText"
-            android:id="@+id/tvInfoMsg"
             android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
         android:layout_marginTop="20dp"
-        android:gravity="right|bottom">
+        android:gravity="right|bottom"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/btn_open_accaunt"
             style="@style/AccentButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_gravity="center_horizontal"
             android:text="@string/open_account"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
 
         <LinearLayout
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="50dp"
             android:layout_gravity="center_horizontal"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="@dimen/login_page_link_block_padding">
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:orientation="vertical">
 
             <TextView
-                android:text="@string/later"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/tv_later"
                 style="@style/AdditionalText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/later"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:id="@+id/tv_later" />
+                android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
