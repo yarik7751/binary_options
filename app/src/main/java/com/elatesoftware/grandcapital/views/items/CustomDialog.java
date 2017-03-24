@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.activities.SignInActivity;
 
 public class CustomDialog {
@@ -77,6 +78,7 @@ public class CustomDialog {
             activity.startActivity(intent);
             CustomSharedPreferences.setIntervalAdvertising(activity.getApplicationContext(), -1);
             dialog.cancel();
+            BaseActivity.removeTerminal();
             activity.finish();
         });
         tvCancel.setOnClickListener(v -> {

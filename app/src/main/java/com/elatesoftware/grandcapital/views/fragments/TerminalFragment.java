@@ -206,8 +206,8 @@ public class TerminalFragment extends Fragment {
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
-        etValueAmount.clearFocus();
-        etValueTime.clearFocus();
+        /*etValueAmount.clearFocus();
+        etValueTime.clearFocus();*/
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
             if (etValueAmount.isFocused()) {
@@ -220,8 +220,16 @@ public class TerminalFragment extends Fragment {
                 requestEarlyClosure();
             }*/
         });
-        etValueAmount.setOnFocusChangeListener((v, hasFocus) -> ConventString.setMaskAmount(etValueAmount, hasFocus));
-        etValueTime.setOnFocusChangeListener((v, hasFocus) -> ConventString.setMaskTime(etValueTime, hasFocus));
+        etValueAmount.setOnFocusChangeListener((v, hasFocus) -> {
+            if(etValueAmount != null) {
+                ConventString.setMaskAmount(etValueAmount, hasFocus);
+            }
+        });
+        etValueTime.setOnFocusChangeListener((v, hasFocus) -> {
+            if(etValueTime != null) {
+                ConventString.setMaskTime(etValueTime, hasFocus);
+            }
+        });
 
         etValueAmount.addTextChangedListener(new TextWatcher() {
             @Override
@@ -494,6 +502,9 @@ public class TerminalFragment extends Fragment {
             }
         });
     }
+
+
+
     private void initializationCurrentPoint() {
         initRocketAnimation();
         imgPointCurrent = new ImageView(getContext());
@@ -505,32 +516,36 @@ public class TerminalFragment extends Fragment {
         rocketAnimation.start();
     }
     private void initRocketAnimation() {
-        rocketAnimation = new CustomAnimationDrawable();
-        rocketAnimation.setOneShot(true);
-        //Log.d(TAG, "initRocketAnimation()");
-        for (int i = 10; i >= 3; i--) {
-            Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
-            rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
-        }
+        if(isAdded()) {
+            rocketAnimation = new CustomAnimationDrawable();
+            rocketAnimation.setOneShot(true);
+            //Log.d(TAG, "initRocketAnimation()");
+            for (int i = 10; i >= 3; i--) {
+                Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
+                rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
+            }
 
-        rocketAnimation.setAnimationEndListner(() -> {
-            initRocketAnimationBack();
-            imgPointCurrent.setBackgroundDrawable(rocketAnimationBack);
-            rocketAnimationBack.start();
-        });
+            rocketAnimation.setAnimationEndListner(() -> {
+                initRocketAnimationBack();
+                imgPointCurrent.setBackgroundDrawable(rocketAnimationBack);
+                rocketAnimationBack.start();
+            });
+        }
     }
     private void initRocketAnimationBack() {
-        rocketAnimationBack = new CustomAnimationDrawable();
-        rocketAnimationBack.setOneShot(true);
-        for (int i = 3; i <= 10; i++) {
-            Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
-            rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
+        if(isAdded()) {
+            rocketAnimationBack = new CustomAnimationDrawable();
+            rocketAnimationBack.setOneShot(true);
+            for (int i = 3; i <= 10; i++) {
+                Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
+                rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
+            }
+            rocketAnimationBack.setAnimationEndListner(() -> {
+                initRocketAnimation();
+                imgPointCurrent.setBackgroundDrawable(rocketAnimation);
+                rocketAnimation.start();
+            });
         }
-        rocketAnimationBack.setAnimationEndListner(() -> {
-            initRocketAnimation();
-            imgPointCurrent.setBackgroundDrawable(rocketAnimation);
-            rocketAnimation.start();
-        });
     }
 
     private void setSizeHeight() {
@@ -623,8 +638,10 @@ public class TerminalFragment extends Fragment {
         }
     }
     private void requestOrders() {
-        Intent intentService = new Intent(getActivity(), OrdersService.class);
-        getActivity().startService(intentService);
+        if(isAdded()) {
+            Intent intentService = new Intent(getActivity(), OrdersService.class);
+            getActivity().startService(intentService);
+        }
     }
 
     private void parseResponseSymbolHistory() {
@@ -917,7 +934,7 @@ public class TerminalFragment extends Fragment {
     private void showViewCloseDealing(OrderAnswer answer) {
         if (answer != null) {
             ((TextView) closeDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
-            ((TextView) closeDealingView.findViewById(R.id.tvPriceValue)).setText(String.valueOf(answer.getClosePrice()));
+            ((TextView) closeDealingView.findViewById(R.id.tvPriceValue)).setText(ConventString.getRoundNumber(answer.getClosePrice()));
             ((TextView) closeDealingView.findViewById(R.id.tvProfitValue)).setText(String.valueOf(answer.getProfitStr()));
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -1082,7 +1099,7 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(SignalService.RESPONSE);
-            if (response != null && response.equals("200") && EarlyClosureAnswer.getInstance() != null) {
+            if (response != null && response.equals("200") && EarlyClosureAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
                 for(int i = 0; i < EarlyClosureAnswer.getInstance().getInstruments().size(); i++) {
                     Instrument instrument = EarlyClosureAnswer.getInstance().getInstruments().get(i);
                     if(instrument.getSymbol().contains(tvValueActive.getText().toString())) {
