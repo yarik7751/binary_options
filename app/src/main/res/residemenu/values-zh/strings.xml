@@ -1,0 +1,176 @@
+<resources>
+    <string name="app_name">GrandCapital</string>
+    <string name="userLogin">10025808</string>
+    <string name="userPassword">6elFJkuL</string>
+    <string name="userLogin1">10026417</string>
+    <string name="userPassword1">UFZ0Spmi</string>
+
+    <string name="number">number</string>
+    <string name="logical_number">logical_number</string>
+    <string name="is_their_message">is_their_message</string>
+
+    <string name="all_quotes">所有报价</string>
+    <string name="selected_quotes">已选</string>
+
+    <!--Exceptions-->
+    <string name="error_incorrent_password_input">密码</string>
+    <string name="error_wront_password">密码错误</string>
+    <string name="error_incorrent_login_input">登入</string>
+    <string name="connection_not_secure">您的连线不是私人连线。您确定继续？</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="cancel">取消</string>
+    <string name="cancel_dont_show">取消，且不再显示此信息。</string>
+    <string name="ok">好</string>
+    <string name="caution">Caution!</string>
+    <string name="logout">确定登出？</string>
+    <string name="reward">利润: $</string>
+    <string name="open_account">开立账户</string>
+    <string name="later">之后</string>
+    <string name="open_account_message">您已经做了几个单了，可以开始赚取真实盈利了！</string>
+    <string name="open_account_title">开立真实账户</string>
+
+    <string name="label_open_dealing_title">订单进行中</string>
+    <string name="label_close_dealing_title">订单已结束</string>
+
+    <!--Signin activity-->
+    <string name="signin_page_button_text">登入</string>
+    <string name="signin_page_signup_link_text">还没有账户吗？马上注册一个！</string>
+    <string name="signin_page_forgot_password_link_text">忘记密码了吗？</string>
+    <string name="signin_page_password_field_text">密码</string>
+    <string name="signin_page_login_field_text">登入</string>
+
+    <!--Signup activity-->
+    <string name="signup_page_name_field">名</string>
+    <string name="signup_page_surname_field">姓</string>
+    <string name="signup_page_phonenumber_field">手机号码</string>
+    <string name="signup_page_email_field">电子邮箱</string>
+    <string name="signup_page_registration_button_text">注册</string>
+    <string name="signup_page_log_in_field">登入</string>
+
+    <!--All activities-->
+    <string name="no_internet_connection_title">没有网络连线</string>
+    <string name="no_internet_connection_text">无法连接服务器。请检查您的网络连线后再试一次。</string>
+    <string name="no_internet_connection_message_button">好</string>
+
+    <!--Error request retrofit-->
+    <string name="request_error_title">申请失败</string>
+    <string name="request_error_request">The request failed. Please try again</string>
+    <string name="request_error_text">发生错误，我们无法完成您的申请。请再试一次。</string>
+    <string name="request_error_message_button">好</string>
+    <string name="grandcapital_icon_description">GrandCapital icon</string>
+    <string name="menu_account_name_fish">理查德·布兰森</string>
+    <string name="menu_account_balance_text_fish">余额</string>
+
+    <!--Menu items name-->
+    <string name="menu_item_terminal">交易</string>
+    <string name="menu_item_dealing">账户记录</string>
+    <string name="menu_item_quotes">报价</string>
+    <string name="menu_item_how_it_works">常见问题</string>
+    <string name="menu_item_promotions">优惠</string>
+    <string name="menu_item_accounts">交易账户</string>
+    <string name="menu_item_support">支持</string>
+    <string name="menu_item_settings">设定</string>
+    <string name="menu_item_logout">登出</string>
+
+    <string name="close">关闭</string>
+
+    <!--Toolbar name-->
+    <string name="toolbar_name_terminal">交易</string>
+    <string name="toolbar_name_dealing">所有交易</string>
+    <string name="toolbar_name_quotes">报价</string>
+    <string name="toolbar_name_how_it_works">常见问题</string>
+    <string name="toolbar_name_promotions">优惠</string>
+    <string name="toolbar_name_accounts">账户</string>
+    <string name="toolbar_name_support">即时支持</string>
+    <string name="toolbar_name_settings">账户设定</string>
+    <string name="toolbar_name_deposit">出/入金</string>
+
+    <!--Dealing list headers open-->
+    <string name="dealing_page_tab_name_open">开启</string>
+    <string name="dealing_page_tab_name_close">关闭</string>
+    <string name="dealing_page_tab_name_binary_option">二元期权</string>
+    <string name="dealing_page_tab_name_forex">外汇</string>
+
+    <!--Dealing list headers open-->
+    <string name="dealing_page_open_active">资产</string>
+    <string name="dealing_page_open_open">开仓价格</string>
+    <string name="dealing_page_open_market">市价</string>
+    <string name="dealing_page_open_amount">交易额</string>
+    <string name="dealing_page_open_time">时间</string>
+
+    <!--Dealing list headers close-->
+    <string name="dealing_page_close_active">资产</string>
+    <string name="dealing_page_close_open">开启</string>
+    <string name="dealing_page_close_win">关闭</string>
+    <string name="dealing_page_close_invest">投资</string>
+    <string name="dealing_page_close_income">获利</string>
+
+    <string name="dealing_page_item_arrow_description">Up or down arrow</string>
+    <string name="dealing_page_request_error_title">申请失败</string>
+
+    <string-array name="how_it_works_page_questions">
+        <item>What are Binary Options?</item>
+        <item>Binary Options in MT4: placing a trade</item>
+        <item>Binary Options in MT4: Double Touch Options</item>
+    </string-array>
+
+    <string-array name="how_it_works_page_questions_content">
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+    </string-array>
+
+    <!--Signals-->
+    <string name="minutes3Cell">15分钟</string>
+    <string name="minutes2Cell">5分钟</string>
+    <string name="_1_minute">1分钟</string>
+    <string name="signal_s">卖出</string>
+    <string name="signal_ss">强力卖出</string>
+    <string name="signal_b">买入</string>
+    <string name="signal_sb">强力买入</string>
+
+    <string name="zero_min">0 MIN</string>
+    <string name="zero_dollars">$0</string>
+
+    <!--нет перевода-->
+    <string name="attention">Attention!</string>
+    <!--//нет перевода-->
+
+    <string name="balance">余额:</string>
+    <string name="link_company">https://grandcapital.ru</string>
+    <string name="deposit">入金</string>
+    <string name="withdraw">出金</string>
+    <string name="active">资产</string>
+    <string name="amount">投资额</string>
+    <string name="time">周期</string>
+    <string name="lower">看跌</string>
+    <string name="higher">看涨</string>
+    <string name="yesterday">昨天</string>
+    <string name="clode_dealing_title">确定您要终止交易吗？</string>
+    <string name="error">发生错误！</string>
+    <string name="no_correct_values">输入数值有误。请检查后再重试。</string>
+
+    <!--нет перевода-->
+    <string name="error_max_time">Максимальное значение времени - 2880 минут</string>
+    <!--//нет перевода-->
+
+    <string name="error_find_signal">此资产暂无信号</string>
+
+    <string name="of_price">价格 </string>
+    <string name="profit">利润 </string>
+    <string-array name="months">
+        <item>一月</item>
+        <item>二月</item>
+        <item>三月</item>
+        <item>四月</item>
+        <item>五月</item>
+        <item>六月</item>
+        <item>七月</item>
+        <item>八月</item>
+        <item>九月</item>
+        <item>十月</item>
+        <item>十一月</item>
+        <item>十二月</item>
+    </string-array>
+</resources>

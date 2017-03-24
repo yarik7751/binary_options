@@ -1,0 +1,176 @@
+<resources>
+    <string name="app_name">GrandCapital</string>
+    <string name="userLogin">10025808</string>
+    <string name="userPassword">6elFJkuL</string>
+    <string name="userLogin1">10026417</string>
+    <string name="userPassword1">UFZ0Spmi</string>
+
+    <string name="number">number</string>
+    <string name="logical_number">logical_number</string>
+    <string name="is_their_message">is_their_message</string>
+
+    <string name="all_quotes">Tous les quotes</string>
+    <string name="selected_quotes">Étoilé</string>
+
+    <!--Exceptions-->
+    <string name="error_incorrent_password_input">Mot de passe</string>
+    <string name="error_wront_password">Mot de passe incorrect</string>
+    <string name="error_incorrent_login_input">Identification</string>
+    <string name="connection_not_secure">Votre connexion n\'est pas privée. Êtes-vous sure de vouloir continuer? </string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="cancel">Annuler</string>
+    <string name="cancel_dont_show">Annuler et ne plus afficher ce message</string>
+    <string name="ok">OK</string>
+    <string name="caution">Caution!</string>
+    <string name="logout">Voulez-vous se déconnecter?</string>
+    <string name="reward">Profit: $</string>
+    <string name="open_account">Ouvrir un compte</string>
+    <string name="later">Plus tard</string>
+    <string name="open_account_message">Vous avez placé plusieurs positions.\nCommencez à gagner de l\'argent réel!</string>
+    <string name="open_account_title">Ouvrir un compte en direct</string>
+
+    <string name="label_open_dealing_title">LE TRADE EST OUVERT</string>
+    <string name="label_close_dealing_title">LE TRADE EST FERMÉ</string>
+
+    <!--Signin activity-->
+    <string name="signin_page_button_text">SE CONNECTER</string>
+    <string name="signin_page_signup_link_text">Vous n\'avez pas de Compte? Inscrivez-vous!</string>
+    <string name="signin_page_forgot_password_link_text">Mot de passe oublié?</string>
+    <string name="signin_page_password_field_text">Mot de passe</string>
+    <string name="signin_page_login_field_text">Identification</string>
+
+    <!--Signup activity-->
+    <string name="signup_page_name_field">Prénom</string>
+    <string name="signup_page_surname_field">Nom</string>
+    <string name="signup_page_phonenumber_field">Numéro de téléphone</string>
+    <string name="signup_page_email_field">Email</string>
+    <string name="signup_page_registration_button_text">Inscription</string>
+    <string name="signup_page_log_in_field">Identification</string>
+
+    <!--All activities-->
+    <string name="no_internet_connection_title">Pas de connexion Internet</string>
+    <string name="no_internet_connection_text">Impossible de se connecter au serveur. Veuillez vérifier votre connexion internet et réessayer</string>
+    <string name="no_internet_connection_message_button">OK</string>
+
+    <!--Error request retrofit-->
+    <string name="request_error_title">La demande a échoué</string>
+    <string name="request_error_request">The request failed. Please try again</string>
+    <string name="request_error_text">Quelque chose s\'est mal passé et nous n\'avons pas pu compléter votre demande. Veuillez réessayer</string>
+    <string name="request_error_message_button">OK</string>
+    <string name="grandcapital_icon_description">GrandCapital icon</string>
+    <string name="menu_account_name_fish">Richard Branson</string>
+    <string name="menu_account_balance_text_fish">Solde: 45 612 $</string>
+
+    <!--Menu items name-->
+    <string name="menu_item_terminal">Trade</string>
+    <string name="menu_item_dealing">Historique du compte</string>
+    <string name="menu_item_quotes">Quotes</string>
+    <string name="menu_item_how_it_works">FAQ</string>
+    <string name="menu_item_promotions">Promotions</string>
+    <string name="menu_item_accounts">Comptes de trading</string>
+    <string name="menu_item_support">Support</string>
+    <string name="menu_item_settings">Paramètres</string>
+    <string name="menu_item_logout">Déconnexion</string>
+
+    <string name="close">Fermer</string>
+
+    <!--Toolbar name-->
+    <string name="toolbar_name_terminal">Trade</string>
+    <string name="toolbar_name_dealing">Tous les trades</string>
+    <string name="toolbar_name_quotes">Quotes</string>
+    <string name="toolbar_name_how_it_works">FAQ</string>
+    <string name="toolbar_name_promotions">Promotions</string>
+    <string name="toolbar_name_accounts">Comptes</string>
+    <string name="toolbar_name_support">Support en direct</string>
+    <string name="toolbar_name_settings">Paramètres du compte</string>
+    <string name="toolbar_name_deposit">Dépôt et retrait</string>
+
+    <!--Dealing list headers open-->
+    <string name="dealing_page_tab_name_open">Ouvrir</string>
+    <string name="dealing_page_tab_name_close">Fermer</string>
+    <string name="dealing_page_tab_name_binary_option">Options binaires</string>
+    <string name="dealing_page_tab_name_forex">Forex</string>
+
+    <!--Dealing list headers open-->
+    <string name="dealing_page_open_active">Le capital</string>
+    <string name="dealing_page_open_open">Prix ​​d\'ouverture</string>
+    <string name="dealing_page_open_market">Marché</string>
+    <string name="dealing_page_open_amount">Montant</string>
+    <string name="dealing_page_open_time">Temps</string>
+
+    <!--Dealing list headers close-->
+    <string name="dealing_page_close_active">Le capital</string>
+    <string name="dealing_page_close_open">Ouvrir</string>
+    <string name="dealing_page_close_win">Fermer</string>
+    <string name="dealing_page_close_invest">Investi</string>
+    <string name="dealing_page_close_income">Profit</string>
+
+    <string name="dealing_page_item_arrow_description">Up or down arrow</string>
+    <string name="dealing_page_request_error_title">Votre demande a échoué</string>
+
+    <string-array name="how_it_works_page_questions">
+        <item>What are Binary Options?</item>
+        <item>Binary Options in MT4: placing a trade</item>
+        <item>Binary Options in MT4: Double Touch Options</item>
+    </string-array>
+
+    <string-array name="how_it_works_page_questions_content">
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+    </string-array>
+
+    <!--Signals-->
+    <string name="minutes3Cell">15 minutes</string>
+    <string name="minutes2Cell">5 minutes</string>
+    <string name="_1_minute">1 minute</string>
+    <string name="signal_s">VENTE FORTE</string>
+    <string name="signal_ss">VENTE FORTE</string>
+    <string name="signal_b">ACHAT</string>
+    <string name="signal_sb">ACHAT FORT</string>
+
+    <string name="zero_min">0 MIN</string>
+    <string name="zero_dollars">$0</string>
+
+    <!--нет перевода-->
+    <string name="attention">Attention!</string>
+    <!--//нет перевода-->
+
+    <string name="balance">Solde:</string>
+    <string name="link_company">https://grandcapital.ru</string>
+    <string name="deposit">DÉPÔT</string>
+    <string name="withdraw">RETRAIT</string>
+    <string name="active">Le capital</string>
+    <string name="amount">Montant</string>
+    <string name="time">Temps</string>
+    <string name="lower">PUT</string>
+    <string name="higher">CALL</string>
+    <string name="yesterday">Hier</string>
+    <string name="clode_dealing_title">Êtes-vous sûr de vouloir fermer le trade?</string>
+    <string name="error">Erreur!</string>
+    <string name="no_correct_values">Les valeurs saisies ne sont pas correctes. Veuillez les vérifier et réessayer.</string>
+
+    <!--нет перевода-->
+    <string name="error_max_time">Максимальное значение времени - 2880 минут</string>
+    <!--//нет перевода-->
+
+    <string name="error_find_signal">Aucun signal disponible pour cet actif</string>
+
+    <string name="of_price">Prix </string>
+    <string name="profit">profit </string>
+    <string-array name="months">
+        <item>Janvier</item>
+        <item>Février</item>
+        <item>Mars</item>
+        <item>Avril</item>
+        <item>Mai</item>
+        <item>Juin</item>
+        <item>Juillet</item>
+        <item>Août</item>
+        <item>Septembre</item>
+        <item>Octobre</item>
+        <item>Novembre</item>
+        <item>Décembre</item>
+    </string-array>
+</resources>

@@ -1,0 +1,176 @@
+<resources>
+    <string name="app_name">GrandCapital</string>
+    <string name="userLogin">10025808</string>
+    <string name="userPassword">6elFJkuL</string>
+    <string name="userLogin1">10026417</string>
+    <string name="userPassword1">UFZ0Spmi</string>
+
+    <string name="number">number</string>
+    <string name="logical_number">logical_number</string>
+    <string name="is_their_message">is_their_message</string>
+
+    <string name="all_quotes">Tất cả các chào giá</string>
+    <string name="selected_quotes">Đã bắt đầu</string>
+
+    <!--Exceptions-->
+    <string name="error_incorrent_password_input">Mật khẩu</string>
+    <string name="error_wront_password">Sai mật khẩu</string>
+    <string name="error_incorrent_login_input">Đăng nhập</string>
+    <string name="connection_not_secure">Kết nối của bạn không phải là riêng tư. Bạn có chắc chắn muốn tiếp tục?</string>
+    <string name="yes">Có</string>
+    <string name="no">Không</string>
+    <string name="cancel">Hủy bỏ</string>
+    <string name="cancel_dont_show">Hủy bỏ và không hiển thị lại thông báo</string>
+    <string name="ok">OK</string>
+    <string name="caution">Caution!</string>
+    <string name="logout">Bạn có muốn đăng xuất?</string>
+    <string name="reward">Lợi nhuận: $</string>
+    <string name="open_account">Mở tài khoản</string>
+    <string name="later">Sau</string>
+    <string name="open_account_message">Bạn đã đặt một số lệnh giao dịch.\nHãy bắt đầu kiếm tiền thật nào!</string>
+    <string name="open_account_title">Mở tài khoản thực</string>
+
+    <string name="label_open_dealing_title">GIAO DỊCH ĐÃ MỞ</string>
+    <string name="label_close_dealing_title">GIAO DỊCH ĐÃ ĐÓNG</string>
+
+    <!--Signin activity-->
+    <string name="signin_page_button_text">ĐĂNG NHẬP</string>
+    <string name="signin_page_signup_link_text">Chưa có tài khoản? Đăng ký!</string>
+    <string name="signin_page_forgot_password_link_text">Quên mật khẩu?</string>
+    <string name="signin_page_password_field_text">Mật khẩu</string>
+    <string name="signin_page_login_field_text">Đăng nhập</string>
+
+    <!--Signup activity-->
+    <string name="signup_page_name_field">Tên</string>
+    <string name="signup_page_surname_field">Họ</string>
+    <string name="signup_page_phonenumber_field">Số điện thoại</string>
+    <string name="signup_page_email_field">Email</string>
+    <string name="signup_page_registration_button_text">Đăng ký</string>
+    <string name="signup_page_log_in_field">Đăng nhập</string>
+
+    <!--All activities-->
+    <string name="no_internet_connection_title">Không có kết nối internet</string>
+    <string name="no_internet_connection_text">Không thể kết nối đến máy chủ. Vui lòng kiểm tra lại kết nối internet và thử lại</string>
+    <string name="no_internet_connection_message_button">OK</string>
+
+    <!--Error request retrofit-->
+    <string name="request_error_title">Yêu cầu thất bại</string>
+    <string name="request_error_request">The request failed. Please try again</string>
+    <string name="request_error_text">Có lỗi xảy ra và chúng tôi không thể hoàn thành yêu cầu của bạn. Vui lòng thử lại.</string>
+    <string name="request_error_message_button">OK</string>
+    <string name="grandcapital_icon_description">GrandCapital icon</string>
+    <string name="menu_account_name_fish">Richard Branson</string>
+    <string name="menu_account_balance_text_fish">Số dư: $45,612</string>
+
+    <!--Menu items name-->
+    <string name="menu_item_terminal">Giao dịch</string>
+    <string name="menu_item_dealing">Lịch sử tài khoản</string>
+    <string name="menu_item_quotes">Chào giá</string>
+    <string name="menu_item_how_it_works">Câu hỏi thường gặp</string>
+    <string name="menu_item_promotions">Khuyến mại</string>
+    <string name="menu_item_accounts">Các tài khoản giao dịch</string>
+    <string name="menu_item_support">Hỗ trợ</string>
+    <string name="menu_item_settings">Cài đặt</string>
+    <string name="menu_item_logout">Đăng xuất</string>
+
+    <string name="close">Đóng</string>
+
+    <!--Toolbar name-->
+    <string name="toolbar_name_terminal">Giao dịch</string>
+    <string name="toolbar_name_dealing">Tất cả các giao dịch</string>
+    <string name="toolbar_name_quotes">Chào giá</string>
+    <string name="toolbar_name_how_it_works">Câu hỏi thường gặp</string>
+    <string name="toolbar_name_promotions">Khuyến mại</string>
+    <string name="toolbar_name_accounts">Tài khoản</string>
+    <string name="toolbar_name_support">Hỗ trợ trực tuyến</string>
+    <string name="toolbar_name_settings">Cài đặt tài khoản</string>
+    <string name="toolbar_name_deposit">Gửi và rút tiền</string>
+
+    <!--Dealing list headers open-->
+    <string name="dealing_page_tab_name_open">Mở</string>
+    <string name="dealing_page_tab_name_close">Đóng</string>
+    <string name="dealing_page_tab_name_binary_option">Tùy chọn nhị phân</string>
+    <string name="dealing_page_tab_name_forex">Ngoại hối</string>
+
+    <!--Dealing list headers open-->
+    <string name="dealing_page_open_active">Tài sản</string>
+    <string name="dealing_page_open_open">Giá mở cửa</string>
+    <string name="dealing_page_open_market">Thị trường</string>
+    <string name="dealing_page_open_amount">Số lượng</string>
+    <string name="dealing_page_open_time">Thời gian</string>
+
+    <!--Dealing list headers close-->
+    <string name="dealing_page_close_active">Tài sản</string>
+    <string name="dealing_page_close_open">Mở</string>
+    <string name="dealing_page_close_win">Đóng</string>
+    <string name="dealing_page_close_invest">Đầu tư</string>
+    <string name="dealing_page_close_income">Lợi nhuận</string>
+
+    <string name="dealing_page_item_arrow_description">Up or down arrow</string>
+    <string name="dealing_page_request_error_title">Yêu cầu thất bại</string>
+
+    <string-array name="how_it_works_page_questions">
+        <item>What are Binary Options?</item>
+        <item>Binary Options in MT4: placing a trade</item>
+        <item>Binary Options in MT4: Double Touch Options</item>
+    </string-array>
+
+    <string-array name="how_it_works_page_questions_content">
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+    </string-array>
+
+    <!--Signals-->
+    <string name="minutes3Cell">15 phút</string>
+    <string name="minutes2Cell">5 phút</string>
+    <string name="_1_minute">1 phút</string>
+    <string name="signal_s">BÁN</string>
+    <string name="signal_ss">BÁN MẠNH</string>
+    <string name="signal_b">MUA</string>
+    <string name="signal_sb">MUA MẠNH</string>
+
+    <string name="zero_min">0 MIN</string>
+    <string name="zero_dollars">$0</string>
+
+    <!--нет перевода-->
+    <string name="attention">Attention!</string>
+    <!--//нет перевода-->
+
+    <string name="balance">Số dư:</string>
+    <string name="link_company">https://grandcapital.ru</string>
+    <string name="deposit">GỬI TIỀN</string>
+    <string name="withdraw">RÚT TIỀN</string>
+    <string name="active">Tài sản</string>
+    <string name="amount">Số lượng</string>
+    <string name="time">Thời gian</string>
+    <string name="lower">ĐẶT</string>
+    <string name="higher">GỌI</string>
+    <string name="yesterday">Hôm qua</string>
+    <string name="clode_dealing_title">Bạn có chắc chắn muốn đóng giao dịch?</string>
+    <string name="error">Lỗi!</string>
+    <string name="no_correct_values">Giá trị nhập vào không đúng. Vui lòng kiểm tra và thử lại.</string>
+
+    <!--нет перевода-->
+    <string name="error_max_time">Максимальное значение времени - 2880 минут</string>
+    <!--//нет перевода-->
+
+    <string name="error_find_signal">Không có tín hiệu cho tài sản này</string>
+
+    <string name="of_price">Giá </string>
+    <string name="profit">Lợi nhuận </string>
+    <string-array name="months">
+        <item>Tháng 1</item>
+        <item>Tháng 2</item>
+        <item>Tháng 3</item>
+        <item>Tháng 4</item>
+        <item>Tháng 5</item>
+        <item>Tháng 6</item>
+        <item>Tháng 7</item>
+        <item>Tháng 8</item>
+        <item>Tháng 9</item>
+        <item>Tháng 10</item>
+        <item>Tháng 11</item>
+        <item>Tháng 12</item>
+    </string-array>
+</resources>
