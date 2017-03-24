@@ -296,7 +296,12 @@ public class BaseActivity extends CustomFontsActivity {
         return fragment;
     }
 
-    private static void clearFragmentBackStack() {
+    public static void removeTerminal() {
+        TerminalFragment fragment = TerminalFragment.getInstance();
+        fragmentManager.beginTransaction().remove(fragment).commit();
+    }
+
+    public static void clearFragmentBackStack() {
         for(int i = 0; i < fragmentManager.getBackStackEntryCount(); i++) {
             fragmentManager.popBackStack();
         }
