@@ -19,6 +19,8 @@
             style="?android:attr/progressBarStyleLarge"/>
     </LinearLayout>
 
+    <include layout="@layout/item_window_signal" />
+
     <ScrollView
         android:fillViewport="true"
         android:layout_width="match_parent"
@@ -360,6 +362,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <include layout="@layout/item_window_signal" />
 </FrameLayout>

@@ -212,8 +212,8 @@ public class TerminalFragment extends Fragment {
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
-        /*etValueAmount.clearFocus();
-        etValueTime.clearFocus();*/
+        etValueAmount.clearFocus();
+        etValueTime.clearFocus();
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
             if (etValueAmount.isFocused()) {
@@ -265,19 +265,15 @@ public class TerminalFragment extends Fragment {
 
         tvMinusAmount.setOnClickListener(v -> {
             ConventString.changeAmountValue(etValueAmount, false);
-            requestEarlyClosure();
         });
         tvPlusAmount.setOnClickListener(v -> {
             ConventString.changeAmountValue(etValueAmount, true);
-            requestEarlyClosure();
         });
         tvPlusTime.setOnClickListener(v -> {
             ConventString.changeTimeValue(etValueTime, true);
-            requestEarlyClosure();
         });
         tvMinusTime.setOnClickListener(v -> {
             ConventString.changeTimeValue(etValueTime, false);
-            requestEarlyClosure();
         });
 
         tvLeftActive.setOnClickListener(v -> {
@@ -1102,11 +1098,14 @@ public class TerminalFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String response = intent.getStringExtra(SignalService.RESPONSE);
-            if (response != null && response.equals("200") && EarlyClosureAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
+            String response = intent.getStringExtra(EarlyClosureService.RESPONSE);
+            if (response != null && response.equals("200") && EarlyClosureAnswer.getInstance() != null && InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
                 for(int i = 0; i < EarlyClosureAnswer.getInstance().getInstruments().size(); i++) {
                     Instrument instrument = EarlyClosureAnswer.getInstance().getInstruments().get(i);
                     if(instrument.getSymbol().contains(tvValueActive.getText().toString())) {
+                        /*if(InfoAnswer.getInstance().getGroup() == null) {
+                            return;
+                        }*/
                         String typeOption = InfoAnswer.getInstance().getGroup().getOptionsStyle();
                         int percent = 100;
                         if(typeOption.contains("american")) {
@@ -1124,7 +1123,7 @@ public class TerminalFragment extends Fragment {
                             }
                         }
                         double earlyClosure = ConventString.getAmountValue(etValueAmount) * percent / 100.000;
-                        tvValueRewardTerminal.setText(earlyClosure + "(" + percent + "%)");
+                        tvValueRewardTerminal.setText(earlyClosure + "(" + (earlyClosure == 0 ? 0 : percent) + "%)");
                     }
                 }
             }
