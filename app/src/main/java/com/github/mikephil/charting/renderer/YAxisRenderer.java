@@ -166,7 +166,7 @@ public class YAxisRenderer extends AxisRenderer {
                             c.drawText(lastSymbol, fixedPosition - paddingHoriz / 3 + width, posY, textPaint);
                         }
                     }
-                } /*else if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_CURRENT_DEALING)) {
+                } else if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_CURRENT_DEALING)) {
                     line.setLineWidth(1.0f);
                     line.setLineColor(line.getLineColor());
                     line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
@@ -201,7 +201,7 @@ public class YAxisRenderer extends AxisRenderer {
                         c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz, posY - height_marker + paddingVert / 2, paint);
                         c.drawText(strLabel, fixedPosition - paddingHoriz / 3, posY, textPaint);
                     }
-                }*/
+                }
             }
         }
     }

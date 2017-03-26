@@ -23,8 +23,12 @@ public class CustomBaseLimitLine extends LimitLine {
     public enum LimitLinesType {
         LINE_HORIZONTAL_CURRENT_SOCKET,
         LINE_HORIZONTAL_CURRENT_DEALING,
+
         LINE_VERTICAL_DEALING_ACTIVE,
         LINE_VERTICAL_DEALING_PASS,
+
+        LINE_VERTICAL_DEALING_ACTIVE_CLOSING,
+        LINE_VERTICAL_DEALING_PASS_CLOSING,
     }
 
     public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX, Bitmap bitmapY) {

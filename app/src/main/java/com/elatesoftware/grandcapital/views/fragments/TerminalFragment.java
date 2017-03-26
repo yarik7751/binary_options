@@ -84,6 +84,7 @@ public class TerminalFragment extends Fragment {
 
     private final static String SYMBOL = "EURUSD";
     private static String sSymbolCurrent = "";
+
     public static double mCurrentValueY = 0;
     private OrderAnswer currentDealing = new OrderAnswer();
 
@@ -96,41 +97,6 @@ public class TerminalFragment extends Fragment {
     public static boolean isOpen = false;
     public boolean isDirection = true;
 
-  //  private Unbinder unbinder;
-   /*@Nullable @BindView(R.id.chart) LineChart mChart;
-   @Nullable @BindView(R.id.tvBalanceTerminal) TextView tvBalance;
-   @Nullable @BindView(R.id.tvDepositTerminal) TextView tvDeposit;
-   @Nullable @BindView(R.id.tvLeftTabActiveTerminal) TextView tvLeftActive;
-   @Nullable @BindView(R.id.tvRightTabActiveTerminal) TextView tvRightActive;
-   @Nullable @BindView(R.id.tvValueTabActiveTerminal) TextView tvValueActive;
-   @Nullable @BindView(R.id.tvMinusTabAmountTerminal) TextView tvMinusAmount;
-   @Nullable @BindView(R.id.tvPlusTabAmountTerminal) TextView tvPlusAmount;
-   @Nullable @BindView(R.id.tvValueTabAmountTerminal) EditText etValueAmount;
-   @Nullable @BindView(R.id.tvMinusTabTimeTerminal) TextView tvMinusTime;
-   @Nullable @BindView(R.id.tvPlusTabTimeTerminal) TextView tvPlusTime;
-   @Nullable @BindView(R.id.tvValueTabTimeTerminal) EditText etValueTime;
-   @Nullable @BindView(R.id.llLowerTerminal) LinearLayout llLowerTerminal;
-   @Nullable @BindView(R.id.llHigherTerminal) LinearLayout llHigherTerminal;
-   @Nullable @BindView(R.id.ll_buttons) LinearLayout llButtons;
-   @Nullable @BindView(R.id.ll_deposit) LinearLayout llDeposit;
-   @Nullable @BindView(R.id.progress_bar) LinearLayout llProgressBar;
-   @Nullable @BindView(R.id.rl_chart) RelativeLayout rlChart;
-   @Nullable @BindView(R.id.fl_main)  FrameLayout flMain;
-   @Nullable @BindView(R.id.ll_top_panel) LinearLayout llTopPanel;
-   @Nullable @BindView(R.id.tv_currency) TextView tvCurrentActive;
-   @Nullable @BindView(R.id.tv_amout)  TextView tvCurrentActiveAmount;
-   @Nullable @BindView(R.id.tv_time1_value) TextView tvSignalMinutes1;
-   @Nullable @BindView(R.id.tv_time2_value) TextView tvSignalMinutes5;
-   @Nullable @BindView(R.id.tv_time3_value) TextView tvSignalMinutes15;
-   @Nullable @BindView(R.id.tvErrorSignal) TextView tvErrorSignal;
-   @Nullable @BindView(R.id.rlErrorSignal) RelativeLayout rlErrorSignal;
-   @Nullable @BindView(R.id.tvValueRewardTerminal) TextView tvValueRewardTerminal;
-   @Nullable @BindDrawable(R.drawable.marker_close_dealing) Drawable drawableMarkerDealing;
-   @Nullable @BindBitmap(R.drawable.whitevert) Bitmap bitmapIconCurrentLimitLabel;
-   @Nullable @BindBitmap(R.drawable.green_vert) Bitmap bitmapIconGreenXLabel;
-   @Nullable @BindBitmap(R.drawable.red_vert) Bitmap bitmapIconRedXLabel;
-   @Nullable @BindColor(R.color.color_red_chart) int colorRed;
-   @Nullable @BindColor(R.color.chat_green)      int colorGreen;*/
     private LineChart mChart;
     private TextView tvBalance;
     private TextView tvDeposit;
@@ -165,17 +131,18 @@ public class TerminalFragment extends Fragment {
     private Bitmap bitmapIconRedXLabel;
     private Bitmap bitmapIconRedYLabel;
     private Bitmap bitmapIconGreenYLabel;
-
+    private Bitmap bitmapIconCurrentDealingGreenYLabel;
+    private Bitmap bitmapIconCurrentDealingRedYLabel;
     private int colorRed;
     private int colorGreen;
 
+    private ImageView imgPointCurrent;
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
     private Dialog dialogOpenAccount;
     private View closeDealingView;
     private View openDealingView;
     private YAxis rightYAxis;
     private XAxis xAxis;
-    private ImageView imgPointCurrent;
     private CustomBaseLimitLine currentLineSocket;
     private CustomBaseLimitLine currentLineDealing;
 
@@ -213,38 +180,33 @@ public class TerminalFragment extends Fragment {
         bitmapIconCurrentLimitLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.whitevert);
         bitmapIconGreenXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_vert);
         bitmapIconRedXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_vert);
+        bitmapIconCurrentDealingGreenYLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_hor);
+        bitmapIconCurrentDealingRedYLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_hor);
         colorGreen = getResources().getColor(R.color.chat_green);
         colorRed = getResources().getColor(R.color.color_red_chart);
-
         bitmapIconRedYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(getContext()).inflate(R.layout.incl_chart_label_red, null));
         bitmapIconGreenYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(getContext()).inflate(R.layout.incl_chart_label_green, null));
 
         mChart = (LineChart) parentView.findViewById(R.id.chart);
         tvBalance = (TextView) parentView.findViewById(R.id.tvBalanceTerminal);
         tvDeposit = (TextView) parentView.findViewById(R.id.tvDepositTerminal);
-
         tvLeftActive = (TextView) parentView.findViewById(R.id.tvLeftTabActiveTerminal);
         tvRightActive = (TextView) parentView.findViewById(R.id.tvRightTabActiveTerminal);
         tvValueActive = (TextView) parentView.findViewById(R.id.tvValueTabActiveTerminal);
-
         tvMinusAmount = (TextView) parentView.findViewById(R.id.tvMinusTabAmountTerminal);
         tvPlusAmount = (TextView) parentView.findViewById(R.id.tvPlusTabAmountTerminal);
         etValueAmount = (EditText) parentView.findViewById(R.id.tvValueTabAmountTerminal);
-
         tvMinusTime = (TextView) parentView.findViewById(R.id.tvMinusTabTimeTerminal);
         tvPlusTime = (TextView) parentView.findViewById(R.id.tvPlusTabTimeTerminal);
         etValueTime = (EditText) parentView.findViewById(R.id.tvValueTabTimeTerminal);
-
         llLowerTerminal = (LinearLayout) parentView.findViewById(R.id.llLowerTerminal);
         llHigherTerminal = (LinearLayout) parentView.findViewById(R.id.llHigherTerminal);
         llTopPanel = (LinearLayout) parentView.findViewById(R.id.ll_top_panel);
-
         llButtons = (LinearLayout) parentView.findViewById(R.id.ll_buttons);
         llDeposit = (LinearLayout) parentView.findViewById(R.id.ll_deposit);
         rlChart = (RelativeLayout) parentView.findViewById(R.id.rl_chart);
         llProgressBar = (LinearLayout) parentView.findViewById(R.id.progress_bar);
         flMain = (FrameLayout) parentView.findViewById(R.id.fl_main);
-
         tvSignalMinutes1 = (TextView) parentView.findViewById(R.id.tv_time1_value);
         tvSignalMinutes5 = (TextView) parentView.findViewById(R.id.tv_time2_value);
         tvSignalMinutes15 = (TextView) parentView.findViewById(R.id.tv_time3_value);
@@ -253,12 +215,12 @@ public class TerminalFragment extends Fragment {
         tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
         tvValueRewardTerminal = (TextView) parentView.findViewById(R.id.tvValueRewardTerminal);
-
         openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
         closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
 
         openDealingView.setTag(TAG_OPEN_DEALING);
         closeDealingView.setTag(TAG_CLOSE_DEALING);
+
         return parentView;
     }
     @Override
@@ -732,7 +694,7 @@ public class TerminalFragment extends Fragment {
                         updateViewCloseDealing(orderClosed);
                         if(orderClosed.getSymbol().equals(ConventString.getActive(tvValueActive))){
                             redrawPointsDealings(order);
-                            drawAllDealingsLimitLines(listOpenDealingsCurrentActive);
+                            drawAllDealingsXLimitLines(listOpenDealingsCurrentActive);
                         }
                         break;
                     }
@@ -804,7 +766,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     private void redrawPointsDealings(OrderAnswer order){
         if (mChart.getData() != null) {
             ILineDataSet set = mChart.getData().getDataSetByIndex(0);
@@ -868,6 +829,19 @@ public class TerminalFragment extends Fragment {
         rightYAxis.addLimitLine(currentLineSocket);
         drawCurrentPoint(entry);
     }
+//    private void drawCurrentDealingYLimitLine(Entry entry) {
+//        if (currentLineDealing != null) {
+//            rightYAxis.removeLimitLine(currentLineDealing);
+//        }
+//        currentLineDealing = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), bitmapIconCurrentLimitLabel, null);
+//        if(){
+//            currentLineDealing.setmBitmapLabelX(bitmapIconCurrentDealingGreenYLabel);
+//        }else{
+//            currentLineDealing.setmBitmapLabelX(bitmapIconCurrentDealingRedYLabel);
+//        }
+//        currentLineDealing.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_CURRENT_DEALING);
+//        rightYAxis.addLimitLine(currentLineDealing);
+//    }
     private void drawCurrentPoint(Entry entry) {
         if (imgPointCurrent != null) {
             imgPointCurrent.setVisibility(View.VISIBLE);
@@ -876,7 +850,7 @@ public class TerminalFragment extends Fragment {
             imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
         }
     }
-    private void drawAllDealingsLimitLines(List<OrderAnswer> list){
+    private void drawAllDealingsXLimitLines(List<OrderAnswer> list){
         xAxis.removeAllLimitLines();
         if(list != null && list.size() != 0){
             if(mListDealingXLine == null){
@@ -892,16 +866,7 @@ public class TerminalFragment extends Fragment {
         if(mListDealingXLine != null && mListDealingXLine.size() != 0){
             for(CustomBaseLimitLine line : mListDealingXLine){
                 OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
-                        order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
-                    line.setmBitmapLabelX(bitmapIconGreenXLabel);
-                    line.setLineColor(colorGreen);
-                    line.setmBitmapLabelY(bitmapIconGreenYLabel);
-                }else{
-                    line.setmBitmapLabelX(bitmapIconRedXLabel);
-                    line.setLineColor(colorRed);
-                    line.setmBitmapLabelY(bitmapIconRedYLabel);
-                }
+                sortColorXLimitLines(line, order);
             }
         }
     }
@@ -912,23 +877,25 @@ public class TerminalFragment extends Fragment {
             CustomBaseLimitLine limitLine = new CustomBaseLimitLine(ConventDate.genericTimeForChart(
                     ConventDate.getConvertDateInMilliseconds(orderAnswer.getOptionsData().getExpirationTime()) * 1000),
                     new Gson().toJson(orderAnswer), iconLabelX, iconLabelY);
-            if(orderAnswer.getCmd() == 0 && orderAnswer.getOpenPrice() < mCurrentValueY ||
-                    orderAnswer.getCmd() == 1 && orderAnswer.getOpenPrice() > mCurrentValueY ){
-                iconLabelX = bitmapIconGreenXLabel;
-                limitLine.setLineColor(colorGreen);
-                iconLabelY = bitmapIconGreenYLabel;
-            }else{
-                iconLabelX = bitmapIconRedXLabel;
-                limitLine.setLineColor(colorRed);
-                iconLabelY = bitmapIconRedYLabel;
-            }
+            limitLine = sortColorXLimitLines(limitLine, orderAnswer);
             limitLine.enableDashedLine(10f, 10f, 0f);
-            limitLine.setmBitmapLabelX(iconLabelX);
-            limitLine.setmBitmapLabelY(iconLabelY);
             limitLine.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
             xAxis.addLimitLine(limitLine);
             mListDealingXLine.add(limitLine);
         }
+    }
+    private CustomBaseLimitLine sortColorXLimitLines(CustomBaseLimitLine line, OrderAnswer order){
+        if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
+                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
+            line.setmBitmapLabelX(bitmapIconGreenXLabel);
+            line.setLineColor(colorGreen);
+            line.setmBitmapLabelY(bitmapIconGreenYLabel);
+        }else{
+            line.setmBitmapLabelX(bitmapIconRedXLabel);
+            line.setLineColor(colorRed);
+            line.setmBitmapLabelY(bitmapIconRedYLabel);
+        }
+        return line;
     }
 
     private void showViewOpenRealAccount(){
@@ -1114,7 +1081,7 @@ public class TerminalFragment extends Fragment {
                 parseClosingDealings(listAllClosedDealings, listOpenDealingsCurrentActive);
                 if(listOpenDealingsCurrentActive != null && listOpenDealingsCurrentActive.size() != 0 &&
                         (mListDealingXLine == null || mListDealingXLine.size() == 0)){
-                    drawAllDealingsLimitLines(listOpenDealingsCurrentActive);
+                    drawAllDealingsXLimitLines(listOpenDealingsCurrentActive);
                 }
             }
         }
