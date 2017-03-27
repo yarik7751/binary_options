@@ -39,8 +39,8 @@ public class ConventDate {
     }
     public static String getConventDate(String date) {
         //dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));//
-        //sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
-        sdf.setTimeZone(TimeZone.getTimeZone("EET"));
+        sdf.setTimeZone(TimeZone.getDefault());
+        //sdf.setTimeZone(TimeZone.getTimeZone("EET"));
         Date resultDate = null;
         try {
             resultDate = sdf.parse(date);
@@ -83,10 +83,11 @@ public class ConventDate {
 
     public static String convertDateFromMilSecHHMM(long time) {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
-        formatter.setTimeZone(TimeZone.getTimeZone(timeZone));
+        formatter.setTimeZone(TimeZone.getDefault());
         Date date = new Date(time);
-        date.setHours(date.getHours() - 2);
-        date.setTime(date.getTime() + getIterationTime());
+        Log.d(TAG, "observesDaylightTime: " + TimeZone.getDefault().inDaylightTime(date));
+        date.setHours(date.getHours() - 3);
+        //date.setTime(date.getTime() + getIterationTime());
         return formatter.format(date);
     }
 
@@ -171,8 +172,8 @@ public class ConventDate {
     }
     public static String getTimeCloseDealing(int expiration) {
         Date date = new Date();
-        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
-        date.setHours(date.getHours() + 2);
+        sdf.setTimeZone(TimeZone.getDefault());
+        //date.setHours(date.getHours() + 2);
         date.setMinutes(date.getMinutes() + expiration);
         return sdf.format(date);
     }
