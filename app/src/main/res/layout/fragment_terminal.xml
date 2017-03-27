@@ -44,6 +44,11 @@
                     android:background="@android:color/transparent"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
+
+                <com.elatesoftware.grandcapital.views.items.DrawView
+                    android:id="@+id/vProtectedLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
             </RelativeLayout>
 
 

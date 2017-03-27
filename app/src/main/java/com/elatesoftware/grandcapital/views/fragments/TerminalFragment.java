@@ -56,17 +56,20 @@ import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.CustomAnimationDrawable;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
+import com.elatesoftware.grandcapital.views.items.DrawView;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.DataSet;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.listener.OnDrawListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointD;
 import com.google.gson.Gson;
@@ -129,6 +132,7 @@ public class TerminalFragment extends Fragment {
     private TextView tvErrorSignal;
     private RelativeLayout rlErrorSignal;
     private TextView tvValueRewardTerminal;
+    private DrawView vProtectedLine;
 
     private Drawable drawableMarkerDealing;
     private Bitmap bitmapIconCurrentLimitLabel;
@@ -150,6 +154,8 @@ public class TerminalFragment extends Fragment {
     private XAxis xAxis;
     private CustomBaseLimitLine currentLineSocket;
     private CustomBaseLimitLine currentLineDealing;
+
+    private Entry currEntry;
 
     private Thread threadSymbolHistory;
 
@@ -221,6 +227,8 @@ public class TerminalFragment extends Fragment {
         tvValueRewardTerminal = (TextView) parentView.findViewById(R.id.tvValueRewardTerminal);
         openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
         closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
+
+        vProtectedLine = (DrawView) parentView.findViewById(R.id.vProtectedLine);
 
         openDealingView.setTag(TAG_OPEN_DEALING);
         closeDealingView.setTag(TAG_CLOSE_DEALING);
@@ -509,43 +517,65 @@ public class TerminalFragment extends Fragment {
         });
         mChart.setOnChartGestureListener(new OnChartGestureListener() {
             @Override
-            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
-            }
+            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {}
 
             @Override
-            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
-            }
+            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {}
 
             @Override
-            public void onChartLongPressed(MotionEvent me) {
-
-            }
+            public void onChartLongPressed(MotionEvent me) {}
 
             @Override
-            public void onChartDoubleTapped(MotionEvent me) {
-
-            }
+            public void onChartDoubleTapped(MotionEvent me) {}
 
             @Override
-            public void onChartSingleTapped(MotionEvent me) {
-
-            }
+            public void onChartSingleTapped(MotionEvent me) {}
 
             @Override
             public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-
+                imgPointCurrent.setX(imgPointCurrent.getX() + velocityX);
+                imgPointCurrent.setY(imgPointCurrent.getY() + velocityY);
             }
 
             @Override
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-
+                if (imgPointCurrent != null || currEntry != null) {
+                    imgPointCurrent.setVisibility(View.VISIBLE);
+                    MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
+                    imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                    imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+                    //vProtectedLine.setX(point.getX() - vProtectedLine.getWidth() / 2);
+                    //vProtectedLine.setY(point.getY() - vProtectedLine.getHeight() / 2);
+                }
             }
 
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
+                if (imgPointCurrent != null || currEntry != null) {
+                    imgPointCurrent.setVisibility(View.VISIBLE);
+                    MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
+                    imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                    imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
+                    //vProtectedLine.setX(point.getX() - vProtectedLine.getWidth() / 2);
+                    //vProtectedLine.setY(point.getY() - vProtectedLine.getHeight() / 2);
+                }
+            }
+        });
 
+        mChart.setOnDrawListener(new OnDrawListener() {
+            @Override
+            public void onEntryAdded(Entry entry) {
+
+            }
+
+            @Override
+            public void onEntryMoved(Entry entry) {
+
+            }
+
+            @Override
+            public void onDrawFinished(DataSet<?> dataSet) {
+                //vProtectedLine.clear();
             }
         });
     }
@@ -797,6 +827,8 @@ public class TerminalFragment extends Fragment {
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
                         break;
                 }
+                Entry eLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
+                vProtectedLine.addPoint(eLast.getX(), eLast.getY(), entry.getX(), entry.getY());
                 mCurrentValueY = answer.getAsk();
                 data.addEntry(entry, 0);
                 data.notifyDataChanged();
@@ -957,6 +989,9 @@ public class TerminalFragment extends Fragment {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
             imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+            //vProtectedLine.setX(point.getX() - vProtectedLine.getWidth() / 2);
+            //vProtectedLine.setY(point.getY() - vProtectedLine.getHeight() / 2);
+            currEntry = entry;
         }
     }
     private void drawAllDealingsXLimitLines(List<OrderAnswer> list){
