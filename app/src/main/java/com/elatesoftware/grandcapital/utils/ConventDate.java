@@ -21,7 +21,8 @@ public class ConventDate {
 
     public static final String TAG = "ConventDate_Logs";
 
-    private final static int DIFFERENSE = 2000;
+    private final static int DIFFERENSE = 3000;
+    private final static int DIFFERENSE_FOR_POINTS = 3000;
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final String timeZone = "GMT+00:00:00";
     private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
@@ -162,14 +163,23 @@ public class ConventDate {
         }
     }
     public static boolean equalsTimeDealing(String date) {
-        long currTime = ConventDate.getCurrentDateMilliseconds();
-        long orderTime = ConventDate.getConvertDateInMilliseconds(date);
-        if (currTime - orderTime <= DIFFERENSE){
+        long tempLong = ConventDate.getDifferenceDate(date);
+        if (tempLong <= 1200 && tempLong >= 0 ){
             return true;
         }else{
             return false;
         }
     }
+    public static boolean equalsTimePoints(String time1, String time2){
+        long timeLong1 = ConventDate.getConvertDateInMilliseconds(time1);
+        long timeLong2 = ConventDate.getConvertDateInMilliseconds(time2);
+        if ((timeLong1 - timeLong2 <= DIFFERENSE_FOR_POINTS && timeLong1 - timeLong2 >= 0) || (timeLong2 - timeLong1 <= DIFFERENSE_FOR_POINTS && timeLong2 - timeLong1 >= 0)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public static boolean equalsTimeDealingPoint(long time1, String date2) {
         sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
         long time2 = 0;
