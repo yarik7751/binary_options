@@ -828,6 +828,7 @@ public class TerminalFragment extends Fragment {
                         break;
                 }
                 Entry eLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
+                MPPointF point = mChart.getPosition(eLast, YAxis.AxisDependency.RIGHT);
                 vProtectedLine.addPoint(eLast.getX(), eLast.getY(), entry.getX(), entry.getY());
                 mCurrentValueY = answer.getAsk();
                 data.addEntry(entry, 0);

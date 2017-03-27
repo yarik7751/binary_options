@@ -73,7 +73,7 @@ public class DrawView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawARGB(100, 74, 68, 106);
+        canvas.drawARGB(0, 74, 68, 106);
 
         if(isClear) {
             isClear = false;
@@ -106,6 +106,7 @@ public class DrawView extends View {
 
     public void addPoint(float x1, float y1, float x2, float y2) {
         Log.d(TAG, "addPoint");
+        Log.d(TAG, "x1: " + x1 + ", y1: " + y1 + ", x2: " + x2 + ", y2: " + y2);
         startX = x1;
         startY = y1;
         endX = x1;
