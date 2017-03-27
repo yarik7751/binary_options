@@ -164,7 +164,7 @@ public class ConventDate {
     }
     public static boolean equalsTimeDealing(String date) {
         long tempLong = ConventDate.getDifferenceDate(date);
-        if (tempLong <= 1200 && tempLong >= 0 ){
+        if (tempLong <= 0){
             return true;
         }else{
             return false;

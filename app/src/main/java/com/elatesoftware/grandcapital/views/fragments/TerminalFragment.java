@@ -225,11 +225,10 @@ public class TerminalFragment extends Fragment {
         tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
         tvValueRewardTerminal = (TextView) parentView.findViewById(R.id.tvValueRewardTerminal);
-        openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
-        closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
-
         vProtectedLine = (DrawView) parentView.findViewById(R.id.vProtectedLine);
 
+        openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
+        closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
         openDealingView.setTag(TAG_OPEN_DEALING);
         closeDealingView.setTag(TAG_CLOSE_DEALING);
 
@@ -310,7 +309,6 @@ public class TerminalFragment extends Fragment {
         tvMinusTime.setOnClickListener(v -> {
             ConventString.changeTimeValue(etValueTime, false);
         });
-
         tvLeftActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).equals("") && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
@@ -348,8 +346,8 @@ public class TerminalFragment extends Fragment {
         llHigherTerminal.setOnClickListener(v -> {
             requestMakeDealing("0");
         });
-        initializationChart();
         initializationCurrentPoint();
+        initializationChart();
         setSizeHeight();
     }
     @Override
@@ -508,7 +506,7 @@ public class TerminalFragment extends Fragment {
                 for(CustomBaseLimitLine line: listLimit){
                     if((line.getLimit() - point.x <= 7000 && line.getLimit() - point.x >= 0) ||
                             (point.x - line.getLimit() <= 7000 && point.x - line.getLimit() >= 0)){
-                        //makeActiveSelectedDealing(line);
+                        makeActiveSelectedDealing(line);
                         break;
                     }
                 }
@@ -536,11 +534,10 @@ public class TerminalFragment extends Fragment {
                 imgPointCurrent.setX(imgPointCurrent.getX() + velocityX);
                 imgPointCurrent.setY(imgPointCurrent.getY() + velocityY);
             }
-
             @Override
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-                if (imgPointCurrent != null || currEntry != null) {
-                    imgPointCurrent.setVisibility(View.VISIBLE);
+                if (imgPointCurrent != null && currEntry != null) {
+                    //imgPointCurrent.setVisibility(View.VISIBLE);
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                     imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
@@ -548,11 +545,10 @@ public class TerminalFragment extends Fragment {
                     //vProtectedLine.setY(point.getY() - vProtectedLine.getHeight() / 2);
                 }
             }
-
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
-                if (imgPointCurrent != null || currEntry != null) {
-                    imgPointCurrent.setVisibility(View.VISIBLE);
+                if (imgPointCurrent != null && currEntry != null) {
+                    //imgPointCurrent.setVisibility(View.VISIBLE);
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                     imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
@@ -565,14 +561,10 @@ public class TerminalFragment extends Fragment {
         mChart.setOnDrawListener(new OnDrawListener() {
             @Override
             public void onEntryAdded(Entry entry) {
-
             }
-
             @Override
             public void onEntryMoved(Entry entry) {
-
             }
-
             @Override
             public void onDrawFinished(DataSet<?> dataSet) {
                 //vProtectedLine.clear();
@@ -621,6 +613,12 @@ public class TerminalFragment extends Fragment {
         }
     }
 
+    private void setSizeHeight() {
+        int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
+        rlChart.getLayoutParams().height = (int) (height * 0.6);
+        llDeposit.getLayoutParams().height = (int) (height * 0.28);
+        llButtons.getLayoutParams().height = (int) (height * 0.11);
+    }
     private List<CustomBaseLimitLine> getXLimitLines(){
         List<CustomBaseLimitLine> list = new ArrayList<>();
         if(xAxis.getLimitLines() != null && xAxis.getLimitLines().size() != 0){
@@ -631,13 +629,6 @@ public class TerminalFragment extends Fragment {
         }else{
             return null;
         }
-    }
-
-    private void setSizeHeight() {
-        int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
-        rlChart.getLayoutParams().height = (int) (height * 0.6);
-        llDeposit.getLayoutParams().height = (int) (height * 0.28);
-        llButtons.getLayoutParams().height = (int) (height * 0.11);
     }
     private synchronized LineDataSet createSetDataChart() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
@@ -662,6 +653,7 @@ public class TerminalFragment extends Fragment {
         return set;
     }
     private void clearChart() {
+        currEntry = null;
         listSocketPointsBackGround.clear();
         typePoint = POINT_SIMPLY;
         mChart.highlightValues(null);
@@ -711,14 +703,14 @@ public class TerminalFragment extends Fragment {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.error_max_time));
                 return;
             }
+            llProgressBar.setVisibility(View.VISIBLE);
+            setEnabledBtnTerminal(false);
             Intent intentService = new Intent(getActivity(), MakeDealingService.class);
             intentService.putExtra(MakeDealingService.CMD, lowerOrHeight);
             intentService.putExtra(MakeDealingService.SYMBOL, ConventString.getActive(tvValueActive));
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
             intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
             getActivity().startService(intentService);
-            llProgressBar.setVisibility(View.VISIBLE);
-            setEnabledBtnTerminal(false);
         } else {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
         }
@@ -986,13 +978,13 @@ public class TerminalFragment extends Fragment {
     }
     private void drawCurrentPoint(Entry entry) {
         if (imgPointCurrent != null) {
-            imgPointCurrent.setVisibility(View.VISIBLE);
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
             imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
             //vProtectedLine.setX(point.getX() - vProtectedLine.getWidth() / 2);
             //vProtectedLine.setY(point.getY() - vProtectedLine.getHeight() / 2);
             currEntry = entry;
+            imgPointCurrent.setVisibility(View.VISIBLE);
         }
     }
     private void drawAllDealingsXLimitLines(List<OrderAnswer> list){
