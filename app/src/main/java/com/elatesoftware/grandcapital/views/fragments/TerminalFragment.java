@@ -1188,16 +1188,10 @@ public class TerminalFragment extends Fragment {
                 List<OrderAnswer> listAllClosedDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
                 CheckDealingService.setListOrderAnswer(listAllOpenDealings);
                 parseClosingDealings(listAllClosedDealings, listOpenDealingsCurrentActive);
-                /*if(listOpenDealingsCurrentActive != null && listOpenDealingsCurrentActive.size() != 0 &&
+                if(listOpenDealingsCurrentActive != null && listOpenDealingsCurrentActive.size() != 0 &&
                         (mListDealingXLine == null || mListDealingXLine.size() == 0)){
                     drawAllDealingsXLimitLines(listOpenDealingsCurrentActive);
-                } else if(listOpenDealingsCurrentActive == null || listOpenDealingsCurrentActive.size() == 0 ||
-                        mListDealingXLine == null || mListDealingXLine.size() == 0){
-                    xAxis.removeAllLimitLines();
-                    if(currentLineDealing != null){
-                        rightYAxis.removeLimitLine(currentLineDealing);
-                    }
-                }*/
+                }
             }
         }
     }
