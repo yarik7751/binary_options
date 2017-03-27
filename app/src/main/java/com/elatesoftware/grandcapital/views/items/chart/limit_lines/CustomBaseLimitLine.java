@@ -15,6 +15,7 @@ public class CustomBaseLimitLine extends LimitLine {
 
     /** label string that is drawn next to the limit line */
     private String mLabel = "";
+    private String mTimer = "";
     private Bitmap mBitmapLabelX = null;
     private Bitmap mBitmapLabelY = null;
 
@@ -31,14 +32,20 @@ public class CustomBaseLimitLine extends LimitLine {
         LINE_VERTICAL_DEALING_PASS_CLOSING,
     }
 
-    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX, Bitmap bitmapY) {
+    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX, Bitmap bitmapY, String timer) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
         mBitmapLabelX = bitmapX;
         mBitmapLabelY = bitmapY;
+        mTimer = timer;
     }
-
+    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX) {
+        super(limit, label);
+        mLimit = limit;
+        mLabel = label;
+        mBitmapLabelX = bitmapX;
+    }
     public void setTypeLimitLine(LimitLinesType type){
         mTypeLimitLine = type;
     }
@@ -69,5 +76,13 @@ public class CustomBaseLimitLine extends LimitLine {
 
     public void setmLabel(String mLabel) {
         this.mLabel = mLabel;
+    }
+
+    public String getmTimer() {
+        return mTimer;
+    }
+
+    public void setmTimer(String mTimer) {
+        this.mTimer = mTimer;
     }
 }

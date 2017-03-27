@@ -226,16 +226,15 @@ public class XAxisRenderer extends AxisRenderer {
                             OrderAnswer orderAnswer = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
 
                             String strLabelX = String.valueOf(ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(line.getLimit())));
-                            String strLabelY = ":32";
+                            String strLabelY = ConventDate.getDifferenceDateToString(Long.valueOf(line.getmTimer()));
                             Bitmap iconLabelX = line.getmBitmapLabelX();
                             Bitmap iconLabelY = line.getmBitmapLabelY();
-                            Bitmap iconCMD = null;
+                            Bitmap iconCMD;
                             if(orderAnswer.getCmd() == 1){
                                 iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.down);
                             }else{
                                 iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
                             }
-
                             line.setLineWidth(1.0f);
                             line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
 
@@ -276,10 +275,9 @@ public class XAxisRenderer extends AxisRenderer {
                                 c.drawBitmap(iconLabelX, posX - width_marker / 2, pos - height_marker / 4, paint);
                                 c.drawText(strLabelX, posX, pos + paddingVert/4, textPaint);
 
-                                c.drawBitmap(iconLabelY, posX - width_marker1 / 2, posYLabel - height_marker1/2, paint);
-                                c.drawBitmap(iconCMD, posX - width_marker2*4/3, posYLabel - height_marker2/2, paint);
-                                c.drawText(strLabelY, posX - width_marker1 /2 + width_marker2*5/2 , posYLabel + height1, textPaint);
-
+                                c.drawBitmap(iconLabelY, posX - width_marker1 / 2, posYLabel - height_marker1 /2, paint);
+                                c.drawBitmap(iconCMD, posX - width_marker2 *4/3, posYLabel - height_marker2 /2, paint);
+                                c.drawText(strLabelY, posX + width_marker2 *2/3, posYLabel + height1/2, textPaint);
                             }
                         }
                     }

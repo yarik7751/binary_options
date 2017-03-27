@@ -108,7 +108,7 @@ public class GrandCapitalApplication extends Application{
      }
     public static void closeAndOpenSocket(final String symbol){
         closeSocket();
-        symbolCurrent = symbol;
+        symbolCurrent = symbol.replace("_OP", "") + "_OP";
         if (mClient != null){
             while(mClient.getReadyState() == WebSocket.READYSTATE.OPEN || mClient.getReadyState() == WebSocket.READYSTATE.CONNECTING){
 

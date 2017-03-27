@@ -77,6 +77,7 @@ public class ConventDate {
         return Math.abs(stringToUnix(currDate) - stringToUnix(date)) / 1000;
     }
 
+
     public static String getDifferenceDateToString(long difSec) {
         if(difSec < 60) {
             return ":" + timeClockFormat(difSec);
