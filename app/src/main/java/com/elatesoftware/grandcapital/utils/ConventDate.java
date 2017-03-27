@@ -77,6 +77,34 @@ public class ConventDate {
         return Math.abs(stringToUnix(currDate) - stringToUnix(date)) / 1000;
     }
 
+    public static String getDifferenceDateToString(long difSec) {
+        if(difSec < 60) {
+            return ":" + timeClockFormat(difSec);
+        } else if(difSec < 60 * 60) {
+            long min = difSec / 60;
+            long sec = difSec % 60;
+            return timeClockFormat(min) + ":" + timeClockFormat(sec);
+        } else if(difSec < 60 * 60 * 24) {
+            long hour = difSec / 60 / 60;
+            difSec -= hour * 60 * 60;
+            long min = difSec / 60;
+            long sec = difSec % 60;
+            return hour + "h " + timeClockFormat(min) + ":" + timeClockFormat(sec);
+        } else {
+            long day = difSec / 60 / 60 / 24;
+            difSec -= day * 60 * 60 * 24;
+            long hour = difSec / 60 / 60;
+            difSec -= hour * 60 * 60;
+            long min = difSec / 60;
+            long sec = difSec % 60;
+            return day + "d " + hour + "h " + timeClockFormat(min) + ":" + timeClockFormat(sec);
+        }
+    }
+
+    public static String timeClockFormat(long time) {
+        return (time < 10) ? "0" + time : "" + time;
+    }
+
     public static long getConvertDateInMilliseconds(String strDate) {
         sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
         Date date = null;
