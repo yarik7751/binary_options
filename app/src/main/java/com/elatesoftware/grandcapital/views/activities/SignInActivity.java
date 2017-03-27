@@ -60,6 +60,10 @@ public class SignInActivity extends CustomFontsActivity {
         btnSignIn.setOnClickListener(view -> signIn());
         tilLogin.setErrorEnabled(true);
         tilPassword.setErrorEnabled(true);
+
+        /*etLogin.setText("10031740");
+        etPassword.setText("2nFaxHcy");*/
+
         etLogin.setOnFocusChangeListener((v, hasFocus) -> tilLogin.setError(null));
         etPassword.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_GO || event == null || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {

@@ -332,7 +332,6 @@ public class TerminalFragment extends Fragment {
         });
         llLowerTerminal.setOnClickListener(v -> {
             requestMakeDealing("1");
-
         });
         llHigherTerminal.setOnClickListener(v -> {
             requestMakeDealing("0");
@@ -379,6 +378,11 @@ public class TerminalFragment extends Fragment {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
         GrandCapitalApplication.closeSocket();
         super.onDestroy();
+    }
+
+    private void setEnabledBtnTerminal(boolean enabled) {
+        llHigherTerminal.setEnabled(enabled);
+        llLowerTerminal.setEnabled(enabled);
     }
 
     private void registerBroadcasts() {
@@ -630,6 +634,8 @@ public class TerminalFragment extends Fragment {
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
             intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
             getActivity().startService(intentService);
+            llProgressBar.setVisibility(View.VISIBLE);
+            setEnabledBtnTerminal(false);
         } else {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
         }
@@ -1039,6 +1045,8 @@ public class TerminalFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(MakeDealingService.RESPONSE);
             if (response != null && response.equals("true")) {
+                llProgressBar.setVisibility(View.GONE);
+                setEnabledBtnTerminal(true);
                 Log.d(GrandCapitalApplication.TAG_SOCKET, "openDealing");
                 requestOrders();
                 if (currentDealing == null) {
@@ -1111,6 +1119,7 @@ public class TerminalFragment extends Fragment {
                         }*/
                         String typeOption = InfoAnswer.getInstance().getGroup().getOptionsStyle();
                         int percent = 100;
+                        Log.d(TAG, "typeOption: " + typeOption);
                         if(typeOption.contains("american")) {
                             percent = instrument.getWinFull();
                         } else if(typeOption.contains("european")) {

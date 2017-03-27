@@ -71,8 +71,10 @@ public class ConventDate {
         }
     }
 
-    public static long getDifferenceDate(String data1, String data2) {
-        return Math.abs(stringToUnix(data1) - stringToUnix(data2)) / 1000;
+    public static long getDifferenceDate(String date) {
+        sdf.setTimeZone(TimeZone.getDefault());
+        String currDate = sdf.format(new Date());
+        return Math.abs(stringToUnix(currDate) - stringToUnix(date)) / 1000;
     }
 
     public static long getConvertDateInMilliseconds(String strDate) {
@@ -159,6 +161,7 @@ public class ConventDate {
     public static boolean isCloseDealing(String time){
         return time.equals("1970-01-01T00:00:00");
     }
+
     public static long getCurrentDateMilliseconds(){
         Date date = new Date();
         date.setHours(date.getHours() - 1);
