@@ -70,6 +70,11 @@ public class ConventDate {
             return -1;
         }
     }
+
+    public static long getDifferenceDate(String data1, String data2) {
+        return Math.abs(stringToUnix(data1) - stringToUnix(data2)) / 1000;
+    }
+
     public static long getConvertDateInMilliseconds(String strDate) {
         sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
         Date date = null;
@@ -85,7 +90,7 @@ public class ConventDate {
         DateFormat formatter = new SimpleDateFormat("HH:mm");
         formatter.setTimeZone(TimeZone.getDefault());
         Date date = new Date(time);
-        Log.d(TAG, "observesDaylightTime: " + TimeZone.getDefault().inDaylightTime(date));
+        //Log.d(TAG, "observesDaylightTime: " + TimeZone.getDefault().inDaylightTime(date));
         date.setHours(date.getHours() - 3);
         //date.setTime(date.getTime() + getIterationTime());
         return formatter.format(date);
@@ -160,13 +165,13 @@ public class ConventDate {
         return date.getTime()/1000;
     }
     public static String getTimeStampCurrentDate() {
-        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        sdf.setTimeZone(TimeZone.getDefault());
         Date date = new Date();
         return String.valueOf(date.getTime() / 1000);
     }
     public static String getTimeStampLastDate() {
         Date date = new Date();
-        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        sdf.setTimeZone(TimeZone.getDefault());
         date.setMinutes(date.getMinutes() - 30);
         return String.valueOf(date.getTime() / 1000);
     }
