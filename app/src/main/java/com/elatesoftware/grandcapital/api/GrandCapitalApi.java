@@ -47,6 +47,9 @@ public class GrandCapitalApi {
 
     private static IGrandCapitalApi grandCapitalApiService = null;
 
+    private final static int CODE_SUCCESS = 200;
+    private final static int CODE_SUCCESS_DELETE_DEALING = 204;
+
     private static IGrandCapitalApi getApiService() {
         if (grandCapitalApiService == null) {
             CookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(GrandCapitalApplication.getAppContext()));
@@ -95,7 +98,7 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null){
-            if(response.code() == 200) {
+            if(response.code() == CODE_SUCCESS) {
                 AuthorizationAnswer.setInstance(response.body());
             }
             result = String.valueOf(response.code());
@@ -114,7 +117,7 @@ public class GrandCapitalApi {
                 e.printStackTrace();
             }
             if(response != null){
-                if(response.code() == 200) {
+                if(response.code() == CODE_SUCCESS) {
                     List<OrderAnswer> list = response.body();
                     Collections.sort(list, (o1, o2) -> o2.getOpenTime().compareTo(o1.getOpenTime()));
                     OrderAnswer.setInstance(list);
@@ -137,7 +140,7 @@ public class GrandCapitalApi {
                 e.printStackTrace();
             }
             if(response != null){
-                if(response.code() == 200) {
+                if(response.code() == CODE_SUCCESS) {
                     InfoAnswer.setInstance(response.body());
                     User.getInstance().setUserName(InfoAnswer.getInstance().getName());
                     CustomSharedPreferences.updateInfoUser(GrandCapitalApplication.getAppContext());
@@ -165,7 +168,7 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null){
-            if(response.code() == 200) {
+            if(response.code() == CODE_SUCCESS) {
                 SummaryAnswer.setInstance(response.body());
                 Double balance = SummaryAnswer.getInstance().getBalance();
                 User.getInstance().setBalance(balance);
@@ -184,7 +187,7 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null){
-            if(response.code() == 200) {
+            if(response.code() == CODE_SUCCESS) {
                SignalAnswer.setInstance(response.body());
             }
             result = String.valueOf(response.code());
@@ -204,7 +207,7 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null){
-            if(response.code() == 200) {
+            if(response.code() == CODE_SUCCESS) {
                 List<SymbolHistoryAnswer> list = response.body();
                 if(list == null || list.size() < 2){
                     SymbolHistoryAnswer.setInstance(null);
@@ -235,7 +238,7 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null){
-            if(response.code() == 200) {
+            if(response.code() == CODE_SUCCESS) {
                 try {
                     result = response.body().string();
                     try {
@@ -267,7 +270,7 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null) {
-            if(response.code() == 200) {
+            if(response.code() == CODE_SUCCESS) {
                 QuestionsAnswer.setInstance(response.body());
             }
             result = String.valueOf(response.code());
@@ -286,7 +289,7 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null) {
-            if(response.code() == 200) {
+            if(response.code() == CODE_SUCCESS) {
                 EarlyClosureAnswer.setInstance(response.body());
             }
             result = String.valueOf(response.code());
@@ -305,7 +308,7 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null) {
-            if(response.code() == 200) {
+            if(response.code() == CODE_SUCCESS) {
                 BinaryOptionAnswer.setInstance(response.body());
             }
             result = String.valueOf(response.code());
@@ -323,8 +326,25 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null) {
-            if(response.code() == 200) {
+            if(response.code() == CODE_SUCCESS) {
                 InOutAnswer.setInstance(response.body());
+            }
+            result = String.valueOf(response.code());
+        }
+        return result;
+    }
+    public static String getDeleteDealing(String ticket) {
+        Call<ResponseBody> call = getApiService().deleteDealing(User.getInstance().getToken(), User.getInstance().getLogin(), ticket);
+        Response<ResponseBody> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null) {
+            if(response.code() == CODE_SUCCESS_DELETE_DEALING) { // success delete dealing
+
             }
             result = String.valueOf(response.code());
         }

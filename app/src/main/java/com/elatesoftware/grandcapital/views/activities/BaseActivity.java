@@ -20,6 +20,7 @@ import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.OrdersService;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
@@ -273,7 +274,6 @@ public class BaseActivity extends CustomFontsActivity {
         backToRootFragment = true;
         fragmentManager.popBackStack();
         onSwitchFragment(targetFragment, targetFragment.getClass().getName(), true, true, R.id.content);
-        Log.d(TAG, "BackStackEntryCount: " + fragmentManager.getBackStackEntryCount());
     }
 
     public static void addNextFragment(Fragment fragment) {
@@ -281,11 +281,9 @@ public class BaseActivity extends CustomFontsActivity {
     }
 
     public static TerminalFragment setTerminalFragment() {
-        Log.d(TAG, "setTerminalFragment()");
         TerminalFragment fragment = TerminalFragment.getInstance();
         if(backToRootFragment) {
             clearFragmentBackStack();
-            Log.d(TAG, "clearFragmentBackStack()");
         }
         backToRootFragment = false;
         if(fragmentManager.findFragmentByTag(fragment.getClass().getName()) == null) {
@@ -416,7 +414,8 @@ public class BaseActivity extends CustomFontsActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null){
-                if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals("200") && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals("200")){
+                if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) &&
+                        intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS)){
                     mResideMenu.refreshBalanceUser();
                     mResideMenu.refreshNameUser();
                 }

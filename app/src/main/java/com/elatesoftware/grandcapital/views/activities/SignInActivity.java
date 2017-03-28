@@ -23,6 +23,7 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.SignInService;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 
@@ -54,7 +55,7 @@ public class SignInActivity extends CustomFontsActivity {
         tvSignUp.setOnClickListener(v -> {
             /*Intent i = new Intent(getApplicationContext(), SignUpActivity.class);
             startActivity(i);*/
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grand.capital/4"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_SIGN_UP));
             startActivity(browserIntent);
         });
         btnSignIn.setOnClickListener(view -> signIn());
@@ -114,9 +115,9 @@ public class SignInActivity extends CustomFontsActivity {
             String response = intent.getStringExtra(SignInService.RESPONSE);
             llProgress.setVisibility(View.GONE);
             if (response != null) {
-                if (response.equals("400")) {
+                if (response.equals(Const.RESPONSE_CODE_ERROR)) {
                     tilPassword.setError(getString(R.string.error_wront_password));
-                } else if(response.equals("200")){
+                } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                     final String login = etLogin.getText().toString();
                     if(AuthorizationAnswer.getInstance() != null){
                         User currentUser = new User(login, AuthorizationAnswer.getInstance().getServerName(),

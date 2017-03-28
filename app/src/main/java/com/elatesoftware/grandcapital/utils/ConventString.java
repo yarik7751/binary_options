@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.utils;
 
 import android.app.Activity;
+import android.text.Html;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -121,5 +122,15 @@ public class ConventString {
             format = format.substring(0, format.length() - 2);
         }
         return format;
+    }
+
+    public static String getContentQuestions(String str){
+        return Html.fromHtml(str).toString()
+                .replace((char) 160, (char) 32).replace((char) 65532, (char) 32).trim().replaceAll("[\\n]{2,}", "\n");
+    }
+
+    public static String getStringEarlyClosure(EditText view, int percent){
+        double earlyClosure = ConventString.getAmountValue(view) * percent / 100.000;
+        return earlyClosure + "(" + (earlyClosure == 0 ? 0 : percent) + "%)";
     }
 }

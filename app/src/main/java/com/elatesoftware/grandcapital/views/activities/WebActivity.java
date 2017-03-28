@@ -32,7 +32,7 @@ public class WebActivity extends AppCompatActivity {
         mWebView = (WebView) findViewById(R.id.webView);
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.loadUrl( getResources().getString(R.string.link_company));
+        mWebView.loadUrl(getResources().getString(R.string.link_company));
     }
 
     @Override

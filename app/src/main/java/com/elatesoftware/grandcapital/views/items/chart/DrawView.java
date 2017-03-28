@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.views.items;
+package com.elatesoftware.grandcapital.views.items.chart;
 
 import android.content.Context;
 import android.graphics.Bitmap;

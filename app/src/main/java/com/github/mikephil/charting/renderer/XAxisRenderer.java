@@ -9,11 +9,13 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.view.LayoutInflater;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -223,23 +225,24 @@ public class XAxisRenderer extends AxisRenderer {
                     for (LimitLine l : limitLines) {
                         if (l instanceof CustomBaseLimitLine) {
                             CustomBaseLimitLine line = (CustomBaseLimitLine) l;
-                            OrderAnswer orderAnswer = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+                            OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
 
                             String strLabelX = String.valueOf(ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(line.getLimit())));
                             String strLabelY = ConventDate.getDifferenceDateToString(Long.valueOf(line.getmTimer()));
                             Bitmap iconLabelX = line.getmBitmapLabelX();
                             Bitmap iconLabelY = line.getmBitmapLabelY();
                             Bitmap iconCMD;
-                            if(orderAnswer.getCmd() == 1){
+                            if(order.getCmd() == 1){
                                 iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.down);
                             }else{
                                 iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
                             }
+
                             line.setLineWidth(1.0f);
                             line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
 
                             pts[0] = l.getLimit();
-                            pts[1] =  Float.valueOf(String.valueOf(orderAnswer.getOpenPrice()));
+                            pts[1] =  Float.valueOf(String.valueOf(order.getOpenPrice()));
                             mTrans.pointValuesToPixel(pts);
 
                             float posX = pts[0];
@@ -256,11 +259,12 @@ public class XAxisRenderer extends AxisRenderer {
                             float paddingHoriz1 = Utils.convertDpToPixel(24);
                             float height1 = Utils.calcTextHeight(textPaint, strLabelY);
                             float width1 = Utils.calcTextWidth(textPaint, strLabelY);
-                            float height_marker1 = height1 + paddingVert1;
-                            float width_marker1 = width1 + paddingHoriz1;
 
-                            float height_marker2 = Utils.convertDpToPixel(12);
-                            float width_marker2 = Utils.convertDpToPixel(12);
+                            float height_markerIconLabelY = height1 + paddingVert1;
+                            float width_markerIconLabelY = width1 + paddingHoriz1;
+
+                            float height_markerIconCMD = Utils.convertDpToPixel(12);
+                            float width_markerIconCMD = Utils.convertDpToPixel(12);
 
                             if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
                                 line.enableDashedLine(10f, 10f, 0f);
@@ -269,15 +273,15 @@ public class XAxisRenderer extends AxisRenderer {
                             }
                             if (iconLabelX != null && iconLabelY != null && iconCMD != null) {
                                 iconLabelX = Bitmap.createScaledBitmap(iconLabelX, (int) width_marker, (int) height_marker, false);
-                                iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_marker1, (int) height_marker1, false);
-                                iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_marker2, (int) height_marker2, false);
+                                iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_markerIconLabelY, (int) height_markerIconLabelY, false);
+                                iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_markerIconCMD, (int) height_markerIconCMD, false);
 
                                 c.drawBitmap(iconLabelX, posX - width_marker / 2, pos - height_marker / 4, paint);
                                 c.drawText(strLabelX, posX, pos + paddingVert/4, textPaint);
 
-                                c.drawBitmap(iconLabelY, posX - width_marker1 / 2, posYLabel - height_marker1 /2, paint);
-                                c.drawBitmap(iconCMD, posX - width_marker2 *4/3, posYLabel - height_marker2 /2, paint);
-                                c.drawText(strLabelY, posX + width_marker2 *2/3, posYLabel + height1/2, textPaint);
+                                c.drawBitmap(iconLabelY, posX - width_markerIconLabelY / 2, posYLabel - height_markerIconLabelY / 2, paint);
+                                c.drawBitmap(iconCMD, posX - width_markerIconCMD * 4/3, posYLabel - height_markerIconCMD / 2, paint);
+                                c.drawText(strLabelY, posX + width_markerIconCMD * 2/3, posYLabel + height1 / 2, textPaint);
                             }
                         }
                     }
@@ -356,7 +360,6 @@ public class XAxisRenderer extends AxisRenderer {
         float[] position = mRenderLimitLinesBuffer;
         position[0] = 0;
         position[1] = 0;
-
 
         for (int i = 0; i < limitLines.size(); i++) {
             LimitLine l = limitLines.get(i);

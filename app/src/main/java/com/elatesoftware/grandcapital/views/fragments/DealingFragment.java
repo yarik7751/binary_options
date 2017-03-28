@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.services.OrdersService;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -192,7 +193,7 @@ public class DealingFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(OrdersService.RESPONSE);
             if (response != null) {
-                if(response.equals("200")){
+                if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                     if(OrderAnswer.getInstance() != null){
                         List<OrderAnswer> orders = OrderAnswer.getInstance();
                         currentOrders = OrderAnswer.filterOrders(orders, currentTabPosition);

@@ -17,6 +17,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -69,4 +70,10 @@ interface IGrandCapitalApi {
 
     @GET("/my/webtrader/api/account/options/info/")
     Call<EarlyClosureAnswer> getEarlyClosureAnswer();
+
+    @DELETE("/my/webtrader/api/account/(login)/trade/(ticket)/")
+    @FormUrlEncoded
+    Call<ResponseBody> deleteDealing(@Header("X-Trader-Token") String token,
+                                     @Path("login") String login,
+                                     @Path("ticket") String ticket);
 }

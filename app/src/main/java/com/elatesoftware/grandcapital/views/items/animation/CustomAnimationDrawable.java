@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.views;
+package com.elatesoftware.grandcapital.views.items.animation;
 
 import android.graphics.drawable.AnimationDrawable;
 

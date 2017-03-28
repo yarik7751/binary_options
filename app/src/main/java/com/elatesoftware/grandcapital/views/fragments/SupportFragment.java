@@ -25,6 +25,7 @@ import com.elatesoftware.grandcapital.api.chat.pojo.PollChatAnswer;
 import com.elatesoftware.grandcapital.api.chat.pojo.SendMessageAnswer;
 import com.elatesoftware.grandcapital.services.ChatService;
 import com.elatesoftware.grandcapital.services.SignInService;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -103,35 +104,7 @@ public class SupportFragment extends Fragment {
             addYourMessageInView(message, System.currentTimeMillis(), true);
             edMessage.setText("");
         });
-
         loadChatHistory();
-
-        /*String testMsg = "dfjgdlsjgldfhjdsjkldfjlgjsgjtisgjordtjdfjklgdfjkgdfjklgjdfklkdfdfkdfkgkldfkldfkfjklgjfdklgjkldfjgkldfjgdfjklgdfjklgjdfklgjdfkgjdfjgdfkgjkldfgjfkldjlklsjieuireuiorueiorueotireuoirueoitrueoitoituuy";
-        for(int i = 0; i < 3; i++) {
-            addYourMessageInView(testMsg);
-        }
-        addYourMessageInView("dfgdfgdfgdfg");
-        addYourMessageInView("dfgdfgdfgdfg");
-
-        for(int i = 0; i < 3; i++) {
-            addTheirMessageInView(testMsg);
-        }
-
-        addYourMessageInView("dfgdfgdfgdfg");
-        addTheirMessageInView("gdfgdfgdfgdf");
-
-        for(int i = 0; i < 3; i++) {
-            addYourMessageInView(testMsg);
-        }
-
-        for(int i = 0; i < 3; i++) {
-            addTheirMessageInView(testMsg);
-        }
-
-        addTheirMessageInView("gdfgdfgdfgdf");
-        addTheirMessageInView("gdfgdfgdfgdf");
-        addTheirMessageInView("gdfgdfgdfgdf");
-        addYourMessageInView("dfgdfgdfgdfg");*/
     }
 
     @Override
@@ -205,9 +178,9 @@ public class SupportFragment extends Fragment {
             if(action.equals(ChatService.CREATE_CHAT)) {
                 Log.d(TAG, "CREATE_CHAT");
                 if (response != null) {
-                    if (response.equals("400")) {
+                    if (response.equals(Const.RESPONSE_CODE_ERROR)) {
                         Log.d(TAG, "error http 400");
-                    } else if(response.equals("200")){
+                    } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                         if(ChatCreateAnswer.getInstance() != null){
                             Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
                             caseId = ChatCreateAnswer.getInstance().getCaseId();
@@ -223,9 +196,9 @@ public class SupportFragment extends Fragment {
             if(action.equals(ChatService.POLL_CHAT)) {
                 Log.d(TAG, "POLL_CHAT");
                 if (response != null) {
-                    if (response.equals("400")) {
+                    if (response.equals(Const.RESPONSE_CODE_ERROR)) {
                         Log.d(TAG, "error http 400");
-                    } else if(response.equals("200")){
+                    } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                         if(PollChatAnswer.getInstance() != null){
                             if(PollChatAnswer.getInstance() != null && !TextUtils.isEmpty(caseId)) {
                                 Log.d(TAG, "PollChatAnswer: " + PollChatAnswer.getInstance().getMessageList());
@@ -251,9 +224,9 @@ public class SupportFragment extends Fragment {
             if(action.equals(ChatService.SEND_MESSAGE_CHAT)) {
                 Log.d(TAG, "SEND_MESSAGE_CHAT");
                 if (response != null) {
-                    if (response.equals("400")) {
+                    if (response.equals(Const.RESPONSE_CODE_ERROR)) {
                         Log.d(TAG, "error http 400");
-                    } else if(response.equals("200")){
+                    } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                         if(SendMessageAnswer.getInstance() != null) {
                             Log.d(TAG, SendMessageAnswer.getInstance() + "");
                         }

@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
 import com.elatesoftware.grandcapital.services.QuestionsService;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.howItWorks.FragmentHowItWorksListAdapter;
 
@@ -95,12 +96,9 @@ public class HowItWorksFragment extends Fragment {
             String response = intent.getStringExtra(QuestionsService.RESPONSE);
             llProgress.setVisibility(View.GONE);
             if(response != null) {
-                if(response.equals("400")) {
+                if(response.equals(Const.RESPONSE_CODE_ERROR)) {
                     Log.d(TAG, "QuestionsAnswer questions ERROR: 400");
-                } else if(response.equals("200")) {
-                    Log.d(TAG, "QuestionsAnswer: " + QuestionsAnswer.getInstance());
-                    Log.d(TAG, "QuestionsAnswer questions: " + QuestionsAnswer.getInstance().getQuestions());
-
+                } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)) {
                     mRecyclerView.setAdapter(new FragmentHowItWorksListAdapter(QuestionsAnswer.getInstance()));
                 } else {
                     Log.d(TAG, "QuestionsAnswer questions ERROR: " + response);

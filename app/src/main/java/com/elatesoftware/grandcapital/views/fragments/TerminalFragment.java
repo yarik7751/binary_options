@@ -49,14 +49,15 @@ import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.services.SignalService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
-import com.elatesoftware.grandcapital.views.CustomAnimationDrawable;
+import com.elatesoftware.grandcapital.views.items.animation.CustomAnimationDrawable;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
-import com.elatesoftware.grandcapital.views.items.DrawView;
+import com.elatesoftware.grandcapital.views.items.chart.DrawView;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
@@ -86,14 +87,12 @@ public class TerminalFragment extends Fragment {
     public final static String TAG_OPEN_DEALING = "openDealingView";
     public final static String TAG_CLOSE_DEALING = "closeDealingView";
 
-    private final static int INTERVAL_SHOW_LABEL = 5000;
-    private final int INTERVAL_ITEM = 100;
-
     private final static String SYMBOL = "EURUSD";
     private static String sSymbolCurrent = "";
-    private static String sTypeOption;
 
     public static double mCurrentValueY = 0;
+    private Entry currEntry;
+    private Thread threadSymbolHistory;
     private OrderAnswer currentDealing = new OrderAnswer();
 
     private static int typePoint = 0;
@@ -101,6 +100,7 @@ public class TerminalFragment extends Fragment {
     private final static int POINT_OPEN_DEALING = 1;
     private final static int POINT_CLOSE_DEALING = 2;
 
+    private static boolean isTypeOptionAmerican = false;
     public static boolean isAddInChart = false;
     public static boolean isOpen = false;
     public boolean isDirection = true;
@@ -135,7 +135,6 @@ public class TerminalFragment extends Fragment {
     private DrawView vProtectedLine;
 
     private Drawable drawableMarkerDealing;
-    private Bitmap bitmapIconCurrentLimitLabel;
     private Bitmap bitmapIconGreenXLabel;
     private Bitmap bitmapIconRedXLabel;
     private Bitmap bitmapIconRedYLabel;
@@ -154,10 +153,6 @@ public class TerminalFragment extends Fragment {
     private XAxis xAxis;
     private CustomBaseLimitLine currentLineSocket;
     private CustomBaseLimitLine currentLineDealing;
-
-    private Entry currEntry;
-
-    private Thread threadSymbolHistory;
 
     private static List<String> listActives = new ArrayList<>();
     public static List<SocketAnswer> listSocketPointsBackGround = new ArrayList<>();
@@ -187,7 +182,6 @@ public class TerminalFragment extends Fragment {
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
 
         drawableMarkerDealing = getResources().getDrawable(R.drawable.marker_close_dealing);
-        bitmapIconCurrentLimitLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.whitevert);
         bitmapIconGreenXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_vert);
         bitmapIconRedXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_vert);
         bitmapIconCurrentDealingGreenYLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_hor);
@@ -310,7 +304,7 @@ public class TerminalFragment extends Fragment {
             ConventString.changeTimeValue(etValueTime, false);
         });
         tvLeftActive.setOnClickListener(v -> {
-            if (!ConventString.getActive(tvValueActive).equals("") && listActives.size() > 0) {
+            if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
                 if (index == 0) {
                     sSymbolCurrent = listActives.get(listActives.size() - 1);
@@ -324,7 +318,7 @@ public class TerminalFragment extends Fragment {
             }
         });
         tvRightActive.setOnClickListener(v -> {
-            if (!ConventString.getActive(tvValueActive).equals("") && listActives.size() > 0) {
+            if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
                 if (index == (listActives.size() - 1)) {
                     sSymbolCurrent = listActives.get(0);
@@ -341,10 +335,10 @@ public class TerminalFragment extends Fragment {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
         llLowerTerminal.setOnClickListener(v -> {
-            requestMakeDealing("1");
+            requestMakeDealing(Const.CMD_LOWER);
         });
         llHigherTerminal.setOnClickListener(v -> {
-            requestMakeDealing("0");
+            requestMakeDealing(Const.CMD_HEIGHT);
         });
         initializationCurrentPoint();
         initializationChart();
@@ -587,7 +581,7 @@ public class TerminalFragment extends Fragment {
             rocketAnimation.setOneShot(true);
             for (int i = 10; i >= 3; i--) {
                 Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
-                rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
+                rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), Const.INTERVAL_ITEM);
             }
 
             rocketAnimation.setAnimationEndListner(() -> {
@@ -603,7 +597,7 @@ public class TerminalFragment extends Fragment {
             rocketAnimationBack.setOneShot(true);
             for (int i = 3; i <= 10; i++) {
                 Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
-                rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), INTERVAL_ITEM);
+                rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), Const.INTERVAL_ITEM);
             }
             rocketAnimationBack.setAnimationEndListner(() -> {
                 initRocketAnimation();
@@ -698,8 +692,8 @@ public class TerminalFragment extends Fragment {
         getActivity().startService(intentService);
     }
     private void requestMakeDealing(String lowerOrHeight) {
-        if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).equals("")) {
-            if(ConventString.getTimeValue(etValueTime) > 2880) {
+        if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).isEmpty()) {
+            if(ConventString.getTimeValue(etValueTime) > Const.MAX_TIME_MIN) {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.error_max_time));
                 return;
             }
@@ -857,8 +851,8 @@ public class TerminalFragment extends Fragment {
         if(list != null){
             if(line != null){
                 if(line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
-                    line.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
                     line.enableDashedLine(10f, 10f, 0f);
+                    line.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
                     if (currentLineDealing != null) {
                          rightYAxis.removeLimitLine(currentLineDealing);
                     }
@@ -937,7 +931,7 @@ public class TerminalFragment extends Fragment {
         if (currentLineSocket != null) {
             rightYAxis.removeLimitLine(currentLineSocket);
         }
-        currentLineSocket = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()), bitmapIconCurrentLimitLabel);
+        currentLineSocket = new CustomBaseLimitLine(entry.getY(), String.valueOf(entry.getY()));
         currentLineSocket.setLineColor(Color.WHITE);
         currentLineSocket.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_CURRENT_SOCKET);
         rightYAxis.addLimitLine(currentLineSocket);
@@ -956,7 +950,6 @@ public class TerminalFragment extends Fragment {
         }
         line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
     }
-
     private void drawCurrentDealingYLimitLine(CustomBaseLimitLine lineX, OrderAnswer order) {
         if (currentLineDealing != null) {
             rightYAxis.removeLimitLine(currentLineDealing);
@@ -981,8 +974,6 @@ public class TerminalFragment extends Fragment {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
             imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
-            //vProtectedLine.setX(point.getX() - vProtectedLine.getWidth() / 2);
-            //vProtectedLine.setY(point.getY() - vProtectedLine.getHeight() / 2);
             currEntry = entry;
             imgPointCurrent.setVisibility(View.VISIBLE);
         }
@@ -1024,7 +1015,7 @@ public class TerminalFragment extends Fragment {
         if (order != null) {
             CustomBaseLimitLine line = new CustomBaseLimitLine(ConventDate.genericTimeForChart(
                     ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000),
-                    new Gson().toJson(order), null, null, String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
+                    new Gson().toJson(order), null, null, String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isTypeOptionAmerican);
             redrawColorXLimitLine(line, order);
             line.enableDashedLine(10f, 10f, 0f);
             line.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
@@ -1039,7 +1030,7 @@ public class TerminalFragment extends Fragment {
             if (CustomSharedPreferences.getIntervalAdvertising(getContext()) >= 3) {
                 CustomSharedPreferences.setIntervalAdvertising(getContext(), 0);
                 dialogOpenAccount = CustomDialog.showDialogOpenAccount(getActivity(), v -> {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grand.capital/4"));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_SIGN_UP));
                     startActivity(browserIntent);
                     dialogOpenAccount.cancel();
                 });
@@ -1050,46 +1041,33 @@ public class TerminalFragment extends Fragment {
         ((TextView) openDealingView.findViewById(R.id.tvActive)).setText(active);
         ((TextView) openDealingView.findViewById(R.id.tvAmount)).setText(amount);
         ((TextView) openDealingView.findViewById(R.id.tvTime)).setText(time);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.topMargin = AndroidUtils.dp(16);
-        params.leftMargin = AndroidUtils.dp(16);
 
         View vCloseDealings = rlChart.findViewWithTag(TAG_CLOSE_DEALING);
         if(vCloseDealings != null) {
             rlChart.removeView(vCloseDealings);
         }
         if (rlChart.findViewWithTag(TAG_OPEN_DEALING) != null) {
-            rlChart.updateViewLayout(openDealingView, params);
+            rlChart.updateViewLayout(openDealingView, ConventImage.getRelativeParams());
         } else {
-            rlChart.addView(openDealingView, params);
+            rlChart.addView(openDealingView, ConventImage.getRelativeParams());
         }
-        new Handler().postDelayed(() -> rlChart.removeView(openDealingView), INTERVAL_SHOW_LABEL);
+        new Handler().postDelayed(() -> rlChart.removeView(openDealingView), Const.INTERVAL_SHOW_LABEL);
     }
     private void showViewCloseDealing(OrderAnswer answer) {
         if (answer != null) {
             ((TextView) closeDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
             ((TextView) closeDealingView.findViewById(R.id.tvPriceValue)).setText(ConventString.getRoundNumber(answer.getClosePrice()));
             ((TextView) closeDealingView.findViewById(R.id.tvProfitValue)).setText(String.valueOf(answer.getProfitStr()));
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.topMargin = AndroidUtils.dp(16);
-            params.leftMargin = AndroidUtils.dp(16);
-
             View vOpenDealings = rlChart.findViewWithTag(TAG_OPEN_DEALING);
             if(vOpenDealings != null) {
                 rlChart.removeView(vOpenDealings);
             }
             if (rlChart.findViewWithTag(TAG_CLOSE_DEALING) != null) {
-                rlChart.updateViewLayout(closeDealingView, params);
+                rlChart.updateViewLayout(closeDealingView, ConventImage.getRelativeParams());
             } else {
-                rlChart.addView(closeDealingView, params);
+                rlChart.addView(closeDealingView, ConventImage.getRelativeParams());
             }
-            new Handler().postDelayed(() -> rlChart.removeView(closeDealingView), INTERVAL_SHOW_LABEL);
+            new Handler().postDelayed(() -> rlChart.removeView(closeDealingView), Const.INTERVAL_SHOW_LABEL);
         }
     }
     public void  showSignalsPanel() {
@@ -1098,7 +1076,7 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         }
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 60 : -60));
-        animation.setDuration(200);
+        animation.setDuration(Const.INTERVAL_ANIM_PANEL);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -1108,13 +1086,7 @@ public class TerminalFragment extends Fragment {
             public void onAnimationEnd(Animation animation) {
                 llTopPanel.clearAnimation();
                 flMain.removeView(llTopPanel);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        AndroidUtils.dp(60)
-                );
-                params.topMargin = AndroidUtils.dp(isDirection ? -60 : 0);
-                flMain.addView(llTopPanel, params);
-
+                flMain.addView(llTopPanel, ConventImage.getFrameParams(isDirection));
                 if (!isDirection) {
                     new Handler().postDelayed(() -> {
                         if (!isDirection) {
@@ -1137,7 +1109,7 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null) {
-                if (intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals("200") && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals("200")) {
+                if (intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS)) {
                     if (InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getInstruments() != null && InfoAnswer.getInstance().getInstruments().size() > 0) {
                         listActives.clear();
                         for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
@@ -1158,7 +1130,7 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(SymbolHistoryService.RESPONSE);
-            if (response != null && response.equals("200") && SymbolHistoryAnswer.getInstance() != null) {
+            if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SymbolHistoryAnswer.getInstance() != null) {
                 parseResponseSymbolHistory();
             } else {
                 GrandCapitalApplication.closeAndOpenSocket(sSymbolCurrent);
@@ -1173,9 +1145,6 @@ public class TerminalFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(MakeDealingService.RESPONSE);
             if (response != null && response.equals("true")) {
-                llProgressBar.setVisibility(View.GONE);
-                setEnabledBtnTerminal(true);
-                Log.d(GrandCapitalApplication.TAG_SOCKET, "openDealing");
                 requestOrders();
                 if (currentDealing == null) {
                     currentDealing = new OrderAnswer();
@@ -1196,6 +1165,8 @@ public class TerminalFragment extends Fragment {
             } else {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.request_error_request));
             }
+            llProgressBar.setVisibility(View.GONE);
+            setEnabledBtnTerminal(true);
         }
     }
     public class GetResponseCloseDealingBroadcastReceiver extends BroadcastReceiver {
@@ -1225,7 +1196,7 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(SignalService.RESPONSE);
-            if (response == null || !response.equals("200")) {
+            if (response == null || !response.equals(Const.RESPONSE_CODE_SUCCESS)) {
                 CustomDialog.showDialogInfo(getActivity(),
                         getResources().getString(R.string.error),
                         getResources().getString(R.string.request_error_text));
@@ -1233,21 +1204,21 @@ public class TerminalFragment extends Fragment {
         }
     }
     public class GetResponseEarlyClosureBroadcastReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(EarlyClosureService.RESPONSE);
-            if (response != null && response.equals("200") && EarlyClosureAnswer.getInstance() != null && InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
+            if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && EarlyClosureAnswer.getInstance() != null &&
+                    InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
                 for(int i = 0; i < EarlyClosureAnswer.getInstance().getInstruments().size(); i++) {
                     Instrument instrument = EarlyClosureAnswer.getInstance().getInstruments().get(i);
                     if(instrument.getSymbol().contains(tvValueActive.getText().toString())) {
                         String typeOption = InfoAnswer.getInstance().getGroup().getOptionsStyle();
                         int percent = 100;
-                        if(typeOption.contains("american")) {
-                            sTypeOption = "american";
+                        if(typeOption.contains(Const.TYPE_OPTION_AMERICAN)) {
+                            isTypeOptionAmerican = true;
                             percent = instrument.getWinFull();
-                        } else if(typeOption.contains("european")) {
-                            sTypeOption = "european";
+                        } else if(typeOption.contains(Const.TYPE_OPTION_EUROPEAN)) {
+                            isTypeOptionAmerican = false;
                             int timeValue = ConventString.getTimeValue(etValueTime);
                             if(timeValue < 5) {
                                 percent = instrument.getWinLt5();
@@ -1259,8 +1230,7 @@ public class TerminalFragment extends Fragment {
                                 percent = instrument.getWin30();
                             }
                         }
-                        double earlyClosure = ConventString.getAmountValue(etValueAmount) * percent / 100.000;
-                        tvValueRewardTerminal.setText(earlyClosure + "(" + (earlyClosure == 0 ? 0 : percent) + "%)");
+                        tvValueRewardTerminal.setText(ConventString.getStringEarlyClosure(etValueAmount, percent));
                     }
                 }
             }

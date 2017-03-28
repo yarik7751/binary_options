@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
 
-                <com.elatesoftware.grandcapital.views.items.DrawView
+                <com.elatesoftware.grandcapital.views.items.chart.DrawView
                     android:id="@+id/vProtectedLine"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>

@@ -20,6 +20,7 @@ import com.elatesoftware.grandcapital.adapters.promotions.FragmentPromotionsAdap
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.services.BinaryOptionService;
 import com.elatesoftware.grandcapital.services.QuestionsService;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
 public class PromotionsFragment extends Fragment {
@@ -103,9 +104,9 @@ public class PromotionsFragment extends Fragment {
             String response = intent.getStringExtra(QuestionsService.RESPONSE);
             llProgress.setVisibility(View.GONE);
             if(response != null) {
-                if(response.equals("400")) {
+                if(response.equals(Const.RESPONSE_CODE_ERROR)) {
                     Log.d(TAG, "BinaryOptionAnswer questions ERROR: 400");
-                } else if(response.equals("200")) {
+                } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)) {
                     Log.d(TAG, "BinaryOptionAnswer: " + BinaryOptionAnswer.getInstance());
                     Log.d(TAG, "BinaryOptionAnswer size: " + BinaryOptionAnswer.getInstance().getElements().size());
                     Log.d(TAG, "BinaryOptionAnswer elements: " + BinaryOptionAnswer.getInstance().getElements());

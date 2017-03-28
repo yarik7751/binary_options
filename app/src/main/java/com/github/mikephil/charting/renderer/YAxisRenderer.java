@@ -1,6 +1,7 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,6 +9,8 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
@@ -146,7 +149,7 @@ public class YAxisRenderer extends AxisRenderer {
                         strLabel = strLabel.substring(0, strLabel.length() - 1);
                     }
 
-                    Bitmap bitmapLabel = line.getmBitmapLabelX();
+                    Bitmap bitmapLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.whitevert);
 
                     float paddingVert = Utils.convertDpToPixel(15);
                     float paddingHoriz = Utils.convertDpToPixel(18);
@@ -187,7 +190,7 @@ public class YAxisRenderer extends AxisRenderer {
                     mTrans.pointValuesToPixel(pts);
                     String strLabel = l.getLabel();
 
-                    Bitmap bitmapLabel = line.getmBitmapLabelX();
+                    Bitmap bitmapLabel = line.getmBitmapLabelY();
                     float paddingVert = Utils.convertDpToPixel(8);
                     float paddingHoriz = Utils.convertDpToPixel(10);
                     float height = Utils.calcTextHeight(textPaint, strLabel);

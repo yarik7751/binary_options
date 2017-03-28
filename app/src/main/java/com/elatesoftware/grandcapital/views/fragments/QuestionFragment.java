@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
 public class QuestionFragment extends Fragment {
@@ -34,10 +36,9 @@ public class QuestionFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "QuestionFragmen onCreateView");
-        this.mHeader = this.getArguments().getString(HEADER_TEXT);
-        this.mContent = this.getArguments().getString(CONTENT_TEXT);
-        this.mContent = Html.fromHtml(this.mContent).toString()
-                .replace((char) 160, (char) 32).replace((char) 65532, (char) 32).trim().replaceAll("[\\n]{2,}", "\n");
+        mHeader = getArguments().getString(HEADER_TEXT);
+        mContent = getArguments().getString(CONTENT_TEXT);
+        mContent = ConventString.getContentQuestions(mContent);
         return inflater.inflate(R.layout.fragment_question, container, false);
     }
 

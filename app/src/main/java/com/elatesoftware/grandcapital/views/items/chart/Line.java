@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.views.items;
+package com.elatesoftware.grandcapital.views.items.chart;
 
 /**
  * Created by user on 21.03.2017.

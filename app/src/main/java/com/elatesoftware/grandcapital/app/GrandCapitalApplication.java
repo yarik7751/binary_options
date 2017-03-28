@@ -166,7 +166,7 @@ public class GrandCapitalApplication extends Application{
                         @Override
                         public void onMessage(final String message) {
                             Log.d(TAG_SOCKET, message);
-                            if (message == null || message.equals("success") || message.equals("answer") || message.equals("") || message.equals("true") || message.equals("false")) {
+                            if (message == null || message.equals("success") || message.equals("answer") || message.isEmpty() || message.equals("true") || message.equals("false")) {
                                 return;
                             }
                             answerCurrent = SocketAnswer.getSetInstance(message);

@@ -20,11 +20,13 @@ import java.util.TimeZone;
 public class ConventDate {
 
     public static final String TAG = "ConventDate_Logs";
-
-    private final static int DIFFERENSE = 3000;
-    private final static int DIFFERENSE_FOR_POINTS = 3000;
+    private static final String CLOSE_DEASLING = "1970-01-01T00:00:00";
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final DateFormat sdfHHMM = new SimpleDateFormat("HH:mm");
+    private final static double DIFFERENSE_FOR_SOCKET = 1.5;
+    private final static int DIFFERENCE_FOR_POINTS = 3000;
     private static final String timeZone = "GMT+00:00:00";
+
     private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
 
     public static float genericTimeForChart(long currentTimePoint){
@@ -119,13 +121,10 @@ public class ConventDate {
     }
 
     public static String convertDateFromMilSecHHMM(long time) {
-        DateFormat formatter = new SimpleDateFormat("HH:mm");
-        formatter.setTimeZone(TimeZone.getDefault());
+        sdfHHMM.setTimeZone(TimeZone.getDefault());
         Date date = new Date(time);
-        //Log.d(TAG, "observesDaylightTime: " + TimeZone.getDefault().inDaylightTime(date));
         date.setHours(date.getHours() - 3);
-        //date.setTime(date.getTime() + getIterationTime());
-        return formatter.format(date);
+        return sdfHHMM.format(date);
     }
 
     private static int getIterationTime() {
@@ -155,7 +154,7 @@ public class ConventDate {
         }else{
             Date currentDate = new Date(currentTime);
             Date newDate = new Date(newTime);
-            if((newDate.getSeconds() - currentDate.getSeconds() <= 1.5)){
+            if((newDate.getSeconds() - currentDate.getSeconds() <= DIFFERENSE_FOR_SOCKET)){
                 return true;
             }else{
                 return false;
@@ -173,32 +172,15 @@ public class ConventDate {
     public static boolean equalsTimePoints(String time1, String time2){
         long timeLong1 = ConventDate.getConvertDateInMilliseconds(time1);
         long timeLong2 = ConventDate.getConvertDateInMilliseconds(time2);
-        if ((timeLong1 - timeLong2 <= DIFFERENSE_FOR_POINTS && timeLong1 - timeLong2 >= 0) || (timeLong2 - timeLong1 <= DIFFERENSE_FOR_POINTS && timeLong2 - timeLong1 >= 0)){
+        if ((timeLong1 - timeLong2 <= DIFFERENCE_FOR_POINTS && timeLong1 - timeLong2 >= 0) || (timeLong2 - timeLong1 <= DIFFERENCE_FOR_POINTS && timeLong2 - timeLong1 >= 0)){
             return true;
         }else{
             return false;
         }
     }
 
-    public static boolean equalsTimeDealingPoint(long time1, String date2) {
-        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
-        long time2 = 0;
-        try {
-            time1 = time1 / 1000;
-            time2 = sdf.parse(date2).getTime() / 1000;
-            long dif = Math.abs(time1 - time2);
-            Log.d(GrandCapitalApplication.TAG_SOCKET, "DIFFERENSE = " + dif);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if ((time1 - time2 <= DIFFERENSE && time1 - time2 >= 0) || (time2 - time1 <= DIFFERENSE && time2 - time1 >= 0)){
-            return true;
-        }else{
-            return false;
-        }
-    }
     public static boolean isCloseDealing(String time){
-        return time.equals("1970-01-01T00:00:00");
+        return time.equals(CLOSE_DEASLING);
     }
 
     public static long getCurrentDateMilliseconds(){

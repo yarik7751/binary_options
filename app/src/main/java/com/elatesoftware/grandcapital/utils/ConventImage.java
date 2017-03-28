@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.elatesoftware.grandcapital.R;
 
@@ -45,5 +47,23 @@ public class ConventImage {
             bitmap.recycle();
         }
         return bitmap;
+    }
+
+    public static RelativeLayout.LayoutParams getRelativeParams(){
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.topMargin = AndroidUtils.dp(16);
+        params.leftMargin = AndroidUtils.dp(16);
+        return params;
+    }
+    public static FrameLayout.LayoutParams getFrameParams(boolean isDirection){
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                AndroidUtils.dp(60)
+        );
+        params.topMargin = AndroidUtils.dp(isDirection ? -60 : 0);
+        return params;
     }
 }

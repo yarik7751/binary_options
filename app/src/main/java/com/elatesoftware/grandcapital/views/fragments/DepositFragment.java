@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -23,6 +22,7 @@ import com.elatesoftware.grandcapital.adapters.in_out.InOutAdapter;
 import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InOutService;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
 import java.util.ArrayList;
@@ -72,10 +72,8 @@ public class DepositFragment  extends Fragment {
 
         btnDeposit.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
-            WebFragment webFragment = WebFragment.getInstance("http://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/deposit");
+            WebFragment webFragment = WebFragment.getInstance(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT);
             BaseActivity.addNextFragment(webFragment);
-            /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/deposit"));
-            startActivity(browserIntent);*/
         });
 
         tvWithdraw.setOnClickListener(v -> {
@@ -84,10 +82,8 @@ public class DepositFragment  extends Fragment {
 
         llWithdraw.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
-            WebFragment webFragment = WebFragment.getInstance("http://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/withdraw");
+            WebFragment webFragment = WebFragment.getInstance(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_WITHDRAW);
             BaseActivity.addNextFragment(webFragment);
-            /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://grandcapital.ru/account/" + User.getInstance().getLogin() + "/payments/withdraw"));
-            startActivity(browserIntent);*/
         });
 
         rvIoOut.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -148,9 +144,9 @@ public class DepositFragment  extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(InOutService.RESPONSE);
             if (response != null) {
-                if (response.equals("400")) {
-                    Log.d(TAG, "error http 400");
-                } else if(response.equals("200")){
+                if (response.equals(Const.RESPONSE_CODE_ERROR)) {
+
+                } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                     if(InOutAnswer.getInstance() != null) {
                         String transaction = intent.getStringExtra(InOutService.TRANSACTION);
                         if(transaction.equals(InOutService.DEPOSIT)) {

@@ -22,6 +22,7 @@ import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.services.InfoUserService;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
 import java.util.List;
@@ -129,7 +130,7 @@ public class QuotesFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null){
-                if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals("200") && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals("200")){
+                if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS)){
                     if(InfoAnswer.getInstance() != null) {
                         Log.d(TAG, "comparisonQuotes onReceive");
                         List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
@@ -142,7 +143,7 @@ public class QuotesFragment extends Fragment {
 
     private void comparisonQuotes(List<Instrument> newInstruments) {
         for(int i = 0; i < lastInstruments.size(); i++) {
-            if(newInstruments.get(i).getSymbol().equals("EURUSD")) {
+            if(newInstruments.get(i).getSymbol().equals(Const.SYMBOL)) {
                 Log.d(TAG, "EURUSD: " + newInstruments.get(i).getAsk().doubleValue());
             }
             if(lastInstruments.get(i).getAsk().doubleValue() < newInstruments.get(i).getAsk().doubleValue()) {

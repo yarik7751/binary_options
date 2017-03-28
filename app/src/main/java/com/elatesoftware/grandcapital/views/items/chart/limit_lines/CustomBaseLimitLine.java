@@ -18,6 +18,7 @@ public class CustomBaseLimitLine extends LimitLine {
     private String mTimer = "";
     private Bitmap mBitmapLabelX = null;
     private Bitmap mBitmapLabelY = null;
+    private boolean mIsAmerican = false;
 
     private LimitLinesType mTypeLimitLine = LimitLinesType.LINE_HORIZONTAL_CURRENT_SOCKET;
 
@@ -31,20 +32,28 @@ public class CustomBaseLimitLine extends LimitLine {
         LINE_VERTICAL_DEALING_ACTIVE_CLOSING,
         LINE_VERTICAL_DEALING_PASS_CLOSING,
     }
-
-    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX, Bitmap bitmapY, String timer) {
+    /** for x lines*/
+    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX, Bitmap bitmapY, String timer, boolean isAmerican) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
         mBitmapLabelX = bitmapX;
         mBitmapLabelY = bitmapY;
         mTimer = timer;
+        mIsAmerican = isAmerican;
     }
-    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX) {
+    /** for socket*/
+    public CustomBaseLimitLine(float limit, String label) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
-        mBitmapLabelX = bitmapX;
+    }
+    /** for y dealing*/
+    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapY) {
+        super(limit, label);
+        mLimit = limit;
+        mLabel = label;
+        mBitmapLabelY = bitmapY;
     }
     public void setTypeLimitLine(LimitLinesType type){
         mTypeLimitLine = type;
@@ -85,4 +94,5 @@ public class CustomBaseLimitLine extends LimitLine {
     public void setmTimer(String mTimer) {
         this.mTimer = mTimer;
     }
+
 }
