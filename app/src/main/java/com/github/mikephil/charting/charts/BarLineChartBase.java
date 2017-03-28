@@ -338,6 +338,7 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      * Performs auto scaling of the axis by recalculating the minimum and maximum y-values based on the entries currently in view.
      */
     protected void autoScale() {
+        //Log.d(DrawView.TAG, "chart autoScale()");
 
         final float fromX = getLowestVisibleX();
         final float toX = getHighestVisibleX();

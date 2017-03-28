@@ -169,7 +169,6 @@ public class TerminalFragment extends Fragment {
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
     private GetResponseEarlyClosureBroadcastReceiver mEarlyClosureBroadcastReceiver;
     private GetResponseDeleteDealingBroadcastReceiver mDeleteDealingBroadcastReceiver;
-
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
         if (fragment == null) {
@@ -521,29 +520,40 @@ public class TerminalFragment extends Fragment {
         });
         mChart.setOnChartGestureListener(new OnChartGestureListener() {
             @Override
-            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {}
+            public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+            }
 
             @Override
-            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {}
+            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+            }
 
             @Override
-            public void onChartLongPressed(MotionEvent me) {}
+            public void onChartLongPressed(MotionEvent me) {
+
+            }
 
             @Override
-            public void onChartDoubleTapped(MotionEvent me) {}
+            public void onChartDoubleTapped(MotionEvent me) {
+
+            }
 
             @Override
-            public void onChartSingleTapped(MotionEvent me) {}
+            public void onChartSingleTapped(MotionEvent me) {
+
+            }
 
             @Override
             public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+                Log.d(TAG, "onChartFling MotionEvent.ACTION1 " + me1.getAction());
+                Log.d(TAG, "onChartFling MotionEvent.ACTION2 " + me2.getAction());
                 imgPointCurrent.setX(imgPointCurrent.getX() + velocityX);
                 imgPointCurrent.setY(imgPointCurrent.getY() + velocityY);
             }
             @Override
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-                if (imgPointCurrent != null && currEntry != null) {
-                    //imgPointCurrent.setVisibility(View.VISIBLE);
+                if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                     imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
@@ -551,35 +561,25 @@ public class TerminalFragment extends Fragment {
                     //vProtectedLine.setY(point.getY() - vProtectedLine.getHeight() / 2);
                 }
             }
+
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
-                if (imgPointCurrent != null && currEntry != null) {
-                    //imgPointCurrent.setVisibility(View.VISIBLE);
+                if(vProtectedLine != null) {
+                    vProtectedLine.clear();
+                }
+                Log.d(TAG, "mChart param: " + dX);
+                if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                     imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
-                    //vProtectedLine.setX(point.getX() - vProtectedLine.getWidth() / 2);
-                    //vProtectedLine.setY(point.getY() - vProtectedLine.getHeight() / 2);
                 }
-            }
-        });
-        mChart.setOnDrawListener(new OnDrawListener() {
-            @Override
-            public void onEntryAdded(Entry entry) {
-            }
-            @Override
-            public void onEntryMoved(Entry entry) {
-            }
-            @Override
-            public void onDrawFinished(DataSet<?> dataSet) {
-                //vProtectedLine.clear();
             }
         });
     }
     private void initializationCurrentPoint() {
         initRocketAnimation();
         imgPointCurrent = new ImageView(getContext());
-        imgPointCurrent.setVisibility(View.GONE);
+        imgPointCurrent.setVisibility(View.INVISIBLE);
         imgPointCurrent.setId(R.id.img);
         imgPointCurrent.setImageDrawable(rocketAnimation);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AndroidUtils.dp(40), AndroidUtils.dp(40));
@@ -833,15 +833,44 @@ public class TerminalFragment extends Fragment {
                         break;
                 }
                 Entry eLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
-                MPPointF point = mChart.getPosition(eLast, YAxis.AxisDependency.RIGHT);
-                vProtectedLine.addPoint(eLast.getX(), eLast.getY(), entry.getX(), entry.getY());
+
+                MPPointF pointLast = mChart.getPosition(eLast, YAxis.AxisDependency.RIGHT);
+                MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
+
+                Log.d(DrawView.TAG, "pL X: " + pointLast.getX() + ", pL Y: " + pointLast.getY() + ", p X: " + point.getX() + ", p Y: " + point.getY());
+                Log.d(DrawView.TAG, "vProtectedLine.getHeight: " + vProtectedLine.getHeight());
+
+                float currY = point.getY();
+                boolean isAnim = true;
+                if(currY > vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1) {
+                    isAnim = false;
+                    currY = (float) (vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1);
+                }
+                if(currY < vProtectedLine.getHeight() * 0.1) {
+                    isAnim = false;
+                    currY = (float) (vProtectedLine.getHeight() * 0.1);
+                }
+                vProtectedLine.addPoint(pointLast.getX(), pointLast.getY(), point.getX(), currY);
                 mCurrentValueY = answer.getAsk();
                 data.addEntry(entry, 0);
                 data.notifyDataChanged();
-                mChart.notifyDataSetChanged();
-                mChart.invalidate();
+                //mChart.notifyDataSetChanged();
+                //mChart.invalidate();
+                boolean finalIsAnim = isAnim;
+                vProtectedLine.setOnEndListener(new DrawView.OnEndListener() {
+                    @Override
+                    public void onEnd() {
+                        if(finalIsAnim) {
+                            mChart.notifyDataSetChanged();
+                            mChart.invalidate();
+                        }
+                    }
+                });
+                if(!finalIsAnim) {
+                    mChart.notifyDataSetChanged();
+                    mChart.invalidate();
+                }
                 typePoint = POINT_SIMPLY;
-
                 redrawXLimitLines();
                 drawSocketCurrentYLimitLine(entry);
             }

@@ -23,6 +23,7 @@ public class DrawView extends View {
 
     private Context context;
     private int interval;
+    private OnEndListener onEndListener;
 
     //private ArrayList<Line> way;
     private int startI = 3;
@@ -64,16 +65,24 @@ public class DrawView extends View {
         this.context = context;
         interval = 15;
 
-        divX = Math.abs(startX - endXValue) / 10 * (startX < endXValue ? 1 : -1);
-        divY = Math.abs(startY - endYValue) / 10 * (startY < endYValue ? 1 : -1);
+        divX = Math.abs(startX - endXValue) / 10.f * (startX < endXValue ? 1.f : -1.f);
+        divY = Math.abs(startY - endYValue) / 10.f * (startY < endYValue ? 1.f : -1.f);
         //Log.d(TAG, "divX = " + divX + ", divY = " + divY);
         //way = new ArrayList<>();
+    }
+
+    public OnEndListener getOnEndListener() {
+        return onEndListener;
+    }
+
+    public void setOnEndListener(OnEndListener onEndListener) {
+        this.onEndListener = onEndListener;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawARGB(0, 74, 68, 106);
+        canvas.drawARGB(0, 255, 0, 10);
 
         if(isClear) {
             isClear = false;
@@ -91,15 +100,28 @@ public class DrawView extends View {
 
         if (!(xCondition && yCondition)) {
             //Log.d(TAG, "divX = " + divX + ", divY = " + divY);
-            endX += divX;
-            endY += divY;
+            if(Math.abs(endXValue - endX) < Math.abs(divX)) {
+                endX += Math.abs(endXValue - endX) * (startX < endXValue ? 1.f : -1.f);
+            } else {
+                endX += divX;
+            }
+            if(Math.abs(endYValue - endY) < Math.abs(divY)) {
+                endY += Math.abs(endYValue - endY) * (startY < endYValue ? 1.f : -1.f);
+            } else {
+                endY += divY;
+            }
             //Log.d(TAG, "endX = " + endX + ", endY = " + endY);
             postInvalidateDelayed(interval);
         } else {
             //Line line = new Line(startX, startY, endX, endY);
             //way.add(line);
+            Log.d(TAG, "endX = " + endX + ", endY = " + endY);
+            Log.d(TAG, "****************************************************************************************************************");
             startX = endXValue;
             startY = endYValue;
+            if(onEndListener != null) {
+                onEndListener.onEnd();
+            }
             //amtLine++;
         }
     }
@@ -107,15 +129,15 @@ public class DrawView extends View {
     public void addPoint(float x1, float y1, float x2, float y2) {
         Log.d(TAG, "addPoint");
         Log.d(TAG, "x1: " + x1 + ", y1: " + y1 + ", x2: " + x2 + ", y2: " + y2);
-        startX = x1;
+        startX = x1 - Math.abs(x1 - x2) + LINE_WIDTH;
         startY = y1;
-        endX = x1;
+        endX = x1 - Math.abs(x1 - x2) + LINE_WIDTH;
         endY = y1;
-        endXValue = x2;
+        endXValue = x2 - Math.abs(x1 - x2) + LINE_WIDTH;
         endYValue = y2;
-        divX = Math.abs(startX - endXValue) / 10 * (startX < endXValue ? 1 : -1);
-        divY = Math.abs(startY - endYValue) / 10 * (startY < endYValue ? 1 : -1);
-        Log.d(TAG, "divX = " + divX + ", divY = " + divY);
+        divX = Math.abs(startX - endXValue) / 10.f * (startX < endXValue ? 1.f : -1.f);
+        divY = Math.abs(startY - endYValue) / 10.f * (startY < endYValue ? 1.f : -1.f);
+        //Log.d(TAG, "divX = " + divX + ", divY = " + divY);
         invalidate();
     }
 
@@ -124,10 +146,16 @@ public class DrawView extends View {
         invalidate();
     }
 
+    private final float LINE_WIDTH = 1.8f;
+
     private Paint getLinePaint() {
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
-        p.setStrokeWidth(15);
-        p.setColor(Color.RED);
+        p.setStrokeWidth(LINE_WIDTH);
+        p.setColor(Color.WHITE);
         return p;
+    }
+    
+    public static interface OnEndListener {
+        public void onEnd();
     }
 }
