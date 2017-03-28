@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -89,9 +90,7 @@ public class TerminalFragment extends Fragment {
     public final static String TAG_OPEN_DEALING = "openDealingView";
     public final static String TAG_CLOSE_DEALING = "closeDealingView";
 
-    private final static String SYMBOL = "EURUSD";
     private static String sSymbolCurrent = "";
-
     public static double mCurrentValueY = 0;
     private Entry currEntry;
     private Thread threadSymbolHistory;
@@ -106,6 +105,7 @@ public class TerminalFragment extends Fragment {
     public static boolean isAddInChart = false;
     public static boolean isOpen = false;
     public boolean isDirection = true;
+    private boolean isAnim = true;
 
     private LineChart mChart;
     private TextView tvBalance;
@@ -317,7 +317,7 @@ public class TerminalFragment extends Fragment {
                 changeActive();
                 parseResponseSignals(ConventString.getActive(tvValueActive));
             } else {
-                sSymbolCurrent = SYMBOL;
+                sSymbolCurrent = Const.SYMBOL;
             }
         });
         tvRightActive.setOnClickListener(v -> {
@@ -331,7 +331,7 @@ public class TerminalFragment extends Fragment {
                 changeActive();
                 parseResponseSignals(ConventString.getActive(tvValueActive));
             } else {
-                sSymbolCurrent = SYMBOL;
+                sSymbolCurrent = Const.SYMBOL;
             }
         });
         tvDeposit.setOnClickListener(v -> {
@@ -672,7 +672,7 @@ public class TerminalFragment extends Fragment {
     }
     private void changeActive() {
         if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
-            sSymbolCurrent = SYMBOL;
+            sSymbolCurrent = Const.SYMBOL;
         }
         llProgressBar.setVisibility(View.VISIBLE);
         tvValueActive.setText(sSymbolCurrent);
@@ -797,7 +797,25 @@ public class TerminalFragment extends Fragment {
         }
     }
 
-    private void addSocketAnswerInSymbol(SocketAnswer item) {
+    private void addPointForLine(LineData data, Entry entry){
+        Entry eLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
+        MPPointF pointLast = mChart.getPosition(eLast, YAxis.AxisDependency.RIGHT);
+        MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
+        Log.d(DrawView.TAG, "pL X: " + pointLast.getX() + ", pL Y: " + pointLast.getY() + ", p X: " + point.getX() + ", p Y: " + point.getY());
+        Log.d(DrawView.TAG, "vProtectedLine.getHeight: " + vProtectedLine.getHeight());
+        float currY = point.getY();
+        isAnim = true;
+        if(currY > vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1) {
+            isAnim = false;
+            currY = (float) (vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1);
+        }
+        if(currY < vProtectedLine.getHeight() * 0.1) {
+            isAnim = false;
+            currY = (float) (vProtectedLine.getHeight() * 0.1);
+        }
+        vProtectedLine.addPoint(pointLast.getX(), pointLast.getY(), point.getX(), currY);
+    }
+    private void addSocketAnswerInSymbol(final SocketAnswer item) {
         if (SymbolHistoryAnswer.getInstance() != null) {
             SymbolHistoryAnswer.getInstance().add(new SymbolHistoryAnswer(item.getHigh(), item.getBid(), item.getAsk(), item.getLow(), item.getTime()));
         }
@@ -832,38 +850,16 @@ public class TerminalFragment extends Fragment {
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
                         break;
                 }
-                Entry eLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
 
-                MPPointF pointLast = mChart.getPosition(eLast, YAxis.AxisDependency.RIGHT);
-                MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
-
-                Log.d(DrawView.TAG, "pL X: " + pointLast.getX() + ", pL Y: " + pointLast.getY() + ", p X: " + point.getX() + ", p Y: " + point.getY());
-                Log.d(DrawView.TAG, "vProtectedLine.getHeight: " + vProtectedLine.getHeight());
-
-                float currY = point.getY();
-                boolean isAnim = true;
-                if(currY > vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1) {
-                    isAnim = false;
-                    currY = (float) (vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1);
-                }
-                if(currY < vProtectedLine.getHeight() * 0.1) {
-                    isAnim = false;
-                    currY = (float) (vProtectedLine.getHeight() * 0.1);
-                }
-                vProtectedLine.addPoint(pointLast.getX(), pointLast.getY(), point.getX(), currY);
+                addPointForLine(data, entry);
                 mCurrentValueY = answer.getAsk();
                 data.addEntry(entry, 0);
                 data.notifyDataChanged();
-                //mChart.notifyDataSetChanged();
-                //mChart.invalidate();
                 boolean finalIsAnim = isAnim;
-                vProtectedLine.setOnEndListener(new DrawView.OnEndListener() {
-                    @Override
-                    public void onEnd() {
-                        if(finalIsAnim) {
-                            mChart.notifyDataSetChanged();
-                            mChart.invalidate();
-                        }
+                vProtectedLine.setOnEndListener(() -> {
+                    if(finalIsAnim) {
+                        mChart.notifyDataSetChanged();
+                        mChart.invalidate();
                     }
                 });
                 if(!finalIsAnim) {
@@ -876,7 +872,7 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-    private void addEntry(SymbolHistoryAnswer answer) {
+    private void addEntry(final SymbolHistoryAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getOpen() != null) {
             LineData data = mChart.getData();
             if (data != null) {
@@ -1171,8 +1167,8 @@ public class TerminalFragment extends Fragment {
                         for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
                             listActives.add(instrument.getSymbol());
                         }
-                        if (listActives != null && listActives.size() > 0 && listActives.contains(SYMBOL) && !ConventString.getActive(tvValueActive).equals(SYMBOL)) {
-                            sSymbolCurrent = listActives.get(listActives.indexOf(SYMBOL));
+                        if (listActives != null && listActives.size() > 0 && listActives.contains(Const.SYMBOL) && !ConventString.getActive(tvValueActive).equals(Const.SYMBOL)) {
+                            sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));
                             changeActive();
                         }
                     }
