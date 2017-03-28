@@ -80,7 +80,6 @@ public class ConventDate {
         return Math.abs(stringToUnix(currDate) - stringToUnix(date)) / 1000;
     }
 
-
     public static String getDifferenceDateToString(long difSec) {
         if(difSec < 60) {
             return ":" + timeClockFormat(difSec);
@@ -93,7 +92,8 @@ public class ConventDate {
             difSec -= hour * 60 * 60;
             long min = difSec / 60;
             long sec = difSec % 60;
-            return hour + "h " + timeClockFormat(min) + ":" + timeClockFormat(sec);
+            //return hour + "h " + timeClockFormat(min) + ":" + timeClockFormat(sec);
+            return hour + "h " + timeClockFormat(min) + "m";
         } else {
             long day = difSec / 60 / 60 / 24;
             difSec -= day * 60 * 60 * 24;
@@ -101,12 +101,13 @@ public class ConventDate {
             difSec -= hour * 60 * 60;
             long min = difSec / 60;
             long sec = difSec % 60;
-            return day + "d " + hour + "h " + timeClockFormat(min) + ":" + timeClockFormat(sec);
+            return day + "d " + hour + "h ";
+            //return day + "d " + hour + "h " + timeClockFormat(min) + ":" + timeClockFormat(sec);
         }
     }
 
     public static String timeClockFormat(long time) {
-        return (time < 10) ? "0" + time : "" + time;
+        return (time < 10) ? "0" + time : String.valueOf(time);
     }
 
     public static long getConvertDateInMilliseconds(String strDate) {
@@ -178,15 +179,6 @@ public class ConventDate {
             return false;
         }
     }
-    /*public static boolean equalsTimeOpeningDealing(String open, String close){
-        long timeOpen = ConventDate.getConvertDateInMilliseconds(open);
-        long timeClose = ConventDate.getConvertDateInMilliseconds(close);
-        if ((Math.abs(stringToUnix(timeOpen) - stringToUnix(date)) / 1000) > 60){
-            return true;
-        }else{
-            return false;
-        }
-    }*/
     public static boolean isCloseDealing(String time){
         return time.equals(CLOSE_DEASLING);
     }

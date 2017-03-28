@@ -15,7 +15,7 @@ public class DeleteDealingService extends IntentService {
     public final static String RESPONSE = "response";
     public static final String ACTION_SERVICE_DELETE_FEALING = "com.elatesoftware.grandcapital.services.DeleteDealingService";
     private final static String NAME_STREAM = "DeleteDealing";
-    private final static String TICKET = "ticket";
+    public final static String TICKET = "ticket";
 
     public DeleteDealingService() {
         super(NAME_STREAM);

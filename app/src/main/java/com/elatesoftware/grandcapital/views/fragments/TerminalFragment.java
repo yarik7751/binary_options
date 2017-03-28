@@ -18,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,6 +43,7 @@ import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
+import com.elatesoftware.grandcapital.services.DeleteDealingService;
 import com.elatesoftware.grandcapital.services.EarlyClosureService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.MakeDealingService;
@@ -147,6 +149,7 @@ public class TerminalFragment extends Fragment {
     private ImageView imgPointCurrent;
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
     private Dialog dialogOpenAccount;
+    private Dialog dialogAgreeDeleteDealing;
     private View closeDealingView;
     private View openDealingView;
     private YAxis rightYAxis;
@@ -162,9 +165,10 @@ public class TerminalFragment extends Fragment {
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
     private GetResponseOpenDealingBroadcastReceiver mMakeDealingBroadcastReceiver;
     private GetResponseSignalsBroadcastReceiver mSignalsBroadcastReceiver;
-    private GetResponseCloseDealingBroadcastReceiver mCloseDealingBroadcastReceiver;
+    private GetResponseCheckClosedDealingBroadcastReceiver mCheckClosedDealingBroadcastReceiver;
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
     private GetResponseEarlyClosureBroadcastReceiver mEarlyClosureBroadcastReceiver;
+    private GetResponseDeleteDealingBroadcastReceiver mDeleteDealingBroadcastReceiver;
 
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
@@ -384,11 +388,6 @@ public class TerminalFragment extends Fragment {
         super.onDestroy();
     }
 
-    private void setEnabledBtnTerminal(boolean enabled) {
-        llHigherTerminal.setEnabled(enabled);
-        llLowerTerminal.setEnabled(enabled);
-    }
-
     private void registerBroadcasts() {
         mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
         IntentFilter intentFilterInfo = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
@@ -410,10 +409,10 @@ public class TerminalFragment extends Fragment {
         intentFilterSignal.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mSignalsBroadcastReceiver, intentFilterSignal);
 
-        mCloseDealingBroadcastReceiver = new GetResponseCloseDealingBroadcastReceiver();
+        mCheckClosedDealingBroadcastReceiver = new GetResponseCheckClosedDealingBroadcastReceiver();
         IntentFilter intentFilterCloseDealing = new IntentFilter(CheckDealingService.ACTION_SERVICE_CHECK_DEALINGS);
         intentFilterCloseDealing.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(mCloseDealingBroadcastReceiver, intentFilterCloseDealing);
+        getActivity().registerReceiver(mCheckClosedDealingBroadcastReceiver, intentFilterCloseDealing);
 
         mOrdersBroadcastReceiver = new GetResponseOrdersBroadcastReceiver();
         IntentFilter intentFilterOrders = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
@@ -424,15 +423,21 @@ public class TerminalFragment extends Fragment {
         IntentFilter intentFilterOrdersEarlyClosure = new IntentFilter(EarlyClosureService.ACTION_SERVICE_EARLY_CLOSURE);
         intentFilterOrdersEarlyClosure.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mEarlyClosureBroadcastReceiver, intentFilterOrdersEarlyClosure);
+
+        mDeleteDealingBroadcastReceiver = new GetResponseDeleteDealingBroadcastReceiver();
+        IntentFilter intentFilterDeleteDealing = new IntentFilter(DeleteDealingService.ACTION_SERVICE_DELETE_FEALING);
+        intentFilterDeleteDealing.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mDeleteDealingBroadcastReceiver, intentFilterDeleteDealing);
     }
     private void unregisterBroadcasts() {
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
         getActivity().unregisterReceiver(mMakeDealingBroadcastReceiver);
         getActivity().unregisterReceiver(mSignalsBroadcastReceiver);
-        getActivity().unregisterReceiver(mCloseDealingBroadcastReceiver);
+        getActivity().unregisterReceiver(mCheckClosedDealingBroadcastReceiver);
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
         getActivity().unregisterReceiver(mEarlyClosureBroadcastReceiver);
+        getActivity().unregisterReceiver(mDeleteDealingBroadcastReceiver);
     }
 
     private void initializationChart() {
@@ -454,7 +459,7 @@ public class TerminalFragment extends Fragment {
         mChart.setBackgroundColor(Color.TRANSPARENT); // set an alternative background color
         mChart.getLegend().setEnabled(false);   //Hide the legend
         mChart.setDrawMarkers(true);
-        mChart.getViewPortHandler().setMaximumScaleX(8.6f);
+        mChart.getViewPortHandler().setMaximumScaleX(10f);
 
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
@@ -470,14 +475,7 @@ public class TerminalFragment extends Fragment {
         xAxis.setTextSize(9);
         xAxis.disableAxisLineDashedLine();
         xAxis.setDrawGridLines(true);
-        xAxis.setSpaceMax(600000f); // space free on x
-
-        //xAxis.setXOffset(300f);
-        //xAxis.setSpaceMax(600f);
-        //xAxis.setGranularityEnabled(true);
-        //xAxis.setGranularity(36000f);
-        //xAxis.setGranularity(0.00000000001f);
-        //xAxis.setGranularityEnabled(true);
+        xAxis.setSpaceMax(600000f);
 
         YAxis leftYAxis = mChart.getAxisLeft();
         leftYAxis.setEnabled(false);
@@ -492,6 +490,20 @@ public class TerminalFragment extends Fragment {
         rightYAxis.setStartAtZero(false);
 
         mChart.setOnTouchListener((v, event) -> {
+            /*
+            if(CustomSharedPreferences.getAgreeCloseDealing(getContext())){
+                dialogAgreeDeleteDealing = CustomDialog.showDialogCloseDealing(getActivity(), v12 -> {
+                    requestDeleteDealing("");
+                    dialogAgreeDeleteDealing.cancel();
+                }, v1 -> {
+                    requestDeleteDealing("");
+                    CustomSharedPreferences.setAgreeCloseDealing(getContext(), false);
+                    dialogAgreeDeleteDealing.cancel();
+                });
+            }else{
+                requestDeleteDealing("");
+            }*/
+
             List<CustomBaseLimitLine> listLimit = getXLimitLines();
             if(listLimit != null && listLimit.size() != 0){
                 float tappedX = event.getX();
@@ -551,7 +563,6 @@ public class TerminalFragment extends Fragment {
                 }
             }
         });
-
         mChart.setOnDrawListener(new OnDrawListener() {
             @Override
             public void onEntryAdded(Entry entry) {
@@ -607,6 +618,10 @@ public class TerminalFragment extends Fragment {
         }
     }
 
+    private void setEnabledBtnTerminal(boolean enabled) {
+        llHigherTerminal.setEnabled(enabled);
+        llLowerTerminal.setEnabled(enabled);
+    }
     private void setSizeHeight() {
         int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
         rlChart.getLayoutParams().height = (int) (height * 0.6);
@@ -714,6 +729,10 @@ public class TerminalFragment extends Fragment {
             Intent intentService = new Intent(getActivity(), OrdersService.class);
             getActivity().startService(intentService);
         }
+    }
+    private void requestDeleteDealing(String ticket){
+        Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
+        getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, ticket));
     }
 
     private void parseResponseSymbolHistory() {
@@ -917,7 +936,7 @@ public class TerminalFragment extends Fragment {
                 mCurrentValueY = Double.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen()));
                 Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
                         Float.valueOf(String.valueOf(mCurrentValueY)), null, null);
-                mChart.zoom(8.6f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
+                mChart.zoom(10f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
                 getActivity().runOnUiThread(() -> {
                     drawSocketCurrentYLimitLine(entry);
                 });
@@ -985,6 +1004,7 @@ public class TerminalFragment extends Fragment {
             for(OrderAnswer orderAnswer : list){
                 if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
                     drawXLimitLine(orderAnswer, isTypeOptionAmerican);
+                    drawXLimitLine(orderAnswer, false);
                 }else{
                     drawXLimitLine(orderAnswer, false);
                 }
@@ -1003,7 +1023,7 @@ public class TerminalFragment extends Fragment {
                     makeActiveSelectedDealing(null);
                 }else {
                     if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
-                       line.setmIsAmerican(true);
+                        line.setmIsAmerican(true);
                     }
                     updateColorXLimitLine(line, order);
                     if (line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
@@ -1177,7 +1197,7 @@ public class TerminalFragment extends Fragment {
             setEnabledBtnTerminal(true);
         }
     }
-    public class GetResponseCloseDealingBroadcastReceiver extends BroadcastReceiver {
+    public class GetResponseCheckClosedDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             listCurrentClosingDealings.add(new Gson().fromJson(intent.getStringExtra(CheckDealingService.RESPONSE), OrderAnswer.class));
@@ -1241,6 +1261,15 @@ public class TerminalFragment extends Fragment {
                         tvValueRewardTerminal.setText(ConventString.getStringEarlyClosure(etValueAmount, percent));
                     }
                 }
+            }
+        }
+    }
+    public class GetResponseDeleteDealingBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String response = intent.getStringExtra(DeleteDealingService.RESPONSE);
+            if (response == null || !response.equals(Const.RESPONSE_CODE_SUCCESS)) {
+
             }
         }
     }

@@ -310,7 +310,6 @@ public class XAxisRenderer extends AxisRenderer {
     }
     @Override
     public void renderGridLines(Canvas c) {
-
         if (!mXAxis.isDrawGridLinesEnabled() || !mXAxis.isEnabled())
             return;
 
