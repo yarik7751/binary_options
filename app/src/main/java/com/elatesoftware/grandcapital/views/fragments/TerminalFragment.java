@@ -488,36 +488,6 @@ public class TerminalFragment extends Fragment {
         rightYAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
         rightYAxis.setStartAtZero(false);
 
-        mChart.setOnTouchListener((v, event) -> {
-            /*
-            if(CustomSharedPreferences.getAgreeCloseDealing(getContext())){
-                dialogAgreeDeleteDealing = CustomDialog.showDialogCloseDealing(getActivity(), v12 -> {
-                    requestDeleteDealing("");
-                    dialogAgreeDeleteDealing.cancel();
-                }, v1 -> {
-                    requestDeleteDealing("");
-                    CustomSharedPreferences.setAgreeCloseDealing(getContext(), false);
-                    dialogAgreeDeleteDealing.cancel();
-                });
-            }else{
-                requestDeleteDealing("");
-            }*/
-
-            List<CustomBaseLimitLine> listLimit = getXLimitLines();
-            if(listLimit != null && listLimit.size() != 0){
-                float tappedX = event.getX();
-                float tappedY = event.getY();
-                MPPointD point = mChart.getTransformer(YAxis.AxisDependency.RIGHT).getValuesByTouchPoint(tappedX, tappedY);
-                for(CustomBaseLimitLine line: listLimit){
-                    if((line.getLimit() - point.x <= 8000 && line.getLimit() - point.x >= 0) ||
-                            (point.x - line.getLimit() <= 8000 && point.x - line.getLimit() >= 0)){
-                        makeActiveSelectedDealing(line);
-                        break;
-                    }
-                }
-            }
-            return false;
-        });
         mChart.setOnChartGestureListener(new OnChartGestureListener() {
             @Override
             public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
@@ -540,10 +510,29 @@ public class TerminalFragment extends Fragment {
             }
 
             @Override
-            public void onChartSingleTapped(MotionEvent me) {
-
+            public void onChartSingleTapped(MotionEvent event) {
+                List<CustomBaseLimitLine> listLimit = getXLimitLines();
+                if(listLimit != null && listLimit.size() != 0){
+                    float tappedX = event.getX();
+                    float tappedY = event.getY();
+                    MPPointD point = mChart.getTransformer(YAxis.AxisDependency.RIGHT).getValuesByTouchPoint(tappedX, tappedY);
+                    for(CustomBaseLimitLine line: listLimit){
+                        OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+                        float y = Float.valueOf(String.valueOf(order.getOpenPrice()));
+                        if((line.getLimit() - point.x <= 8000 && line.getLimit() - point.x >= 0) ||
+                                (point.x - line.getLimit() <= 8000 && point.x - line.getLimit() >= 0)){
+                            if((y - point.y <= 0.00012 && y - point.y >= 0) || (point.y - y <= 0.00012 && point.y - y >= 0)){
+                                //deleteDealing(order);
+                                Log.d(GrandCapitalApplication.TAG_SOCKET, "DELETE");
+                            }else{
+                                Log.d(GrandCapitalApplication.TAG_SOCKET, "SELECT");
+                                makeActiveSelectedDealing(line);
+                            }
+                            break;
+                        }
+                    }
+                }
             }
-
             @Override
             public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
                 Log.d(TAG, "onChartFling MotionEvent.ACTION1 " + me1.getAction());
@@ -692,6 +681,20 @@ public class TerminalFragment extends Fragment {
         BaseActivity.getToolbar().setDealingSelectIcon();
         showViewOpenRealAccount();
     }
+    private void deleteDealing(OrderAnswer order){
+        if(CustomSharedPreferences.getAgreeCloseDealing(getContext())){
+            dialogAgreeDeleteDealing = CustomDialog.showDialogCloseDealing(getActivity(), v12 -> {
+                requestDeleteDealing(order);
+                dialogAgreeDeleteDealing.cancel();
+            }, v1 -> {
+                requestDeleteDealing(order);
+                CustomSharedPreferences.setAgreeCloseDealing(getContext(), false);
+                dialogAgreeDeleteDealing.cancel();
+            });
+        }else{
+            requestDeleteDealing(order);
+        }
+    }
 
     private void requestEarlyClosure() {
         Intent intent = new Intent(getActivity(), EarlyClosureService.class);
@@ -707,13 +710,15 @@ public class TerminalFragment extends Fragment {
         getActivity().startService(intentService);
     }
     private void requestMakeDealing(String lowerOrHeight) {
+        llProgressBar.setVisibility(View.VISIBLE);
+        setEnabledBtnTerminal(false);
         if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).isEmpty()) {
             if(ConventString.getTimeValue(etValueTime) > Const.MAX_TIME_MIN) {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.error_max_time));
+                llProgressBar.setVisibility(View.GONE);
+                setEnabledBtnTerminal(true);
                 return;
             }
-            llProgressBar.setVisibility(View.VISIBLE);
-            setEnabledBtnTerminal(false);
             Intent intentService = new Intent(getActivity(), MakeDealingService.class);
             intentService.putExtra(MakeDealingService.CMD, lowerOrHeight);
             intentService.putExtra(MakeDealingService.SYMBOL, ConventString.getActive(tvValueActive));
@@ -722,6 +727,8 @@ public class TerminalFragment extends Fragment {
             getActivity().startService(intentService);
         } else {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
+            llProgressBar.setVisibility(View.GONE);
+            setEnabledBtnTerminal(true);
         }
     }
     private void requestOrders() {
@@ -730,9 +737,13 @@ public class TerminalFragment extends Fragment {
             getActivity().startService(intentService);
         }
     }
-    private void requestDeleteDealing(String ticket){
-        Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
-        getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, ticket));
+    private void requestDeleteDealing(OrderAnswer order){
+        if(order.getTicket() != null && order.getTicket() != 0 ){
+            //requestOrders();
+        }else{
+            Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
+            getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, String.valueOf(order.getTicket())));
+        }
     }
 
     private void parseResponseSymbolHistory() {
@@ -855,18 +866,21 @@ public class TerminalFragment extends Fragment {
                 mCurrentValueY = answer.getAsk();
                 data.addEntry(entry, 0);
                 data.notifyDataChanged();
-                boolean finalIsAnim = isAnim;
-                vProtectedLine.setOnEndListener(() -> {
-                    if(finalIsAnim) {
-                        mChart.notifyDataSetChanged();
-                        mChart.invalidate();
-                    }
-                });
-                if(!finalIsAnim) {
-                    mChart.notifyDataSetChanged();
-                    mChart.invalidate();
-                }
                 typePoint = POINT_SIMPLY;
+//                boolean finalIsAnim = isAnim;
+//                vProtectedLine.setOnEndListener(() -> {
+//                    if(finalIsAnim) {
+//                        mChart.notifyDataSetChanged();
+//                        mChart.invalidate();
+//                    }
+//                });
+//                if(!finalIsAnim) {
+//                    mChart.notifyDataSetChanged();
+//                    mChart.invalidate();
+//                }
+                mChart.notifyDataSetChanged();
+                mChart.invalidate();
+
                 redrawXLimitLines();
                 drawSocketCurrentYLimitLine(entry);
             }
@@ -1029,7 +1043,6 @@ public class TerminalFragment extends Fragment {
             for(OrderAnswer orderAnswer : list){
                 if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
                     drawXLimitLine(orderAnswer, isTypeOptionAmerican);
-                    drawXLimitLine(orderAnswer, false);
                 }else{
                     drawXLimitLine(orderAnswer, false);
                 }

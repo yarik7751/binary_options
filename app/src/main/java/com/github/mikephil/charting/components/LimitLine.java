@@ -23,7 +23,7 @@ public class LimitLine extends ComponentBase {
     private float mLineWidth = 2f;
 
     /** the color of the limit line */
-    private int mLineColor = Color.rgb(237, 91, 91);
+    private int mLineColor = Color.TRANSPARENT;    //Color.rgb(237, 91, 91);
 
     /** the style of the label text */
     private Paint.Style mTextStyle = Paint.Style.FILL_AND_STROKE;

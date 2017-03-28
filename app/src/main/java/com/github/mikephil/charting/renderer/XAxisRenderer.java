@@ -280,7 +280,7 @@ public class XAxisRenderer extends AxisRenderer {
                                     float width_markerIconClose =  Utils.convertDpToPixel(12);
                                     iconClose = Bitmap.createScaledBitmap(iconClose, (int) width_markerIconClose, (int) height_markerIconClose, false);
                                     paddingHorizIconLabelY = Utils.convertDpToPixel(16);
-                                    width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY + width_markerIconCMD +  width_markerIconClose;
+                                    width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY*6/5 + width_markerIconCMD +  width_markerIconClose;
                                 }
                                 /**create bitmaps*/
                                 iconLabelX = Bitmap.createScaledBitmap(iconLabelX, (int) width_marker, (int) height_marker, false);
@@ -293,9 +293,11 @@ public class XAxisRenderer extends AxisRenderer {
                                 /**positionBitmap Y*/
                                 c.drawBitmap(iconLabelY, posX - width_markerIconLabelY / 2, posYLabel - height_markerIconLabelY / 2, paint);
                                 c.drawBitmap(iconCMD, posX - width_markerIconLabelY/2 + paddingHorizIconLabelY/4, posYLabel - height_markerIconCMD / 2, paint);
-                                c.drawText(strLabelY, posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*1/3 + width_markerIconCMD*2 , posYLabel + heightStrLabelY  / 2, textPaint);
+                                c.drawText(strLabelY, posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*1/3 + width_markerIconCMD*2 ,
+                                        posYLabel + heightStrLabelY  / 2, textPaint);
                                 if(line.ismIsAmerican()){
-                                    c.drawBitmap(iconClose,  posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*2/5 + width_markerIconCMD*2 + widthStrLabelY/2, posYLabel - height_markerIconCMD / 2, paint);
+                                    c.drawBitmap(iconClose,  posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*4/7 +
+                                            width_markerIconCMD*2 + widthStrLabelY/2, posYLabel - height_markerIconCMD / 2, paint);
                                 }
                             }
                         }

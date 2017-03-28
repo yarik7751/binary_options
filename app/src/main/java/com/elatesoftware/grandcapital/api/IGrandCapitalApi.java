@@ -71,7 +71,7 @@ interface IGrandCapitalApi {
     @GET("/my/webtrader/api/account/options/info/")
     Call<EarlyClosureAnswer> getEarlyClosureAnswer();
 
-    @DELETE("/my/webtrader/api/account/(login)/trade/(ticket)/")
+    @DELETE("/my/webtrader/api/account/{login}/trade/{ticket}/")
     @FormUrlEncoded
     Call<ResponseBody> deleteDealing(@Header("X-Trader-Token") String token,
                                      @Path("login") String login,
