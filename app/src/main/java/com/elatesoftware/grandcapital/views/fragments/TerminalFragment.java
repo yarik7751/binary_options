@@ -498,8 +498,8 @@ public class TerminalFragment extends Fragment {
                 float tappedY = event.getY();
                 MPPointD point = mChart.getTransformer(YAxis.AxisDependency.RIGHT).getValuesByTouchPoint(tappedX, tappedY);
                 for(CustomBaseLimitLine line: listLimit){
-                    if((line.getLimit() - point.x <= 7000 && line.getLimit() - point.x >= 0) ||
-                            (point.x - line.getLimit() <= 7000 && point.x - line.getLimit() >= 0)){
+                    if((line.getLimit() - point.x <= 8000 && line.getLimit() - point.x >= 0) ||
+                            (point.x - line.getLimit() <= 8000 && point.x - line.getLimit() >= 0)){
                         makeActiveSelectedDealing(line);
                         break;
                     }
@@ -804,7 +804,7 @@ public class TerminalFragment extends Fragment {
                         currentDealing = null;
                         String dataEntry = new Gson().toJson(order);
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawableMarkerDealing, dataEntry);
-                        drawXLimitLine(order);
+                        drawXLimitLine(order, false);
                         break;
                     case POINT_SIMPLY:
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
@@ -937,7 +937,7 @@ public class TerminalFragment extends Fragment {
         rightYAxis.addLimitLine(currentLineSocket);
         drawCurrentPoint(entry);
     }
-    private void redrawColorXLimitLine(CustomBaseLimitLine line, OrderAnswer order){
+    private void updateColorXLimitLine(CustomBaseLimitLine line, OrderAnswer order){
         if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
                 order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
             line.setmBitmapLabelX(bitmapIconGreenXLabel);
@@ -959,10 +959,10 @@ public class TerminalFragment extends Fragment {
             lineX.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE);
             currentLineDealing = new CustomBaseLimitLine(Float.valueOf(String.valueOf(order.getOpenPrice())), String.valueOf(order.getOpenPrice()), null);
             if(lineX.getLineColor() == colorGreen){
-                currentLineDealing.setmBitmapLabelX(bitmapIconCurrentDealingGreenYLabel);
+                currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingGreenYLabel);
                 currentLineDealing.setLineColor(colorGreen);
             }else if (lineX.getLineColor() == colorRed){
-                currentLineDealing.setmBitmapLabelX(bitmapIconCurrentDealingRedYLabel);
+                currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingRedYLabel);
                 currentLineDealing.setLineColor(colorRed);
             }
             currentLineDealing.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_CURRENT_DEALING);
@@ -983,7 +983,11 @@ public class TerminalFragment extends Fragment {
         rightYAxis.removeAllLimitLines();
         if(list != null && list.size() != 0){
             for(OrderAnswer orderAnswer : list){
-                drawXLimitLine(orderAnswer);
+                if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
+                    drawXLimitLine(orderAnswer, isTypeOptionAmerican);
+                }else{
+                    drawXLimitLine(orderAnswer, false);
+                }
             }
             makeActiveSelectedDealing(null);
         }
@@ -997,8 +1001,11 @@ public class TerminalFragment extends Fragment {
                     redrawPointsDealings(order);
                     xAxis.removeLimitLine(line);
                     makeActiveSelectedDealing(null);
-                }else{
-                    redrawColorXLimitLine(line, order);
+                }else {
+                    if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                       line.setmIsAmerican(true);
+                    }
+                    updateColorXLimitLine(line, order);
                     if (line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
                         drawCurrentDealingYLimitLine(line, order);
                     }
@@ -1011,12 +1018,12 @@ public class TerminalFragment extends Fragment {
             xAxis.removeAllLimitLines();
         }
     }
-    private void drawXLimitLine(OrderAnswer order) {
+    private void drawXLimitLine(OrderAnswer order, boolean isAmerican) {
         if (order != null) {
             CustomBaseLimitLine line = new CustomBaseLimitLine(ConventDate.genericTimeForChart(
                     ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000),
-                    new Gson().toJson(order), null, null, String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isTypeOptionAmerican);
-            redrawColorXLimitLine(line, order);
+                    new Gson().toJson(order), null, null, String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican);
+            updateColorXLimitLine(line, order);
             line.enableDashedLine(10f, 10f, 0f);
             line.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
             xAxis.addLimitLine(line);
@@ -1155,6 +1162,7 @@ public class TerminalFragment extends Fragment {
                 OptionsData optionsData = new OptionsData();
                 optionsData.setExpirationTime(ConventDate.getTimeCloseDealing(Double.valueOf(intent.getStringExtra(MakeDealingService.EXPIRATION)).intValue()));
                 currentDealing.setOptionsData(optionsData);
+                currentDealing.setOpenTime(ConventDate.getCurrentDate());
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
                 typePoint = POINT_OPEN_DEALING;
                 showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),

@@ -231,6 +231,7 @@ public class XAxisRenderer extends AxisRenderer {
                             String strLabelY = ConventDate.getDifferenceDateToString(Long.valueOf(line.getmTimer()));
                             Bitmap iconLabelX = line.getmBitmapLabelX();
                             Bitmap iconLabelY = line.getmBitmapLabelY();
+                            Bitmap iconClose = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.close_button);
                             Bitmap iconCMD;
                             if(order.getCmd() == 1){
                                 iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.down);
@@ -238,6 +239,11 @@ public class XAxisRenderer extends AxisRenderer {
                                 iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
                             }
 
+                            if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
+                                line.enableDashedLine(10f, 10f, 0f);
+                            }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
+                                line.enableDashedLine(0f, 0f, 0f);
+                            }
                             line.setLineWidth(1.0f);
                             line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
 
@@ -248,40 +254,49 @@ public class XAxisRenderer extends AxisRenderer {
                             float posX = pts[0];
                             float posYLabel = pts[1];
 
-                            float paddingVert = Utils.convertDpToPixel(35);
-                            float paddingHoriz = Utils.convertDpToPixel(5);
-                            float height = Utils.calcTextHeight(textPaint, strLabelX);
-                            float width = Utils.calcTextWidth(textPaint, strLabelX);
-                            float height_marker = height + paddingVert;
-                            float width_marker = width + paddingHoriz;
+                            float paddingVertIconLabelY = Utils.convertDpToPixel(12);
+                            float paddingHorizIconLabelY = Utils.convertDpToPixel(14);
 
-                            float paddingVert1 = Utils.convertDpToPixel(12);
-                            float paddingHoriz1 = Utils.convertDpToPixel(24);
-                            float height1 = Utils.calcTextHeight(textPaint, strLabelY);
-                            float width1 = Utils.calcTextWidth(textPaint, strLabelY);
-
-                            float height_markerIconLabelY = height1 + paddingVert1;
-                            float width_markerIconLabelY = width1 + paddingHoriz1;
+                            float paddingVertIconLabelX = Utils.convertDpToPixel(35);
+                            float paddingHorizIconLabelX = Utils.convertDpToPixel(5);
 
                             float height_markerIconCMD = Utils.convertDpToPixel(12);
                             float width_markerIconCMD = Utils.convertDpToPixel(12);
 
-                            if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
-                                line.enableDashedLine(10f, 10f, 0f);
-                            }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
-                                line.enableDashedLine(0f, 0f, 0f);
-                            }
+                            float height = Utils.calcTextHeight(textPaint, strLabelX);
+                            float width = Utils.calcTextWidth(textPaint, strLabelX);
+                            float height_marker = height + paddingVertIconLabelX;
+                            float width_marker = width + paddingHorizIconLabelX;
+
+                            float heightStrLabelY = Utils.calcTextHeight(textPaint, strLabelY);
+                            float widthStrLabelY  = Utils.calcTextWidth(textPaint, strLabelY);
+
+                            float height_markerIconLabelY = heightStrLabelY  + paddingVertIconLabelY;
+                            float width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY + width_markerIconCMD;
+
                             if (iconLabelX != null && iconLabelY != null && iconCMD != null) {
+                                if(line.ismIsAmerican()){
+                                    float height_markerIconClose = Utils.convertDpToPixel(12);
+                                    float width_markerIconClose =  Utils.convertDpToPixel(12);
+                                    iconClose = Bitmap.createScaledBitmap(iconClose, (int) width_markerIconClose, (int) height_markerIconClose, false);
+                                    paddingHorizIconLabelY = Utils.convertDpToPixel(16);
+                                    width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY + width_markerIconCMD +  width_markerIconClose;
+                                }
+                                /**create bitmaps*/
                                 iconLabelX = Bitmap.createScaledBitmap(iconLabelX, (int) width_marker, (int) height_marker, false);
                                 iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_markerIconLabelY, (int) height_markerIconLabelY, false);
                                 iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_markerIconCMD, (int) height_markerIconCMD, false);
 
+                                /**positionBitmap X*/
                                 c.drawBitmap(iconLabelX, posX - width_marker / 2, pos - height_marker / 4, paint);
-                                c.drawText(strLabelX, posX, pos + paddingVert/4, textPaint);
-
+                                c.drawText(strLabelX, posX, pos + paddingVertIconLabelX/4, textPaint);
+                                /**positionBitmap Y*/
                                 c.drawBitmap(iconLabelY, posX - width_markerIconLabelY / 2, posYLabel - height_markerIconLabelY / 2, paint);
-                                c.drawBitmap(iconCMD, posX - width_markerIconCMD * 4/3, posYLabel - height_markerIconCMD / 2, paint);
-                                c.drawText(strLabelY, posX + width_markerIconCMD * 2/3, posYLabel + height1 / 2, textPaint);
+                                c.drawBitmap(iconCMD, posX - width_markerIconLabelY/2 + paddingHorizIconLabelY/4, posYLabel - height_markerIconCMD / 2, paint);
+                                c.drawText(strLabelY, posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*1/3 + width_markerIconCMD*2 , posYLabel + heightStrLabelY  / 2, textPaint);
+                                if(line.ismIsAmerican()){
+                                    c.drawBitmap(iconClose,  posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*2/5 + width_markerIconCMD*2 + widthStrLabelY/2, posYLabel - height_markerIconCMD / 2, paint);
+                                }
                             }
                         }
                     }

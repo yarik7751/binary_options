@@ -178,15 +178,23 @@ public class ConventDate {
             return false;
         }
     }
-
+    /*public static boolean equalsTimeOpeningDealing(String open, String close){
+        long timeOpen = ConventDate.getConvertDateInMilliseconds(open);
+        long timeClose = ConventDate.getConvertDateInMilliseconds(close);
+        if ((Math.abs(stringToUnix(timeOpen) - stringToUnix(date)) / 1000) > 60){
+            return true;
+        }else{
+            return false;
+        }
+    }*/
     public static boolean isCloseDealing(String time){
         return time.equals(CLOSE_DEASLING);
     }
 
-    public static long getCurrentDateMilliseconds(){
+    public static String getCurrentDate(){
         Date date = new Date();
-        date.setHours(date.getHours() - 1);
-        return date.getTime()/1000;
+        sdf.setTimeZone(TimeZone.getDefault());
+        return sdf.format(date);
     }
     public static String getTimeStampCurrentDate() {
         sdf.setTimeZone(TimeZone.getDefault());

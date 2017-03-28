@@ -95,4 +95,11 @@ public class CustomBaseLimitLine extends LimitLine {
         this.mTimer = mTimer;
     }
 
+    public boolean ismIsAmerican() {
+        return mIsAmerican;
+    }
+
+    public void setmIsAmerican(boolean mIsAmerican) {
+        this.mIsAmerican = mIsAmerican;
+    }
 }
