@@ -105,7 +105,7 @@ public class TerminalFragment extends Fragment {
     public static boolean isAddInChart = false;
     public static boolean isOpen = false;
     public boolean isDirection = true;
-    private boolean isAnim = true;
+    private boolean isFirstDrawPoint = true;
 
     private LineChart mChart;
     private TextView tvBalance;
@@ -170,6 +170,8 @@ public class TerminalFragment extends Fragment {
     private GetResponseEarlyClosureBroadcastReceiver mEarlyClosureBroadcastReceiver;
     private GetResponseDeleteDealingBroadcastReceiver mDeleteDealingBroadcastReceiver;
     private static TerminalFragment fragment = null;
+    private boolean isAnim = true;
+
     public static TerminalFragment getInstance() {
         if (fragment == null) {
             fragment = new TerminalFragment();
@@ -371,6 +373,7 @@ public class TerminalFragment extends Fragment {
     public void onPause() {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         isAddInChart = false;
+        hideCurrentPoint();
         clearChart();
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
@@ -556,7 +559,7 @@ public class TerminalFragment extends Fragment {
                 if(vProtectedLine != null) {
                     vProtectedLine.clear();
                 }
-                Log.d(TAG, "mChart param: " + dX);
+                //Log.d(TAG, "mChart param: " + dX);
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
@@ -568,12 +571,11 @@ public class TerminalFragment extends Fragment {
     private void initializationCurrentPoint() {
         initRocketAnimation();
         imgPointCurrent = new ImageView(getContext());
-        imgPointCurrent.setVisibility(View.INVISIBLE);
         imgPointCurrent.setId(R.id.img);
         imgPointCurrent.setImageDrawable(rocketAnimation);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AndroidUtils.dp(40), AndroidUtils.dp(40));
         rlChart.addView(imgPointCurrent, params);
-        rocketAnimation.start();
+        imgPointCurrent.setVisibility(View.INVISIBLE);
     }
     private void initRocketAnimation() {
         if(isAdded()) {
@@ -663,6 +665,11 @@ public class TerminalFragment extends Fragment {
         if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
             sSymbolCurrent = Const.SYMBOL;
         }
+
+        imgPointCurrent.setVisibility(View.INVISIBLE);
+        isFirstDrawPoint = true;
+        vProtectedLine.clear();
+
         llProgressBar.setVisibility(View.VISIBLE);
         tvValueActive.setText(sSymbolCurrent);
         clearChart();
@@ -861,30 +868,49 @@ public class TerminalFragment extends Fragment {
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
                         break;
                 }
-
-                addPointForLine(data, entry);
+                Entry entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
+                boolean finalIsAnim = setChartAnimation(entryLast, entry);
                 mCurrentValueY = answer.getAsk();
                 data.addEntry(entry, 0);
                 data.notifyDataChanged();
+                vProtectedLine.setOnEndListener(new DrawView.OnEndListener() {
+                    @Override
+                    public void onEnd() {
+                        if(finalIsAnim) {
+                            mChart.notifyDataSetChanged();
+                            mChart.invalidate();
+                        }
+                    }
+                });
+                if(!finalIsAnim) {
+                    mChart.notifyDataSetChanged();
+                    mChart.invalidate();
+                }
                 typePoint = POINT_SIMPLY;
-//                boolean finalIsAnim = isAnim;
-//                vProtectedLine.setOnEndListener(() -> {
-//                    if(finalIsAnim) {
-//                        mChart.notifyDataSetChanged();
-//                        mChart.invalidate();
-//                    }
-//                });
-//                if(!finalIsAnim) {
-//                    mChart.notifyDataSetChanged();
-//                    mChart.invalidate();
-//                }
-                mChart.notifyDataSetChanged();
-                mChart.invalidate();
-
                 redrawXLimitLines();
                 drawSocketCurrentYLimitLine(entry);
             }
         }
+    }
+    private boolean setChartAnimation(Entry entryLast, Entry entry) {
+        MPPointF pointLast = mChart.getPosition(entryLast, YAxis.AxisDependency.RIGHT);
+        MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
+
+        Log.d(DrawView.TAG, "pL X: " + pointLast.getX() + ", pL Y: " + pointLast.getY() + ", p X: " + point.getX() + ", p Y: " + point.getY());
+        Log.d(DrawView.TAG, "vProtectedLine.getHeight: " + vProtectedLine.getHeight());
+
+        float currY = point.getY();
+        boolean isAnim = true;
+        if(currY > vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1) {
+            isAnim = false;
+            currY = (float) (vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1);
+        }
+        if(currY < vProtectedLine.getHeight() * 0.1) {
+            isAnim = false;
+            currY = (float) (vProtectedLine.getHeight() * 0.1);
+        }
+        vProtectedLine.addPoint(pointLast.getX(), pointLast.getY(), point.getX(), currY);
+        return isAnim;
     }
     private void addEntry(final SymbolHistoryAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getOpen() != null) {
@@ -1027,15 +1053,32 @@ public class TerminalFragment extends Fragment {
             rightYAxis.addLimitLine(currentLineDealing);
         }
     }
+
     private void drawCurrentPoint(Entry entry) {
+        Log.d(TAG, "drawCurrentPoint");
+        if(isFirstDrawPoint) {
+            Log.d(TAG, "isFirstDrawPoint");
+            hideCurrentPoint();
+        } else {
+            Log.d(TAG, "isFirstDrawPoint FALSE");
+            imgPointCurrent.setVisibility(View.VISIBLE);
+        }
         if (imgPointCurrent != null) {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
             imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+            //Log.d(TAG, "point.getX(): " + point.getX() + ", point.getY(): " + point.getY());
             currEntry = entry;
-            imgPointCurrent.setVisibility(View.VISIBLE);
         }
     }
+
+    private void hideCurrentPoint() {
+        isFirstDrawPoint = false;
+        imgPointCurrent.setVisibility(View.INVISIBLE);
+        imgPointCurrent.setImageDrawable(rocketAnimation);
+        rocketAnimation.start();
+    }
+
     private void drawAllDealingsXLimitLines(List<OrderAnswer> list){
         xAxis.removeAllLimitLines();
         rightYAxis.removeAllLimitLines();
