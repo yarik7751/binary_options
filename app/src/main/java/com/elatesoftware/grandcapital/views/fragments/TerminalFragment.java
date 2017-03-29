@@ -158,24 +158,29 @@ public class TerminalFragment extends Fragment {
     private int numberTemporaryPoint = 1;
     private float divX = 0, divY = 0;
     private Entry entryLast;
-    private Timer timerAnimation;
     private Handler handler;
+
+    private static List<String> listActives = new ArrayList<>();
+    public static List<SocketAnswer> listSocketPointsBackGround = new ArrayList<>();
+    public static List<OrderAnswer> listCurrentClosingDealings = new ArrayList<>();
+    public static List<OrderAnswer> listOpenDealings = new ArrayList<>();
+
+    private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
+    private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
+    private GetResponseOpenDealingBroadcastReceiver mMakeDealingBroadcastReceiver;
+    private GetResponseSignalsBroadcastReceiver mSignalsBroadcastReceiver;
+    private GetResponseCheckClosedDealingBroadcastReceiver mCheckClosedDealingBroadcastReceiver;
+    private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
+    private GetResponseEarlyClosureBroadcastReceiver mEarlyClosureBroadcastReceiver;
+    private GetResponseDeleteDealingBroadcastReceiver mDeleteDealingBroadcastReceiver;
+
     private Runnable runnableAnimation = new Runnable() {
         @Override
         public void run() {
             float x = entryLast.getX();
             float y = entryLast.getY();
-
-            /*if(Math.abs(divX) < Math.abs(x - currEntry.getX())) {
-                x += Math.abs(x - currEntry.getX());
-            } else {*/
             x += divX;
-            //}
-            /*if(Math.abs(divY) < Math.abs(y - currEntry.getY())) {
-                y += Math.abs(y - currEntry.getY());
-            } else {*/
             y += divY;
-            //}
             Entry newEntry = new Entry(x, y, null, null);
             numberTemporaryPoint++;
             Log.d(TAG, "timerTaskAnimation: " + numberTemporaryPoint);
@@ -197,20 +202,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     };
-
-    private static List<String> listActives = new ArrayList<>();
-    public static List<SocketAnswer> listSocketPointsBackGround = new ArrayList<>();
-    public static List<OrderAnswer> listCurrentClosingDealings = new ArrayList<>();
-    public static List<OrderAnswer> listOpenDealings = new ArrayList<>();
-
-    private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
-    private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
-    private GetResponseOpenDealingBroadcastReceiver mMakeDealingBroadcastReceiver;
-    private GetResponseSignalsBroadcastReceiver mSignalsBroadcastReceiver;
-    private GetResponseCheckClosedDealingBroadcastReceiver mCheckClosedDealingBroadcastReceiver;
-    private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
-    private GetResponseEarlyClosureBroadcastReceiver mEarlyClosureBroadcastReceiver;
-    private GetResponseDeleteDealingBroadcastReceiver mDeleteDealingBroadcastReceiver;
 
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
@@ -392,7 +383,6 @@ public class TerminalFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onResume Terminal");
-        //timerAnimation = new Timer();
         handler = new Handler();
         llProgressBar.setVisibility(View.VISIBLE);
         isOpen = true;
@@ -593,8 +583,6 @@ public class TerminalFragment extends Fragment {
                     if(point != null){
                         imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
-                        //vProtectedLine.setX(point.getX() - vProtectedLine.getWidth() / 2);
-                        //vProtectedLine.setY(point.getY() - vProtectedLine.getHeight() / 2);
                     }
                 }
             }
@@ -610,7 +598,6 @@ public class TerminalFragment extends Fragment {
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
                     }
                 }
-                //float xMax = xAxis.getAxisMaximum();
                 redrawXScrollLinesDealings(mChart.getHighestVisibleX());
             }
         });
@@ -712,7 +699,7 @@ public class TerminalFragment extends Fragment {
         set.setDrawFilled(true);
         set.setFillColor(Color.WHITE);
         set.setFillAlpha(50);
-        set.setHighlightEnabled(true); // selected point
+        set.setHighlightEnabled(true);
         set.setDrawHighlightIndicators(false);//
         return set;
     }
@@ -730,11 +717,9 @@ public class TerminalFragment extends Fragment {
         if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
             sSymbolCurrent = Const.SYMBOL;
         }
-
         imgPointCurrent.setVisibility(View.INVISIBLE);
         isFirstDrawPoint = true;
         vProtectedLine.clear();
-
         llProgressBar.setVisibility(View.VISIBLE);
         tvValueActive.setText(sSymbolCurrent);
         clearChart();
@@ -1096,12 +1081,9 @@ public class TerminalFragment extends Fragment {
         }
     }
     private void drawCurrentPoint(Entry entry) {
-        //Log.d(TAG, "drawCurrentPoint");
         if(isFirstDrawPoint) {
-            //Log.d(TAG, "isFirstDrawPoint");
             hideCurrentPoint();
         } else {
-            //Log.d(TAG, "isFirstDrawPoint FALSE");
             imgPointCurrent.setVisibility(View.VISIBLE);
         }
         if (imgPointCurrent != null) {
