@@ -25,12 +25,10 @@ public class CustomBaseLimitLine extends LimitLine {
     public enum LimitLinesType {
         LINE_HORIZONTAL_CURRENT_SOCKET,
         LINE_HORIZONTAL_CURRENT_DEALING,
+        LINE_HORIZONTAL_DEALING,
 
         LINE_VERTICAL_DEALING_ACTIVE,
-        LINE_VERTICAL_DEALING_PASS,
-
-        LINE_VERTICAL_DEALING_ACTIVE_CLOSING,
-        LINE_VERTICAL_DEALING_PASS_CLOSING,
+        LINE_VERTICAL_DEALING_PASS
     }
     /** for x lines*/
     public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX, Bitmap bitmapY, String timer, boolean isAmerican) {
