@@ -141,6 +141,7 @@ public class TerminalFragment extends Fragment {
     private Bitmap bitmapIconGreenYLabel;
     private Bitmap bitmapIconCurrentDealingGreenYLabel;
     private Bitmap bitmapIconCurrentDealingRedYLabel;
+    private Bitmap bitmapIconCurrentPoint;
     private int colorRed;
     private int colorGreen;
 
@@ -223,6 +224,7 @@ public class TerminalFragment extends Fragment {
         bitmapIconRedXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_vert);
         bitmapIconCurrentDealingGreenYLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_hor);
         bitmapIconCurrentDealingRedYLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_hor);
+        bitmapIconCurrentPoint = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
         colorGreen = getResources().getColor(R.color.chat_green);
         colorRed = getResources().getColor(R.color.color_red_chart);
         bitmapIconRedYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(getContext()).inflate(R.layout.incl_chart_label_red, null));
@@ -616,8 +618,7 @@ public class TerminalFragment extends Fragment {
             rocketAnimation = new CustomAnimationDrawable();
             rocketAnimation.setOneShot(true);
             for (int i = 10; i >= 3; i--) {
-                Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
-                rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), Const.INTERVAL_ITEM);
+                rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(bitmapIconCurrentPoint, i)), Const.INTERVAL_ITEM);
             }
 
             rocketAnimation.setAnimationEndListner(() -> {
@@ -632,8 +633,7 @@ public class TerminalFragment extends Fragment {
             rocketAnimationBack = new CustomAnimationDrawable();
             rocketAnimationBack.setOneShot(true);
             for (int i = 3; i <= 10; i++) {
-                Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.front_elipsa);
-                rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(image, i)), Const.INTERVAL_ITEM);
+                rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(bitmapIconCurrentPoint, i)), Const.INTERVAL_ITEM);
             }
             rocketAnimationBack.setAnimationEndListner(() -> {
                 initRocketAnimation();
