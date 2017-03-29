@@ -149,7 +149,7 @@ public class GrandCapitalApplication extends Application{
                     });
                 }
             }
-        }, 1000, 1000);
+        }, 3000, 1000);
     }
 
     static class SocketTask extends AsyncTask<Void, Void, Void> {

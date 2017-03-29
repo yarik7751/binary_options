@@ -30,12 +30,21 @@ public class CustomBaseLimitLine extends LimitLine {
         LINE_VERTICAL_DEALING_ACTIVE,
         LINE_VERTICAL_DEALING_PASS
     }
-    /** for x lines*/
+    /** for x dealing*/
     public CustomBaseLimitLine(float limit, String label, Bitmap bitmapX, Bitmap bitmapY, String timer, boolean isAmerican) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
         mBitmapLabelX = bitmapX;
+        mBitmapLabelY = bitmapY;
+        mTimer = timer;
+        mIsAmerican = isAmerican;
+    }
+    /** for y dealing*/
+    public CustomBaseLimitLine(float limit, String label, Bitmap bitmapY, String timer, boolean isAmerican) {
+        super(limit, label);
+        mLimit = limit;
+        mLabel = label;
         mBitmapLabelY = bitmapY;
         mTimer = timer;
         mIsAmerican = isAmerican;
@@ -46,13 +55,14 @@ public class CustomBaseLimitLine extends LimitLine {
         mLimit = limit;
         mLabel = label;
     }
-    /** for y dealing*/
+    /** for current y dealing*/
     public CustomBaseLimitLine(float limit, String label, Bitmap bitmapY) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
         mBitmapLabelY = bitmapY;
     }
+
     public void setTypeLimitLine(LimitLinesType type){
         mTypeLimitLine = type;
     }

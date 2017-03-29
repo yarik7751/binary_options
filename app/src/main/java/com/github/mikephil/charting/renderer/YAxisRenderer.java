@@ -10,7 +10,9 @@ import android.graphics.Path;
 import android.graphics.RectF;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
@@ -20,6 +22,7 @@ import com.github.mikephil.charting.utils.MPPointD;
 import com.github.mikephil.charting.utils.Transformer;
 import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -146,6 +149,9 @@ public class YAxisRenderer extends AxisRenderer {
                     String strLabel = l.getLabel();
                     String lastSymbol = "";
                     if (strLabel.length() > 3) {
+                        if(strLabel.length() > 7){
+                            strLabel = strLabel.substring(0, 7);
+                        }
                         lastSymbol = strLabel.substring(strLabel.length() - 1, strLabel.length());
                         strLabel = strLabel.substring(0, strLabel.length() - 1);
                     }
@@ -228,22 +234,52 @@ public class YAxisRenderer extends AxisRenderer {
                         pts[1] = l.getLimit();
                         mTrans.pointValuesToPixel(pts);
                         String strLabel = l.getLabel();
+                        OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+                        String strLabelY  = ConventDate.getDifferenceDateToString(Long.valueOf(line.getmTimer()));
 
-                        Bitmap bitmapLabel = line.getmBitmapLabelY();
-                        float paddingVert = Utils.convertDpToPixel(8);
-                        float paddingHoriz = Utils.convertDpToPixel(10);
+                        Bitmap iconLabelY = line.getmBitmapLabelY();
+                        Bitmap iconClose = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.close_button);
+                        Bitmap iconCMD;
+                        if(order.getCmd() == 1){
+                            iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.down);
+                        }else{
+                            iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
+                        }
+                        float height_markerIconCMD = Utils.convertDpToPixel(12);
+                        float width_markerIconCMD = Utils.convertDpToPixel(12);
+                        float paddingVertIconLabelY = Utils.convertDpToPixel(12);
+                        float paddingHorizIconLabelY = Utils.convertDpToPixel(14);
+                        float heightStrLabelY = Utils.calcTextHeight(textPaint, strLabelY);
+                        float widthStrLabelY  = Utils.calcTextWidth(textPaint, strLabelY);
+                        float height_markerIconLabelY = heightStrLabelY  + paddingVertIconLabelY;
+                        float width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY + width_markerIconCMD;
+
                         float height = Utils.calcTextHeight(textPaint, strLabel);
                         float width = Utils.calcTextWidth(textPaint, strLabel);
                         float posY = pts[1] + height / 2;
 
-                        float height_marker = height + paddingVert;
-                        float width_marker = width + paddingHoriz*2;
-
-                        if (bitmapLabel != null) {
-                            bitmapLabel = Bitmap.createScaledBitmap(bitmapLabel, (int) width_marker, (int) height_marker, false);
-                            c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz/2, posY - height_marker + paddingVert / 2, paint);
-                            c.drawText(strLabel, fixedPosition, posY, textPaint);
+                    if (iconLabelY != null && iconCMD != null) {
+                        if(line.ismIsAmerican()){
+                            float height_markerIconClose = Utils.convertDpToPixel(12);
+                            float width_markerIconClose =  Utils.convertDpToPixel(12);
+                            iconClose = Bitmap.createScaledBitmap(iconClose, (int) width_markerIconClose, (int) height_markerIconClose, false);
+                            paddingHorizIconLabelY = Utils.convertDpToPixel(16);
+                            width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY*6/5 + width_markerIconCMD +  width_markerIconClose;
                         }
+                        /**create bitmaps*/
+                        iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_markerIconLabelY, (int) height_markerIconLabelY, false);
+                        iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_markerIconCMD, (int) height_markerIconCMD, false);
+
+                        /**positionBitmap Y*/
+                        c.drawBitmap(iconLabelY, fixedPosition - width_markerIconLabelY, posY - height_markerIconLabelY/2, paint);
+                        c.drawBitmap(iconCMD, fixedPosition - width_markerIconLabelY/2 + paddingHorizIconLabelY/4, posY - height_markerIconLabelY/4, paint);
+                        c.drawText(strLabelY, fixedPosition - width_markerIconLabelY/2 + paddingHorizIconLabelY*1/3 + width_markerIconCMD*2 ,
+                                posY + heightStrLabelY  / 2, textPaint);
+//                        if(line.ismIsAmerican()){
+//                            c.drawBitmap(iconClose,  posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*4/7 +
+//                                    width_markerIconCMD*2 + widthStrLabelY/2, posYLabel - height_markerIconCMD / 2, paint);
+//                        }
+                    }
                 }
             }
         }
