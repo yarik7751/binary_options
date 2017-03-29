@@ -16,6 +16,7 @@ import android.view.View;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
@@ -150,6 +151,7 @@ public class BaseActivity extends CustomFontsActivity {
     }
     private void requestOrders() {
         Intent intentService = new Intent(BaseActivity.this, OrdersService.class);
+        intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS);
         startService(intentService);
     }
     private void addItems() {

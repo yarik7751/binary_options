@@ -24,11 +24,12 @@ public class DeleteDealingService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String response = GrandCapitalApi.getDeleteDealing(intent.getStringExtra(TICKET));
+        String response = GrandCapitalApi.getDeleteDealing(intent.getIntExtra(TICKET, 0));
         Intent responseIntent = new Intent();
         responseIntent.setAction(ACTION_SERVICE_DELETE_FEALING);
         responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
         responseIntent.putExtra(RESPONSE, response);
+        responseIntent.putExtra(TICKET, intent.getIntExtra(TICKET, 0));
         sendBroadcast(responseIntent);
     }
 }

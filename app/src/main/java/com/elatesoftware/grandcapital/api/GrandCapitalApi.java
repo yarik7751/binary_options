@@ -333,7 +333,7 @@ public class GrandCapitalApi {
         }
         return result;
     }
-    public static String getDeleteDealing(String ticket) {
+    public static String getDeleteDealing(int ticket) {
         Call<ResponseBody> call = getApiService().deleteDealing(User.getInstance().getToken(), User.getInstance().getLogin(), ticket);
         Response<ResponseBody> response = null;
         String result = null;
@@ -343,7 +343,7 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null) {
-            if(response.code() == CODE_SUCCESS_DELETE_DEALING) { // success delete dealing
+            if(response.code() == CODE_SUCCESS_DELETE_DEALING) {
 
             }
             result = String.valueOf(response.code());
