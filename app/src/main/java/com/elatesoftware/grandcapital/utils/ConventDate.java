@@ -80,6 +80,16 @@ public class ConventDate {
         return Math.abs(stringToUnix(currDate) - stringToUnix(date)) / 1000;
     }
 
+    public static boolean validationDateTimer(String date) {
+        sdf.setTimeZone(TimeZone.getDefault());
+        String currDate = sdf.format(new Date());
+        if((stringToUnix(currDate) - stringToUnix(date))/1000 >= 0){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
     public static String getDifferenceDateToString(long difSec) {
         if(difSec < 60) {
             return ":" + timeClockFormat(difSec);

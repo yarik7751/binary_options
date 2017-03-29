@@ -155,6 +155,49 @@ public class TerminalFragment extends Fragment {
     private CustomBaseLimitLine currentLineSocket;
     private CustomBaseLimitLine currentLineDealing;
 
+    private int numberTemporaryPoint = 1;
+    private float divX = 0, divY = 0;
+    private Entry entryLast;
+    private Timer timerAnimation;
+    private Handler handler;
+    private Runnable runnableAnimation = new Runnable() {
+        @Override
+        public void run() {
+            float x = entryLast.getX();
+            float y = entryLast.getY();
+
+            /*if(Math.abs(divX) < Math.abs(x - currEntry.getX())) {
+                x += Math.abs(x - currEntry.getX());
+            } else {*/
+            x += divX;
+            //}
+            /*if(Math.abs(divY) < Math.abs(y - currEntry.getY())) {
+                y += Math.abs(y - currEntry.getY());
+            } else {*/
+            y += divY;
+            //}
+            Entry newEntry = new Entry(x, y, null, null);
+            numberTemporaryPoint++;
+            Log.d(TAG, "timerTaskAnimation: " + numberTemporaryPoint);
+            LineData data = mChart.getData();
+            data.addEntry(newEntry, 0);
+            data.notifyDataChanged();
+            mChart.notifyDataSetChanged();
+            mChart.invalidate();
+            if(numberTemporaryPoint == 10) {
+                typePoint = POINT_SIMPLY;
+                redrawXLimitLines();
+            }
+            drawSocketCurrentYLimitLine(newEntry);
+            entryLast = newEntry;
+            if(numberTemporaryPoint < 10) {
+                handler.postDelayed(runnableAnimation, 50);
+            } else {
+                Log.d(TAG, "timerTaskAnimation: END");
+            }
+        }
+    };
+
     private static List<String> listActives = new ArrayList<>();
     public static List<SocketAnswer> listSocketPointsBackGround = new ArrayList<>();
     public static List<OrderAnswer> listCurrentClosingDealings = new ArrayList<>();
@@ -893,75 +936,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
-    private int numberTemporaryPoint = 1;
-    private float divX = 0, divY = 0;
-    private Entry entryLast;
-    private Timer timerAnimation;
-
-    private Handler handler;
-    private Runnable runnableAnimation = new Runnable() {
-        @Override
-        public void run() {
-            float x = entryLast.getX();
-            float y = entryLast.getY();
-
-            /*if(Math.abs(divX) < Math.abs(x - currEntry.getX())) {
-                x += Math.abs(x - currEntry.getX());
-            } else {*/
-            x += divX;
-            //}
-
-            /*if(Math.abs(divY) < Math.abs(y - currEntry.getY())) {
-                y += Math.abs(y - currEntry.getY());
-            } else {*/
-            y += divY;
-            //}
-
-            Entry newEntry = new Entry(x, y, null, null);
-            numberTemporaryPoint++;
-
-            Log.d(TAG, "timerTaskAnimation: " + numberTemporaryPoint);
-
-            LineData data = mChart.getData();
-            data.addEntry(newEntry, 0);
-            data.notifyDataChanged();
-            mChart.notifyDataSetChanged();
-            mChart.invalidate();
-            if(numberTemporaryPoint == 10) {
-                typePoint = POINT_SIMPLY;
-                redrawXLimitLines();
-            }
-            drawSocketCurrentYLimitLine(newEntry);
-            entryLast = newEntry;
-            if(numberTemporaryPoint < 10) {
-                handler.postDelayed(runnableAnimation, 50);
-            } else {
-                Log.d(TAG, "timerTaskAnimation: END");
-            }
-        }
-    };
-
-    private boolean setChartAnimation(Entry entryLast, Entry entry) {
-        MPPointF pointLast = mChart.getPosition(entryLast, YAxis.AxisDependency.RIGHT);
-        MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
-
-        Log.d(DrawView.TAG, "pL X: " + pointLast.getX() + ", pL Y: " + pointLast.getY() + ", p X: " + point.getX() + ", p Y: " + point.getY());
-        Log.d(DrawView.TAG, "vProtectedLine.getHeight: " + vProtectedLine.getHeight());
-
-        float currY = point.getY();
-        boolean isAnim = true;
-        if(currY > vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1) {
-            isAnim = false;
-            currY = (float) (vProtectedLine.getHeight() - vProtectedLine.getHeight() * 0.1);
-        }
-        if(currY < vProtectedLine.getHeight() * 0.1) {
-            isAnim = false;
-            currY = (float) (vProtectedLine.getHeight() * 0.1);
-        }
-        vProtectedLine.addPoint(pointLast.getX(), pointLast.getY(), point.getX(), currY);
-        return isAnim;
-    }
     private void addEntry(final SymbolHistoryAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getOpen() != null) {
             LineData data = mChart.getData();
@@ -1147,10 +1121,12 @@ public class TerminalFragment extends Fragment {
         rightYAxis.removeAllLimitLines();
         if(list != null && list.size() != 0){
             for(OrderAnswer orderAnswer : list){
-                if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
-                    drawXLimitLine(orderAnswer, isTypeOptionAmerican);
-                }else{
-                    drawXLimitLine(orderAnswer, false);
+                if(ConventDate.validationDateTimer(orderAnswer.getOpenTime())){
+                    if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
+                        drawXLimitLine(orderAnswer, isTypeOptionAmerican);
+                    }else{
+                        drawXLimitLine(orderAnswer, false);
+                    }
                 }
             }
             makeActiveSelectedDealing(null);
@@ -1166,12 +1142,16 @@ public class TerminalFragment extends Fragment {
                     xAxis.removeLimitLine(line);
                     makeActiveSelectedDealing(null);
                 }else {
-                    if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
-                        line.setmIsAmerican(true);
-                    }
-                    updateColorXLimitLine(line, order);
-                    if (line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
-                        drawCurrentDealingYLimitLine(line, order);
+                    if(!ConventDate.validationDateTimer(order.getOpenTime())){
+                        xAxis.removeLimitLine(line);
+                    }else{
+                        if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                            line.setmIsAmerican(true);
+                        }
+                        updateColorXLimitLine(line, order);
+                        if (line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
+                            drawCurrentDealingYLimitLine(line, order);
+                        }
                     }
                 }
             }
