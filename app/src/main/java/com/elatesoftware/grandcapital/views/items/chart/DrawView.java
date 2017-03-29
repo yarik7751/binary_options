@@ -146,10 +146,11 @@ public class DrawView extends View {
         invalidate();
     }
 
-    private final float LINE_WIDTH = 1.8f;
+    private final float LINE_WIDTH = 1.7f;
 
     private Paint getLinePaint() {
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setStyle(Paint.Style.FILL_AND_STROKE);
         p.setStrokeWidth(LINE_WIDTH);
         p.setColor(Color.WHITE);
         return p;

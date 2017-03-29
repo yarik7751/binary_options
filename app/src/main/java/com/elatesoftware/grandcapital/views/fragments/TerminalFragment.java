@@ -79,6 +79,8 @@ import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TerminalFragment extends Fragment {
 
@@ -221,6 +223,7 @@ public class TerminalFragment extends Fragment {
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
         tvValueRewardTerminal = (TextView) parentView.findViewById(R.id.tvValueRewardTerminal);
         vProtectedLine = (DrawView) parentView.findViewById(R.id.vProtectedLine);
+        vProtectedLine.setVisibility(View.INVISIBLE);
 
         openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
         closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
@@ -346,6 +349,8 @@ public class TerminalFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onResume Terminal");
+        //timerAnimation = new Timer();
+        handler = new Handler();
         llProgressBar.setVisibility(View.VISIBLE);
         isOpen = true;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
@@ -557,8 +562,10 @@ public class TerminalFragment extends Fragment {
                 }
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
-                    imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
-                    imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
+                    if(point != null) {
+                        imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                        imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
+                    }
                 }
                 //float xMax = xAxis.getAxisMaximum();
                 redrawXScrollLinesDealings(mChart.getHighestVisibleX());
@@ -874,27 +881,67 @@ public class TerminalFragment extends Fragment {
                         entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
                         break;
                 }
-                Entry entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
-                boolean finalIsAnim = setChartAnimation(entryLast, entry);
                 mCurrentValueY = answer.getAsk();
-                data.addEntry(entry, 0);
-                data.notifyDataChanged();
-                /*vProtectedLine.setOnEndListener(() -> {
-                    if(finalIsAnim) {
-                        mChart.notifyDataSetChanged();
-                        mChart.invalidate();
-                    }
-                });
-                if(!finalIsAnim) {*/
-                    mChart.notifyDataSetChanged();
-                    mChart.invalidate();
-               // }
-                typePoint = POINT_SIMPLY;
-                redrawXLimitLines();
-                drawSocketCurrentYLimitLine(entry);
+                currEntry = entry;
+                entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
+
+                divX = (currEntry.getX() - entryLast.getX()) / 10.f;
+                divY = (currEntry.getY() - entryLast.getY()) / 10.f;
+
+                numberTemporaryPoint = 1;
+                handler.postDelayed(runnableAnimation, 50);
             }
         }
     }
+
+    private int numberTemporaryPoint = 1;
+    private float divX = 0, divY = 0;
+    private Entry entryLast;
+    private Timer timerAnimation;
+
+    private Handler handler;
+    private Runnable runnableAnimation = new Runnable() {
+        @Override
+        public void run() {
+            float x = entryLast.getX();
+            float y = entryLast.getY();
+
+            /*if(Math.abs(divX) < Math.abs(x - currEntry.getX())) {
+                x += Math.abs(x - currEntry.getX());
+            } else {*/
+            x += divX;
+            //}
+
+            /*if(Math.abs(divY) < Math.abs(y - currEntry.getY())) {
+                y += Math.abs(y - currEntry.getY());
+            } else {*/
+            y += divY;
+            //}
+
+            Entry newEntry = new Entry(x, y, null, null);
+            numberTemporaryPoint++;
+
+            Log.d(TAG, "timerTaskAnimation: " + numberTemporaryPoint);
+
+            LineData data = mChart.getData();
+            data.addEntry(newEntry, 0);
+            data.notifyDataChanged();
+            mChart.notifyDataSetChanged();
+            mChart.invalidate();
+            if(numberTemporaryPoint == 10) {
+                typePoint = POINT_SIMPLY;
+                redrawXLimitLines();
+            }
+            drawSocketCurrentYLimitLine(newEntry);
+            entryLast = newEntry;
+            if(numberTemporaryPoint < 10) {
+                handler.postDelayed(runnableAnimation, 50);
+            } else {
+                Log.d(TAG, "timerTaskAnimation: END");
+            }
+        }
+    };
+
     private boolean setChartAnimation(Entry entryLast, Entry entry) {
         MPPointF pointLast = mChart.getPosition(entryLast, YAxis.AxisDependency.RIGHT);
         MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
@@ -1019,8 +1066,12 @@ public class TerminalFragment extends Fragment {
                 Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
                         Float.valueOf(String.valueOf(mCurrentValueY)), null, null);
                 mChart.zoom(10f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
+                currEntry = entry;
                 getActivity().runOnUiThread(() -> {
                     drawSocketCurrentYLimitLine(entry);
+                    imgPointCurrent.setVisibility(View.VISIBLE);
+                    imgPointCurrent.setImageDrawable(rocketAnimation);
+                    initRocketAnimation();
                 });
             }
             GrandCapitalApplication.closeAndOpenSocket(symbol);
@@ -1071,19 +1122,18 @@ public class TerminalFragment extends Fragment {
         }
     }
     private void drawCurrentPoint(Entry entry) {
-        Log.d(TAG, "drawCurrentPoint");
+        //Log.d(TAG, "drawCurrentPoint");
         if(isFirstDrawPoint) {
-            Log.d(TAG, "isFirstDrawPoint");
+            //Log.d(TAG, "isFirstDrawPoint");
             hideCurrentPoint();
         } else {
-            Log.d(TAG, "isFirstDrawPoint FALSE");
+            //Log.d(TAG, "isFirstDrawPoint FALSE");
             imgPointCurrent.setVisibility(View.VISIBLE);
         }
         if (imgPointCurrent != null) {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
             imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
-            currEntry = entry;
         }
     }
     private void hideCurrentPoint() {
