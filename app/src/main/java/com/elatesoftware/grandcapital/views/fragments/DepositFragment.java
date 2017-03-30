@@ -144,24 +144,18 @@ public class DepositFragment  extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(InOutService.RESPONSE);
-            if (response != null) {
-                if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
-                    if(InOutAnswer.getInstance() != null) {
-                        String transaction = intent.getStringExtra(InOutService.TRANSACTION);
-                        if(transaction.equals(InOutService.DEPOSIT)) {
-                            deposits = InOutAnswer.getInstance();
-                            query(InOutService.WITHDRAW);
-                        }
-                        if(transaction.equals(InOutService.WITHDRAW)) {
-                            withdraws = InOutAnswer.getInstance();
-                            rvIoOut.setAdapter(new InOutAdapter(deposits, withdraws));
-                            llProgress.setVisibility(View.INVISIBLE);
-                        }
+            if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)){
+                if(InOutAnswer.getInstance() != null) {
+                    String transaction = intent.getStringExtra(InOutService.TRANSACTION);
+                    if(transaction.equals(InOutService.DEPOSIT)) {
+                        deposits = InOutAnswer.getInstance();
+                        query(InOutService.WITHDRAW);
                     }
-                } else {
-                    CustomDialog.showDialogInfo(getActivity(),
-                            getString(R.string.request_error_title),
-                            getString(R.string.request_error_text));
+                    if(transaction.equals(InOutService.WITHDRAW)) {
+                        withdraws = InOutAnswer.getInstance();
+                        rvIoOut.setAdapter(new InOutAdapter(deposits, withdraws));
+                        llProgress.setVisibility(View.INVISIBLE);
+                    }
                 }
             } else {
                 CustomDialog.showDialogInfo(getActivity(),

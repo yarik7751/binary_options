@@ -219,6 +219,7 @@ public class TerminalFragment extends Fragment {
         BaseActivity.backToRootFragment = false;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
 
+        isFirstDrawPoint = true;
         drawableMarkerDealing = getResources().getDrawable(R.drawable.marker_close_dealing);
         bitmapIconGreenXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.green_vert);
         bitmapIconRedXLabel = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.red_vert);
@@ -275,12 +276,12 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
-        try {
+        /*try {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         } catch (Exception ignored) {
             ignored.printStackTrace();
-        }
+        }*/
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
 
@@ -407,7 +408,8 @@ public class TerminalFragment extends Fragment {
         }
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         isAddInChart = false;
-        hideCurrentPoint();
+        isFirstDrawPoint = true;
+        imgPointCurrent.setVisibility(View.INVISIBLE);
         clearChart();
         unregisterBroadcasts();
         isOpen = false;
@@ -546,10 +548,10 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-                Log.d(TAG, "onChartFling MotionEvent.ACTION1 " + me1.getAction());
+                /*Log.d(TAG, "onChartFling MotionEvent.ACTION1 " + me1.getAction());
                 Log.d(TAG, "onChartFling MotionEvent.ACTION2 " + me2.getAction());
                 imgPointCurrent.setX(imgPointCurrent.getX() + velocityX);
-                imgPointCurrent.setY(imgPointCurrent.getY() + velocityY);
+                imgPointCurrent.setY(imgPointCurrent.getY() + velocityY);*/
             }
             @Override
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
@@ -570,10 +572,15 @@ public class TerminalFragment extends Fragment {
                         Log.d(TAG, "maxim x: " + mChart.getHighestVisibleX());
                         Log.d(TAG, "point x: " + (point.getX() - imgPointCurrent.getWidth() / 2));
                         if(currEntry.getX() >= mChart.getHighestVisibleX()) {
-                            hideCurrentPoint();
+                            imgPointCurrent.setVisibility(View.INVISIBLE);
+                            /*imgPointCurrent.setImageDrawable(rocketAnimation);
+                            rocketAnimation.start();*/
+                            //hideCurrentPoint();
                         } else {
                             imgPointCurrent.setVisibility(View.VISIBLE);
-
+                            /*isFirstDrawPoint = true;
+                            imgPointCurrent.setImageDrawable(rocketAnimation);
+                            rocketAnimation.start();*/
                         }
                         imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
@@ -591,6 +598,7 @@ public class TerminalFragment extends Fragment {
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(AndroidUtils.dp(40), AndroidUtils.dp(40));
         rlChart.addView(imgPointCurrent, params);
         imgPointCurrent.setVisibility(View.INVISIBLE);
+        rocketAnimation.start();
     }
     private void initRocketAnimation() {
         if(isAdded()) {
@@ -602,7 +610,7 @@ public class TerminalFragment extends Fragment {
 
             rocketAnimation.setAnimationEndListner(() -> {
                 initRocketAnimationBack();
-                imgPointCurrent.setBackgroundDrawable(rocketAnimationBack);
+                imgPointCurrent.setImageDrawable(rocketAnimationBack);
                 rocketAnimationBack.start();
             });
         }
@@ -616,7 +624,7 @@ public class TerminalFragment extends Fragment {
             }
             rocketAnimationBack.setAnimationEndListner(() -> {
                 initRocketAnimation();
-                imgPointCurrent.setBackgroundDrawable(rocketAnimation);
+                imgPointCurrent.setImageDrawable(rocketAnimation);
                 rocketAnimation.start();
             });
         }
@@ -703,8 +711,8 @@ public class TerminalFragment extends Fragment {
         if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
             sSymbolCurrent = Const.SYMBOL;
         }
-        imgPointCurrent.setVisibility(View.INVISIBLE);
         isFirstDrawPoint = true;
+        imgPointCurrent.setVisibility(View.INVISIBLE);
         llProgressBar.setVisibility(View.VISIBLE);
         tvValueActive.setText(sSymbolCurrent);
         clearChart();
@@ -916,6 +924,7 @@ public class TerminalFragment extends Fragment {
     }
 
     private void addSocketAnswerInSymbol(final SocketAnswer item) {
+        Log.d(TAG, "addSocketAnswerInSymbol");
         if (SymbolHistoryAnswer.getInstance() != null) {
             SymbolHistoryAnswer.getInstance().add(new SymbolHistoryAnswer(item.getHigh(), item.getBid(), item.getAsk(), item.getLow(), item.getTime()));
         }
@@ -1087,9 +1096,18 @@ public class TerminalFragment extends Fragment {
                 currEntry = entry;
                 getActivity().runOnUiThread(() -> {
                     drawSocketCurrentYLimitLine(entry);
-                    imgPointCurrent.setVisibility(View.VISIBLE);
-                    imgPointCurrent.setImageDrawable(rocketAnimation);
-                    initRocketAnimation();
+                    if(isFirstDrawPoint) {
+                        imgPointCurrent.setVisibility(View.VISIBLE);
+                        isFirstDrawPoint = false;
+                        if (imgPointCurrent != null || currEntry != null) {
+                            MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
+                            if(point != null){
+                                imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                                imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+                            }
+                        }
+                    }
+                    //initRocketAnimation();
                 });
             }
             GrandCapitalApplication.closeAndOpenSocket(symbol);
@@ -1152,7 +1170,9 @@ public class TerminalFragment extends Fragment {
     }
     private void drawCurrentPoint(Entry entry) {
         if(isFirstDrawPoint) {
-            hideCurrentPoint();
+            //hideCurrentPoint();
+        } else {
+            //imgPointCurrent.setVisibility(View.VISIBLE);
         }
         if (imgPointCurrent != null) {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
@@ -1479,7 +1499,9 @@ public class TerminalFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(SignalService.RESPONSE);
             if (response == null || !response.equals(Const.RESPONSE_CODE_SUCCESS)) {
-                CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.request_error_text));
+                CustomDialog.showDialogInfo(getActivity(),
+                        getResources().getString(R.string.error),
+                        getResources().getString(R.string.request_error_text));
             }
         }
     }
@@ -1513,6 +1535,10 @@ public class TerminalFragment extends Fragment {
                         tvValueRewardTerminal.setText(ConventString.getStringEarlyClosure(etValueAmount, percent));
                     }
                 }
+            } else {
+                CustomDialog.showDialogInfo(getActivity(),
+                        getResources().getString(R.string.error),
+                        getResources().getString(R.string.request_error_text));
             }
         }
     }

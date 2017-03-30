@@ -96,14 +96,8 @@ public class HowItWorksFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(QuestionsService.RESPONSE);
             llProgress.setVisibility(View.GONE);
-            if(response != null) {
-                if(response.equals(Const.RESPONSE_CODE_SUCCESS)) {
-                    mRecyclerView.setAdapter(new FragmentHowItWorksListAdapter(QuestionsAnswer.getInstance()));
-                } else {
-                    CustomDialog.showDialogInfo(getActivity(),
-                            getString(R.string.request_error_title),
-                            getString(R.string.request_error_text));
-                }
+            if(response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)) {
+                mRecyclerView.setAdapter(new FragmentHowItWorksListAdapter(QuestionsAnswer.getInstance()));
             } else {
                 CustomDialog.showDialogInfo(getActivity(),
                         getString(R.string.request_error_title),

@@ -104,17 +104,11 @@ public class PromotionsFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(QuestionsService.RESPONSE);
             llProgress.setVisibility(View.GONE);
-            if(response != null) {
-                if(response.equals(Const.RESPONSE_CODE_SUCCESS)) {
-                    Log.d(TAG, "BinaryOptionAnswer: " + BinaryOptionAnswer.getInstance());
-                    Log.d(TAG, "BinaryOptionAnswer size: " + BinaryOptionAnswer.getInstance().getElements().size());
-                    Log.d(TAG, "BinaryOptionAnswer elements: " + BinaryOptionAnswer.getInstance().getElements());
-                    rvPromotions.setAdapter(new FragmentPromotionsAdapter(getActivity(), BinaryOptionAnswer.getInstance()));
-                } else {
-                    CustomDialog.showDialogInfo(getActivity(),
-                            getString(R.string.request_error_title),
-                            getString(R.string.request_error_text));
-                }
+            if(response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)) {
+                Log.d(TAG, "BinaryOptionAnswer: " + BinaryOptionAnswer.getInstance());
+                Log.d(TAG, "BinaryOptionAnswer size: " + BinaryOptionAnswer.getInstance().getElements().size());
+                Log.d(TAG, "BinaryOptionAnswer elements: " + BinaryOptionAnswer.getInstance().getElements());
+                rvPromotions.setAdapter(new FragmentPromotionsAdapter(getActivity(), BinaryOptionAnswer.getInstance()));
             } else {
                 CustomDialog.showDialogInfo(getActivity(),
                         getString(R.string.request_error_title),

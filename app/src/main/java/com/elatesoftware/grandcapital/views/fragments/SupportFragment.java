@@ -178,17 +178,11 @@ public class SupportFragment extends Fragment {
             String action = intent.getStringExtra(ChatService.ACTION);
             if(action.equals(ChatService.CREATE_CHAT)) {
                 Log.d(TAG, "CREATE_CHAT");
-                if (response != null) {
-                    if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
-                        if(ChatCreateAnswer.getInstance() != null){
-                            Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
-                            caseId = ChatCreateAnswer.getInstance().getCaseId();
-                            handler.postDelayed(runnablePollChat, INTERVAL);
-                        } else {
-                            CustomDialog.showDialogInfo(getActivity(),
-                                    getString(R.string.request_error_title),
-                                    getString(R.string.request_error_text));
-                        }
+                if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)){
+                    if(ChatCreateAnswer.getInstance() != null){
+                        Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
+                        caseId = ChatCreateAnswer.getInstance().getCaseId();
+                        handler.postDelayed(runnablePollChat, INTERVAL);
                     } else {
                         CustomDialog.showDialogInfo(getActivity(),
                                 getString(R.string.request_error_title),
@@ -200,25 +194,18 @@ public class SupportFragment extends Fragment {
                             getString(R.string.request_error_text));
                 }
             }
+
             if(action.equals(ChatService.POLL_CHAT)) {
                 Log.d(TAG, "POLL_CHAT");
-                if (response != null) {
-                    if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
-                        if(PollChatAnswer.getInstance() != null){
-                            if(PollChatAnswer.getInstance() != null && !TextUtils.isEmpty(caseId)) {
-                                Log.d(TAG, "PollChatAnswer: " + PollChatAnswer.getInstance().getMessageList());
-                                ArrayList<PollChatAnswer.Message> messages = PollChatAnswer.getInstance().getMessageList();
-                                if(messages.size() > 0) {
-                                    PollChatAnswer.Message lastMessage = messages.get(messages.size() - 1);
-                                    if(lastIndex < lastMessage.getIndex()) {
-                                        addTheirMessages(messages);
-                                        lastIndex = lastMessage.getIndex();
-                                    }
-                                }
-                            } else {
-                                CustomDialog.showDialogInfo(getActivity(),
-                                        getString(R.string.request_error_title),
-                                        getString(R.string.request_error_text));
+                if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)){
+                    if(PollChatAnswer.getInstance() != null && !TextUtils.isEmpty(caseId)) {
+                        Log.d(TAG, "PollChatAnswer: " + PollChatAnswer.getInstance().getMessageList());
+                        ArrayList<PollChatAnswer.Message> messages = PollChatAnswer.getInstance().getMessageList();
+                        if(messages.size() > 0) {
+                            PollChatAnswer.Message lastMessage = messages.get(messages.size() - 1);
+                            if(lastIndex < lastMessage.getIndex()) {
+                                addTheirMessages(messages);
+                                lastIndex = lastMessage.getIndex();
                             }
                         }
                     } else {
@@ -232,10 +219,10 @@ public class SupportFragment extends Fragment {
                             getString(R.string.request_error_text));
                 }
             }
+
             if(action.equals(ChatService.SEND_MESSAGE_CHAT)) {
                 Log.d(TAG, "SEND_MESSAGE_CHAT");
-                if (response != null) {
-                    if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
+                if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)){
                         if(SendMessageAnswer.getInstance() != null) {
                             Log.d(TAG, SendMessageAnswer.getInstance() + "");
                         } else {
@@ -243,11 +230,6 @@ public class SupportFragment extends Fragment {
                                     getString(R.string.request_error_title),
                                     getString(R.string.request_error_text));
                         }
-                    } else {
-                        CustomDialog.showDialogInfo(getActivity(),
-                                getString(R.string.request_error_title),
-                                getString(R.string.request_error_text));
-                    }
                 } else {
                     CustomDialog.showDialogInfo(getActivity(),
                             getString(R.string.request_error_title),
