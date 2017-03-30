@@ -384,8 +384,7 @@ public class TerminalFragment extends Fragment {
             changeActive();
         }
         requestGetAllOrders();
-        tvLeftActive.setEnabled(true);
-        tvRightActive.setEnabled(true);
+        setEnabledBtnChooseActive(true);
     }
     @Override
     public void onPause() {
@@ -619,6 +618,10 @@ public class TerminalFragment extends Fragment {
         llHigherTerminal.setEnabled(enabled);
         llLowerTerminal.setEnabled(enabled);
     }
+    private void setEnabledBtnChooseActive(boolean enabled) {
+        tvLeftActive.setEnabled(enabled);
+        tvRightActive.setEnabled(enabled);
+    }
     private void setSizeHeight() {
         int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
         rlChart.getLayoutParams().height = (int) (height * 0.6);
@@ -637,7 +640,6 @@ public class TerminalFragment extends Fragment {
             return null;
         }
     }
-
     private List<CustomBaseLimitLine> getYLimitLines(){
         List<CustomBaseLimitLine> list = new ArrayList<>();
         if(rightYAxis.getLimitLines() != null && rightYAxis.getLimitLines().size() != 0){
@@ -694,8 +696,7 @@ public class TerminalFragment extends Fragment {
         mChart.invalidate();
     }
     private void changeActive() {
-        tvLeftActive.setEnabled(false);
-        tvRightActive.setEnabled(false);
+        setEnabledBtnChooseActive(false);
         if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
             sSymbolCurrent = Const.SYMBOL;
         }
@@ -1377,8 +1378,7 @@ public class TerminalFragment extends Fragment {
                 GrandCapitalApplication.closeAndOpenSocket(sSymbolCurrent);
             }
             llProgressBar.setVisibility(View.GONE);
-            tvLeftActive.setEnabled(true);
-            tvRightActive.setEnabled(true);
+            setEnabledBtnChooseActive(true);
         }
     }
     public class GetResponseOpenDealingBroadcastReceiver extends BroadcastReceiver {
