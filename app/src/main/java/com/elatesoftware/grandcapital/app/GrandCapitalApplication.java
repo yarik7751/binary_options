@@ -143,10 +143,12 @@ public class GrandCapitalApplication extends Application{
                         }
                         answerSave = answerCurrent;
                     }
-                    TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                        TerminalFragment.getInstance().redrawXLimitLines();
+                    if(TerminalFragment.getInstance().getActivity() != null){
+                        TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                            TerminalFragment.getInstance().redrawXYDealingLimitLines();
 
-                    });
+                        });
+                    }
                 }
             }
         }, 3000, 1000);

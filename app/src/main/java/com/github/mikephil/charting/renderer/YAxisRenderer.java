@@ -233,7 +233,6 @@ public class YAxisRenderer extends AxisRenderer {
 
                         pts[1] = l.getLimit();
                         mTrans.pointValuesToPixel(pts);
-                        String strLabel = l.getLabel();
                         OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                         String strLabelY  = ConventDate.getDifferenceDateToString(Long.valueOf(line.getmTimer()));
 
@@ -254,9 +253,7 @@ public class YAxisRenderer extends AxisRenderer {
                         float height_markerIconLabelY = heightStrLabelY  + paddingVertIconLabelY;
                         float width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY + width_markerIconCMD;
 
-                        float height = Utils.calcTextHeight(textPaint, strLabel);
-                        float width = Utils.calcTextWidth(textPaint, strLabel);
-                        float posY = pts[1] + height / 2;
+                        float posY = pts[1] + heightStrLabelY / 2;
 
                     if (iconLabelY != null && iconCMD != null) {
                         if(line.ismIsAmerican()){
@@ -271,14 +268,12 @@ public class YAxisRenderer extends AxisRenderer {
                         iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_markerIconCMD, (int) height_markerIconCMD, false);
 
                         /**positionBitmap Y*/
-                        c.drawBitmap(iconLabelY, fixedPosition - width_markerIconLabelY, posY - height_markerIconLabelY/2, paint);
-                        c.drawBitmap(iconCMD, fixedPosition - width_markerIconLabelY/2 + paddingHorizIconLabelY/4, posY - height_markerIconLabelY/4, paint);
-                        c.drawText(strLabelY, fixedPosition - width_markerIconLabelY/2 + paddingHorizIconLabelY*1/3 + width_markerIconCMD*2 ,
-                                posY + heightStrLabelY  / 2, textPaint);
-//                        if(line.ismIsAmerican()){
-//                            c.drawBitmap(iconClose,  posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*4/7 +
-//                                    width_markerIconCMD*2 + widthStrLabelY/2, posYLabel - height_markerIconCMD / 2, paint);
-//                        }
+                        c.drawBitmap(iconLabelY, fixedPosition - width_markerIconLabelY/2 - paddingHorizIconLabelY/3, posY - height_markerIconLabelY + paddingVertIconLabelY/2, paint);
+                        c.drawBitmap(iconCMD, fixedPosition - width_markerIconLabelY/2, posY - height_markerIconLabelY/2, paint);
+                        c.drawText(strLabelY, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*5/4, posY - heightStrLabelY/7, textPaint);
+                        if(line.ismIsAmerican()){
+                            c.drawBitmap(iconClose, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*3/2 + widthStrLabelY, posY - height_markerIconLabelY/2, paint);
+                        }
                     }
                 }
             }
