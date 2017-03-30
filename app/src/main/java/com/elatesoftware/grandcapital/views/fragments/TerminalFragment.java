@@ -406,13 +406,13 @@ public class TerminalFragment extends Fragment {
     }
     @Override
     public void onPause() {
+        if (threadSymbolHistory != null) {
+            threadSymbolHistory.interrupt();
+        }
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         isAddInChart = false;
         hideCurrentPoint();
         clearChart();
-        if (threadSymbolHistory != null) {
-            threadSymbolHistory.interrupt();
-        }
         unregisterBroadcasts();
         isOpen = false;
         super.onPause();
