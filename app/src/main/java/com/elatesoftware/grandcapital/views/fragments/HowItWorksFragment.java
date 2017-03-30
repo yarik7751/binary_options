@@ -29,7 +29,6 @@ public class HowItWorksFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private LinearLayout llProgress;
-    private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private GetResponseQuestionsBroadcastReceiver mQuestionsBroadcastReceiver;
@@ -54,21 +53,12 @@ public class HowItWorksFragment extends Fragment {
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
         BaseActivity.getToolbar().deselectAll();
         BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
-        /*BaseActivity.getToolbar().mTabLayout.setOnLoadData(new OnLoadData() {
-            @Override
-            public void loadData() {
-                BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
-            }
-        });*/
 
         llProgress = (LinearLayout) getView().findViewById(R.id.fragment_dealing_progress_bar);
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.fragment_how_it_works_questions_list);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        //String[] questionsNames = getActivity().getResources().getStringArray(R.array.how_it_works_page_questions);
-        //String[] questionsContents = getActivity().getResources().getStringArray(R.array.how_it_works_page_questions_content);
-        //mRecyclerView.setAdapter(new FragmentHowItWorksListAdapter(questionsNames, questionsContents));
 
         Intent pageIntent = new Intent(getActivity(), QuestionsService.class);
         pageIntent.putExtra(QuestionsService.PAGE, 1);

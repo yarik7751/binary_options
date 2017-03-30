@@ -129,14 +129,12 @@ public class QuotesFragment extends Fragment {
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null){
-                if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS)){
-                    if(InfoAnswer.getInstance() != null) {
+            if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null &&
+                    intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) &&
+                    intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS) && InfoAnswer.getInstance() != null) {
                         Log.d(TAG, "comparisonQuotes onReceive");
                         List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
                         comparisonQuotes(newInstruments);
-                    }
-                }
             }
         }
     }
@@ -144,11 +142,11 @@ public class QuotesFragment extends Fragment {
     private void comparisonQuotes(List<Instrument> newInstruments) {
         for(int i = 0; i < lastInstruments.size(); i++) {
             if(newInstruments.get(i).getSymbol().equals(Const.SYMBOL)) {
-                Log.d(TAG, "EURUSD: " + newInstruments.get(i).getAsk().doubleValue());
+                Log.d(TAG, "EURUSD: " + newInstruments.get(i).getAsk());
             }
-            if(lastInstruments.get(i).getAsk().doubleValue() < newInstruments.get(i).getAsk().doubleValue()) {
+            if(lastInstruments.get(i).getAsk() < newInstruments.get(i).getAsk()) {
                 newInstruments.get(i).setColor(UP_TEXT_COLOR);
-            } else if(lastInstruments.get(i).getAsk().doubleValue() > newInstruments.get(i).getAsk().doubleValue()) {
+            } else if(lastInstruments.get(i).getAsk() > newInstruments.get(i).getAsk()) {
                 newInstruments.get(i).setColor(DOWN_TEXT_COLOR);
             } else {
                 newInstruments.get(i).setColor(lastInstruments.get(i).getColor());

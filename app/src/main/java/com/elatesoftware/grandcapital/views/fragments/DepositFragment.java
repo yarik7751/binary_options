@@ -144,18 +144,20 @@ public class DepositFragment  extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(InOutService.RESPONSE);
-            if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)){
-                if(InOutAnswer.getInstance() != null) {
-                    String transaction = intent.getStringExtra(InOutService.TRANSACTION);
-                    if(transaction.equals(InOutService.DEPOSIT)) {
+            if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && InOutAnswer.getInstance() != null) {
+                String transaction = intent.getStringExtra(InOutService.TRANSACTION);
+                switch (transaction){
+                    case InOutService.DEPOSIT:
                         deposits = InOutAnswer.getInstance();
                         query(InOutService.WITHDRAW);
-                    }
-                    if(transaction.equals(InOutService.WITHDRAW)) {
+                        break;
+                    case InOutService.WITHDRAW:
                         withdraws = InOutAnswer.getInstance();
                         rvIoOut.setAdapter(new InOutAdapter(deposits, withdraws));
                         llProgress.setVisibility(View.INVISIBLE);
-                    }
+                        break;
+                    default:
+                        break;
                 }
             } else {
                 CustomDialog.showDialogInfo(getActivity(),

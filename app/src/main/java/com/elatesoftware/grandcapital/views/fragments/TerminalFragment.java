@@ -758,14 +758,14 @@ public class TerminalFragment extends Fragment {
                     OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                     if(order != null && order.getOpenPrice() != null){
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-                        /**if(line.ismIsAmerican()) {
+                        if(line.ismIsAmerican()) {
                             if (line.ismIsAmerican() && (point.x - line.getLimit() <= 1200000 && point.x - line.getLimit() >= 0)) {
                                 if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
                                     deleteDealing(order);
                                     break;
                                 }
                             }
-                        }*/
+                        }
                     }
                     if ((line.getLimit() - point.x <= 9000 && line.getLimit() - point.x >= 0) ||
                             (point.x - line.getLimit() <= 9000 && point.x - line.getLimit() >= 0)) {
@@ -788,12 +788,12 @@ public class TerminalFragment extends Fragment {
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
                         Log.d(GrandCapitalApplication.TAG_SOCKET, "tappedY = " + tappedY + "....point.y" + point.y);
                         Log.d(GrandCapitalApplication.TAG_SOCKET, "xMax = " + xMax + "....point.x" + point.x);
-                       /**if(line.ismIsAmerican()&& line.ismIsAmerican() && (point.x - xMax <= 1200000 && point.x - xMax >= 0)) {
+                        if(line.ismIsAmerican()&& line.ismIsAmerican() && (point.x - xMax <= 1200000 && point.x - xMax >= 0)) {
                             if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
                                 deleteDealing(order);
                                 break;
                             }
-                        }*/
+                        }
                     }
                 }
             }
@@ -1193,11 +1193,11 @@ public class TerminalFragment extends Fragment {
         if(list != null && list.size() != 0){
             for(OrderAnswer orderAnswer : list){
                 if(ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {
-                    /**if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
-                     drawDealingLimitLine(orderAnswer, isTypeOptionAmerican);
-                     }else{*/
-                    drawDealingLimitLine(orderAnswer, false);
-                    /** }*/
+                     if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
+                        drawDealingLimitLine(orderAnswer, isTypeOptionAmerican);
+                     }else{
+                        drawDealingLimitLine(orderAnswer, false);
+                    }
                 }
             }
             makeActiveSelectedDealing(null);
@@ -1216,9 +1216,9 @@ public class TerminalFragment extends Fragment {
                     if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime())){
                         xAxis.removeLimitLine(line);
                     }else{
-                        /**if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                        if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                             line.setmIsAmerican(true);
-                        }*/
+                        }
                         updateColorXLimitLine(line, order);
                         if (line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
                             drawCurrentDealingYLimitLine(line, order);
@@ -1244,9 +1244,9 @@ public class TerminalFragment extends Fragment {
                     if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime())){
                         rightYAxis.removeLimitLine(line);
                     }else{
-                        /**if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                        if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                             line.setmIsAmerican(true);
-                        }*/
+                        }
                         updateColorYLimitLine(line, order);
                     }
                 }
@@ -1388,7 +1388,6 @@ public class TerminalFragment extends Fragment {
                     }, 3000);
                 }
             }
-
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
@@ -1400,24 +1399,24 @@ public class TerminalFragment extends Fragment {
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null) {
-                if (intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS)) {
-                    if (InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getInstruments() != null && InfoAnswer.getInstance().getInstruments().size() > 0) {
-                        listActives.clear();
-                        for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
-                            listActives.add(instrument.getSymbol());
-                        }
-                        if (listActives != null && listActives.size() > 0 && listActives.contains(Const.SYMBOL) && !ConventString.getActive(tvValueActive).equals(Const.SYMBOL)) {
-                            sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));
-                            changeActive();
-                        }
+            if (intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null &&
+                intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) &&
+                intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS) && InfoAnswer.getInstance() != null &&
+                InfoAnswer.getInstance().getInstruments() != null && InfoAnswer.getInstance().getInstruments().size() > 0) {
+                    listActives.clear();
+                    for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
+                        listActives.add(instrument.getSymbol());
                     }
-                    ConventString.updateBalance(tvBalance);
-                    requestSignals();
+                    if (listActives != null && listActives.size() > 0 && listActives.contains(Const.SYMBOL) && !ConventString.getActive(tvValueActive).equals(Const.SYMBOL)) {
+                        sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));
+                        changeActive();
+                    }
                 }
+                ConventString.updateBalance(tvBalance);
+                requestSignals();
             }
-        }
     }
+
     public class GetResponseSymbolHistoryBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

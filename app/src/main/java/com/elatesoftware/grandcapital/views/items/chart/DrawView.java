@@ -57,10 +57,6 @@ public class DrawView extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
     }
-    //private int amtLine;
-
-
-
     private void init(Context context) {
         this.context = context;
         interval = 15;
