@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.views.items.chart.limit_lines;
+package com.elatesoftware.grandcapital.views.items.chart;
 
 import android.graphics.Bitmap;
 

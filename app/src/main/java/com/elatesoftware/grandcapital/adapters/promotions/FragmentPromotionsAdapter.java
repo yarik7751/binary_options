@@ -55,18 +55,15 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
                 context.startActivity(browserIntent);*/
             }
         });
-        promotionsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString(QuestionFragment.HEADER_TEXT, binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
-                bundle.putString(QuestionFragment.CONTENT_TEXT, binaryOptionAnswer.getElements().get(position).getLongDescription());
+        promotionsViewHolder.itemView.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString(QuestionFragment.HEADER_TEXT, binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
+            bundle.putString(QuestionFragment.CONTENT_TEXT, binaryOptionAnswer.getElements().get(position).getLongDescription());
 
-                BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
-                QuestionFragment questionFragment = new QuestionFragment();
-                questionFragment.setArguments(bundle);
-                BaseActivity.addNextFragment(questionFragment);
-            }
+            BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
+            QuestionFragment questionFragment = new QuestionFragment();
+            questionFragment.setArguments(bundle);
+            BaseActivity.addNextFragment(questionFragment);
         });
     }
 

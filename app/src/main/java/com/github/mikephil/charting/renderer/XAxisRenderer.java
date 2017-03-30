@@ -9,14 +9,12 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.view.LayoutInflater;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.utils.ConventImage;
-import com.elatesoftware.grandcapital.views.items.chart.limit_lines.CustomBaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.chart.CustomBaseLimitLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;

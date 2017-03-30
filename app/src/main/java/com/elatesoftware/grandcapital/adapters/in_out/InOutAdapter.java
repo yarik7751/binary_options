@@ -31,9 +31,6 @@ public class InOutAdapter extends GrandCapitalListAdapter {
     ArrayList<InOutAnswer> withdraws;
     ArrayList<InOutAnswer> allTransactions;
 
-    public InOutAdapter() {
-    }
-
     public InOutAdapter(ArrayList<InOutAnswer> deposits, ArrayList<InOutAnswer> withdraws) {
         this.deposits = deposits;
         this.withdraws = withdraws;

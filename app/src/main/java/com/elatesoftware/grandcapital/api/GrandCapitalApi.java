@@ -50,7 +50,7 @@ public class GrandCapitalApi {
     private static final String BASE_URL = "https://grandcapital.ru";
     public static final String SOCKET_URL = "wss://ws.grandcapital.net/";
     private static final String BASE_URL_CHART = "https://www.snapengage.com";
-    public static final String API_KEY_CHART = "0a79a7fafe494bdca35793a2e68cd847";
+    static final String API_KEY_CHART = "0a79a7fafe494bdca35793a2e68cd847";
 
     private final static int CODE_SUCCESS = 200;
     private final static int CODE_SUCCESS_DELETE_DEALING = 204;
