@@ -19,10 +19,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.api.chat.pojo.ChatCreateAnswer;
-import com.elatesoftware.grandcapital.api.chat.pojo.HistoryMessage;
-import com.elatesoftware.grandcapital.api.chat.pojo.PollChatAnswer;
-import com.elatesoftware.grandcapital.api.chat.pojo.SendMessageAnswer;
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.ChatCreateAnswer;
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.HistoryMessage;
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.PollChatAnswer;
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.SendMessageAnswer;
 import com.elatesoftware.grandcapital.services.ChatService;
 import com.elatesoftware.grandcapital.services.SignInService;
 import com.elatesoftware.grandcapital.utils.Const;

@@ -1,5 +1,8 @@
 package com.elatesoftware.grandcapital.api;
 
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.ChatCreateAnswer;
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.PollChatAnswer;
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.SendMessageAnswer;
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.api.pojo.EarlyClosureAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
@@ -22,7 +25,9 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -75,4 +80,25 @@ interface IGrandCapitalApi {
     Call<ResponseBody> deleteDealing(@Header("X-Trader-Token") String token,
                                      @Path("login") String login,
                                      @Path("ticket") Integer ticket);
+
+    @FormUrlEncoded
+    @Headers("X-Api-Key:" + GrandCapitalApi.API_KEY_CHART)
+    @POST("/api/v1/chat")
+    Call<ChatCreateAnswer> createNewChat(
+            @Field("widgetId") String widgetId,
+            @Field("visitorMessage") String visitorMessage
+    );
+
+    @Headers("X-Api-Key:" +  GrandCapitalApi.API_KEY_CHART)
+    @GET("/api/v1/chat/poll/{caseId}")
+    Call<PollChatAnswer> pollChat(@Path("caseId") String caseId);
+
+    @FormUrlEncoded
+    @Headers("X-Api-Key:" +  GrandCapitalApi.API_KEY_CHART)
+    @PUT("/api/v1/chat")
+    Call<SendMessageAnswer> sendMessageChat(
+            @Field("caseId") String caseId,
+            @Field("messageType") Integer messageType,
+            @Field("messageBody") String messageBody
+    );
 }

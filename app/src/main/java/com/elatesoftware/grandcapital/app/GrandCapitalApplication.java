@@ -123,7 +123,7 @@ public class GrandCapitalApplication extends Application{
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(TerminalFragment.getInstance() != null){
+                if(TerminalFragment.getInstance().getActivity() != null && TerminalFragment.getInstance() != null){
                     if(!symbolCurrent.equals("") && answerCurrent != null && symbolCurrent.equals(answerCurrent.getSymbol())){
                         if(answerCurrent != null && answerCurrent.getTime() != null && answerCurrent.getTime() != 0L) {
                             if (answerSave != null && answerSave.getTime() != null && answerSave.getTime() != 0L && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())) {
@@ -143,12 +143,10 @@ public class GrandCapitalApplication extends Application{
                         }
                         answerSave = answerCurrent;
                     }
-                    if(TerminalFragment.getInstance().getActivity() != null){
-                        TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                            TerminalFragment.getInstance().redrawXYDealingLimitLines();
+                    TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                        TerminalFragment.getInstance().redrawXYDealingLimitLines();
 
-                        });
-                    }
+                    });
                 }
             }
         }, 3000, 1000);
@@ -159,7 +157,7 @@ public class GrandCapitalApplication extends Application{
         protected Void doInBackground(Void... params){
             if(mClient == null || mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
                 try {
-                    mClient = new WebSocketClient(new URI(GrandCapitalApi.SOCKET_URL), new Draft_17(), null, 30000){
+                    mClient = new WebSocketClient(new URI(GrandCapitalApi.SOCKET_URL), new Draft_17(), null, 10000){
                         @Override
                         public void onOpen(ServerHandshake handshakedata) {
                             Log.d(TAG_SOCKET, "Open Connect Socket");

@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.api.chat.pojo;
+package com.elatesoftware.grandcapital.api.pojo.pojo_chat;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

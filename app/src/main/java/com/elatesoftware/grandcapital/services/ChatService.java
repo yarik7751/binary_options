@@ -4,7 +4,9 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import com.elatesoftware.grandcapital.api.chat.ChatApi;
+import com.elatesoftware.grandcapital.api.GrandCapitalApi;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+
 
 /**
  * Created by Ярослав Левшунов on 28.02.2017.
@@ -44,19 +46,19 @@ public class ChatService extends IntentService {
             Log.d(NAME_STREAM, NAME_STREAM + " CREATE_CHAT");
             String widgetId = intent.getStringExtra(WIDGET_ID);
             String visitorMessage = intent.getStringExtra(VISITOR_MESSAGE);
-            response = ChatApi.createNewChat(widgetId, visitorMessage);
+            response = GrandCapitalApi.createNewChat(widgetId, visitorMessage);
         }
         if(action.equals(POLL_CHAT)) {
             Log.d(NAME_STREAM, NAME_STREAM + " POLL_CHAT");
             String caseId = intent.getStringExtra(CASE_ID);
-            response = ChatApi.pollChat(caseId);
+            response = GrandCapitalApi.pollChat(caseId);
         }
         if(action.equals(SEND_MESSAGE_CHAT)) {
             Log.d(NAME_STREAM, NAME_STREAM + " SEND_MESSAGE_CHAT");
             String caseId = intent.getStringExtra(CASE_ID);
             Integer messageType = intent.getIntExtra(MESSAGE_TYPE, 1);
             String messageBody = intent.getStringExtra(MESSAGE_BODY);
-            response = ChatApi.sendMessage(caseId, messageType, messageBody);
+            response = GrandCapitalApi.sendMessage(caseId, messageType, messageBody);
         }
         Intent responseIntent = new Intent();
         responseIntent.setAction(ACTION_SERVICE_CHAT);

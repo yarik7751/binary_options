@@ -129,7 +129,6 @@ public class TerminalFragment extends Fragment {
     private TextView tvErrorSignal;
     private RelativeLayout rlErrorSignal;
     private TextView tvValueRewardTerminal;
-    //private DrawView vProtectedLine;
 
     private Drawable drawableMarkerDealing;
     private Bitmap bitmapIconGreenXLabel;
@@ -183,7 +182,6 @@ public class TerminalFragment extends Fragment {
                 y += divY;
                 Entry newEntry = new Entry(x, y, null, null);
                 numberTemporaryPoint++;
-                //Log.d(TAG, "timerTaskAnimation: " + numberTemporaryPoint);
                 LineData data = mChart.getData();
                 if (currEntry != null && numberTemporaryPoint == 9) {
                     newEntry.setIcon(currEntry.getIcon());
@@ -486,13 +484,13 @@ public class TerminalFragment extends Fragment {
         mChart.setScaleYEnabled(false);
         mChart.setScaleMinima(0.4f, 1f);
         mChart.setDoubleTapToZoomEnabled(false);
-        mChart.getDescription().setEnabled(false);  // enable description text
-        mChart.setTouchEnabled(true);               // enable touch gestures жесты
-        mChart.setDragEnabled(true);                // enable scaling and dragging
+        mChart.getDescription().setEnabled(false);
+        mChart.setTouchEnabled(true);
+        mChart.setDragEnabled(true);
         mChart.setDrawGridBackground(false);
-        mChart.setPinchZoom(true);                  // if disabled, scaling can be done on x- and y-axis separately
-        mChart.setBackgroundColor(Color.TRANSPARENT); // set an alternative background color
-        mChart.getLegend().setEnabled(false);       //Hide the legend
+        mChart.setPinchZoom(true);
+        mChart.setBackgroundColor(Color.TRANSPARENT);
+        mChart.getLegend().setEnabled(false);
         mChart.setDrawMarkers(true);
         mChart.getViewPortHandler().setMaximumScaleX(10f);
 
@@ -681,7 +679,7 @@ public class TerminalFragment extends Fragment {
         set.setFillColor(Color.WHITE);
         set.setFillAlpha(50);
         set.setHighlightEnabled(true);
-        set.setDrawHighlightIndicators(false);//
+        set.setDrawHighlightIndicators(false);
         return set;
     }
     private void clearChart() {
@@ -1155,8 +1153,6 @@ public class TerminalFragment extends Fragment {
     private void drawCurrentPoint(Entry entry) {
         if(isFirstDrawPoint) {
             hideCurrentPoint();
-        } else {
-            //imgPointCurrent.setVisibility(View.VISIBLE);
         }
         if (imgPointCurrent != null) {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
@@ -1483,9 +1479,7 @@ public class TerminalFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(SignalService.RESPONSE);
             if (response == null || !response.equals(Const.RESPONSE_CODE_SUCCESS)) {
-                CustomDialog.showDialogInfo(getActivity(),
-                        getResources().getString(R.string.error),
-                        getResources().getString(R.string.request_error_text));
+                CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.request_error_text));
             }
         }
     }

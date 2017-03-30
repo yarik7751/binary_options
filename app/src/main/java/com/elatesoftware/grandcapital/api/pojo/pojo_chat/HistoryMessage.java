@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.api.chat.pojo;
+package com.elatesoftware.grandcapital.api.pojo.pojo_chat;
 
 
 public class HistoryMessage {

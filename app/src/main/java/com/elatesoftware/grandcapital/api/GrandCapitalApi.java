@@ -2,6 +2,9 @@ package com.elatesoftware.grandcapital.api;
 
 import android.util.Log;
 
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.ChatCreateAnswer;
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.PollChatAnswer;
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.SendMessageAnswer;
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.api.pojo.EarlyClosureAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
@@ -42,10 +45,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GrandCapitalApi {
 
+    private static IGrandCapitalApi grandCapitalApiService = null;
+
     private static final String BASE_URL = "https://grandcapital.ru";
     public static final String SOCKET_URL = "wss://ws.grandcapital.net/";
-
-    private static IGrandCapitalApi grandCapitalApiService = null;
+    private static final String BASE_URL_CHART = "https://www.snapengage.com";
+    public static final String API_KEY_CHART = "0a79a7fafe494bdca35793a2e68cd847";
 
     private final static int CODE_SUCCESS = 200;
     private final static int CODE_SUCCESS_DELETE_DEALING = 204;
@@ -86,6 +91,24 @@ public class GrandCapitalApi {
         }
         return grandCapitalApiService;
     }
+    private static IGrandCapitalApi getApiServiceChart() {
+        if (grandCapitalApiService == null) {
+            CookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(GrandCapitalApplication.getAppContext()));
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .cookieJar(cookieJar)
+                    .connectTimeout(5, TimeUnit.MINUTES)
+                    .writeTimeout(5, TimeUnit.MINUTES)
+                    .readTimeout(5, TimeUnit.MINUTES)
+                    .build();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL_CHART)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+            grandCapitalApiService = retrofit.create(IGrandCapitalApi.class);
+        }
+        return grandCapitalApiService;
+    }
 
     public static String authorizationRequest(String login, String password){
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), ConventToJson.getJsonRequestSignIn(login, password));
@@ -105,7 +128,6 @@ public class GrandCapitalApi {
         }
         return result;
      }
-
     public static String getOrders() {
         if(User.getInstance() != null && User.getInstance().getLogin() != null){
             Call<List<OrderAnswer>> call = getApiService().getOrders(User.getInstance().getLogin());
@@ -194,7 +216,6 @@ public class GrandCapitalApi {
         }
         return result;
     }
-
     public static String getSymbolHistory(String symbol) {
         Response<List<SymbolHistoryAnswer>> response = null;
         String result = null;
@@ -259,7 +280,6 @@ public class GrandCapitalApi {
         }
         return result;
     }
-
     public static String getQuestions(int page) {
         Call<QuestionsAnswer> call = getApiService().getQuestions(page);
         Response<QuestionsAnswer> response = null;
@@ -278,7 +298,6 @@ public class GrandCapitalApi {
 
         return result;
     }
-
     public static String getEarlyClosureAnswer() {
         Call<EarlyClosureAnswer> call = getApiService().getEarlyClosureAnswer();
         Response<EarlyClosureAnswer> response = null;
@@ -297,7 +316,6 @@ public class GrandCapitalApi {
 
         return result;
     }
-
     public static String getBinaryOption() {
         Call<BinaryOptionAnswer> call = getApiService().getBinaryOption();
         Response<BinaryOptionAnswer> response = null;
@@ -315,7 +333,6 @@ public class GrandCapitalApi {
         }
         return result;
     }
-
     public static String getMoneyTransactions(String tran) {
         Call<ArrayList<InOutAnswer>> call = getApiService().getMoneyTransactions(User.getInstance().getLogin(), tran);
         Response<ArrayList<InOutAnswer>> response = null;
@@ -348,6 +365,60 @@ public class GrandCapitalApi {
             }
             result = String.valueOf(response.code());
         }
+        return result;
+    }
+    public static String createNewChat(String widgetId, String visitorMessage) {
+        Call<ChatCreateAnswer> call = getApiServiceChart().createNewChat(widgetId, visitorMessage);
+        Response<ChatCreateAnswer> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null) {
+            if(response.code() == 200) {
+                ChatCreateAnswer.setInstance(response.body());
+            }
+            result = String.valueOf(response.code());
+        }
+
+        return result;
+    }
+    public static String pollChat(String caseId) {
+        Call<PollChatAnswer> call = getApiServiceChart().pollChat(caseId);
+        Response<PollChatAnswer> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null) {
+            if(response.code() == 200) {
+                PollChatAnswer.setInstance(response.body());
+            }
+            result = String.valueOf(response.code());
+        }
+
+        return result;
+    }
+    public static String sendMessage(String caseId, Integer messageType, String messageBody) {
+        Call<SendMessageAnswer> call = getApiServiceChart().sendMessageChat(caseId, messageType, messageBody);
+        Response<SendMessageAnswer> response = null;
+        String result = null;
+        try {
+            response = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(response != null) {
+            if(response.code() == 200) {
+                SendMessageAnswer.setInstance(response.body());
+            }
+            result = String.valueOf(response.code());
+        }
+
         return result;
     }
 }
