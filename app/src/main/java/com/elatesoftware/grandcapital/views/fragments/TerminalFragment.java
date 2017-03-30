@@ -784,16 +784,16 @@ public class TerminalFragment extends Fragment {
             if(point != null){
                 for(CustomBaseLimitLine line: listLimit){
                     OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                    if(order != null && order.getOpenPrice() != null){
+                    if((order != null && order.getOpenPrice() != null && line.ismIsAmerican()) && (line.ismIsAmerican() && (point.x - xMax <= 1200000 && point.x - xMax >= 0))) {
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-                        Log.d(GrandCapitalApplication.TAG_SOCKET, "tappedY = " + tappedY + "....point.y" + point.y);
-                        Log.d(GrandCapitalApplication.TAG_SOCKET, "xMax = " + xMax + "....point.x" + point.x);
-                        if(line.ismIsAmerican()&& line.ismIsAmerican() && (point.x - xMax <= 1200000 && point.x - xMax >= 0)) {
-                            if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
-                                deleteDealing(order);
-                                break;
-                            }
+                        if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
+                            deleteDealing(order);
+                            break;
                         }
+                    }
+                    if ((xMax - point.x <= 9000 && xMax - point.x >= 0) || (point.x - xMax <= 9000 && point.x - xMax >= 0)) {
+                       // makeActiveSelectedDealing(line);
+                        break;
                     }
                 }
             }
@@ -992,14 +992,24 @@ public class TerminalFragment extends Fragment {
             list = getYLimitLines();
             if(list != null && list.size() != 0){
                 for(CustomBaseLimitLine line: list){
-                    rightYAxis.removeLimitLine(line);
+                    OrderAnswer orderCurrent = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+                    if(ConventDate.equalsTimePoints(order.getOptionsData().getExpirationTime(), orderCurrent.getOptionsData().getExpirationTime()) &&
+                            ConventDate.equalsTimePoints(order.getOpenTime(), order.getOpenTime())){
+                        rightYAxis.removeLimitLine(line);
+                        break;
+                    }
                 }
             }
         }else{
             list = getXLimitLines();
             if(list != null && list.size() != 0){
                 for(CustomBaseLimitLine line: list){
-                    xAxis.removeLimitLine(line);
+                    OrderAnswer orderCurrent = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+                    if(ConventDate.equalsTimePoints(order.getOptionsData().getExpirationTime(), orderCurrent.getOptionsData().getExpirationTime()) &&
+                            ConventDate.equalsTimePoints(order.getOpenTime(), order.getOpenTime())){
+                        xAxis.removeLimitLine(line);
+                        break;
+                    }
                 }
             }
         }
