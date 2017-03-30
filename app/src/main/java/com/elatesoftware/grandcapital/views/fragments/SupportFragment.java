@@ -45,7 +45,6 @@ public class SupportFragment extends Fragment {
     private static final int INTERVAL = 5000;
 
     private ScrollView svMessages;
-    private CircleButton cbSendMessage;
     private EditText edMessage;
     private LinearLayout llMessages;
 
@@ -81,7 +80,7 @@ public class SupportFragment extends Fragment {
         BaseActivity.getToolbar().deselectAll();
 
         svMessages = (ScrollView) view.findViewById(R.id.sv_messages);
-        cbSendMessage = (CircleButton) view.findViewById(R.id.cb_send_message);
+        CircleButton cbSendMessage = (CircleButton) view.findViewById(R.id.cb_send_message);
         edMessage = (EditText) view.findViewById(R.id.ed_message);
         llMessages = (LinearLayout) view.findViewById(R.id.ll_messages);
 
@@ -128,9 +127,6 @@ public class SupportFragment extends Fragment {
         Gson gson = new Gson();
         String historyStr = gson.toJson(historyChat, new TypeToken<LinkedList<HistoryMessage>>(){}.getType());
         CustomSharedPreferences.saveChatHistory(getContext(), historyStr);
-        //LinkedList<HistoryMessage> copy = gson.fromJson(historyStr, new TypeToken<LinkedList<HistoryMessage>>(){}.getType());
-        Log.d(TAG, "historyStr: " + historyStr);
-        //Log.d(TAG, "copy.size(): " + copy.size());
     }
 
     private void addYourMessageInView(String message, long unix, boolean addInHistory) {
@@ -176,10 +172,9 @@ public class SupportFragment extends Fragment {
             Log.d(TAG, "onReceive");
             String response = intent.getStringExtra(SignInService.RESPONSE);
             String action = intent.getStringExtra(ChatService.ACTION);
-            if(action.equals(ChatService.CREATE_CHAT)) {
-                Log.d(TAG, "CREATE_CHAT");
-                if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)){
-                    if(ChatCreateAnswer.getInstance() != null){
+            switch(action){
+                case ChatService.CREATE_CHAT:
+                    if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && ChatCreateAnswer.getInstance() != null){
                         Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
                         caseId = ChatCreateAnswer.getInstance().getCaseId();
                         handler.postDelayed(runnablePollChat, INTERVAL);
@@ -188,18 +183,11 @@ public class SupportFragment extends Fragment {
                                 getString(R.string.request_error_title),
                                 getString(R.string.request_error_text));
                     }
-                } else {
-                    CustomDialog.showDialogInfo(getActivity(),
-                            getString(R.string.request_error_title),
-                            getString(R.string.request_error_text));
-                }
-            }
-
-            if(action.equals(ChatService.POLL_CHAT)) {
-                Log.d(TAG, "POLL_CHAT");
-                if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)){
-                    if(PollChatAnswer.getInstance() != null && !TextUtils.isEmpty(caseId)) {
-                        Log.d(TAG, "PollChatAnswer: " + PollChatAnswer.getInstance().getMessageList());
+                    break;
+                case ChatService.POLL_CHAT:
+                    Log.d(TAG, "POLL_CHAT");
+                    if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && PollChatAnswer.getInstance() != null &&
+                            PollChatAnswer.getInstance() != null && !TextUtils.isEmpty(caseId)) {
                         ArrayList<PollChatAnswer.Message> messages = PollChatAnswer.getInstance().getMessageList();
                         if(messages.size() > 0) {
                             PollChatAnswer.Message lastMessage = messages.get(messages.size() - 1);
@@ -213,28 +201,18 @@ public class SupportFragment extends Fragment {
                                 getString(R.string.request_error_title),
                                 getString(R.string.request_error_text));
                     }
-                } else {
-                    CustomDialog.showDialogInfo(getActivity(),
-                            getString(R.string.request_error_title),
-                            getString(R.string.request_error_text));
-                }
-            }
-
-            if(action.equals(ChatService.SEND_MESSAGE_CHAT)) {
-                Log.d(TAG, "SEND_MESSAGE_CHAT");
-                if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)){
-                        if(SendMessageAnswer.getInstance() != null) {
-                            Log.d(TAG, SendMessageAnswer.getInstance() + "");
-                        } else {
-                            CustomDialog.showDialogInfo(getActivity(),
-                                    getString(R.string.request_error_title),
-                                    getString(R.string.request_error_text));
-                        }
-                } else {
-                    CustomDialog.showDialogInfo(getActivity(),
-                            getString(R.string.request_error_title),
-                            getString(R.string.request_error_text));
-                }
+                    break;
+                case ChatService.SEND_MESSAGE_CHAT:
+                    if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SendMessageAnswer.getInstance() != null) {
+                        Log.d(TAG, SendMessageAnswer.getInstance() + "");
+                    } else {
+                        CustomDialog.showDialogInfo(getActivity(),
+                                getString(R.string.request_error_title),
+                                getString(R.string.request_error_text));
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

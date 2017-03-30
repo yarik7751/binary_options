@@ -758,16 +758,15 @@ public class TerminalFragment extends Fragment {
                     OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                     if(order != null && order.getOpenPrice() != null){
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-                        if(line.ismIsAmerican()) {
+                        /**if(line.ismIsAmerican()) {
                             if (line.ismIsAmerican() && (point.x - line.getLimit() <= 1200000 && point.x - line.getLimit() >= 0)) {
                                 if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
                                     deleteDealing(order);
                                     break;
                                 }
                             }
-                        }
+                        }*/
                     }
-
                     if ((line.getLimit() - point.x <= 9000 && line.getLimit() - point.x >= 0) ||
                             (point.x - line.getLimit() <= 9000 && point.x - line.getLimit() >= 0)) {
                         makeActiveSelectedDealing(line);
@@ -789,12 +788,12 @@ public class TerminalFragment extends Fragment {
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
                         Log.d(GrandCapitalApplication.TAG_SOCKET, "tappedY = " + tappedY + "....point.y" + point.y);
                         Log.d(GrandCapitalApplication.TAG_SOCKET, "xMax = " + xMax + "....point.x" + point.x);
-                        if(line.ismIsAmerican()&& line.ismIsAmerican() && (point.x - xMax <= 1200000 && point.x - xMax >= 0)) {
+                       /**if(line.ismIsAmerican()&& line.ismIsAmerican() && (point.x - xMax <= 1200000 && point.x - xMax >= 0)) {
                             if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
                                 deleteDealing(order);
                                 break;
                             }
-                        }
+                        }*/
                     }
                 }
             }
@@ -910,10 +909,10 @@ public class TerminalFragment extends Fragment {
             for(OrderAnswer order : listCurrentClosingDealings){
                 for(OrderAnswer orderClosed : listAllClosedDealings){
                     if ((int) order.getTicket() == (int) orderClosed.getTicket()) {
-                        updateViewCloseDealing(order);
+                        updateViewCloseDealing(orderClosed);
                         if(order.getSymbol().equals(ConventString.getActive(tvValueActive))) {
-                            deleteDealingLimitLine(order);
-                            //redrawPointsDealings(order);
+                            deleteDealingLimitLine(orderClosed);
+                            //redrawPointsDealings(orderClosed);
                         }
                         break;
                     }
@@ -988,7 +987,7 @@ public class TerminalFragment extends Fragment {
         }
     }
     private void deleteDealingLimitLine(OrderAnswer order){
-        List<CustomBaseLimitLine> list = null;
+        List<CustomBaseLimitLine> list;
         if(ConventDate.genericTimeForChart(ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000) >  mChart.getHighestVisibleX()){
             list = getYLimitLines();
             if(list != null && list.size() != 0){
@@ -996,7 +995,7 @@ public class TerminalFragment extends Fragment {
                     rightYAxis.removeLimitLine(line);
                 }
             }
-        } else{
+        }else{
             list = getXLimitLines();
             if(list != null && list.size() != 0){
                 for(CustomBaseLimitLine line: list){
@@ -1017,8 +1016,11 @@ public class TerminalFragment extends Fragment {
                     }
                 }else{
                     for(CustomBaseLimitLine l: list){
-                        l.enableDashedLine(10f, 10f, 0f);
-                        l.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
+                        if(l.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
+                            l.enableDashedLine(10f, 10f, 0f);
+                            l.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
+                            break;
+                        }
                     }
                     drawCurrentDealingYLimitLine(line, (new Gson().fromJson(line.getLabel(), OrderAnswer.class)));
                 }
@@ -1029,7 +1031,6 @@ public class TerminalFragment extends Fragment {
             if(currentLineDealing != null){
                 rightYAxis.removeLimitLine(currentLineDealing);
             }
-            xAxis.removeAllLimitLines();
         }
     }
     private void removeDealingLimitLine(final int ticket){
@@ -1191,12 +1192,12 @@ public class TerminalFragment extends Fragment {
         rightYAxis.removeAllLimitLines();
         if(list != null && list.size() != 0){
             for(OrderAnswer orderAnswer : list){
-                if(ConventDate.validationDateTimer(orderAnswer.getOpenTime())){
-                    if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
-                        drawDealingLimitLine(orderAnswer, isTypeOptionAmerican);
-                    }else{
-                        drawDealingLimitLine(orderAnswer, false);
-                    }
+                if(ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {
+                    /**if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
+                     drawDealingLimitLine(orderAnswer, isTypeOptionAmerican);
+                     }else{*/
+                    drawDealingLimitLine(orderAnswer, false);
+                    /** }*/
                 }
             }
             makeActiveSelectedDealing(null);
@@ -1212,12 +1213,12 @@ public class TerminalFragment extends Fragment {
                     xAxis.removeLimitLine(line);
                     makeActiveSelectedDealing(null);
                 }else {
-                    if(!ConventDate.validationDateTimer(order.getOpenTime())){
+                    if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime())){
                         xAxis.removeLimitLine(line);
                     }else{
-                        if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                        /**if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                             line.setmIsAmerican(true);
-                        }
+                        }*/
                         updateColorXLimitLine(line, order);
                         if (line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
                             drawCurrentDealingYLimitLine(line, order);
@@ -1229,7 +1230,6 @@ public class TerminalFragment extends Fragment {
             if(currentLineDealing != null) {
                 rightYAxis.removeLimitLine(currentLineDealing);
             }
-            xAxis.removeAllLimitLines();
         }
     }
     public void redrawYLimitLines(){
@@ -1241,12 +1241,12 @@ public class TerminalFragment extends Fragment {
                     redrawPointsDealings(order);
                     rightYAxis.removeLimitLine(line);
                 }else {
-                    if(!ConventDate.validationDateTimer(order.getOpenTime())){
+                    if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime())){
                         rightYAxis.removeLimitLine(line);
                     }else{
-                        if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                        /**if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                             line.setmIsAmerican(true);
-                        }
+                        }*/
                         updateColorYLimitLine(line, order);
                     }
                 }
@@ -1489,6 +1489,8 @@ public class TerminalFragment extends Fragment {
                     case OrdersService.GET_TICKET_ORDER:
                         listOpenDealings = OrderAnswer.filterOrdersCurrentActive(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION, ConventString.getActive(tvValueActive));
                         requestDeleteDealing(new Gson().fromJson(intent.getStringExtra(OrdersService.RESPONSE), OrderAnswer.class));
+                        break;
+                    default:
                         break;
                 }
             }

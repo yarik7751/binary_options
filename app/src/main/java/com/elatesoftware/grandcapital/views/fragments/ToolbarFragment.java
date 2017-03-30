@@ -146,7 +146,6 @@ public class ToolbarFragment extends Fragment {
                 mTabLayout.hideTab(3);
                 mTabLayout.showTab(4);
                 break;
-
             case TOOLBAR_EMPTY_FRAGMENT:
                 //mTabLayout.setVisibility(View.INVISIBLE);
                 hideTabs();
@@ -157,6 +156,8 @@ public class ToolbarFragment extends Fragment {
                 mTabLayout.showTab(2);
                 mTabLayout.showTab(3);
                 mTabLayout.showTab(4);
+                break;
+            default:
                 break;
         }
     }

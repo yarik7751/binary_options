@@ -41,6 +41,7 @@ public class GrandCapitalApplication extends Application{
     private static Context context;
     private static SSLContext sc;
     public static WebSocketClient mClient;
+    //public static WebSocket mClient;
     public final static String TAG_SOCKET = "debug_for_socket";
 
     private static SocketAnswer answerCurrent = null;
@@ -88,6 +89,7 @@ public class GrandCapitalApplication extends Application{
             e.printStackTrace();
         }
 
+        //mClient = WebSocketCustom.getmWebSocket();
         timer = new Timer();
         startTimer();
     }

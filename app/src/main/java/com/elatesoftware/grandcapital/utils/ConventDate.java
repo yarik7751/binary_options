@@ -83,7 +83,7 @@ public class ConventDate {
     public static boolean validationDateTimer(String date) {
         sdf.setTimeZone(TimeZone.getDefault());
         String currDate = sdf.format(new Date());
-        if((stringToUnix(currDate) - stringToUnix(date))/1000 >= 0){
+        if(stringToUnix(date) -(stringToUnix(currDate))/1000 >= 0){
             return true;
         }else {
             return false;
