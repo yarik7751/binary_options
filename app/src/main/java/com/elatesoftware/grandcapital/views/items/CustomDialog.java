@@ -2,7 +2,10 @@ package com.elatesoftware.grandcapital.views.items;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.webkit.SslErrorHandler;
@@ -10,11 +13,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.activities.SignInActivity;
 
 public class CustomDialog {
+
+    private static Dialog dialogOpenReal;
 
     public static void showDialogInfo(Activity activity, String title, String message){
         final Dialog dialog = new Dialog(activity);
@@ -120,5 +126,19 @@ public class CustomDialog {
         btnOpenAccount.setOnClickListener(listnerOpenAccount);
         dialog.show();
         return dialog;
+    }
+
+    public static void showViewOpenRealAccount(Activity activity){
+        if (CustomSharedPreferences.getIntervalAdvertising(activity) >= 0) {
+            CustomSharedPreferences.setIntervalAdvertising(activity, CustomSharedPreferences.getIntervalAdvertising(activity) + 1);
+            if (CustomSharedPreferences.getIntervalAdvertising(activity) >= 3) {
+                CustomSharedPreferences.setIntervalAdvertising(activity, 0);
+                dialogOpenReal = CustomDialog.showDialogOpenAccount(activity, v -> {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_SIGN_UP));
+                    activity.startActivity(browserIntent);
+                    dialogOpenReal.cancel();
+                });
+            }
+        }
     }
 }

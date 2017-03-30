@@ -59,6 +59,7 @@ import com.elatesoftware.grandcapital.views.items.animation.CustomAnimationDrawa
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.chart.CustomBaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.chart.ViewInfoHelper;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -82,8 +83,6 @@ import java.util.List;
 public class TerminalFragment extends Fragment {
 
     public final static String TAG = "TerminalFragment_Logs";
-    public final static String TAG_OPEN_DEALING = "openDealingView";
-    public final static String TAG_CLOSE_DEALING = "closeDealingView";
 
     private static String sSymbolCurrent = "";
     public static double mCurrentValueY = 0;
@@ -142,10 +141,7 @@ public class TerminalFragment extends Fragment {
 
     private ImageView imgPointCurrent;
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
-    private Dialog dialogOpenAccount;
     private Dialog dialogAgreeDeleteDealing;
-    private View closeDealingView;
-    private View openDealingView;
     private YAxis rightYAxis;
     private XAxis xAxis;
     private CustomBaseLimitLine currentLineSocket;
@@ -156,6 +152,8 @@ public class TerminalFragment extends Fragment {
     private Entry entryLast;
     private Handler handler;
     private Entry currEntry;
+
+    private ViewInfoHelper mViewInfoHelper;
 
     private static List<String> listActives = new ArrayList<>();
     public static List<SocketAnswer> listSocketPointsBackGround = new ArrayList<>();
@@ -259,11 +257,6 @@ public class TerminalFragment extends Fragment {
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
         tvValueRewardTerminal = (TextView) parentView.findViewById(R.id.tvValueRewardTerminal);
 
-        openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
-        closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
-        openDealingView.setTag(TAG_OPEN_DEALING);
-        closeDealingView.setTag(TAG_CLOSE_DEALING);
-
         return parentView;
     }
     @Override
@@ -275,12 +268,8 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
-        /*try {
-            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
-            BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
-        }*/
+        mViewInfoHelper = new ViewInfoHelper(rlChart);
+
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
 
@@ -305,12 +294,10 @@ public class TerminalFragment extends Fragment {
         etValueAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 requestEarlyClosure();
             }
-
             @Override
             public void afterTextChanged(Editable s) {}
         });
@@ -606,7 +593,6 @@ public class TerminalFragment extends Fragment {
             for (int i = 10; i >= 3; i--) {
                 rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(bitmapIconCurrentPoint, i)), Const.INTERVAL_ITEM);
             }
-
             rocketAnimation.setAnimationEndListner(() -> {
                 initRocketAnimationBack();
                 imgPointCurrent.setImageDrawable(rocketAnimationBack);
@@ -639,6 +625,7 @@ public class TerminalFragment extends Fragment {
         llDeposit.getLayoutParams().height = (int) (height * 0.28);
         llButtons.getLayoutParams().height = (int) (height * 0.11);
     }
+
     private List<CustomBaseLimitLine> getXLimitLines(){
         List<CustomBaseLimitLine> list = new ArrayList<>();
         if(xAxis.getLimitLines() != null && xAxis.getLimitLines().size() != 0){
@@ -650,6 +637,7 @@ public class TerminalFragment extends Fragment {
             return null;
         }
     }
+
     private List<CustomBaseLimitLine> getYLimitLines(){
         List<CustomBaseLimitLine> list = new ArrayList<>();
         if(rightYAxis.getLimitLines() != null && rightYAxis.getLimitLines().size() != 0){
@@ -667,6 +655,7 @@ public class TerminalFragment extends Fragment {
             return null;
         }
     }
+
     private synchronized LineDataSet createSetDataChart() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -729,10 +718,10 @@ public class TerminalFragment extends Fragment {
     }
     private void updateViewCloseDealing(OrderAnswer order){
         CustomSharedPreferences.setAmtCloseDealings(getContext(), CustomSharedPreferences.getAmtCloseDealings(getContext()) + 1);
-        showViewCloseDealing(order);
+        mViewInfoHelper.showViewCloseDealing(order);
         ((BaseActivity) getActivity()).setDealings();
         BaseActivity.getToolbar().setDealingSelectIcon();
-        showViewOpenRealAccount();
+        CustomDialog.showViewOpenRealAccount(getActivity());
     }
     private void deleteDealing(OrderAnswer order){
         if(CustomSharedPreferences.getAgreeCloseDealing(getContext())){
@@ -1324,54 +1313,7 @@ public class TerminalFragment extends Fragment {
         }
     }
 
-    private void showViewOpenRealAccount(){
-        if (CustomSharedPreferences.getIntervalAdvertising(getContext()) >= 0) {
-            CustomSharedPreferences.setIntervalAdvertising(getContext(), CustomSharedPreferences.getIntervalAdvertising(getContext()) + 1);
-            Log.d(TAG, "IntervalAdvertising1: " + CustomSharedPreferences.getIntervalAdvertising(getContext()));
-            if (CustomSharedPreferences.getIntervalAdvertising(getContext()) >= 3) {
-                CustomSharedPreferences.setIntervalAdvertising(getContext(), 0);
-                dialogOpenAccount = CustomDialog.showDialogOpenAccount(getActivity(), v -> {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_SIGN_UP));
-                    startActivity(browserIntent);
-                    dialogOpenAccount.cancel();
-                });
-            }
-        }
-    }
-    private void showViewOpenDealing(String active, String amount, String time) {
-        ((TextView) openDealingView.findViewById(R.id.tvActive)).setText(active);
-        ((TextView) openDealingView.findViewById(R.id.tvAmount)).setText(amount);
-        ((TextView) openDealingView.findViewById(R.id.tvTime)).setText(time);
-
-        View vCloseDealings = rlChart.findViewWithTag(TAG_CLOSE_DEALING);
-        if(vCloseDealings != null) {
-            rlChart.removeView(vCloseDealings);
-        }
-        if (rlChart.findViewWithTag(TAG_OPEN_DEALING) != null) {
-            rlChart.updateViewLayout(openDealingView, ConventImage.getRelativeParams());
-        } else {
-            rlChart.addView(openDealingView, ConventImage.getRelativeParams());
-        }
-        new Handler().postDelayed(() -> rlChart.removeView(openDealingView), Const.INTERVAL_SHOW_LABEL);
-    }
-    private void showViewCloseDealing(OrderAnswer answer) {
-        if (answer != null) {
-            ((TextView) closeDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
-            ((TextView) closeDealingView.findViewById(R.id.tvPriceValue)).setText(ConventString.getRoundNumber(answer.getClosePrice()));
-            ((TextView) closeDealingView.findViewById(R.id.tvProfitValue)).setText(String.valueOf(answer.getProfitStr()));
-            View vOpenDealings = rlChart.findViewWithTag(TAG_OPEN_DEALING);
-            if(vOpenDealings != null) {
-                rlChart.removeView(vOpenDealings);
-            }
-            if (rlChart.findViewWithTag(TAG_CLOSE_DEALING) != null) {
-                rlChart.updateViewLayout(closeDealingView, ConventImage.getRelativeParams());
-            } else {
-                rlChart.addView(closeDealingView, ConventImage.getRelativeParams());
-            }
-            new Handler().postDelayed(() -> rlChart.removeView(closeDealingView), Const.INTERVAL_SHOW_LABEL);
-        }
-    }
-    public void  showSignalsPanel() {
+    public void showSignalsPanel() {
         parseResponseSignals(ConventString.getActive(tvValueActive));
         if(!isDirection) {
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
@@ -1425,7 +1367,6 @@ public class TerminalFragment extends Fragment {
                 requestSignals();
             }
     }
-
     public class GetResponseSymbolHistoryBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1459,7 +1400,7 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
                 typePoint = POINT_OPEN_DEALING;
                 drawDealingLimitLine(currentDealing, false);
-                showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
+                mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));
                 etValueAmount.setText(getResources().getString(R.string.zero_dollars));

@@ -63,8 +63,6 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
     compile 'com.squareup.okhttp3:okhttp-urlconnection:3.5.0'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.0'
-    compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'com.github.markushi:circlebutton:1.1'
     compile 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'

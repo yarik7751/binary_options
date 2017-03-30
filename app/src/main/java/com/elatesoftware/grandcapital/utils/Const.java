@@ -22,7 +22,6 @@ public class Const {
     public final static String URL_GRAND_CAPITAL_DEPOSIT = "/payments/deposit";
     public final static String URL_GRAND_CAPITAL_WITHDRAW = "/payments/withdraw";
 
-    public final static int INTERVAL_SHOW_LABEL = 5000;
     public final static int INTERVAL_ANIM_PANEL = 200;
     public static final int INTERVAL_ITEM = 100;
     public static final int MAX_TIME_MIN = 2880;

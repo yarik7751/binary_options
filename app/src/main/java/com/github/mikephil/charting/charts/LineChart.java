@@ -30,7 +30,6 @@ public class LineChart extends BarLineChartBase<LineData> implements LineDataPro
     @Override
     protected void init() {
         super.init();
-
         mRenderer = new LineChartRenderer(this, mAnimator, mViewPortHandler);
     }
 
