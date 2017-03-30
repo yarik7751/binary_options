@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -657,7 +656,6 @@ public class TerminalFragment extends Fragment {
             return null;
         }
     }
-
     private synchronized LineDataSet createSetDataChart() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -680,6 +678,7 @@ public class TerminalFragment extends Fragment {
         set.setDrawHighlightIndicators(false);
         return set;
     }
+
     private void clearChart() {
         currEntry = null;
         entryLast = null;
@@ -717,27 +716,7 @@ public class TerminalFragment extends Fragment {
         requestSymbolHistory(ConventString.getActive(tvValueActive));
         requestGetAllOrders();
     }
-    private void updateViewCloseDealing(OrderAnswer order){
-        CustomSharedPreferences.setAmtCloseDealings(getContext(), CustomSharedPreferences.getAmtCloseDealings(getContext()) + 1);
-        mViewInfoHelper.showViewCloseDealing(order);
-        ((BaseActivity) getActivity()).setDealings();
-        BaseActivity.getToolbar().setDealingSelectIcon();
-        CustomDialog.showViewOpenRealAccount(getActivity());
-    }
-    private void deleteDealing(OrderAnswer order){
-        if(CustomSharedPreferences.getAgreeCloseDealing(getContext())){
-            dialogAgreeDeleteDealing = CustomDialog.showDialogCloseDealing(getActivity(), v12 -> {
-                requestDeleteDealing(order);
-                dialogAgreeDeleteDealing.cancel();
-            }, v1 -> {
-                requestDeleteDealing(order);
-                CustomSharedPreferences.setAgreeCloseDealing(getContext(), false);
-                dialogAgreeDeleteDealing.cancel();
-            });
-        }else{
-            requestDeleteDealing(order);
-        }
-    }
+
     private void onClickXLimitLines(float x, float y){
         List<CustomBaseLimitLine> listLimit = getXLimitLines();
         if(listLimit != null && listLimit.size() != 0){
@@ -750,7 +729,7 @@ public class TerminalFragment extends Fragment {
                         if(line.ismIsAmerican()) {
                             if (line.ismIsAmerican() && (point.x - line.getLimit() <= 1200000 && point.x - line.getLimit() >= 0)) {
                                 if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
-                                    deleteDealing(order);
+                                    showViewCloseDealing(order);
                                     break;
                                 }
                             }
@@ -776,7 +755,7 @@ public class TerminalFragment extends Fragment {
                     if((order != null && order.getOpenPrice() != null && line.ismIsAmerican()) && (line.ismIsAmerican() && (point.x - xMax <= 1200000 && point.x - xMax >= 0))) {
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
                         if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
-                            deleteDealing(order);
+                            showViewCloseDealing(order);
                             break;
                         }
                     }
@@ -898,7 +877,7 @@ public class TerminalFragment extends Fragment {
             for(OrderAnswer order : listCurrentClosingDealings){
                 for(OrderAnswer orderClosed : listAllClosedDealings){
                     if ((int) order.getTicket() == (int) orderClosed.getTicket()) {
-                        updateViewCloseDealing(orderClosed);
+                        mViewInfoHelper.updateSettingsCloseDealing(orderClosed, getActivity());
                         if(order.getSymbol().equals(ConventString.getActive(tvValueActive))) {
                             deleteDealingLimitLine(orderClosed);
                             //redrawPointsDealings(orderClosed);
@@ -975,6 +954,7 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
+
     private void deleteDealingLimitLine(OrderAnswer order){
         List<CustomBaseLimitLine> list;
         if(ConventDate.genericTimeForChart(ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000) >  mChart.getHighestVisibleX()){
@@ -1040,7 +1020,7 @@ public class TerminalFragment extends Fragment {
                         redrawPointsDealings(order);
                         listOpenDealings.remove(order);
                         CheckDealingService.setListOrderAnswer(listOpenDealings);
-                        updateViewCloseDealing(order);
+                        mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         deleteDealingLimitLine(order);
                         break;
                     }
@@ -1346,6 +1326,20 @@ public class TerminalFragment extends Fragment {
         });
         llTopPanel.startAnimation(animation);
         isDirection = !isDirection;
+    }
+    private void showViewCloseDealing(OrderAnswer order){
+        if(CustomSharedPreferences.getAgreeCloseDealing(getContext())){
+            dialogAgreeDeleteDealing = CustomDialog.showDialogCloseDealing(getActivity(), v12 -> {
+                requestDeleteDealing(order);
+                dialogAgreeDeleteDealing.cancel();
+            }, v1 -> {
+                requestDeleteDealing(order);
+                CustomSharedPreferences.setAgreeCloseDealing(getContext(), false);
+                dialogAgreeDeleteDealing.cancel();
+            });
+        }else{
+            requestDeleteDealing(order);
+        }
     }
 
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {

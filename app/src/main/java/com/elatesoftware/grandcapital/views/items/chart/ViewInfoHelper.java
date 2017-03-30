@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.views.items.chart;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -12,6 +13,9 @@ import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.utils.ConventString;
+import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
 /**
  * Created by Darya on 30.03.2017.
@@ -69,5 +73,13 @@ public class ViewInfoHelper {
             }
             new Handler().postDelayed(() -> rlChart.removeView(mCloseDealingView), INTERVAL_SHOW_LABEL);
         }
+    }
+
+    public void updateSettingsCloseDealing(OrderAnswer order, Activity activity){
+        CustomSharedPreferences.setAmtCloseDealings(activity, CustomSharedPreferences.getAmtCloseDealings(activity) + 1);
+        showViewCloseDealing(order);
+        ((BaseActivity) activity).setDealings();
+        BaseActivity.getToolbar().setDealingSelectIcon();
+        CustomDialog.showViewOpenRealAccount(activity);
     }
 }
