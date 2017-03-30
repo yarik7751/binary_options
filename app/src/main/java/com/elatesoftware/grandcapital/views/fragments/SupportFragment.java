@@ -29,6 +29,7 @@ import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -178,27 +179,31 @@ public class SupportFragment extends Fragment {
             if(action.equals(ChatService.CREATE_CHAT)) {
                 Log.d(TAG, "CREATE_CHAT");
                 if (response != null) {
-                    if (response.equals(Const.RESPONSE_CODE_ERROR)) {
-                        Log.d(TAG, "error http 400");
-                    } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
+                    if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                         if(ChatCreateAnswer.getInstance() != null){
                             Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
                             caseId = ChatCreateAnswer.getInstance().getCaseId();
                             handler.postDelayed(runnablePollChat, INTERVAL);
+                        } else {
+                            CustomDialog.showDialogInfo(getActivity(),
+                                    getString(R.string.request_error_title),
+                                    getString(R.string.request_error_text));
                         }
                     } else {
-                        Log.d(TAG, "response = " + response);
+                        CustomDialog.showDialogInfo(getActivity(),
+                                getString(R.string.request_error_title),
+                                getString(R.string.request_error_text));
                     }
                 } else {
-                    Log.d(TAG, "response = null");
+                    CustomDialog.showDialogInfo(getActivity(),
+                            getString(R.string.request_error_title),
+                            getString(R.string.request_error_text));
                 }
             }
             if(action.equals(ChatService.POLL_CHAT)) {
                 Log.d(TAG, "POLL_CHAT");
                 if (response != null) {
-                    if (response.equals(Const.RESPONSE_CODE_ERROR)) {
-                        Log.d(TAG, "error http 400");
-                    } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
+                    if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                         if(PollChatAnswer.getInstance() != null){
                             if(PollChatAnswer.getInstance() != null && !TextUtils.isEmpty(caseId)) {
                                 Log.d(TAG, "PollChatAnswer: " + PollChatAnswer.getInstance().getMessageList());
@@ -211,30 +216,42 @@ public class SupportFragment extends Fragment {
                                     }
                                 }
                             } else {
-                                Log.d(TAG, "PollChatAnswer: null");
+                                CustomDialog.showDialogInfo(getActivity(),
+                                        getString(R.string.request_error_title),
+                                        getString(R.string.request_error_text));
                             }
                         }
                     } else {
-                        Log.d(TAG, "response = " + response);
+                        CustomDialog.showDialogInfo(getActivity(),
+                                getString(R.string.request_error_title),
+                                getString(R.string.request_error_text));
                     }
                 } else {
-                    Log.d(TAG, "response = null");
+                    CustomDialog.showDialogInfo(getActivity(),
+                            getString(R.string.request_error_title),
+                            getString(R.string.request_error_text));
                 }
             }
             if(action.equals(ChatService.SEND_MESSAGE_CHAT)) {
                 Log.d(TAG, "SEND_MESSAGE_CHAT");
                 if (response != null) {
-                    if (response.equals(Const.RESPONSE_CODE_ERROR)) {
-                        Log.d(TAG, "error http 400");
-                    } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
+                    if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                         if(SendMessageAnswer.getInstance() != null) {
                             Log.d(TAG, SendMessageAnswer.getInstance() + "");
+                        } else {
+                            CustomDialog.showDialogInfo(getActivity(),
+                                    getString(R.string.request_error_title),
+                                    getString(R.string.request_error_text));
                         }
                     } else {
-                        Log.d(TAG, "response = " + response);
+                        CustomDialog.showDialogInfo(getActivity(),
+                                getString(R.string.request_error_title),
+                                getString(R.string.request_error_text));
                     }
                 } else {
-                    Log.d(TAG, "response = null");
+                    CustomDialog.showDialogInfo(getActivity(),
+                            getString(R.string.request_error_title),
+                            getString(R.string.request_error_text));
                 }
             }
         }

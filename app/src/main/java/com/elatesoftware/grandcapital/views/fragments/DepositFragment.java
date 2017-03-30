@@ -24,6 +24,7 @@ import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InOutService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
 import java.util.ArrayList;
 
@@ -144,9 +145,7 @@ public class DepositFragment  extends Fragment {
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(InOutService.RESPONSE);
             if (response != null) {
-                if (response.equals(Const.RESPONSE_CODE_ERROR)) {
-
-                } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
+                if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                     if(InOutAnswer.getInstance() != null) {
                         String transaction = intent.getStringExtra(InOutService.TRANSACTION);
                         if(transaction.equals(InOutService.DEPOSIT)) {
@@ -160,10 +159,14 @@ public class DepositFragment  extends Fragment {
                         }
                     }
                 } else {
-                    Log.d(TAG, "response = " + response);
+                    CustomDialog.showDialogInfo(getActivity(),
+                            getString(R.string.request_error_title),
+                            getString(R.string.request_error_text));
                 }
             } else {
-                Log.d(TAG, "response = null");
+                CustomDialog.showDialogInfo(getActivity(),
+                        getString(R.string.request_error_title),
+                        getString(R.string.request_error_text));
             }
         }
     }

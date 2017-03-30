@@ -122,14 +122,13 @@ public class DealingFragment extends Fragment {
 
         mTabs = (TabLayout) getView().findViewById(R.id.dealingTabs);
         mTabs.getTabAt(currentTabPosition).select();
+        requestOrders();
         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 requestOrders();
+                mNoOrdersLayout.setVisibility(View.GONE);
                 currentTabPosition = mTabs.getSelectedTabPosition();
-                if(currentTabPosition == CLOSE_TAB_POSITION) {
-
-                }
                 mProgressLayout.setVisibility(View.VISIBLE);
                 mListLayout.setVisibility(View.INVISIBLE);
             }
@@ -140,6 +139,7 @@ public class DealingFragment extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) {
             }
         });
+        mTabs.getTabAt(currentTabPosition).select();
     }
 
     private void initListHeaders() {

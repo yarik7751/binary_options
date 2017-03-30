@@ -125,6 +125,9 @@ public class ToolbarFragment extends Fragment {
                 mTabLayout.animation.cancel();
             }
         }
+        if(mTabLayout == null) {
+            return;
+        }
         mTabLayout.setVisibility(View.VISIBLE);
         mTabLayout.showAllTabs();
         showTabs();

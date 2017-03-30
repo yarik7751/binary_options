@@ -22,6 +22,7 @@ import com.elatesoftware.grandcapital.services.BinaryOptionService;
 import com.elatesoftware.grandcapital.services.QuestionsService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
 public class PromotionsFragment extends Fragment {
 
@@ -104,16 +105,20 @@ public class PromotionsFragment extends Fragment {
             String response = intent.getStringExtra(QuestionsService.RESPONSE);
             llProgress.setVisibility(View.GONE);
             if(response != null) {
-                if(response.equals(Const.RESPONSE_CODE_ERROR)) {
-                    Log.d(TAG, "BinaryOptionAnswer questions ERROR: 400");
-                } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)) {
+                if(response.equals(Const.RESPONSE_CODE_SUCCESS)) {
                     Log.d(TAG, "BinaryOptionAnswer: " + BinaryOptionAnswer.getInstance());
                     Log.d(TAG, "BinaryOptionAnswer size: " + BinaryOptionAnswer.getInstance().getElements().size());
                     Log.d(TAG, "BinaryOptionAnswer elements: " + BinaryOptionAnswer.getInstance().getElements());
                     rvPromotions.setAdapter(new FragmentPromotionsAdapter(getActivity(), BinaryOptionAnswer.getInstance()));
                 } else {
-                    Log.d(TAG, "BinaryOptionAnswer questions ERROR: " + response);
+                    CustomDialog.showDialogInfo(getActivity(),
+                            getString(R.string.request_error_title),
+                            getString(R.string.request_error_text));
                 }
+            } else {
+                CustomDialog.showDialogInfo(getActivity(),
+                        getString(R.string.request_error_title),
+                        getString(R.string.request_error_text));
             }
         }
     }

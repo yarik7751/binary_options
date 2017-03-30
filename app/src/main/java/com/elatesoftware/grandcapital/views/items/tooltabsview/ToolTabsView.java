@@ -148,6 +148,10 @@ public class ToolTabsView extends LinearLayout {
         this.onLoadData = onLoadData;
     }
 
+    public OnLoadData getOnLoadData() {
+        return onLoadData;
+    }
+
     public void setOnChangePosition(OnChangePosition onChangePosition) {
         this.onChangePosition = onChangePosition;
     }

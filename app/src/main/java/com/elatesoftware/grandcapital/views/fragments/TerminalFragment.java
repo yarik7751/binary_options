@@ -129,7 +129,7 @@ public class TerminalFragment extends Fragment {
     private TextView tvErrorSignal;
     private RelativeLayout rlErrorSignal;
     private TextView tvValueRewardTerminal;
-    private DrawView vProtectedLine;
+    //private DrawView vProtectedLine;
 
     private Drawable drawableMarkerDealing;
     private Bitmap bitmapIconGreenXLabel;
@@ -183,7 +183,7 @@ public class TerminalFragment extends Fragment {
                 y += divY;
                 Entry newEntry = new Entry(x, y, null, null);
                 numberTemporaryPoint++;
-                Log.d(TAG, "timerTaskAnimation: " + numberTemporaryPoint);
+                //Log.d(TAG, "timerTaskAnimation: " + numberTemporaryPoint);
                 LineData data = mChart.getData();
                 if (currEntry != null && numberTemporaryPoint == 9) {
                     newEntry.setIcon(currEntry.getIcon());
@@ -260,8 +260,6 @@ public class TerminalFragment extends Fragment {
         tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
         tvValueRewardTerminal = (TextView) parentView.findViewById(R.id.tvValueRewardTerminal);
-        vProtectedLine = (DrawView) parentView.findViewById(R.id.vProtectedLine);
-        vProtectedLine.setVisibility(View.INVISIBLE);
 
         openDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_open_dealing, null);
         closeDealingView = LayoutInflater.from(getContext()).inflate(R.layout.label_close_dealing, null);
@@ -568,12 +566,17 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
-                if (vProtectedLine != null) {
-                    vProtectedLine.clear();
-                }
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
+                        Log.d(TAG, "maxim x: " + mChart.getHighestVisibleX());
+                        Log.d(TAG, "point x: " + (point.getX() - imgPointCurrent.getWidth() / 2));
+                        if(currEntry.getX() >= mChart.getHighestVisibleX()) {
+                            hideCurrentPoint();
+                        } else {
+                            imgPointCurrent.setVisibility(View.VISIBLE);
+
+                        }
                         imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
                     }
@@ -704,7 +707,6 @@ public class TerminalFragment extends Fragment {
         }
         imgPointCurrent.setVisibility(View.INVISIBLE);
         isFirstDrawPoint = true;
-        vProtectedLine.clear();
         llProgressBar.setVisibility(View.VISIBLE);
         tvValueActive.setText(sSymbolCurrent);
         clearChart();
@@ -1154,7 +1156,7 @@ public class TerminalFragment extends Fragment {
         if(isFirstDrawPoint) {
             hideCurrentPoint();
         } else {
-            imgPointCurrent.setVisibility(View.VISIBLE);
+            //imgPointCurrent.setVisibility(View.VISIBLE);
         }
         if (imgPointCurrent != null) {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);

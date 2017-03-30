@@ -21,6 +21,7 @@ import com.elatesoftware.grandcapital.services.QuestionsService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.howItWorks.FragmentHowItWorksListAdapter;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
 public class HowItWorksFragment extends Fragment {
 
@@ -96,13 +97,17 @@ public class HowItWorksFragment extends Fragment {
             String response = intent.getStringExtra(QuestionsService.RESPONSE);
             llProgress.setVisibility(View.GONE);
             if(response != null) {
-                if(response.equals(Const.RESPONSE_CODE_ERROR)) {
-                    Log.d(TAG, "QuestionsAnswer questions ERROR: 400");
-                } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)) {
+                if(response.equals(Const.RESPONSE_CODE_SUCCESS)) {
                     mRecyclerView.setAdapter(new FragmentHowItWorksListAdapter(QuestionsAnswer.getInstance()));
                 } else {
-                    Log.d(TAG, "QuestionsAnswer questions ERROR: " + response);
+                    CustomDialog.showDialogInfo(getActivity(),
+                            getString(R.string.request_error_title),
+                            getString(R.string.request_error_text));
                 }
+            } else {
+                CustomDialog.showDialogInfo(getActivity(),
+                        getString(R.string.request_error_title),
+                        getString(R.string.request_error_text));
             }
         }
     }
