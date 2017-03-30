@@ -902,9 +902,10 @@ public class TerminalFragment extends Fragment {
             for(OrderAnswer order : listCurrentClosingDealings){
                 for(OrderAnswer orderClosed : listAllClosedDealings){
                     if ((int) order.getTicket() == (int) orderClosed.getTicket()) {
-                        updateViewCloseDealing(orderClosed);
-                        if(orderClosed.getSymbol().equals(ConventString.getActive(tvValueActive))){
-                            drawAllDealingsLimitLines(listOpenDealings);
+                        updateViewCloseDealing(order);
+                        if(order.getSymbol().equals(ConventString.getActive(tvValueActive))) {
+                            deleteDealingLimitLine(order);
+                            //redrawPointsDealings(order);
                         }
                         break;
                     }
@@ -977,7 +978,24 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
+    private void deleteDealingLimitLine(OrderAnswer order){
+        List<CustomBaseLimitLine> list = null;
+        if(ConventDate.genericTimeForChart(ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000) >  mChart.getHighestVisibleX()){
+            list = getYLimitLines();
+            if(list != null && list.size() != 0){
+                for(CustomBaseLimitLine line: list){
+                    rightYAxis.removeLimitLine(line);
+                }
+            }
+        } else{
+            list = getXLimitLines();
+            if(list != null && list.size() != 0){
+                for(CustomBaseLimitLine line: list){
+                    xAxis.removeLimitLine(line);
+                }
+            }
+        }
+    }
     private void makeActiveSelectedDealing(CustomBaseLimitLine line){
         List<CustomBaseLimitLine> list = getXLimitLines();
         if(list != null){
@@ -1010,14 +1028,14 @@ public class TerminalFragment extends Fragment {
             if(listOpenDealings != null && listOpenDealings.size() != 0){
                 for(OrderAnswer order: listOpenDealings){
                     if(order.getTicket() == ticket){
+                        redrawPointsDealings(order);
                         listOpenDealings.remove(order);
                         CheckDealingService.setListOrderAnswer(listOpenDealings);
                         updateViewCloseDealing(order);
-                        redrawPointsDealings(order);
+                        deleteDealingLimitLine(order);
                         break;
                     }
                 }
-                drawAllDealingsLimitLines(listOpenDealings);
             }
         }
     }
