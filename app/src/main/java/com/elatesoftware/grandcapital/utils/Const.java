@@ -13,6 +13,7 @@ public class Const {
     public final static String RESPONSE_CODE_SUCCESS = "200";
     public final static String CODE_SUCCESS_DELETE_DEALING = "204";
     public final static String RESPONSE_CODE_ERROR = "400";
+    public final static String ACTION = "ACTION";
 
     public final static String TYPE_OPTION_AMERICAN = "american";
     public final static String TYPE_OPTION_EUROPEAN = "european";

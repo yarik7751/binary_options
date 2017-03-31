@@ -2,9 +2,11 @@ package com.elatesoftware.grandcapital.services;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.elatesoftware.grandcapital.api.GrandCapitalApi;
+import com.elatesoftware.grandcapital.utils.Const;
 
 /**
  * Created by Дарья Высокович on 28.03.2017.

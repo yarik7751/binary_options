@@ -11,8 +11,8 @@ public class GrandCapitalListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private static final int WHITE_ROW_COLOR =  GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListItemColor);
     private static final int TRANSPARENT_ROW_COLOR = Color.TRANSPARENT;
-    protected static final int ORDER_EVEN = 0;
-    private static final int ORDER_ODD = 1;
+    public static final int ORDER_EVEN = 0;
+    public static final int ORDER_ODD = 1;
 
     public int order = ORDER_ODD;
 

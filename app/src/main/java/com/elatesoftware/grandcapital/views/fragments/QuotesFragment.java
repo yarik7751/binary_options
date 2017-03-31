@@ -129,12 +129,14 @@ public class QuotesFragment extends Fragment {
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null &&
-                    intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) &&
-                    intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS) && InfoAnswer.getInstance() != null) {
-                        Log.d(TAG, "comparisonQuotes onReceive");
-                        List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
-                        comparisonQuotes(newInstruments);
+            String responseInfo = intent.getStringExtra(InfoUserService.RESPONSE_INFO);
+            String responseSummary = intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY);
+            if(responseInfo != null && responseSummary != null && responseInfo.equals(Const.RESPONSE_CODE_SUCCESS) && responseSummary.equals(Const.RESPONSE_CODE_SUCCESS)){
+                if(InfoAnswer.getInstance() != null) {
+                    Log.d(TAG, "comparisonQuotes onReceive");
+                    List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
+                    comparisonQuotes(newInstruments);
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.services.DeleteDealingService;
 import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
@@ -52,6 +53,7 @@ public class DealingFragment extends Fragment {
     public static final int CLOSE_TAB_POSITION = 1;
 
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
+    private GetResponseDeleteDealingBroadcastReceiver mDeleteDealingBroadcastReceiver;
     private static int currentTabPosition = 0;
 
     public static boolean sIsOpen = false;
@@ -93,12 +95,18 @@ public class DealingFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
+
+        mDeleteDealingBroadcastReceiver = new GetResponseDeleteDealingBroadcastReceiver();
+        IntentFilter intentFilterDeleteDealing = new IntentFilter(DeleteDealingService.ACTION_SERVICE_DELETE_FEALING);
+        intentFilterDeleteDealing.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mDeleteDealingBroadcastReceiver, intentFilterDeleteDealing);
     }
 
     @Override
     public void onPause() {
         Log.d(TAG, "onPause()");
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
+        getActivity().unregisterReceiver(mDeleteDealingBroadcastReceiver);
         sIsOpen = false;
         super.onPause();
 
@@ -108,6 +116,13 @@ public class DealingFragment extends Fragment {
         intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS);
         getActivity().startService(intentService);
     }
+
+    private void requestDeleteDealing(OrderAnswer order) {
+        Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
+        intentService.putExtra(Const.ACTION, DeleteDealingService.ACTION_SERVICE_DELETE_FEALING);
+        getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
+    }
+
     private void cleanCloseDealings() {
         CustomSharedPreferences.setAmtCloseDealings(getContext(), 0);
         ((BaseActivity) getActivity()).setDealings();
@@ -193,35 +208,37 @@ public class DealingFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(OrdersService.RESPONSE);
-            if (response != null) {
-                if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
-                    if(OrderAnswer.getInstance() != null){
-                        List<OrderAnswer> orders = OrderAnswer.getInstance();
-                        currentOrders = OrderAnswer.filterOrders(orders, currentTabPosition);
-                        checkOrders(currentOrders);
-                        /*mAdapter = currentTabPosition == OPEN_TAB_POSITION
-                                ? new FragmentDealingOpenOrdersAdapter(currentOrders)
-                                : new FragmentDealingCloseOrdersAdapter(currentOrders);*/
-                        if(currentTabPosition == OPEN_TAB_POSITION) {
-                            if(mAdapterOpen == null) {
-                                mAdapterClose = null;
-                                mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders);
-                                mRecyclerView.setAdapter(mAdapterOpen);
-                            } else {
-                                mAdapterOpen.updateAdapter(currentOrders);
-                            }
+            if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)){
+                if(OrderAnswer.getInstance() != null){
+                    List<OrderAnswer> orders = OrderAnswer.getInstance();
+                    currentOrders = OrderAnswer.filterOrders(orders, currentTabPosition);
+                    checkOrders(currentOrders);
+                    if(currentTabPosition == OPEN_TAB_POSITION) {
+                        if(mAdapterOpen == null) {
+                            mAdapterClose = null;
+                            mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Log.d(TAG, "delete dealing");
+                                    OrderAnswer order = (OrderAnswer) v.getTag();
+                                    requestDeleteDealing(order);
+                                }
+                            });
+                            mRecyclerView.setAdapter(mAdapterOpen);
                         } else {
-                            mAdapterOpen = null;
-                            if(mAdapterClose == null) {
-                                mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
-                                mRecyclerView.setAdapter(mAdapterClose);
-                            }
-                            //cleanCloseDealings();
+                            mAdapterOpen.updateAdapter(currentOrders);
                         }
+                    } else {
+                        mAdapterOpen = null;
+                        if(mAdapterClose == null) {
+                            mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
+                            mRecyclerView.setAdapter(mAdapterClose);
+                        }
+                        //cleanCloseDealings();
                     }
-                    mProgressLayout.setVisibility(View.GONE);
-                    setListHeader(currentTabPosition);
                 }
+                mProgressLayout.setVisibility(View.GONE);
+                setListHeader(currentTabPosition);
             } else {
                 if (isAdded()) {
                     mProgressLayout.setVisibility(View.GONE);
@@ -229,6 +246,20 @@ public class DealingFragment extends Fragment {
                             getString(R.string.request_error_title),
                             getString(R.string.request_error_text));
                 }
+            }
+        }
+    }
+
+    public class GetResponseDeleteDealingBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "GetResponseDeleteDealingBroadcastReceiver");
+            String response = intent.getStringExtra(DeleteDealingService.RESPONSE);
+            if (response == null || !response.equals(Const.CODE_SUCCESS_DELETE_DEALING)) {
+                Log.d(TAG, "CODE_SUCCESS_DELETE_DEALING ERROR");
+            } else {
+                Log.d(TAG, "CODE_SUCCESS_DELETE_DEALING");
+                requestOrders();
             }
         }
     }

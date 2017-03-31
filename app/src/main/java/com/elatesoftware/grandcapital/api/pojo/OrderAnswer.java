@@ -1,9 +1,12 @@
 package com.elatesoftware.grandcapital.api.pojo;
 
+import android.util.Log;
+
 import javax.annotation.Generated;
 
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
+import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -178,10 +181,10 @@ public class OrderAnswer {
     public String getProfitStr() {
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
         String sign = "";
-        if(getProfit() < 0){
+        if(profit < 0){
             sign = "-";
         }
-        return String.format(sign + "$%s", numberFormat.format(Math.abs(getProfit())));
+        return String.format(sign + "$%s", numberFormat.format(Math.abs(profit)));
     }
 
     public void setProfit(Double profit) {

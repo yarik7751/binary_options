@@ -2,85 +2,103 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="40dp"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
-    <android.support.v7.widget.CardView
+    <com.daimajia.swipe.SwipeLayout
+        android:id="@+id/sl_dealing"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        card_view:cardBackgroundColor="@android:color/transparent"
-        card_view:cardElevation="0dp"
-        android:background="@android:color/transparent"
-        android:elevation="0dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp"
-            android:paddingLeft="16dp"
-            android:paddingTop="10dp"
-            android:weightSum="11">
-
-            <TextView
-                android:id="@+id/tv_dealing_header_col1_active"
-                style="@style/BoldText"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                tools:text="EURUSD"
-                android:textSize="@dimen/dealing_list_text_size" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/dealingListDownOrderColor">
 
             <ImageView
-                android:layout_width="0dp"
-                android:id="@+id/imgv_dealing_header_col1_active"
+                android:id="@+id/img_close_dealing"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-                android:paddingLeft="0dp"
-                android:paddingRight="20dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/up"
-                android:contentDescription="@string/dealing_page_item_arrow_description" />
-
-            <TextView
-                android:id="@+id/tv_dealing_header_col2_open"
-                style="@style/BoldText"
-                android:layout_width="0dp"
-                tools:text="$0.65431"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:textSize="@dimen/dealing_list_text_size" />
-
-            <TextView
-                android:id="@+id/tv_dealing_col3_win"
-                style="@style/UpOrderStyle"
-                android:layout_width="0dp"
-                tools:text="$1.06000"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:textSize="@dimen/dealing_list_text_size" />
-
-            <TextView
-                android:id="@+id/tv_dealing_col4_invest"
-                style="@style/BoldText"
-                tools:text="$1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:textSize="@dimen/dealing_list_text_size" />
-
-            <TextView
-                android:id="@+id/tv_dealing_col5_income"
-                style="@style/BoldText"
-                tools:text="$0.4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:textSize="@dimen/dealing_list_text_size" />
+                android:layout_gravity="center"
+                android:src="@drawable/close_button"/>
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardBackgroundColor="@android:color/transparent"
+            card_view:cardElevation="0dp"
+            android:background="@android:color/transparent"
+            android:elevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="10dp"
+                android:weightSum="11">
+
+                <TextView
+                    android:id="@+id/tv_dealing_header_col1_active"
+                    style="@style/BoldText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    tools:text="EURUSD"
+                    android:textSize="@dimen/dealing_list_text_size" />
+
+                <ImageView
+                    android:id="@+id/imgv_dealing_header_col1_active"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:adjustViewBounds="true"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="20dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/up"
+                    android:contentDescription="@string/dealing_page_item_arrow_description" />
+
+                <TextView
+                    android:id="@+id/tv_dealing_header_col2_open"
+                    style="@style/BoldText"
+                    android:layout_width="0dp"
+                    tools:text="$0.65431"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:textSize="@dimen/dealing_list_text_size" />
+
+                <TextView
+                    android:id="@+id/tv_dealing_col3_win"
+                    style="@style/UpOrderStyle"
+                    android:layout_width="0dp"
+                    tools:text="$1.06000"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:textSize="@dimen/dealing_list_text_size" />
+
+                <TextView
+                    android:id="@+id/tv_dealing_col4_invest"
+                    style="@style/BoldText"
+                    tools:text="$1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:textSize="@dimen/dealing_list_text_size" />
+
+                <TextView
+                    android:id="@+id/tv_dealing_col5_income"
+                    style="@style/BoldText"
+                    tools:text="$0.4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:textSize="@dimen/dealing_list_text_size" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </com.daimajia.swipe.SwipeLayout>
 </LinearLayout>

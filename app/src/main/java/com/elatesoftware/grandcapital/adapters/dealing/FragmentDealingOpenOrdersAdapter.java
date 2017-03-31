@@ -1,6 +1,10 @@
 package com.elatesoftware.grandcapital.adapters.dealing;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
+import com.daimajia.swipe.SimpleSwipeListener;
+import com.daimajia.swipe.SwipeLayout;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 
 import java.text.NumberFormat;
@@ -12,8 +16,12 @@ import com.elatesoftware.grandcapital.utils.ConventString;
 
 public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapter {
 
-    public FragmentDealingOpenOrdersAdapter(List<OrderAnswer> orderList) {
+    private View.OnClickListener onClickDeleteDealing;
+
+    public FragmentDealingOpenOrdersAdapter(List<OrderAnswer> orderList, View.OnClickListener _onClickDeleteDealing) {
         super(orderList);
+        onClickDeleteDealing = _onClickDeleteDealing;
+        order = ORDER_EVEN;
     }
 
     @Override
@@ -40,6 +48,8 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
             orderHolder.mThirdColumn.setTextColor(UP_TEXT_COLOR);
             orderHolder.mArrow.setImageDrawable(UP_DRAWABLE);
         }
+        orderHolder.imgCloseDealing.setTag(orderList.get(position));
+        orderHolder.imgCloseDealing.setOnClickListener(onClickDeleteDealing);
     }
 
     public void updateAdapter(List<OrderAnswer> _orderList) {

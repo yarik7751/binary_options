@@ -21,6 +21,8 @@ public class FragmentDealingCloseOrdersAdapter extends FragmentDealingOrdersAdap
 
         FragmentDealingViewHolder orderHolder = (FragmentDealingViewHolder) holder;
 
+        orderHolder.slDealing.setSwipeEnabled(false);
+
         orderHolder.mFirstColumn.setText(orderList.get(position).getSymbol());
         double openPrice = orderList.get(position).getOpenPrice();
         double closePrice = orderList.get(position).getClosePrice();
