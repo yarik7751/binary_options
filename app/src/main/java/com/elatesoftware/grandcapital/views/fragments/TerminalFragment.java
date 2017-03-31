@@ -169,40 +169,7 @@ public class TerminalFragment extends Fragment {
     private GetResponseEarlyClosureBroadcastReceiver mEarlyClosureBroadcastReceiver;
     private GetResponseDeleteDealingBroadcastReceiver mDeleteDealingBroadcastReceiver;
 
-    private Runnable runnableAnimation = new Runnable() {
-        @Override
-        public void run() {
-            if (entryLast != null && currEntry != null) {
-                float x = entryLast.getX();
-                float y = entryLast.getY();
-                x += divX;
-                y += divY;
-                Entry newEntry = new Entry(x, y, null, null);
-                numberTemporaryPoint++;
-                LineData data = mChart.getData();
-                if (currEntry != null && numberTemporaryPoint == 9) {
-                    newEntry.setIcon(currEntry.getIcon());
-                    newEntry.setData(currEntry.getData());
-                }
-                data.addEntry(newEntry, 0);
-                data.notifyDataChanged();
-                mChart.notifyDataSetChanged();
-                mChart.invalidate();
-                if (numberTemporaryPoint == 10) {
-                    typePoint = POINT_SIMPLY;
-                    redrawXYDealingLimitLines();
-                }
-                drawSocketCurrentYLimitLine(newEntry);
-                entryLast = newEntry;
-                if (numberTemporaryPoint < 10) {
-                    handler.postDelayed(runnableAnimation, 50);
-                }
-            }
-        }
-    };
-
     private static TerminalFragment fragment = null;
-
     public static TerminalFragment getInstance() {
         if (fragment == null) {
             fragment = new TerminalFragment();
@@ -260,7 +227,6 @@ public class TerminalFragment extends Fragment {
 
         return parentView;
     }
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -284,33 +250,28 @@ public class TerminalFragment extends Fragment {
             }
         });
         etValueAmount.setOnFocusChangeListener((v, hasFocus) -> {
-            if (etValueAmount != null) {
+            if(etValueAmount != null) {
                 ConventString.setMaskAmount(etValueAmount, hasFocus);
             }
         });
         etValueTime.setOnFocusChangeListener((v, hasFocus) -> {
-            if (etValueTime != null) {
+            if(etValueTime != null) {
                 ConventString.setMaskTime(etValueTime, hasFocus);
             }
         });
         etValueAmount.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 requestEarlyClosure();
             }
-
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
         etValueTime.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -318,8 +279,7 @@ public class TerminalFragment extends Fragment {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-            }
+            public void afterTextChanged(Editable s) {}
         });
         tvMinusAmount.setOnClickListener(v -> {
             ConventString.changeAmountValue(etValueAmount, false);
@@ -374,7 +334,6 @@ public class TerminalFragment extends Fragment {
         initializationChart();
         setSizeHeight();
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -389,13 +348,13 @@ public class TerminalFragment extends Fragment {
         if (sSymbolCurrent != null && !sSymbolCurrent.equals("")) {
             tvValueActive.setText(sSymbolCurrent);
             parseResponseSymbolHistory();
+            llProgressBar.setVisibility(View.GONE);
         } else {
             changeActive();
         }
         requestGetAllOrders();
         setEnabledBtnChooseActive(true);
     }
-
     @Override
     public void onPause() {
         if (threadSymbolHistory != null) {
@@ -411,7 +370,6 @@ public class TerminalFragment extends Fragment {
         super.onPause();
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(true);
     }
-
     @Override
     public void onDestroy() {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
@@ -460,7 +418,6 @@ public class TerminalFragment extends Fragment {
         intentFilterDeleteDealing.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mDeleteDealingBroadcastReceiver, intentFilterDeleteDealing);
     }
-
     private void unregisterBroadcasts() {
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
@@ -526,28 +483,23 @@ public class TerminalFragment extends Fragment {
             public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
 
             }
-
             @Override
             public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
 
             }
-
             @Override
             public void onChartLongPressed(MotionEvent me) {
 
             }
-
             @Override
             public void onChartDoubleTapped(MotionEvent me) {
 
             }
-
             @Override
             public void onChartSingleTapped(MotionEvent event) {
                 onClickXLimitLines(event.getX(), event.getY());
                 onClickYLimitLines(event.getX(), event.getY());
             }
-
             @Override
             public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {}
 
@@ -555,22 +507,21 @@ public class TerminalFragment extends Fragment {
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
-                    if (point != null) {
+                    if(point != null){
                         imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
                     }
                 }
                 redrawScrollLinesDealings(mChart.getHighestVisibleX());
             }
-
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
-                    if (point != null) {
+                    if(point != null) {
                         Log.d(TAG, "maxim x: " + mChart.getHighestVisibleX());
                         Log.d(TAG, "point x: " + (point.getX() - imgPointCurrent.getWidth() / 2));
-                        if (currEntry.getX() >= mChart.getHighestVisibleX()) {
+                        if(currEntry.getX() >= mChart.getHighestVisibleX()) {
                             imgPointCurrent.setVisibility(View.INVISIBLE);
                         } else {
                             imgPointCurrent.setVisibility(View.VISIBLE);
@@ -583,7 +534,6 @@ public class TerminalFragment extends Fragment {
             }
         });
     }
-
     private void initializationCurrentPoint() {
         imgPointCurrent = new ImageView(getContext());
         imgPointCurrent.setId(R.id.img);
@@ -598,12 +548,10 @@ public class TerminalFragment extends Fragment {
         llHigherTerminal.setEnabled(enabled);
         llLowerTerminal.setEnabled(enabled);
     }
-
     private void setEnabledBtnChooseActive(boolean enabled) {
         tvLeftActive.setEnabled(enabled);
         tvRightActive.setEnabled(enabled);
     }
-
     private void setSizeHeight() {
         int height = AndroidUtils.getWindowsSizeParams(getContext())[1] - AndroidUtils.getStatusBarHeight(getContext()) - AndroidUtils.dp(60);
         rlChart.getLayoutParams().height = (int) (height * 0.6);
@@ -613,34 +561,32 @@ public class TerminalFragment extends Fragment {
 
     private List<CustomBaseLimitLine> getXLimitLines() {
         List<CustomBaseLimitLine> list = new ArrayList<>();
-        if (xAxis.getLimitLines() != null && xAxis.getLimitLines().size() != 0) {
-            for (LimitLine l : xAxis.getLimitLines()) {
+        if(xAxis.getLimitLines() != null && xAxis.getLimitLines().size() != 0){
+            for(LimitLine l: xAxis.getLimitLines()){
                 list.add((CustomBaseLimitLine) l);
             }
             return list;
-        } else {
+        }else{
             return null;
         }
     }
-
-    private List<CustomBaseLimitLine> getYLimitLines() {
+    private List<CustomBaseLimitLine> getYLimitLines(){
         List<CustomBaseLimitLine> list = new ArrayList<>();
-        if (rightYAxis.getLimitLines() != null && rightYAxis.getLimitLines().size() != 0) {
-            for (LimitLine l : rightYAxis.getLimitLines()) {
+        if(rightYAxis.getLimitLines() != null && rightYAxis.getLimitLines().size() != 0){
+            for(LimitLine l: rightYAxis.getLimitLines()){
                 list.add((CustomBaseLimitLine) l);
             }
-            if (currentLineSocket != null) {
+            if(currentLineSocket != null){
                 list.remove(currentLineSocket);
             }
-            if (currentLineDealing != null) {
+            if(currentLineDealing != null){
                 list.remove(currentLineDealing);
             }
             return list;
-        } else {
+        }else{
             return null;
         }
     }
-
     private synchronized LineDataSet createSetDataChart() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -663,6 +609,17 @@ public class TerminalFragment extends Fragment {
         set.setDrawHighlightIndicators(false);
         return set;
     }
+    public LineData getLineData(){
+        LineData data = mChart.getData();
+        if (data != null) {
+            ILineDataSet set = data.getDataSetByIndex(0);
+            if (set == null) {
+                set = createSetDataChart();
+                data.addDataSet(set);
+            }
+        }
+        return data;
+    }
 
     private void clearChart() {
         currEntry = null;
@@ -679,7 +636,6 @@ public class TerminalFragment extends Fragment {
         mChart.clearValues();
         mChart.invalidate();
     }
-
     private void changeActive() {
         setEnabledBtnChooseActive(false);
         if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
@@ -703,16 +659,16 @@ public class TerminalFragment extends Fragment {
         requestGetAllOrders();
     }
 
-    private void onClickXLimitLines(float x, float y) {
+    private void onClickXLimitLines(float x, float y){
         List<CustomBaseLimitLine> listLimit = getXLimitLines();
-        if (listLimit != null && listLimit.size() != 0) {
+        if(listLimit != null && listLimit.size() != 0){
             MPPointD point = mChart.getTransformer(YAxis.AxisDependency.RIGHT).getValuesByTouchPoint(x, y);
-            if (point != null) {
-                for (CustomBaseLimitLine line : listLimit) {
+            if(point != null){
+                for(CustomBaseLimitLine line: listLimit){
                     OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                    if (order != null && order.getOpenPrice() != null) {
+                    if(order != null && order.getOpenPrice() != null){
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-                        if (line.ismIsAmerican()) {
+                        if(line.ismIsAmerican()) {
                             if (line.ismIsAmerican() && (point.x - line.getLimit() <= 1200000 && point.x - line.getLimit() >= 0)) {
                                 if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
                                     showViewCloseDealing(order);
@@ -730,16 +686,15 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
-    private void onClickYLimitLines(float x, float y) {
+    private void onClickYLimitLines(float x, float y){
         float xMax = mChart.getHighestVisibleX();
         List<CustomBaseLimitLine> listLimit = getYLimitLines();
-        if (listLimit != null && listLimit.size() != 0) {
+        if(listLimit != null && listLimit.size() != 0){
             MPPointD point = mChart.getTransformer(YAxis.AxisDependency.RIGHT).getValuesByTouchPoint(x, y);
-            if (point != null) {
-                for (CustomBaseLimitLine line : listLimit) {
+            if(point != null){
+                for(CustomBaseLimitLine line: listLimit){
                     OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                    if ((order != null && order.getOpenPrice() != null && line.ismIsAmerican()) && (line.ismIsAmerican() && (point.x - xMax <= 1200000 && point.x - xMax >= 0))) {
+                    if((order != null && order.getOpenPrice() != null && line.ismIsAmerican()) && (line.ismIsAmerican() && (point.x - xMax <= 1200000 && point.x - xMax >= 0))) {
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
                         if ((tappedY - point.y >= 0 && tappedY - point.y <= 0.00001) || (point.y - tappedY >= 0 && point.y - tappedY <= 0.00001)) {
                             showViewCloseDealing(order);
@@ -747,6 +702,7 @@ public class TerminalFragment extends Fragment {
                         }
                     }
                     if ((xMax - point.x <= 9000 && xMax - point.x >= 0) || (point.x - xMax <= 9000 && point.x - xMax >= 0)) {
+                       // makeActiveSelectedDealing(line);
                         break;
                     }
                 }
@@ -756,25 +712,24 @@ public class TerminalFragment extends Fragment {
 
     private void requestEarlyClosure() {
         Intent intent = new Intent(getActivity(), EarlyClosureService.class);
+        intent.putExtra(EarlyClosureService.SYMBOL, tvValueActive.getText().toString());
+        intent.putExtra(EarlyClosureService.TIME, ConventString.getTimeValue(etValueTime));
         getActivity().startService(intent);
     }
-
     private void requestSymbolHistory(String symbol) {
         Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
         intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
         getActivity().startService(intentService);
     }
-
     private void requestSignals() {
         Intent intentService = new Intent(getActivity(), SignalService.class);
         getActivity().startService(intentService);
     }
-
     private void requestMakeDealing(String lowerOrHeight) {
         llProgressBar.setVisibility(View.VISIBLE);
         setEnabledBtnTerminal(false);
         if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).isEmpty()) {
-            if (ConventString.getTimeValue(etValueTime) > Const.MAX_TIME_MIN) {
+            if(ConventString.getTimeValue(etValueTime) > Const.MAX_TIME_MIN) {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.error_max_time));
                 llProgressBar.setVisibility(View.GONE);
                 setEnabledBtnTerminal(true);
@@ -792,29 +747,26 @@ public class TerminalFragment extends Fragment {
             setEnabledBtnTerminal(true);
         }
     }
-
     private void requestGetAllOrders() {
-        if (isAdded()) {
+        if(isAdded()) {
             Intent intentService = new Intent(getActivity(), OrdersService.class);
             intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS);
             getActivity().startService(intentService);
         }
     }
-
     private void requestGetTicketOrder(OrderAnswer order) {
-        if (isAdded()) {
+        if(isAdded()) {
             Intent intentService = new Intent(getActivity(), OrdersService.class);
             intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_TICKET_ORDER);
             intentService.putExtra(OrdersService.ORDER, new Gson().toJson(order));
             getActivity().startService(intentService);
         }
     }
-
-    private void requestDeleteDealing(OrderAnswer order) {
-        if (order.getTicket() != null && order.getTicket() != 0) {
+    private void requestDeleteDealing(OrderAnswer order){
+        if(order.getTicket() != null && order.getTicket() != 0 ){
             Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
             getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
-        } else {
+        }else{
             requestGetTicketOrder(order);
         }
     }
@@ -823,10 +775,10 @@ public class TerminalFragment extends Fragment {
         if (SymbolHistoryAnswer.getInstance() != null && SymbolHistoryAnswer.getInstance().size() != 0) {
             List<SocketAnswer> list;
             if (listSocketPointsBackGround != null && listSocketPointsBackGround.size() != 0) {
-                list = listSocketPointsBackGround.subList(0, listSocketPointsBackGround.size());
+                list = listSocketPointsBackGround.subList(0, listSocketPointsBackGround.size()-1);
                 Log.d(GrandCapitalApplication.TAG_SOCKET, "add from background in list socketanswer size = " + (list.size() - 1));
                 for (SocketAnswer item : list) {
-                    addSocketAnswerInSymbol(item);
+                    SymbolHistoryAnswer.addSocketAnswerInSymbol(item);
                 }
                 listSocketPointsBackGround.clear();
             }
@@ -835,17 +787,10 @@ public class TerminalFragment extends Fragment {
             listSocketPointsBackGround.clear();
             isAddInChart = true;
         }
-        llProgressBar.setVisibility(View.GONE);
     }
-
     private void parseResponseSignals(String symbol) {
         if (SignalAnswer.getInstance() != null) {
-            List<SignalAnswer> list = new ArrayList<>();
-            for (SignalAnswer answer : SignalAnswer.getInstance()) {
-                if (answer.getInstrument().replace("/", "").equals(symbol)) {
-                    list.add(answer);
-                }
-            }
+            List<SignalAnswer> list = SignalAnswer.getSignalsActive(symbol);
             if (list.size() != 0) {
                 rlErrorSignal.setVisibility(View.GONE);
                 tvCurrentActive.setText(symbol);
@@ -865,15 +810,15 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
-    private void parseClosingDealings(List<OrderAnswer> listAllClosedDealings) {
-        if (listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0) {
-            for (OrderAnswer order : listCurrentClosingDealings) {
-                for (OrderAnswer orderClosed : listAllClosedDealings) {
+    private void parseClosingDealings(List<OrderAnswer> listAllClosedDealings){
+        if(listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0){
+            for(OrderAnswer order : listCurrentClosingDealings){
+                for(OrderAnswer orderClosed : listAllClosedDealings){
                     if ((int) order.getTicket() == (int) orderClosed.getTicket()) {
                         mViewInfoHelper.updateSettingsCloseDealing(orderClosed, getActivity());
-                        if (order.getSymbol().equals(ConventString.getActive(tvValueActive))) {
+                        if(order.getSymbol().equals(ConventString.getActive(tvValueActive))) {
                             drawAllDealingsLimitLines(listOpenDealings);
+                            //redrawPointsDealings(orderClosed);
                         }
                         break;
                     }
@@ -883,141 +828,80 @@ public class TerminalFragment extends Fragment {
         }
     }
 
-    private void addSocketAnswerInSymbol(final SocketAnswer item) {
-        Log.d(TAG, "addSocketAnswerInSymbol");
-        if (SymbolHistoryAnswer.getInstance() != null) {
-            SymbolHistoryAnswer.getInstance().add(new SymbolHistoryAnswer(item.getHigh(), item.getBid(), item.getAsk(), item.getLow(), item.getTime()));
-        }
-    }
-
     public synchronized void addEntry(final SocketAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getAsk() != null) {
-            LineData data = mChart.getData();
+            LineData data = getLineData();
             if (data != null) {
-                ILineDataSet set = data.getDataSetByIndex(0);
-                if (set == null) {
-                    set = createSetDataChart();
-                    data.addDataSet(set);
-                }
-                addSocketAnswerInSymbol(answer);
-                Entry entry;
-                switch (typePoint) {
-                    case POINT_CLOSE_DEALING:
-                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawableMarkerDealing, null);
-                        break;
-                    case POINT_OPEN_DEALING:
-                        OrderAnswer order = currentDealing;
-                        order.setOpenPrice(answer.getAsk());
-                        String dataEntry = new Gson().toJson(order);
-                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), drawableMarkerDealing, dataEntry);
-                        break;
-                    case POINT_SIMPLY:
-                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
-                        break;
-                    default:
-                        entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
-                        break;
-                }
+                SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
                 mCurrentValueY = answer.getAsk();
-                currEntry = entry;
-                entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount() - 1);
+                currEntry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
+                entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
 
                 divX = (currEntry.getX() - entryLast.getX()) / 10.f;
                 divY = (currEntry.getY() - entryLast.getY()) / 10.f;
 
                 numberTemporaryPoint = 1;
-                handler.postDelayed(runnableAnimation, 50);
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(entryLast != null && currEntry != null) {
+                            float x = entryLast.getX();
+                            float y = entryLast.getY();
+                            x += divX;
+                            y += divY;
+                            Entry newEntry;
+                            if (numberTemporaryPoint == 9) {
+                                switch (typePoint) {
+                                    case POINT_CLOSE_DEALING:
+                                        newEntry = new Entry(x, y, drawableMarkerDealing, null);
+                                        break;
+                                    case POINT_OPEN_DEALING:
+                                        OrderAnswer order = currentDealing;
+                                        order.setOpenPrice(answer.getAsk());
+                                        String dataEntry = new Gson().toJson(order);
+                                        newEntry = new Entry(x, y, drawableMarkerDealing, dataEntry);
+                                        drawDealingLimitLine(order, false);
+                                        break;
+                                    case POINT_SIMPLY:
+                                    default:
+                                        newEntry = new Entry(x, y, null, null);
+                                        break;
+                                }
+                            }else{
+                                newEntry = new Entry(x, y, null, null);
+                            }
+                            numberTemporaryPoint++;
+                            LineData data = mChart.getData();
+                            data.addEntry(newEntry, 0);
+                            data.notifyDataChanged();
+                            mChart.notifyDataSetChanged();
+                            mChart.invalidate();
+                            if (numberTemporaryPoint == 9) {
+                                typePoint = POINT_SIMPLY;
+                                redrawXYDealingLimitLines();
+                            }
+                            drawSocketCurrentYLimitLine(newEntry);
+                            entryLast = newEntry;
+                            if (numberTemporaryPoint < 10) {
+                                handler.postDelayed(this, 50);
+                            }
+                        }
+                    }
+                }, 50);
             }
         }
     }
-
     private void addEntry(final SymbolHistoryAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getOpen() != null) {
-            LineData data = mChart.getData();
+            LineData data = getLineData();
             if (data != null) {
-                ILineDataSet set = data.getDataSetByIndex(0);
-                if (set == null) {
-                    set = createSetDataChart();
-                    data.addDataSet(set);
-                }
-                Entry entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()),
-                        Float.valueOf(String.valueOf(answer.getOpen())), null, null);
+                Entry entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getOpen())), null, null);
                 data.addEntry(entry, 0);
                 data.notifyDataChanged();
                 mChart.notifyDataSetChanged();
             }
         }
     }
-
-    private void makeActiveSelectedDealing(CustomBaseLimitLine line) {
-        List<CustomBaseLimitLine> list = getXLimitLines();
-        if (list != null) {
-            if (line != null) {
-                if (line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE) {
-                    line.enableDashedLine(10f, 10f, 0f);
-                    line.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
-                    if (currentLineDealing != null) {
-                        rightYAxis.removeLimitLine(currentLineDealing);
-                    }
-                } else {
-                    for (CustomBaseLimitLine l : list) {
-                        if (l.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE) {
-                            l.enableDashedLine(10f, 10f, 0f);
-                            l.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
-                            break;
-                        }
-                    }
-                    drawCurrentDealingYLimitLine(line, (new Gson().fromJson(line.getLabel(), OrderAnswer.class)));
-                }
-            } else {
-                drawCurrentDealingYLimitLine(list.get(0), (new Gson().fromJson(list.get(0).getLabel(), OrderAnswer.class)));
-            }
-        } else {
-            if (currentLineDealing != null) {
-                rightYAxis.removeLimitLine(currentLineDealing);
-            }
-        }
-    }
-
-    private void deleteDealingLimitLine(final int ticket) {
-        if (OrderAnswer.getInstance() != null && ticket != 0) {
-            if (listOpenDealings != null && listOpenDealings.size() != 0) {
-                for (OrderAnswer order : listOpenDealings) {
-                    if (order.getTicket() == ticket) {
-                        redrawPointsDealings(order);
-                        listOpenDealings.remove(order);
-                        CheckDealingService.setListOrderAnswer(listOpenDealings);
-                        mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
-                        drawAllDealingsLimitLines(listOpenDealings);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    private void redrawPointsDealings(OrderAnswer order) {
-        if (mChart.getData() != null) {
-            ILineDataSet set = mChart.getData().getDataSetByIndex(0);
-            typePoint = POINT_CLOSE_DEALING;
-            for (int i = set.getEntryCount() - 1; i >= 0; i--) {
-                Entry entry = set.getEntryForIndex(i);
-                if (entry.getData() != null && entry.getData() instanceof String) {
-                    OrderAnswer dataPoint = new Gson().fromJson(String.valueOf(entry.getData()), OrderAnswer.class);
-                    if (ConventDate.equalsTimePoints(dataPoint.getOptionsData().getExpirationTime(), order.getOptionsData().getExpirationTime())) {
-                        Log.d(GrandCapitalApplication.TAG_SOCKET, "closeDealing");
-                        entry.setIcon(null);
-                        entry.setData(null);
-                        mChart.getData().notifyDataChanged();
-                        mChart.notifyDataSetChanged();
-                        mChart.invalidate();
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     private void drawDataSymbolHistory(List<SymbolHistoryAnswer> listSymbol, final String symbol) {
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
@@ -1065,6 +949,39 @@ public class TerminalFragment extends Fragment {
         threadSymbolHistory.start();
     }
 
+    private void redrawPointsDealings(OrderAnswer order){
+        if (mChart.getData() != null) {
+            ILineDataSet set = mChart.getData().getDataSetByIndex(0);
+            typePoint = POINT_CLOSE_DEALING;
+            for (int i = set.getEntryCount() - 1; i >= 0; i--) {
+                Entry entry = set.getEntryForIndex(i);
+                if (entry.getData() != null && entry.getData() instanceof String) {
+                    OrderAnswer dataPoint = new Gson().fromJson(String.valueOf(entry.getData()) , OrderAnswer.class);
+                    if(ConventDate.equalsTimePoints(dataPoint.getOptionsData().getExpirationTime(), order.getOptionsData().getExpirationTime())){
+                        Log.d(GrandCapitalApplication.TAG_SOCKET, "closeDealing");
+                        entry.setIcon(null);
+                        entry.setData(null);
+                        mChart.getData().notifyDataChanged();
+                        mChart.notifyDataSetChanged();
+                        mChart.invalidate();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    private void drawCurrentPoint(Entry entry) {
+        if(isFirstDrawPoint) {
+            //hideCurrentPoint();
+        } else {
+            //imgPointCurrent.setVisibility(View.VISIBLE);
+        }
+        if (imgPointCurrent != null) {
+            MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
+            imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+            imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+        }
+    }
     private void drawSocketCurrentYLimitLine(Entry entry) {
         if (entry != null) {
             if (currentLineSocket != null) {
@@ -1077,43 +994,18 @@ public class TerminalFragment extends Fragment {
             drawCurrentPoint(entry);
         }
     }
-
-    private void updateColorXLimitLine(CustomBaseLimitLine line, OrderAnswer order) {
-        if (order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
-                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY) {
-            line.setmBitmapLabelX(bitmapIconGreenXLabel);
-            line.setLineColor(colorGreen);
-            line.setmBitmapLabelY(bitmapIconGreenYLabel);
-        } else {
-            line.setmBitmapLabelX(bitmapIconRedXLabel);
-            line.setLineColor(colorRed);
-            line.setmBitmapLabelY(bitmapIconRedYLabel);
-        }
-        line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
-    }
-
-    private void updateColorYLimitLine(CustomBaseLimitLine line, OrderAnswer order) {
-        if (order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
-                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY) {
-            line.setmBitmapLabelY(bitmapIconGreenYLabel);
-        } else {
-            line.setmBitmapLabelY(bitmapIconRedYLabel);
-        }
-        line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
-    }
-
     private void drawCurrentDealingYLimitLine(CustomBaseLimitLine lineX, OrderAnswer order) {
         if (currentLineDealing != null) {
             rightYAxis.removeLimitLine(currentLineDealing);
         }
-        if (getXLimitLines() != null && lineX != null) {
+        if(getXLimitLines() != null  && lineX != null){
             lineX.enableDashedLine(0f, 0f, 0f);
             lineX.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE);
             currentLineDealing = new CustomBaseLimitLine(Float.valueOf(String.valueOf(order.getOpenPrice())), String.valueOf(order.getOpenPrice()), null);
-            if (lineX.getLineColor() == colorGreen) {
+            if(lineX.getLineColor() == colorGreen){
                 currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingGreenYLabel);
                 currentLineDealing.setLineColor(colorGreen);
-            } else if (lineX.getLineColor() == colorRed) {
+            }else if (lineX.getLineColor() == colorRed){
                 currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingRedYLabel);
                 currentLineDealing.setLineColor(colorRed);
             }
@@ -1122,117 +1014,12 @@ public class TerminalFragment extends Fragment {
         }
     }
 
-    private void drawCurrentPoint(Entry entry) {
-        if (imgPointCurrent != null) {
-            MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
-            imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
-            imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
-        }
-    }
-
-    private void drawAllDealingsLimitLines(List<OrderAnswer> list) {
-        xAxis.removeAllLimitLines();
-        rightYAxis.removeAllLimitLines();
-        if (list != null && list.size() != 0) {
-            for (OrderAnswer orderAnswer : list) {
-                if (ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {
-                    if (isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61) {
-                        drawDealingLimitLine(orderAnswer, isTypeOptionAmerican);
-                    } else {
-                        drawDealingLimitLine(orderAnswer, false);
-                    }
-                }
-            }
-            makeActiveSelectedDealing(null);
-        }
-    }
-
-    public void redrawXLimitLines() {
-        List<CustomBaseLimitLine> list = getXLimitLines();
-        if (list != null && list.size() != 0) {
-            for (CustomBaseLimitLine line : list) {
-                OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                if (Long.parseLong(line.getmTimer()) <= 1.5) {
-                    redrawPointsDealings(order);
-                    xAxis.removeLimitLine(line);
-                    makeActiveSelectedDealing(null);
-                } else {
-                    if (!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime())) {
-                        xAxis.removeLimitLine(line);
-                    } else {
-                        if (isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61) {
-                            line.setmIsAmerican(true);
-                        }
-                        updateColorXLimitLine(line, order);
-                        if (line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE) {
-                            drawCurrentDealingYLimitLine(line, order);
-                        }
-                    }
-                }
-            }
-        } else {
-            if (currentLineDealing != null) {
-                rightYAxis.removeLimitLine(currentLineDealing);
-            }
-        }
-    }
-
-    public void redrawYLimitLines() {
-        List<CustomBaseLimitLine> list = getYLimitLines();
-        if (list != null && list.size() != 0) {
-            for (CustomBaseLimitLine line : list) {
-                OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                if (Long.parseLong(line.getmTimer()) <= 1.5) {
-                    redrawPointsDealings(order);
-                    rightYAxis.removeLimitLine(line);
-                } else {
-                    if (!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime())) {
-                        rightYAxis.removeLimitLine(line);
-                    } else {
-                        if (isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61) {
-                            line.setmIsAmerican(true);
-                        }
-                        updateColorYLimitLine(line, order);
-                    }
-                }
-            }
-        }
-    }
-
-    public void redrawXYDealingLimitLines() {
-        redrawXLimitLines();
-        redrawYLimitLines();
-        mChart.invalidate();
-    }
-
-    private void drawDealingLimitLine(OrderAnswer order, boolean isAmerican) {
-        if (order != null) {
-            if (ConventDate.genericTimeForChart(ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000) >= mChart.getHighestVisibleX()) {
-                CustomBaseLimitLine lineY = new CustomBaseLimitLine(Float.valueOf(String.valueOf(order.getOpenPrice())),
-                        new Gson().toJson(order), null,
-                        String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican);
-                updateColorYLimitLine(lineY, order);
-                lineY.setLineColor(Color.TRANSPARENT);
-                lineY.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_DEALING);
-                rightYAxis.addLimitLine(lineY);
-            } else {
-                CustomBaseLimitLine lineX = new CustomBaseLimitLine(ConventDate.genericTimeForChart(
-                        ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000),
-                        new Gson().toJson(order), null, null, String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican);
-                updateColorXLimitLine(lineX, order);
-                lineX.enableDashedLine(10f, 10f, 0f);
-                lineX.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
-                xAxis.addLimitLine(lineX);
-            }
-        }
-    }
-
-    private void redrawScrollLinesDealings(float xMax) {
+    private void redrawScrollLinesDealings(float xMax){
         List<CustomBaseLimitLine> listX = getXLimitLines();
         List<CustomBaseLimitLine> listY = getYLimitLines();
-        if (listX != null && listX.size() != 0) {
-            for (CustomBaseLimitLine lineX : listX) {
-                if (lineX.getLimit() >= xMax) {
+        if(listX != null && listX.size() != 0){
+            for(CustomBaseLimitLine lineX : listX){
+                if(lineX.getLimit() >= xMax){
                     OrderAnswer order = new Gson().fromJson(lineX.getLabel(), OrderAnswer.class);
                     CustomBaseLimitLine lineY = new CustomBaseLimitLine(Float.valueOf(String.valueOf(order.getOpenPrice())),
                             lineX.getLabel(), lineX.getmBitmapLabelY(),
@@ -1240,14 +1027,14 @@ public class TerminalFragment extends Fragment {
                     lineY.setLineColor(Color.TRANSPARENT);
                     lineY.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_DEALING);
                     rightYAxis.addLimitLine(lineY);
-                    if (lineX.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE) {
+                    if (lineX.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
                         drawCurrentDealingYLimitLine(lineX, order);
                     }
                     xAxis.removeLimitLine(lineX);
                 }
             }
         }
-        if (listY != null && listY.size() != 0) {
+        if(listY != null && listY.size() != 0) {
             for (CustomBaseLimitLine lineY : listY) {
                 OrderAnswer order = new Gson().fromJson(lineY.getLabel(), OrderAnswer.class);
                 if (ConventDate.genericTimeForChart(ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000) < xMax) {
@@ -1262,10 +1049,169 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
+    private void drawAllDealingsLimitLines(List<OrderAnswer> list){
+        xAxis.removeAllLimitLines();
+        rightYAxis.removeAllLimitLines();
+        if(list != null && list.size() != 0){
+            for(OrderAnswer orderAnswer : list){
+                if(ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {
+                     if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
+                        drawDealingLimitLine(orderAnswer, isTypeOptionAmerican);
+                     }else{
+                        drawDealingLimitLine(orderAnswer, false);
+                    }
+                }
+            }
+            makeActiveSelectedDealing(null);
+        }
+    }
+    private void makeActiveSelectedDealing(CustomBaseLimitLine line){
+        List<CustomBaseLimitLine> list = getXLimitLines();
+        if(list != null){
+            if(line != null){
+                if(line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
+                    line.enableDashedLine(10f, 10f, 0f);
+                    line.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
+                    if (currentLineDealing != null) {
+                        rightYAxis.removeLimitLine(currentLineDealing);
+                    }
+                }else{
+                    for(CustomBaseLimitLine l: list){
+                        if(l.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
+                            l.enableDashedLine(10f, 10f, 0f);
+                            l.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
+                            break;
+                        }
+                    }
+                    drawCurrentDealingYLimitLine(line, (new Gson().fromJson(line.getLabel(), OrderAnswer.class)));
+                }
+            }else{
+                drawCurrentDealingYLimitLine(list.get(0),(new Gson().fromJson(list.get(0).getLabel(), OrderAnswer.class)));
+            }
+        }else{
+            if(currentLineDealing != null){
+                rightYAxis.removeLimitLine(currentLineDealing);
+            }
+        }
+    }
+    public void redrawXYDealingLimitLines(){
+        redrawXLimitLines();
+        redrawYLimitLines();
+        mChart.invalidate();
+    }
+    private void drawDealingLimitLine(OrderAnswer order, boolean isAmerican) {
+        if (order != null) {
+            if(ConventDate.genericTimeForChart(ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000) >= mChart.getHighestVisibleX()){
+                CustomBaseLimitLine lineY = new CustomBaseLimitLine(Float.valueOf(String.valueOf(order.getOpenPrice())),
+                        new Gson().toJson(order), null,
+                        String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican);
+                updateColorYLimitLine(lineY, order);
+                lineY.setLineColor(Color.TRANSPARENT);
+                lineY.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_DEALING);
+                rightYAxis.addLimitLine(lineY);
+            }else{
+                CustomBaseLimitLine lineX = new CustomBaseLimitLine(ConventDate.genericTimeForChart(
+                        ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000),
+                        new Gson().toJson(order), null, null, String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican);
+                updateColorXLimitLine(lineX, order);
+                lineX.enableDashedLine(10f, 10f, 0f);
+                lineX.setTypeLimitLine(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS);
+                xAxis.addLimitLine(lineX);
+            }
+        }
+    }
+    public void redrawXLimitLines(){
+        List<CustomBaseLimitLine> list = getXLimitLines();
+        if(list != null && list.size() != 0){
+            for(CustomBaseLimitLine line : list){
+                OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+                if(Long.parseLong(line.getmTimer()) <= 1.5) {
+                    redrawPointsDealings(order);
+                    xAxis.removeLimitLine(line);
+                    makeActiveSelectedDealing(null);
+                }else {
+                    if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime())){
+                        xAxis.removeLimitLine(line);
+                    }else{
+                        if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                            line.setmIsAmerican(true);
+                        }
+                        updateColorXLimitLine(line, order);
+                        if (line.getTypeLimitLine() == CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE){
+                            drawCurrentDealingYLimitLine(line, order);
+                        }
+                    }
+                }
+            }
+        }else{
+            if(currentLineDealing != null) {
+                rightYAxis.removeLimitLine(currentLineDealing);
+            }
+        }
+    }
+    public void redrawYLimitLines(){
+        List<CustomBaseLimitLine> list = getYLimitLines();
+        if(list != null && list.size() != 0){
+            for(CustomBaseLimitLine line : list){
+                OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+                if(Long.parseLong(line.getmTimer()) <= 1.5) {
+                    redrawPointsDealings(order);
+                    rightYAxis.removeLimitLine(line);
+                }else {
+                    if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime())){
+                        rightYAxis.removeLimitLine(line);
+                    }else{
+                        if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                            line.setmIsAmerican(true);
+                        }
+                        updateColorYLimitLine(line, order);
+                    }
+                }
+            }
+        }
+    }
+    private void updateColorXLimitLine(CustomBaseLimitLine line, OrderAnswer order){
+        if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
+                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
+            line.setmBitmapLabelX(bitmapIconGreenXLabel);
+            line.setLineColor(colorGreen);
+            line.setmBitmapLabelY(bitmapIconGreenYLabel);
+        }else{
+            line.setmBitmapLabelX(bitmapIconRedXLabel);
+            line.setLineColor(colorRed);
+            line.setmBitmapLabelY(bitmapIconRedYLabel);
+        }
+        line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
+    }
+    private void updateColorYLimitLine(CustomBaseLimitLine line, OrderAnswer order){
+        if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
+                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
+            line.setmBitmapLabelY(bitmapIconGreenYLabel);
+        }else{
+            line.setmBitmapLabelY(bitmapIconRedYLabel);
+        }
+        line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
+    }
+    private void deleteDealingLimitLine(final int ticket){
+        if(OrderAnswer.getInstance() != null && ticket != 0){
+            if(listOpenDealings != null && listOpenDealings.size() != 0){
+                for(OrderAnswer order: listOpenDealings){
+                    if(order.getTicket() == ticket){
+                        redrawPointsDealings(order);
+                        listOpenDealings.remove(order);
+                        CheckDealingService.setListOrderAnswer(listOpenDealings);
+                        mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
+                        drawAllDealingsLimitLines(listOpenDealings);
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     public void showSignalsPanel() {
         parseResponseSignals(ConventString.getActive(tvValueActive));
-        if (!isDirection) {
+        if(!isDirection) {
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         }
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 60 : -60));
@@ -1289,7 +1235,6 @@ public class TerminalFragment extends Fragment {
                     }, 3000);
                 }
             }
-
             @Override
             public void onAnimationRepeat(Animation animation) {
             }
@@ -1297,9 +1242,8 @@ public class TerminalFragment extends Fragment {
         llTopPanel.startAnimation(animation);
         isDirection = !isDirection;
     }
-
-    private void showViewCloseDealing(OrderAnswer order) {
-        if (CustomSharedPreferences.getAgreeCloseDealing(getContext())) {
+    private void showViewCloseDealing(OrderAnswer order){
+        if(CustomSharedPreferences.getAgreeCloseDealing(getContext())){
             dialogAgreeDeleteDealing = CustomDialog.showDialogCloseDealing(getActivity(), v12 -> {
                 requestDeleteDealing(order);
                 dialogAgreeDeleteDealing.cancel();
@@ -1308,7 +1252,7 @@ public class TerminalFragment extends Fragment {
                 CustomSharedPreferences.setAgreeCloseDealing(getContext(), false);
                 dialogAgreeDeleteDealing.cancel();
             });
-        } else {
+        }else{
             requestDeleteDealing(order);
         }
     }
@@ -1316,30 +1260,28 @@ public class TerminalFragment extends Fragment {
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String responseInfo = intent.getStringExtra(InfoUserService.RESPONSE_INFO);
-            String responseSummary = intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY);
-            if (responseInfo != null && responseSummary != null && responseInfo.equals(Const.RESPONSE_CODE_SUCCESS) && responseSummary.equals(Const.RESPONSE_CODE_SUCCESS)) {
-                if (InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getInstruments() != null && InfoAnswer.getInstance().getInstruments().size() > 0) {
-                    listActives.clear();
-                    for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
-                        listActives.add(instrument.getSymbol());
-                    }
-                    if (listActives != null && listActives.size() > 0 && listActives.contains(Const.SYMBOL) && !ConventString.getActive(tvValueActive).equals(Const.SYMBOL)) {
-                        sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));
-                        changeActive();
-                    }
+            if (intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null &&
+                intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) &&
+                intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS) && InfoAnswer.getInstance() != null &&
+                InfoAnswer.getInstance().getInstruments() != null && InfoAnswer.getInstance().getInstruments().size() > 0) {
+                listActives.clear();
+                for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
+                    listActives.add(instrument.getSymbol());
+                }
+                if (listActives != null && listActives.size() > 0 && listActives.contains(Const.SYMBOL) && !ConventString.getActive(tvValueActive).equals(Const.SYMBOL)) {
+                    sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));
+                    changeActive();
                 }
                 ConventString.updateBalance(tvBalance);
-                requestSignals();
             }
-        }
+            requestSignals();
+         }
     }
-
     public class GetResponseSymbolHistoryBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String response = intent.getStringExtra(SymbolHistoryService.RESPONSE);
-            if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SymbolHistoryAnswer.getInstance() != null) {
+            if (intent.getStringExtra(SymbolHistoryService.RESPONSE) != null && intent.getStringExtra(SymbolHistoryService.RESPONSE).equals(Const.RESPONSE_CODE_SUCCESS) &&
+                    SymbolHistoryAnswer.getInstance() != null) {
                 parseResponseSymbolHistory();
             } else {
                 GrandCapitalApplication.closeAndOpenSocket(sSymbolCurrent);
@@ -1348,7 +1290,6 @@ public class TerminalFragment extends Fragment {
             setEnabledBtnChooseActive(true);
         }
     }
-
     public class GetResponseOpenDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1367,7 +1308,6 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setOpenTime(ConventDate.getCurrentDate());
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
                 typePoint = POINT_OPEN_DEALING;
-                drawDealingLimitLine(currentDealing, false);
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));
@@ -1380,7 +1320,6 @@ public class TerminalFragment extends Fragment {
             setEnabledBtnTerminal(true);
         }
     }
-
     public class GetResponseCheckClosedDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1388,12 +1327,11 @@ public class TerminalFragment extends Fragment {
             new Handler().postDelayed(() -> requestGetAllOrders(), 4500);
         }
     }
-
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (OrderAnswer.getInstance() != null) {
-                switch (intent.getIntExtra(OrdersService.FUNCTION, 0)) {
+                switch (intent.getIntExtra(OrdersService.FUNCTION, 0)){
                     case OrdersService.GET_ALL_ORDERS:
                         List<OrderAnswer> listAllOpenDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION);
                         listOpenDealings = OrderAnswer.filterOrdersCurrentActive(listAllOpenDealings, DealingFragment.OPEN_TAB_POSITION, ConventString.getActive(tvValueActive));
@@ -1415,7 +1353,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseSignalsBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1427,37 +1364,14 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseEarlyClosureBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(EarlyClosureService.RESPONSE);
             if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && EarlyClosureAnswer.getInstance() != null &&
                     InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
-                for (int i = 0; i < EarlyClosureAnswer.getInstance().getInstruments().size(); i++) {
-                    Instrument instrument = EarlyClosureAnswer.getInstance().getInstruments().get(i);
-                    if (instrument.getSymbol().contains(tvValueActive.getText().toString())) {
-                        String typeOption = InfoAnswer.getInstance().getGroup().getOptionsStyle();
-                        int percent = 100;
-                        if (typeOption.contains(Const.TYPE_OPTION_AMERICAN)) {
-                            isTypeOptionAmerican = true;
-                            percent = instrument.getWinFull();
-                        } else if (typeOption.contains(Const.TYPE_OPTION_EUROPEAN)) {
-                            isTypeOptionAmerican = false;
-                            int timeValue = ConventString.getTimeValue(etValueTime);
-                            if (timeValue < 5) {
-                                percent = instrument.getWinLt5();
-                            } else if (timeValue >= 5 && timeValue < 15) {
-                                percent = instrument.getWin5();
-                            } else if (timeValue >= 15 && timeValue < 30) {
-                                percent = instrument.getWin15();
-                            } else {
-                                percent = instrument.getWin30();
-                            }
-                        }
-                        tvValueRewardTerminal.setText(ConventString.getStringEarlyClosure(etValueAmount, percent));
-                    }
-                }
+                isTypeOptionAmerican = intent.getBooleanExtra(EarlyClosureService.IS_AMERICAN, false);
+                tvValueRewardTerminal.setText(ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
             } else {
                 CustomDialog.showDialogInfo(getActivity(),
                         getResources().getString(R.string.error),
@@ -1465,14 +1379,13 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseDeleteDealingBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(DeleteDealingService.RESPONSE);
             if (response == null || !response.equals(Const.CODE_SUCCESS_DELETE_DEALING)) {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.request_error_title), getResources().getString(R.string.request_error_request));
-            } else {
+            }else{
                 deleteDealingLimitLine(intent.getIntExtra(DeleteDealingService.TICKET, 0));
             }
         }

@@ -158,7 +158,7 @@
     <string name="error_find_signal">No signals available for this asset</string>
 
     <string name="of_price">Price </string>
-    <string name="profit">profit </string>
+    <string name="profit">Profit </string>
     <string-array name="months">
         <item>January</item>
         <item>February</item>

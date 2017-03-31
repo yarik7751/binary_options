@@ -158,7 +158,7 @@
     <string name="error_find_signal">Aucun signal disponible pour cet actif</string>
 
     <string name="of_price">Prix </string>
-    <string name="profit">profit </string>
+    <string name="profit">Profit </string>
     <string-array name="months">
         <item>Janvier</item>
         <item>Février</item>

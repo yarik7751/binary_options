@@ -4,9 +4,14 @@ package com.elatesoftware.grandcapital.api.pojo;
  * Created by Дарья Высокович on 10.03.2017.
  */
 
+import android.view.View;
+
+import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.utils.ConventString;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SignalAnswer {
@@ -115,5 +120,16 @@ public class SignalAnswer {
         this.instrument = instrument;
         return this;
     }
-
+    public static List<SignalAnswer> getSignalsActive(String symbol) {
+        List<SignalAnswer> list = null;
+        if (SignalAnswer.getInstance() != null) {
+            list = new ArrayList<>();
+            for (SignalAnswer answer : SignalAnswer.getInstance()) {
+                if (answer.getInstrument().replace("/", "").equals(symbol)) {
+                    list.add(answer);
+                }
+            }
+        }
+        return list;
+    }
 }

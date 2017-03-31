@@ -1,5 +1,7 @@
 package com.elatesoftware.grandcapital.api.pojo;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -37,6 +39,11 @@ public class SymbolHistoryAnswer {
     }
     public static void setInstance(List<SymbolHistoryAnswer> symbolList) {
         symbolInstance = symbolList;
+    }
+    public static void addSocketAnswerInSymbol(final SocketAnswer item) {
+        if (SymbolHistoryAnswer.getInstance() != null) {
+            SymbolHistoryAnswer.getInstance().add(new SymbolHistoryAnswer(item.getHigh(), item.getBid(), item.getAsk(), item.getLow(), item.getTime()));
+        }
     }
     public static void nullInstance() {
         symbolInstance = null;
