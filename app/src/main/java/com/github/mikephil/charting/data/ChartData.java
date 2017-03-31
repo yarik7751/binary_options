@@ -432,14 +432,11 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
     public void addEntry(Entry e, int dataSetIndex) {
 
         if (mDataSets.size() > dataSetIndex && dataSetIndex >= 0) {
-
             IDataSet set = mDataSets.get(dataSetIndex);
             // add the entry to the dataset
             if (!set.addEntry(e))
                 return;
-
             calcMinMax(e, set.getAxisDependency());
-
         } else {
             Log.e("addEntry", "Cannot add Entry because dataSetIndex too high or too low.");
         }

@@ -24,7 +24,7 @@ public class ConventDate {
     private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final DateFormat sdfHHMM = new SimpleDateFormat("HH:mm");
     private final static double DIFFERENSE_FOR_SOCKET = 1.5;
-    private final static int DIFFERENCE_FOR_POINTS = 4200;
+    private final static int DIFFERENCE_FOR_POINTS = 4000;
     private static final String timeZone = "GMT+00:00:00";
 
     private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
