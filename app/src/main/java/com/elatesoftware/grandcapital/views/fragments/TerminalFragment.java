@@ -157,6 +157,7 @@ public class TerminalFragment extends Fragment {
     private Entry entryLast;
     private Handler handler;
     private Entry currEntry;
+    private float x1 = -1, y1 = -1, x2 = -1, y2 = -1, distance1 = -1, distance2 = -1;
 
     private ViewInfoHelper mViewInfoHelper;
 
@@ -441,7 +442,7 @@ public class TerminalFragment extends Fragment {
         mChart.setHighlightPerDragEnabled(false);
         mChart.setHighlightPerTapEnabled(false);
         mChart.setPadding(0, 0, 0, 0);
-        //mChart.setAutoScaleMinMaxEnabled(true);
+        mChart.setAutoScaleMinMaxEnabled(true);
         mChart.setScaleYEnabled(false);
         mChart.setScaleMinima(0.4f, 1f);
         mChart.setDoubleTapToZoomEnabled(false);
@@ -453,7 +454,7 @@ public class TerminalFragment extends Fragment {
         mChart.setBackgroundColor(Color.TRANSPARENT);
         mChart.getLegend().setEnabled(false);
         mChart.setDrawMarkers(true);
-        mChart.getViewPortHandler().setMaximumScaleX(10f);
+        //mChart.getViewPortHandler().setMaximumScaleX(10f);
 
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
@@ -486,17 +487,9 @@ public class TerminalFragment extends Fragment {
         mChart.setOnChartGestureListener(new OnChartGestureListener() {
             @Override
             public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-                /*if(mChart.getViewPortHandler().getScaleX() >= 10f) {
-                    mChart.getViewPortHandler().zoomOut(10f, mChart.getViewPortHandler().getScaleY());
-                }*/
-                //mChart.setScaleXEnabled(true);
             }
             @Override
             public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-                /*if(mChart.getViewPortHandler().getScaleX() >= 10f) {
-                    mChart.getViewPortHandler().setZoom(10f, mChart.getViewPortHandler().getScaleY());
-                }*/
-                //mChart.setScaleXEnabled(true);
             }
             @Override
             public void onChartLongPressed(MotionEvent me) {
@@ -518,10 +511,6 @@ public class TerminalFragment extends Fragment {
 
             @Override
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-                /*Log.d(TAG, "getScaleX: " + mChart.getViewPortHandler().getScaleX());
-                if(mChart.getViewPortHandler().getScaleX() == 10f) {
-                    mChart.setScaleXEnabled(false);
-                }*/
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null){
@@ -533,7 +522,6 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
-                //Log.d(TAG, "onChartTranslate");
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
@@ -558,19 +546,48 @@ public class TerminalFragment extends Fragment {
                     return true;
                 }
 
-                if(event.getActionMasked() == MotionEvent.ACTION_MOVE && event.getPointerCount() >= 2) {
+                if(event.getActionMasked() == MotionEvent.ACTION_MOVE && event.getPointerCount() == 2) {
                     Log.d(TAG, "onTouch");
-                    Log.d(TAG, "getScaleX: " + mChart.getViewPortHandler().getScaleX());
-                    /*if(mChart.getViewPortHandler().getScaleX() >= 10f) {
-                        mChart.setScaleXEnabled(false);
+                    if(x1 < 0 && y1 < 0 && x2 < 0 && y2 < 0) {
+                        setPoints(event);
+                        distance1 = callDistance();
+                        return false;
                     } else {
-                        mChart.setScaleXEnabled(true);
-                    }*/
+                        setPoints(event);
+                        distance2 = callDistance();
+                        if(Math.abs(distance1 - distance2) >= 5) {
+                            if (distance1 < distance2) {
+                                Log.d(TAG, "SCALE +++");
+                                if(mChart.getViewPortHandler().getScaleX() >= 10f) {
+                                    Log.d(TAG, "setScaleXEnabled(false)");
+                                    mChart.setScaleXEnabled(false);
+                                    mChart.getViewPortHandler().setZoom(10f, mChart.getViewPortHandler().getScaleY());
+                                    Log.d(TAG, "Scale: " + mChart.getViewPortHandler().getScaleX());
+                                }
+                            } else if (distance1 > distance2) {
+                                Log.d(TAG, "SCALE ---");
+                                mChart.setScaleXEnabled(true);
+                            }
+                            distance1 = distance2;
+                        }
+                    }
                 }
                 return false;
             }
         });
     }
+
+    private float callDistance() {
+        return (float) Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
+
+    private void setPoints(MotionEvent event) {
+        x1 = event.getX(0);
+        y1 = event.getY(0);
+        x2 = event.getX(1);
+        y2 = event.getY(1);
+    }
+
     private void initializationCurrentPoint() {
         imgPointCurrent = new ImageView(getContext());
         imgPointCurrent.setId(R.id.img);
@@ -862,6 +879,10 @@ public class TerminalFragment extends Fragment {
 
     public synchronized void addEntry(final SocketAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getAsk() != null) {
+            if (isFirstDrawPoint) {
+                imgPointCurrent.setVisibility(View.VISIBLE);
+                isFirstDrawPoint = false;
+            }
             LineData data = getLineDataChart();
             LineData lineData = mChart.getLineData();
             if (data != null) {
@@ -957,12 +978,8 @@ public class TerminalFragment extends Fragment {
                 currEntry = entry;
                 getActivity().runOnUiThread(() -> {
                     drawSocketCurrentYLimitLine(entry);
-                    if (isFirstDrawPoint) {
-                        imgPointCurrent.setVisibility(View.VISIBLE);
-                        isFirstDrawPoint = false;
-                    }
                     if (imgPointCurrent != null || currEntry != null) {
-                        MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
+                        MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                         if (point != null) {
                             Log.d(TAG, "setPoint position");
                             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
@@ -998,11 +1015,6 @@ public class TerminalFragment extends Fragment {
         }
     }
     private void drawCurrentPoint(Entry entry) {
-        if(isFirstDrawPoint) {
-            //hideCurrentPoint();
-        } else {
-            //imgPointCurrent.setVisibility(View.VISIBLE);
-        }
         if (imgPointCurrent != null) {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
@@ -1402,10 +1414,6 @@ public class TerminalFragment extends Fragment {
                     InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
                 isTypeOptionAmerican = intent.getBooleanExtra(EarlyClosureService.IS_AMERICAN, false);
                 tvValueRewardTerminal.setText(ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
-            } else {
-                CustomDialog.showDialogInfo(getActivity(),
-                        getResources().getString(R.string.error),
-                        getResources().getString(R.string.request_error_text));
             }
         }
     }
