@@ -879,12 +879,7 @@ public class TerminalFragment extends Fragment {
 
     public synchronized void addEntry(final SocketAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getAsk() != null) {
-            if (isFirstDrawPoint) {
-                imgPointCurrent.setVisibility(View.VISIBLE);
-                isFirstDrawPoint = false;
-            }
             LineData data = getLineDataChart();
-            LineData lineData = mChart.getLineData();
             if (data != null) {
                 SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
                 mCurrentValueY = answer.getAsk();
@@ -910,7 +905,7 @@ public class TerminalFragment extends Fragment {
 
                 divX = (currEntry.getX() - entryLast.getX()) / 10.f;
                 divY = (currEntry.getY() - entryLast.getY()) / 10.f;
-                
+
                 numberTemporaryPoint = 1;
                 final Entry simplyEntry = new Entry(entryLast.getX(), entryLast.getY(), null, null);
                 handler.postAtTime(new Runnable() {
@@ -931,15 +926,17 @@ public class TerminalFragment extends Fragment {
                             numberTemporaryPoint++;
                             drawSocketCurrentYLimitLine(simplyEntry);
                             if (numberTemporaryPoint <= 10) {
-                                handler.postDelayed(this, 100);
-                            } else {
+                                handler.postDelayed(this, 50);
                             }
                         }
                     }
-                }, 100);
+                }, 50);
             }
         }
     }
+
+
+
     private void addEntry(final SymbolHistoryAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getOpen() != null) {
             LineData data = getLineDataChart();
@@ -970,22 +967,32 @@ public class TerminalFragment extends Fragment {
                     }
                 }
             }
+
             if (mChart.getLineData() != null) {
                 mCurrentValueY = Double.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen()));
                 Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
                         Float.valueOf(String.valueOf(mCurrentValueY)), null, null);
-                mChart.zoom(10f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
+                mChart.zoom(5f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
                 currEntry = entry;
                 getActivity().runOnUiThread(() -> {
                     drawSocketCurrentYLimitLine(entry);
-                    if (imgPointCurrent != null || currEntry != null) {
-                        MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
-                        if (point != null) {
-                            Log.d(TAG, "setPoint position");
-                            imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
-                            imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (imgPointCurrent != null || currEntry != null) {
+                                MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
+                                if (point != null) {
+                                    Log.d(TAG, "setPoint position");
+                                    imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                                    imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+                                }
+                            }
+                            if (isFirstDrawPoint) {
+                                imgPointCurrent.setVisibility(View.VISIBLE);
+                                isFirstDrawPoint = false;
+                            }
                         }
-                    }
+                    }, 10);
                 });
             }
             GrandCapitalApplication.closeAndOpenSocket(symbol);
@@ -1018,7 +1025,14 @@ public class TerminalFragment extends Fragment {
         if (imgPointCurrent != null) {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
-            imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+            float y = point.getY();
+            if(y > mChart.getHeight() - mChart.getHeight() * 0.1f) {
+                y = mChart.getHeight() - mChart.getHeight() * 0.1f;
+            }
+            if(y < mChart.getHeight() * 0.1f) {
+                y = mChart.getHeight() * 0.1f;
+            }
+            imgPointCurrent.setY(y - imgPointCurrent.getHeight() / 2);
         }
     }
     private void drawSocketCurrentYLimitLine(Entry entry) {
