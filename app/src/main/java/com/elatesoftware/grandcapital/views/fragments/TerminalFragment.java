@@ -486,11 +486,17 @@ public class TerminalFragment extends Fragment {
         mChart.setOnChartGestureListener(new OnChartGestureListener() {
             @Override
             public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
+                /*if(mChart.getViewPortHandler().getScaleX() >= 10f) {
+                    mChart.getViewPortHandler().zoomOut(10f, mChart.getViewPortHandler().getScaleY());
+                }*/
+                //mChart.setScaleXEnabled(true);
             }
             @Override
             public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
+                /*if(mChart.getViewPortHandler().getScaleX() >= 10f) {
+                    mChart.getViewPortHandler().setZoom(10f, mChart.getViewPortHandler().getScaleY());
+                }*/
+                //mChart.setScaleXEnabled(true);
             }
             @Override
             public void onChartLongPressed(MotionEvent me) {
@@ -506,10 +512,16 @@ public class TerminalFragment extends Fragment {
                 onClickYLimitLines(event.getX(), event.getY());
             }
             @Override
-            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {}
+            public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+                Log.d(TAG, "onChartFling");
+            }
 
             @Override
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+                /*Log.d(TAG, "getScaleX: " + mChart.getViewPortHandler().getScaleX());
+                if(mChart.getViewPortHandler().getScaleX() == 10f) {
+                    mChart.setScaleXEnabled(false);
+                }*/
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null){
@@ -521,11 +533,10 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
+                //Log.d(TAG, "onChartTranslate");
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
-                        Log.d(TAG, "maxim x: " + mChart.getHighestVisibleX());
-                        Log.d(TAG, "point x: " + (point.getX() - imgPointCurrent.getWidth() / 2));
                         if(currEntry.getX() >= mChart.getHighestVisibleX()) {
                             imgPointCurrent.setVisibility(View.INVISIBLE);
                         } else {
@@ -536,6 +547,27 @@ public class TerminalFragment extends Fragment {
                     }
                 }
                 redrawScrollLinesDealings(mChart.getHighestVisibleX());
+            }
+        });
+
+        mChart.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                if(event.getPointerCount() >= 3) {
+                    return true;
+                }
+
+                if(event.getActionMasked() == MotionEvent.ACTION_MOVE && event.getPointerCount() >= 2) {
+                    Log.d(TAG, "onTouch");
+                    Log.d(TAG, "getScaleX: " + mChart.getViewPortHandler().getScaleX());
+                    /*if(mChart.getViewPortHandler().getScaleX() >= 10f) {
+                        mChart.setScaleXEnabled(false);
+                    } else {
+                        mChart.setScaleXEnabled(true);
+                    }*/
+                }
+                return false;
             }
         });
     }
@@ -831,58 +863,55 @@ public class TerminalFragment extends Fragment {
     public synchronized void addEntry(final SocketAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getAsk() != null) {
             LineData data = getLineDataChart();
+            LineData lineData = mChart.getLineData();
             if (data != null) {
                 SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
                 mCurrentValueY = answer.getAsk();
                 currEntry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
                 entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
+                switch (typePoint) {
+                    case POINT_CLOSE_DEALING:
+                        entryLast.setIcon(drawableMarkerDealing);
+                        entryLast.setData(null);
+                        typePoint = POINT_SIMPLY;
+                        break;
+                    case POINT_OPEN_DEALING:
+                        OrderAnswer order = currentDealing;
+                        order.setOpenPrice(answer.getAsk());
+                        String dataEntry = new Gson().toJson(order);
+                        entryLast.setIcon(drawableMarkerDealing);
+                        entryLast.setData(dataEntry);
+                        drawDealingLimitLine(order, false);
+                        currentDealing = null;
+                        typePoint = POINT_SIMPLY;
+                        break;
+                }
 
                 divX = (currEntry.getX() - entryLast.getX()) / 10.f;
                 divY = (currEntry.getY() - entryLast.getY()) / 10.f;
-
+                
                 numberTemporaryPoint = 1;
+                final Entry simplyEntry = new Entry(entryLast.getX(), entryLast.getY(), null, null);
                 handler.postAtTime(new Runnable() {
                     @Override
                     public void run() {
                         if(entryLast != null && currEntry != null) {
-                            entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
-                            float x = entryLast.getX();
-                            float y = entryLast.getY();
+                            float x = simplyEntry.getX();
+                            float y = simplyEntry.getY();
                             x += divX;
                             y += divY;
-                            Entry newEntry;
-                            switch (typePoint) {
-                                case POINT_CLOSE_DEALING:
-                                    newEntry = new Entry(x, y, drawableMarkerDealing, null);
-                                    typePoint = POINT_SIMPLY;
-                                    break;
-                                case POINT_OPEN_DEALING:
-                                    OrderAnswer order = currentDealing;
-                                    order.setOpenPrice(answer.getAsk());
-                                    String dataEntry = new Gson().toJson(order);
-                                    newEntry = new Entry(x, y, drawableMarkerDealing, dataEntry);
-                                    drawDealingLimitLine(order, false);
-                                    currentDealing = null;
-                                    typePoint = POINT_SIMPLY;
-                                    break;
-                                case POINT_SIMPLY:
-                                    newEntry = new Entry(x, y, null, null);
-                                    break;
-                                default:
-                                    newEntry = new Entry(x, y, null, null);
-                                    typePoint = POINT_SIMPLY;
-                                    break;
+                            simplyEntry.setX(x);
+                            simplyEntry.setY(y);
+                            if(numberTemporaryPoint == 1) {
+                                data.addEntry(simplyEntry, 0);
                             }
-                            LineData data = mChart.getLineData();
-                            data.addEntry(newEntry, 0);
                             data.notifyDataChanged();
-                            mChart.notifyDataSetChanged();
                             mChart.invalidate();
                             numberTemporaryPoint++;
-                            drawSocketCurrentYLimitLine(newEntry);
-                            entryLast = newEntry;
+                            drawSocketCurrentYLimitLine(simplyEntry);
                             if (numberTemporaryPoint <= 10) {
                                 handler.postDelayed(this, 100);
+                            } else {
                             }
                         }
                     }
