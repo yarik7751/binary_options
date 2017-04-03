@@ -14,7 +14,8 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.views.items.chart.CustomBaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.XDealingLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
@@ -221,8 +222,9 @@ public class XAxisRenderer extends AxisRenderer {
                     textPaint.setStrokeWidth(0.5f);
 
                     for (LimitLine l : limitLines) {
-                        if (l instanceof CustomBaseLimitLine) {
-                            CustomBaseLimitLine line = (CustomBaseLimitLine) l;
+                        if (l instanceof XDealingLine) {
+                            XDealingLine line = (XDealingLine) l;
+
                             OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
 
                             String strLabelX = String.valueOf(ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(line.getLimit())));
@@ -237,9 +239,9 @@ public class XAxisRenderer extends AxisRenderer {
                                 iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
                             }
 
-                            if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
+                            if (!line.ismIsActive()) {
                                 line.enableDashedLine(10f, 10f, 0f);
-                            }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
+                            }else {
                                 line.enableDashedLine(0f, 0f, 0f);
                             }
                             line.setLineWidth(1.0f);
@@ -382,7 +384,7 @@ public class XAxisRenderer extends AxisRenderer {
             int clipRestoreCount = c.save();
 
             position[0] = l.getLimit();
-            if(l instanceof CustomBaseLimitLine){
+            if(l instanceof BaseLimitLine){
                 OrderAnswer orderAnswer = new Gson().fromJson(l.getLabel(), OrderAnswer.class);
                 position[1] =  Float.valueOf(String.valueOf(orderAnswer.getOpenPrice()));
             }else{
@@ -412,11 +414,11 @@ public class XAxisRenderer extends AxisRenderer {
         mLimitLinePaint.setPathEffect(limitLine.getDashPathEffect());
         mLimitLinePaint.setStyle(Paint.Style.STROKE);
         mLimitLinePaint.setColor(limitLine.getLineColor());
-        if(limitLine instanceof CustomBaseLimitLine){
-            CustomBaseLimitLine line = (CustomBaseLimitLine) limitLine;
-            if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_PASS)) {
+        if(limitLine instanceof BaseLimitLine){
+            XDealingLine line = (XDealingLine) limitLine;
+            if (!line.ismIsActive()) {
                 line.enableDashedLine(10f, 10f, 0f);
-            }else if(line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_VERTICAL_DEALING_ACTIVE)){
+            }else {
                 line.enableDashedLine(0f, 0f, 0f);
             }
         }

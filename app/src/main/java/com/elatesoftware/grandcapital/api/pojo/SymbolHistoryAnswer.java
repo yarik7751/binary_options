@@ -1,10 +1,10 @@
 package com.elatesoftware.grandcapital.api.pojo;
 
-import android.util.Log;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SymbolHistoryAnswer {
@@ -25,7 +25,7 @@ public class SymbolHistoryAnswer {
     @Expose
     private Long time;
 
-    public SymbolHistoryAnswer(Double high, Double close, Double open, Double low, Long time) {
+    private SymbolHistoryAnswer(Double high, Double close, Double open, Double low, Long time) {
         this.high = high;
         this.close = close;
         this.open = open;
@@ -45,6 +45,17 @@ public class SymbolHistoryAnswer {
             SymbolHistoryAnswer.getInstance().add(new SymbolHistoryAnswer(item.getHigh(), item.getBid(), item.getAsk(), item.getLow(), item.getTime()));
         }
     }
+    private static void sortList(){
+        if(symbolInstance != null){
+            Collections.sort((List)symbolInstance, new Comparator<SymbolHistoryAnswer>() {
+                @Override
+                public int compare(SymbolHistoryAnswer o1, SymbolHistoryAnswer o2) {
+                    return o1.getTime().compareTo(o2.getTime());
+                }
+            });
+        }
+    }
+
     public static void nullInstance() {
         symbolInstance = null;
     }

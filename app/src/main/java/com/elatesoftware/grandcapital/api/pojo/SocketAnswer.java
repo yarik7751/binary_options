@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Дарья Высокович on 28.02.2017.
  */
@@ -70,6 +73,27 @@ public class SocketAnswer {
     public static void clearSocketAnswer(){
         answersInstance = null;
     }
+
+    private static List<SocketAnswer> listSocketPointsBackGround = null;
+    public static List<SocketAnswer> getInstanceListBackGround() {
+        if(listSocketPointsBackGround == null){
+            listSocketPointsBackGround = new ArrayList<>();
+        }
+        return listSocketPointsBackGround;
+    }
+    public static void clearListBackGround(){
+        if(listSocketPointsBackGround == null){
+            listSocketPointsBackGround = new ArrayList<>();
+        }
+        listSocketPointsBackGround.clear();
+    }
+    public static void addItemListBackGround(SocketAnswer answerCurrent){
+        if(listSocketPointsBackGround == null){
+            listSocketPointsBackGround = new ArrayList<>();
+        }
+        listSocketPointsBackGround.add(answerCurrent);
+    }
+
 
     public String getSymbol() {
         return symbol;
@@ -179,7 +203,7 @@ public class SocketAnswer {
         return (time * 1000);
     }
 
-    public void setTime(Long time) {
+    public synchronized void setTime(Long time) {
         this.time = time;
     }
 

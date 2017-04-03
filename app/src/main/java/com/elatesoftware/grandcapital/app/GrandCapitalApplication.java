@@ -41,7 +41,6 @@ public class GrandCapitalApplication extends Application{
     private static Context context;
     private static SSLContext sc;
     public static WebSocketClient mClient;
-    //public static WebSocket mClient;
     public final static String TAG_SOCKET = "debug_for_socket";
 
     private static SocketAnswer answerCurrent = null;
@@ -88,14 +87,12 @@ public class GrandCapitalApplication extends Application{
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //mClient = WebSocketCustom.getmWebSocket();
         timer = new Timer();
         startTimer();
     }
 
     public static void closeSocket(){
-        TerminalFragment.listSocketPointsBackGround.clear();
+        SocketAnswer.clearListBackGround();
          answerCurrent = null;
          answerSave = null;
          symbolCurrent = "";
@@ -138,17 +135,17 @@ public class GrandCapitalApplication extends Application{
                                     });
                                 } else {
                                     TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                                        TerminalFragment.listSocketPointsBackGround.add(answerCurrent);
+                                        SocketAnswer.addItemListBackGround(answerCurrent);
                                     });
                                 }
                             }
                         }
                         answerSave = answerCurrent;
+                    }else{
+                        TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
+                            TerminalFragment.getInstance().redrawXYDealingLimitLines();
+                        });
                     }
-                    TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                        TerminalFragment.getInstance().redrawXYDealingLimitLines();
-
-                    });
                 }
             }
         }, 3000, 1000);
@@ -165,7 +162,7 @@ public class GrandCapitalApplication extends Application{
                             Log.d(TAG_SOCKET, "Open Connect Socket");
                             if(!symbolCurrent.equals("")){
                                 mClient.send(symbolCurrent);
-                                TerminalFragment.listSocketPointsBackGround.clear();
+                                SocketAnswer.clearListBackGround();
                                 Log.d(TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
                             }
                         }
@@ -184,7 +181,7 @@ public class GrandCapitalApplication extends Application{
                         public void onClose(int code, String reason, boolean remote){
                             Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
 
-                            TerminalFragment.listSocketPointsBackGround.clear();
+                            SocketAnswer.clearListBackGround();
                             if(!symbolCurrent.equals("")){
                                 closeAndOpenSocket(symbolCurrent);
                             }

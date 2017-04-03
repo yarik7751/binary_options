@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.views.items.ResideMenu;
+package com.elatesoftware.grandcapital.views.items.resideMenu;
 
 import android.app.Activity;
 import android.content.Context;

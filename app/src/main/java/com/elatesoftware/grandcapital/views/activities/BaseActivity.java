@@ -15,8 +15,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
-import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
@@ -33,13 +31,9 @@ import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.elatesoftware.grandcapital.views.fragments.ToolbarFragment;
 import com.elatesoftware.grandcapital.views.fragments.WebFragment;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
-import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
-import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItem;
-import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenuItemWithMark;
-import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.OnChangePosition;
-
-import java.util.Timer;
-import java.util.TimerTask;
+import com.elatesoftware.grandcapital.views.items.resideMenu.ResideMenu;
+import com.elatesoftware.grandcapital.views.items.resideMenu.ResideMenuItem;
+import com.elatesoftware.grandcapital.views.items.resideMenu.ResideMenuItemWithMark;
 
 public class BaseActivity extends CustomFontsActivity {
 

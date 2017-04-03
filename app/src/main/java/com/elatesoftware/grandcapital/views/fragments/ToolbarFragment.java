@@ -13,7 +13,7 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.views.items.ResideMenu.ResideMenu;
+import com.elatesoftware.grandcapital.views.items.resideMenu.ResideMenu;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.ToolTabsView;
 import com.elatesoftware.grandcapital.views.items.tooltabsview.adapter.ToolTabsViewAdapter;
 
@@ -57,16 +57,12 @@ public class ToolbarFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         imgBurger = (ImageView) mParentActivity.findViewById(R.id.menu_burger);
-        //imgBurger.setOnClickListener(v -> mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT));
-        imgBurger.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (burgerType == BURGER_OPEN_MENU) {
-                    mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
-                }
-                if (burgerType == BURGER_BACK_PRESSED) {
-                    getActivity().onBackPressed();
-                }
+        imgBurger.setOnClickListener(v -> {
+            if (burgerType == BURGER_OPEN_MENU) {
+                mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
+            }
+            if (burgerType == BURGER_BACK_PRESSED) {
+                getActivity().onBackPressed();
             }
         });
         mPageTitle = (TextView) getView().findViewById(R.id.page_title);

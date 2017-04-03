@@ -13,7 +13,10 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.views.items.chart.CustomBaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.DealingLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.SocketLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.YDealingLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
@@ -124,13 +127,14 @@ public class YAxisRenderer extends AxisRenderer {
         List<LimitLine> limitLines = mYAxis.getLimitLines();
         float[] pts = new float[2];
         for (LimitLine l : limitLines) {
-            if (l instanceof CustomBaseLimitLine) {
-                CustomBaseLimitLine line = (CustomBaseLimitLine) l;
-/************************************************** LINE_HORIZONTAL_CURRENT_SOCKET ************************************************************************/
-                if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_CURRENT_SOCKET)) {
-                    line.setLineWidth(1.0f);
-                    line.setLineColor(Color.WHITE);
-                    line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+            if (l instanceof BaseLimitLine) {
+                BaseLimitLine line = (BaseLimitLine) l;
+/************************************************** LINE_CURRENT_SOCKET ************************************************************************/
+                if (line instanceof SocketLine) {
+                    SocketLine lineSocket = (SocketLine) line;
+                    lineSocket.setLineWidth(1.0f);
+                    lineSocket.setLineColor(Color.WHITE);
+                    lineSocket.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
 
                     Paint paint = new Paint();
                     paint.setStyle(Paint.Style.FILL);
@@ -144,9 +148,9 @@ public class YAxisRenderer extends AxisRenderer {
                     textPaint.setStrokeWidth(0.5f);
                     textPaint.setStyle(l.getTextStyle());
 
-                    pts[1] = l.getLimit();
+                    pts[1] = lineSocket.getLimit();
                     mTrans.pointValuesToPixel(pts);
-                    String strLabel = l.getLabel();
+                    String strLabel = lineSocket.getLabel();
                     String lastSymbol = "";
                     if (strLabel.length() > 3) {
                         if(strLabel.length() > 7){
@@ -176,11 +180,12 @@ public class YAxisRenderer extends AxisRenderer {
                             c.drawText(lastSymbol, fixedPosition - paddingHoriz / 3 + width, posY, textPaint);
                         }
                     }
-/************************************************** LINE_HORIZONTAL_CURRENT_DEALING ************************************************************************/
-                } else if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_CURRENT_DEALING)) {
-                    line.setLineWidth(1.0f);
-                    line.setLineColor(line.getLineColor());
-                    line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+/************************************************** LINE_CURRENT_DEALING ************************************************************************/
+                } else if (line instanceof DealingLine) {
+                    DealingLine lineDealing = (DealingLine) line;
+                    lineDealing.setLineWidth(1.0f);
+                    lineDealing.setLineColor(line.getLineColor());
+                    lineDealing.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
                     Paint paint = new Paint();
                     paint.setStyle(Paint.Style.FILL);
                     paint.setColor(line.getLineColor());
@@ -194,11 +199,11 @@ public class YAxisRenderer extends AxisRenderer {
                     textPaint.setStrokeWidth(0.5f);
                     textPaint.setStyle(l.getTextStyle());
 
-                    pts[1] = l.getLimit();
+                    pts[1] = lineDealing.getLimit();
                     mTrans.pointValuesToPixel(pts);
-                    String strLabel = l.getLabel();
+                    String strLabel = lineDealing.getLabel();
 
-                    Bitmap bitmapLabel = line.getmBitmapLabelY();
+                    Bitmap bitmapLabel = lineDealing.getmBitmapLabelY();
                     float paddingVert = Utils.convertDpToPixel(8);
                     float paddingHoriz = Utils.convertDpToPixel(10);
                     float height = Utils.calcTextHeight(textPaint, strLabel);
@@ -213,10 +218,11 @@ public class YAxisRenderer extends AxisRenderer {
                         c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz/2, posY - height_marker + paddingVert / 2, paint);
                         c.drawText(strLabel, fixedPosition, posY, textPaint);
                     }
-/************************************************** LINE_HORIZONTAL_DEALING ************************************************************************/
-                }else if (line.getTypeLimitLine().equals(CustomBaseLimitLine.LimitLinesType.LINE_HORIZONTAL_DEALING)) {
-                        line.setLineWidth(0.0f);
-                        line.setLineColor(Color.TRANSPARENT);
+/************************************************** LINE_Y_DEALING_PASSIVE ************************************************************************/
+                }else if (line instanceof YDealingLine){
+                        YDealingLine lineDealing = (YDealingLine) line;
+                        lineDealing.setLineWidth(0.0f);
+                        lineDealing.setLineColor(Color.TRANSPARENT);
                         line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
                         Paint paint = new Paint();
                         paint.setStyle(Paint.Style.FILL);
@@ -231,12 +237,12 @@ public class YAxisRenderer extends AxisRenderer {
                         textPaint.setStrokeWidth(0.5f);
                         textPaint.setStyle(l.getTextStyle());
 
-                        pts[1] = l.getLimit();
+                        pts[1] = lineDealing.getLimit();
                         mTrans.pointValuesToPixel(pts);
                         OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                        String strLabelY  = ConventDate.getDifferenceDateToString(Long.valueOf(line.getmTimer()));
+                        String strLabelY  = ConventDate.getDifferenceDateToString(Long.valueOf(lineDealing.getmTimer()));
 
-                        Bitmap iconLabelY = line.getmBitmapLabelY();
+                        Bitmap iconLabelY = lineDealing.getmBitmapLabelY();
                         Bitmap iconClose = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.close_button);
                         Bitmap iconCMD;
                         if(order.getCmd() == 1){
@@ -256,7 +262,7 @@ public class YAxisRenderer extends AxisRenderer {
                         float posY = pts[1] + heightStrLabelY / 2;
 
                     if (iconLabelY != null && iconCMD != null) {
-                        if(line.ismIsAmerican()){
+                        if(lineDealing.ismIsAmerican()){
                             float height_markerIconClose = Utils.convertDpToPixel(12);
                             float width_markerIconClose =  Utils.convertDpToPixel(12);
                             iconClose = Bitmap.createScaledBitmap(iconClose, (int) width_markerIconClose, (int) height_markerIconClose, false);
@@ -271,7 +277,7 @@ public class YAxisRenderer extends AxisRenderer {
                         c.drawBitmap(iconLabelY, fixedPosition - width_markerIconLabelY/2 - paddingHorizIconLabelY/3, posY - height_markerIconLabelY + paddingVertIconLabelY/2, paint);
                         c.drawBitmap(iconCMD, fixedPosition - width_markerIconLabelY/2, posY - height_markerIconLabelY/2, paint);
                         c.drawText(strLabelY, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*5/4, posY - heightStrLabelY/7, textPaint);
-                        if(line.ismIsAmerican()){
+                        if(lineDealing.ismIsAmerican()){
                             c.drawBitmap(iconClose, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*3/2 + widthStrLabelY, posY - height_markerIconLabelY/2, paint);
                         }
                     }
