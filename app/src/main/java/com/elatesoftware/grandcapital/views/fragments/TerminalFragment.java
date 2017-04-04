@@ -239,7 +239,6 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
         mViewInfoHelper = new ViewInfoHelper(rlChart);
-
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
 
@@ -625,7 +624,7 @@ public class TerminalFragment extends Fragment {
         set.setDrawHighlightIndicators(false);
         return set;
     }
-    private LineData getLineDataChart(){
+    private synchronized LineData getLineDataChart(){
         LineData data = mChart.getData();
         if (data != null) {
             ILineDataSet set = data.getDataSetByIndex(0);
@@ -640,7 +639,7 @@ public class TerminalFragment extends Fragment {
         currEntry = null;
         entryLast = null;
         currentLineDealing = null;
-        currentLineSocket = null;
+        SocketLine.deleteSocketLine(rightYAxis);
         currentDealing = null;
         mCurrentValueY = 0;
         typePoint = POINT_SIMPLY;
@@ -888,7 +887,8 @@ public class TerminalFragment extends Fragment {
                             data.notifyDataChanged();
                             mChart.invalidate();
                             numberTemporaryPoint++;
-                            drawSocketLine(simplyEntry);
+                            SocketLine.drawSocketLine(simplyEntry, rightYAxis);
+                            drawCurrentPoint(simplyEntry);
                             if (numberTemporaryPoint <= 5) {
                                 handler.postDelayed(this, 200);
                             }
@@ -936,7 +936,8 @@ public class TerminalFragment extends Fragment {
                 mChart.zoom(5f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
                 currEntry = entry;
                 getActivity().runOnUiThread(() -> {
-                    drawSocketLine(entry);
+                    SocketLine.drawSocketLine(entry, rightYAxis);
+                    drawCurrentPoint(entry);
                     new Handler().postDelayed(() -> {
                         if (imgPointCurrent != null || currEntry != null) {
                             MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
@@ -971,16 +972,6 @@ public class TerminalFragment extends Fragment {
                 y = mChart.getHeight() * 0.1f;
             }
             imgPointCurrent.setY(y - imgPointCurrent.getHeight() / 2);
-        }
-    }
-    private void drawSocketLine(Entry entry) {
-        if (entry != null) {
-            if (currentLineSocket != null) {
-                rightYAxis.removeLimitLine(currentLineSocket);
-            }
-            currentLineSocket = new SocketLine(entry.getY(), String.valueOf(entry.getY()));
-            rightYAxis.addLimitLine(currentLineSocket);
-            drawCurrentPoint(entry);
         }
     }
     private void drawActiveDealingLine(BaseLimitLine line, OrderAnswer order) {
@@ -1033,13 +1024,13 @@ public class TerminalFragment extends Fragment {
                 YDealingLine line = new YDealingLine(Float.valueOf(String.valueOf(order.getOpenPrice())),
                         new Gson().toJson(order), null,
                         String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican, false);
-                 updateColorYLimitLine(line, order);
+                 YDealingLine.updateColorYLimitLine(line, order, mCurrentValueY);
                  rightYAxis.addLimitLine(line);
             }else{
                 XDealingLine line = new XDealingLine(ConventDate.genericTimeForChart(
                         ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000),
                         new Gson().toJson(order), null, null, String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican, false);
-                updateColorXLimitLine(line, order);
+                XDealingLine.updateColorXLimitLine(line, order, mCurrentValueY);
                 xAxis.addLimitLine(line);
             }
         }
@@ -1105,7 +1096,7 @@ public class TerminalFragment extends Fragment {
                         if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                             line.setmIsAmerican(true);
                         }
-                        updateColorXLimitLine(line, order);
+                        XDealingLine.updateColorXLimitLine(line, order, mCurrentValueY);
                         if(line.ismIsActive()){
                             drawActiveDealingLine(line, order);
                         }
@@ -1133,7 +1124,7 @@ public class TerminalFragment extends Fragment {
                         if(isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                             line.setmIsAmerican(true);
                         }
-                        updateColorYLimitLine(line, order);
+                        YDealingLine.updateColorYLimitLine(line, order, mCurrentValueY);
                         if(line.ismIsActive()){
                             drawActiveDealingLine(line, order);
                         }
@@ -1162,28 +1153,6 @@ public class TerminalFragment extends Fragment {
         }
     }
 
-    private void updateColorXLimitLine(XDealingLine line, OrderAnswer order){
-        if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
-                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
-            line.setmBitmapLabelX(bitmapIconGreenXLabel);
-            line.setLineColor(colorGreen);
-            line.setmBitmapLabelY(bitmapIconGreenYLabel);
-        }else{
-            line.setmBitmapLabelX(bitmapIconRedXLabel);
-            line.setLineColor(colorRed);
-            line.setmBitmapLabelY(bitmapIconRedYLabel);
-        }
-        line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
-    }
-    private void updateColorYLimitLine(YDealingLine line, OrderAnswer order){
-        if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
-                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
-            line.setmBitmapLabelY(bitmapIconGreenYLabel);
-        }else{
-            line.setmBitmapLabelY(bitmapIconRedYLabel);
-        }
-        line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
-    }
     private void deleteDealingLimitLine(final int ticket){
         if(OrderAnswer.getInstance() != null && ticket != 0){
             if(listOpenDealings != null && listOpenDealings.size() != 0){

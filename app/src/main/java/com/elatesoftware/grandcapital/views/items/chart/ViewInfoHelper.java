@@ -25,7 +25,7 @@ public class ViewInfoHelper {
 
     private final static String TAG_OPEN_DEALING = "openDealingView";
     private final static String TAG_CLOSE_DEALING = "closeDealingView";
-    private final static int INTERVAL_SHOW_LABEL = 5000;
+    private final static int INTERVAL_SHOW_LABEL = 4000;
 
     private View mCloseDealingView;
     private View mOpenDealingView;
@@ -57,7 +57,7 @@ public class ViewInfoHelper {
         new Handler().postDelayed(() -> rlChart.removeView(mOpenDealingView), INTERVAL_SHOW_LABEL);
     }
 
-    public void showViewCloseDealing(OrderAnswer answer) {
+    private void showViewCloseDealing(OrderAnswer answer) {
         if (answer != null) {
             ((TextView) mCloseDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
             ((TextView) mCloseDealingView.findViewById(R.id.tvPriceValue)).setText(ConventString.getRoundNumber(answer.getClosePrice()));

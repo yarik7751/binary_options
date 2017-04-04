@@ -1,6 +1,13 @@
 package com.elatesoftware.grandcapital.views.items.chart.limitLines;
 
 import android.graphics.Bitmap;
+import android.view.LayoutInflater;
+
+import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.ConventImage;
 
 /**
  * Created by Дарья Высокович on 03.04.2017.
@@ -18,6 +25,7 @@ public class YDealingLine extends BaseLimitLine {
     private boolean mIsAmerican = false;
     private boolean mIsActive = false;
 
+
     /** for y dealing*/
     public YDealingLine(float limit, String label, Bitmap bitmapY, String timer, boolean isAmerican, boolean isActive) {
         super(limit, label);
@@ -27,6 +35,15 @@ public class YDealingLine extends BaseLimitLine {
         mTimer = timer;
         mIsAmerican = isAmerican;
         mIsActive = isActive;
+    }
+    public static void updateColorYLimitLine(YDealingLine line, OrderAnswer order, double mCurrentValueY){
+        if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
+                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
+            line.setmBitmapLabelY(bitmapIconGreenYLabel);
+        }else{
+            line.setmBitmapLabelY(bitmapIconRedYLabel);
+        }
+        line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
     }
 
     public Bitmap getmBitmapLabelY() {

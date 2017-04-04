@@ -2,6 +2,9 @@ package com.elatesoftware.grandcapital.views.items.chart.limitLines;
 
 import android.graphics.Color;
 
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+
 /**
  * Created by Дарья Высокович on 03.04.2017.
  */
@@ -14,8 +17,10 @@ public class SocketLine extends BaseLimitLine {
     /** label string that is drawn next to the limit line */
     private String mLabel = "";
 
+    private static SocketLine lineSocket = null;
+
     /** for socket*/
-    public SocketLine(float limit, String label) {
+    private SocketLine(float limit, String label) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
@@ -36,5 +41,20 @@ public class SocketLine extends BaseLimitLine {
 
     public void setmLimit(float mLimit) {
         this.mLimit = mLimit;
+    }
+
+    public static void drawSocketLine(Entry entry, YAxis rightYAxis) {
+        if (entry != null) {
+            if (lineSocket != null) {
+                rightYAxis.removeLimitLine(lineSocket);
+            }
+            lineSocket = new SocketLine(entry.getY(), String.valueOf(entry.getY()));
+            rightYAxis.addLimitLine(lineSocket);
+        }
+    }
+    public static void deleteSocketLine(YAxis rightYAxis){
+        if (lineSocket != null) {
+            rightYAxis.removeLimitLine(lineSocket);
+        }
     }
 }

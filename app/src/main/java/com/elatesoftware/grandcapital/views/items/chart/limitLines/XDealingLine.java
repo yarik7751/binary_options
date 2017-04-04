@@ -2,6 +2,9 @@ package com.elatesoftware.grandcapital.views.items.chart.limitLines;
 
 import android.graphics.Bitmap;
 
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.utils.ConventDate;
+
 /**
  * Created by Дарья Высокович on 03.04.2017.
  */
@@ -35,6 +38,20 @@ public class XDealingLine extends BaseLimitLine {
             super.enableDashedLine(10f, 10f, 0f);
         }
     }
+    public static void updateColorXLimitLine(XDealingLine line, OrderAnswer order, double mCurrentValueY){
+        if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
+                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
+            line.setmBitmapLabelX(bitmapIconGreenXLabel);
+            line.setLineColor(colorGreen);
+            line.setmBitmapLabelY(bitmapIconGreenYLabel);
+        }else{
+            line.setmBitmapLabelX(bitmapIconRedXLabel);
+            line.setLineColor(colorRed);
+            line.setmBitmapLabelY(bitmapIconRedYLabel);
+        }
+        line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
+    }
+
 
     public float getmLimit() {
         return mLimit;
