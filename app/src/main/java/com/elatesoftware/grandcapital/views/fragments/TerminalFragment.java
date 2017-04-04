@@ -530,15 +530,25 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
+                Log.d(TAG, "scale: " + mChart.getViewPortHandler().getScaleX());
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
-                        if(currEntry.getX() >= mChart.getHighestVisibleX()) {
-                            imgPointCurrent.setVisibility(View.INVISIBLE);
-                        } else {
-                            imgPointCurrent.setVisibility(View.VISIBLE);
+                        if(mChart.getViewPortHandler().getScaleX() > 1.3277f) {
+                            if (currEntry.getX() >= mChart.getHighestVisibleX()) {
+                                imgPointCurrent.setVisibility(View.INVISIBLE);
+                            } else {
+                                imgPointCurrent.setVisibility(View.VISIBLE);
+                            }
                         }
-                        imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                        /*Log.d(TAG, "dX: " + dX);
+                        Log.d(TAG, "mChart.getHighestVisibleX(): " + mChart.getHighestVisibleX());
+                        Log.d(TAG, "mChart.getXChartMax(): " + mChart.getXChartMax());*/
+                        if(mChart.getViewPortHandler().getScaleX() > 4.3f) {
+                            imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                        } else if (mChart.getHighestVisibleX() != mChart.getXChartMax() && mChart.getLowestVisibleX() != mChart.getXChartMin()) {
+                            imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                        }
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
                     }
                 }

@@ -58,6 +58,7 @@ public class ToolbarFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         imgBurger = (ImageView) mParentActivity.findViewById(R.id.menu_burger);
         imgBurger.setOnClickListener(v -> {
+            AndroidUtils.hideKeyboard(getActivity());
             if (burgerType == BURGER_OPEN_MENU) {
                 mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
             }
