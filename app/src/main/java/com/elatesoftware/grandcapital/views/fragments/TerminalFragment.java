@@ -805,11 +805,10 @@ public class TerminalFragment extends Fragment {
                 redrawXLimitLines();
                 redrawYLimitLines();
                 mCurrentValueY = answer.getAsk();
-                divX = (currEntry.getX() - entryLast.getX()) / 5.f;
-                divY = (currEntry.getY() - entryLast.getY()) / 5.f;
+                divX = (currEntry.getX() - entryLast.getX()) / 10.f;
+                divY = (currEntry.getY() - entryLast.getY()) / 10.f;
                 numberTemporaryPoint = 1;
                 final Entry simplyEntry = new Entry(entryLast.getX(), entryLast.getY(), null, null);
-
                 handler.postAtTime(new Runnable() {
                     @Override
                     public void run() {
@@ -819,20 +818,19 @@ public class TerminalFragment extends Fragment {
                             simplyEntry.setX(x += divX);
                             simplyEntry.setY(y += divY);
                             if(numberTemporaryPoint == 1) {
-                                //data.addEntry(simplyEntry, 0);
                                 data.getDataSetByIndex(0).addEntry(simplyEntry);
                             }
-                            //data.notifyDataChanged();
+                            data.notifyDataChanged();
                             mChart.invalidate();
                             numberTemporaryPoint++;
                             SocketLine.drawSocketLine(simplyEntry);
                             drawCurrentPoint(simplyEntry);
-                            if (numberTemporaryPoint <= 5) {
-                                handler.postDelayed(this, 200);
+                            if (numberTemporaryPoint <= 10) {
+                                handler.postDelayed(this, 70);
                             }
                         }
                     }
-                }, 200);
+                }, 70);
             }
         }
     }
@@ -841,9 +839,8 @@ public class TerminalFragment extends Fragment {
             LineData data = getLineDataChart();
             if (data != null) {
                 Entry entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getOpen())), null, null);
-                //data.addEntry(entry, 0);
-                //data.notifyDataChanged();
                 data.getDataSetByIndex(0).addEntry(entry);
+                data.notifyDataChanged();
                 mChart.notifyDataSetChanged();
             }
         }
@@ -1097,7 +1094,8 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setOptionsData(optionsData);
                 currentDealing.setOpenTime(ConventDate.getCurrentDate());
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
-                typePoint = POINT_OPEN_DEALING;
+
+
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));

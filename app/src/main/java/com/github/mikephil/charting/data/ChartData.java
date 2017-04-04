@@ -8,8 +8,10 @@ import com.github.mikephil.charting.components.YAxis.AxisDependency;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
+import com.github.mikephil.charting.utils.EntryXComparator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -430,7 +432,6 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      * @param dataSetIndex
      */
     public void addEntry(Entry e, int dataSetIndex) {
-
         if (mDataSets.size() > dataSetIndex && dataSetIndex >= 0) {
             IDataSet set = mDataSets.get(dataSetIndex);
             // add the entry to the dataset

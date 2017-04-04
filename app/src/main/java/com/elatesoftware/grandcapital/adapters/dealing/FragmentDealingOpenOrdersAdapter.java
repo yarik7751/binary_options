@@ -49,11 +49,9 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
             orderHolder.mArrow.setImageDrawable(UP_DRAWABLE);
         }
         orderHolder.imgCloseDealing.setTag(orderList.get(position));
-        if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(orderList.get(position).getOpenTime()) >= 61){
+        // if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(orderList.get(position).getOpenTime()) >= 61){
             orderHolder.imgCloseDealing.setOnClickListener(onClickDeleteDealing);
-        }else{
-
-        }
+        //}
     }
 
     public void updateAdapter(List<OrderAnswer> _orderList) {
