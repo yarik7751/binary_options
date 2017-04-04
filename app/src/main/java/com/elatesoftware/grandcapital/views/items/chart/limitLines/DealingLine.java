@@ -31,23 +31,12 @@ public class DealingLine extends BaseLimitLine {
         if(line != null){
             line.enableDashedLine(0f, 0f, 0f);
             currentLineDealing = new DealingLine(Float.valueOf(String.valueOf(order.getOpenPrice())), String.valueOf(order.getOpenPrice()), null);
-            if(line instanceof YDealingLine){
-                YDealingLine lineY = (YDealingLine) line;
-                if(lineY.getmBitmapLabelY() == bitmapIconGreenYLabel){
-                    currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingGreenYLabel);
-                    currentLineDealing.setLineColor(colorGreen);
-                }else{
-                    currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingRedYLabel);
-                    currentLineDealing.setLineColor(colorRed);
-                }
-            }else if (line instanceof XDealingLine){
-                if((line).getLineColor() == colorGreen){
-                    currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingGreenYLabel);
-                    currentLineDealing.setLineColor(colorGreen);
-                }else{
-                    currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingRedYLabel);
-                    currentLineDealing.setLineColor(colorRed);
-                }
+            if(line.getLineColor() == colorGreen){
+                currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingGreenYLabel);
+                currentLineDealing.setLineColor(colorGreen);
+            }else{
+                currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingRedYLabel);
+                currentLineDealing.setLineColor(colorRed);
             }
             rightYAxis.addLimitLine(currentLineDealing);
         }

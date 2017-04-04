@@ -1,14 +1,8 @@
 package com.elatesoftware.grandcapital.views.items.chart.limitLines;
 
 import android.graphics.Bitmap;
-import android.view.LayoutInflater;
-
-import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.utils.ConventImage;
-import com.github.mikephil.charting.components.YAxis;
 import com.google.gson.Gson;
 
 /**
@@ -24,7 +18,7 @@ public class YDealingLine extends BaseLimitLine {
     private boolean mIsAmerican = false;
     private boolean mIsActive = false;
 
-    public YDealingLine(float limit, String label, Bitmap bitmapY, String timer, boolean isAmerican, boolean isActive) {
+    YDealingLine(float limit, String label, Bitmap bitmapY, String timer, boolean isAmerican, boolean isActive) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
@@ -34,15 +28,16 @@ public class YDealingLine extends BaseLimitLine {
         mIsActive = isActive;
     }
     public static void updateColorYLimitLine(YDealingLine line, OrderAnswer order, double mCurrentValueY){
-        if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
-                order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
+        if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY || order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
             line.setmBitmapLabelY(bitmapIconGreenYLabel);
+            line.setLineColor(colorGreen);
         }else{
             line.setmBitmapLabelY(bitmapIconRedYLabel);
+            line.setLineColor(colorRed);
         }
         line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
     }
-    public static void createYDealingLine(OrderAnswer order, double mCurrentValueY, boolean isAmerican){
+    static void createYDealingLine(OrderAnswer order, double mCurrentValueY, boolean isAmerican){
         YDealingLine line = new YDealingLine(Float.valueOf(String.valueOf(order.getOpenPrice())),
                 new Gson().toJson(order), null,
                 String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican, false);

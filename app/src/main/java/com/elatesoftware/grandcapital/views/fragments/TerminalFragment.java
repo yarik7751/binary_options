@@ -493,7 +493,6 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-
             }
             @Override
             public void onChartLongPressed(MotionEvent me) {
@@ -551,7 +550,6 @@ public class TerminalFragment extends Fragment {
                 return true;
             }
             if(event.getActionMasked() == MotionEvent.ACTION_MOVE && event.getPointerCount() == 2) {
-                Log.d(TAG, "onTouch");
                 if(x1 < 0 && y1 < 0 && x2 < 0 && y2 < 0) {
                     setPoints(event);
                     distance1 = ConventDimens.callDistance(x1, x2, y1, y2);
@@ -561,15 +559,11 @@ public class TerminalFragment extends Fragment {
                     distance2 = ConventDimens.callDistance(x1, x2, y1, y2);
                     if(Math.abs(distance1 - distance2) >= 5) {
                         if (distance1 < distance2) {
-                            Log.d(TAG, "SCALE +++");
                             if(mChart.getViewPortHandler().getScaleX() >= 10f) {
-                                Log.d(TAG, "setScaleXEnabled(false)");
                                 mChart.setScaleXEnabled(false);
                                 mChart.getViewPortHandler().setZoom(10f, mChart.getViewPortHandler().getScaleY());
-                                Log.d(TAG, "Scale: " + mChart.getViewPortHandler().getScaleX());
                             }
                         } else if (distance1 > distance2) {
-                            Log.d(TAG, "SCALE ---");
                             mChart.setScaleXEnabled(true);
                         }
                         distance1 = distance2;
@@ -779,6 +773,7 @@ public class TerminalFragment extends Fragment {
             LineData data = getLineDataChart();
             if (data != null) {
                 SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
+                mCurrentValueY = answer.getAsk();
                 currEntry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
                 if(data.getDataSetByIndex(0).getEntryCount() != 0){
                     entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
@@ -804,9 +799,8 @@ public class TerminalFragment extends Fragment {
                 }
                 redrawXLimitLines();
                 redrawYLimitLines();
-                mCurrentValueY = answer.getAsk();
-                divX = (currEntry.getX() - entryLast.getX()) / 10.f;
-                divY = (currEntry.getY() - entryLast.getY()) / 10.f;
+                divX = (currEntry.getX() - entryLast.getX()) / 6.f;
+                divY = (currEntry.getY() - entryLast.getY()) / 6.f;
                 numberTemporaryPoint = 1;
                 final Entry simplyEntry = new Entry(entryLast.getX(), entryLast.getY(), null, null);
                 handler.postAtTime(new Runnable() {
@@ -825,12 +819,12 @@ public class TerminalFragment extends Fragment {
                             numberTemporaryPoint++;
                             SocketLine.drawSocketLine(simplyEntry);
                             drawCurrentPoint(simplyEntry);
-                            if (numberTemporaryPoint <= 10) {
-                                handler.postDelayed(this, 70);
+                            if (numberTemporaryPoint <= 6) {
+                                handler.postDelayed(this, 100);
                             }
                         }
                     }
-                }, 70);
+                }, 100);
             }
         }
     }
@@ -1094,8 +1088,7 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setOptionsData(optionsData);
                 currentDealing.setOpenTime(ConventDate.getCurrentDate());
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
-
-
+                typePoint = POINT_OPEN_DEALING;
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));

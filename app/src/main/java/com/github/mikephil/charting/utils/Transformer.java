@@ -176,6 +176,7 @@ public class Transformer {
         /***************************************my bug**********************************************/
         try{
             if (valuePointsForGenerateTransformedValuesLine != null && valuePointsForGenerateTransformedValuesLine.length != count) {
+
                 valuePointsForGenerateTransformedValuesLine = new float[count];
             }
         }catch(NegativeArraySizeException ex){

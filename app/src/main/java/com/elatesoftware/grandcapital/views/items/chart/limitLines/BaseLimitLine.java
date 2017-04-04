@@ -153,7 +153,7 @@ public class BaseLimitLine extends LimitLine {
                     }
                     line.enableDashedLine(0f, 0f, 0f);
                     ((XDealingLine) line).setmIsActive(true);
-                    DealingLine.drawActiveDealingLine(line, (new Gson().fromJson(line.getLabel(), OrderAnswer.class)));
+                    DealingLine.drawActiveDealingLine(line, (new Gson().fromJson(((XDealingLine) line).getLabel(), OrderAnswer.class)));
                 }
             }else if(line instanceof YDealingLine && ((YDealingLine) line).ismIsActive()){
                 ((YDealingLine) line).setmIsActive(false);
@@ -178,21 +178,22 @@ public class BaseLimitLine extends LimitLine {
                         }
                     }
                     ((YDealingLine) line).setmIsActive(true);
-                    DealingLine.drawActiveDealingLine(line, (new Gson().fromJson(line.getLabel(), OrderAnswer.class)));
+                    DealingLine.drawActiveDealingLine(line, (new Gson().fromJson(((YDealingLine) line).getLabel(), OrderAnswer.class)));
                 }
             }
         }else{
             List<XDealingLine> listX = BaseLimitLine.getXLimitLines();
             List<YDealingLine> listY = BaseLimitLine.getYLimitLines();
-            if(listX == null || listX.size() == 0){
-                if(listY != null && listY.size() != 0){
-                    listY.get(0).setmIsActive(true);
-                    DealingLine.drawActiveDealingLine(listY.get(0), (new Gson().fromJson(listY.get(0).getLabel(), OrderAnswer.class)));
-                }
-            }else{
+            if(listX != null && listX.size() != 0){
                 listX.get(0).setmIsActive(true);
                 DealingLine.drawActiveDealingLine(listX.get(0), (new Gson().fromJson(listX.get(0).getLabel(), OrderAnswer.class)));
+                return;
             }
+            if(listY != null && listY.size() != 0){
+                listY.get(0).setmIsActive(true);
+                DealingLine.drawActiveDealingLine(listY.get(0), (new Gson().fromJson(listY.get(0).getLabel(), OrderAnswer.class)));
+            }
+            DealingLine.deleteDealingLine();
         }
     }
 
@@ -247,7 +248,7 @@ public class BaseLimitLine extends LimitLine {
             for(OrderAnswer orderAnswer : list){
                 if(ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {
                     if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
-                        drawDealingLimitLine(orderAnswer, isTypeOptionAmerican,mCurrentValueY);
+                        drawDealingLimitLine(orderAnswer, isTypeOptionAmerican, mCurrentValueY);
                     }else{
                         drawDealingLimitLine(orderAnswer, false, mCurrentValueY);
                     }
