@@ -11,6 +11,7 @@ import com.elatesoftware.grandcapital.api.GrandCapitalApi;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
+import com.github.mikephil.charting.data.Entry;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.client.DefaultSSLWebSocketClientFactory;

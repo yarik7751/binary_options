@@ -22,7 +22,9 @@
     <string name="cancel">取消</string>
     <string name="cancel_dont_show">取消，且不再显示此信息。</string>
     <string name="ok">好</string>
+
     <string name="caution">Caution!</string>
+
     <string name="logout">确定登出？</string>
     <string name="reward">利润: $</string>
     <string name="open_account">开立账户</string>
@@ -130,7 +132,7 @@
     <string name="signal_b">买入</string>
     <string name="signal_sb">强力买入</string>
 
-    <string name="zero_min">0 MIN</string>
+    <string name="zero_min">0 分钟</string>
     <string name="zero_dollars">$0</string>
 
     <!--нет перевода-->

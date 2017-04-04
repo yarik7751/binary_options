@@ -76,7 +76,7 @@ public class ConventDate {
     public static long getDifferenceDate(String date) {
         SDF.setTimeZone(TimeZone.getDefault());
         String currDate = SDF.format(new Date());
-        return Math.abs(stringToUnix(currDate) - stringToUnix(date)) / 1000;
+        return (stringToUnix(date) - stringToUnix(currDate)) / 1000;
     }
 
 

@@ -114,12 +114,12 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/fragment_dealing_no_elements_layout"
-        android:layout_below="@+id/tabsLayout"
         android:orientation="vertical"
-        android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:visibility="gone"
         android:paddingTop="8dp">
         <TextView
