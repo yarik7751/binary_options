@@ -11,20 +11,29 @@ import com.github.mikephil.charting.data.Entry;
 
 public class SocketLine extends BaseLimitLine {
 
-    /** limit / maximum (the y-value or xIndex) */
     private float mLimit = 0f;
-
-    /** label string that is drawn next to the limit line */
     private String mLabel = "";
 
     private static SocketLine lineSocket = null;
-
-    /** for socket*/
     private SocketLine(float limit, String label) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
         super.setLineColor(Color.WHITE);
+    }
+    public static void drawSocketLine(Entry entry) {
+        if (entry != null) {
+            if (lineSocket != null) {
+                rightYAxis.removeLimitLine(lineSocket);
+            }
+            lineSocket = new SocketLine(entry.getY(), String.valueOf(entry.getY()));
+            rightYAxis.addLimitLine(lineSocket);
+        }
+    }
+    public static void deleteSocketLine(){
+        if (lineSocket != null) {
+            rightYAxis.removeLimitLine(lineSocket);
+        }
     }
 
     public String getmLabel() {
@@ -41,20 +50,5 @@ public class SocketLine extends BaseLimitLine {
 
     public void setmLimit(float mLimit) {
         this.mLimit = mLimit;
-    }
-
-    public static void drawSocketLine(Entry entry, YAxis rightYAxis) {
-        if (entry != null) {
-            if (lineSocket != null) {
-                rightYAxis.removeLimitLine(lineSocket);
-            }
-            lineSocket = new SocketLine(entry.getY(), String.valueOf(entry.getY()));
-            rightYAxis.addLimitLine(lineSocket);
-        }
-    }
-    public static void deleteSocketLine(YAxis rightYAxis){
-        if (lineSocket != null) {
-            rightYAxis.removeLimitLine(lineSocket);
-        }
     }
 }

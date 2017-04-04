@@ -38,16 +38,17 @@ import javax.net.ssl.X509TrustManager;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class GrandCapitalApplication extends Application{
-
-    private static Context context;
-    private static SSLContext sc;
-    public static WebSocketClient mClient;
     public final static String TAG_SOCKET = "debug_for_socket";
+    public static boolean isTypeOptionAmerican = false;
 
     private static SocketAnswer answerCurrent = null;
     private static SocketAnswer answerSave = null;
     private static Timer timer;
     private static String symbolCurrent = "";
+
+    private static Context context;
+    private static SSLContext sc;
+    public static WebSocketClient mClient;
 
     @Override
     public void onCreate() {

@@ -8,6 +8,8 @@ import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventImage;
+import com.github.mikephil.charting.components.YAxis;
+import com.google.gson.Gson;
 
 /**
  * Created by Дарья Высокович on 03.04.2017.
@@ -15,18 +17,13 @@ import com.elatesoftware.grandcapital.utils.ConventImage;
 
 public class YDealingLine extends BaseLimitLine {
 
-    /** limit / maximum (the y-value or xIndex) */
     private float mLimit = 0f;
-
-    /** label string that is drawn next to the limit line */
     private String mLabel = "";
     private String mTimer = "";
     private Bitmap mBitmapLabelY = null;
     private boolean mIsAmerican = false;
     private boolean mIsActive = false;
 
-
-    /** for y dealing*/
     public YDealingLine(float limit, String label, Bitmap bitmapY, String timer, boolean isAmerican, boolean isActive) {
         super(limit, label);
         mLimit = limit;
@@ -44,6 +41,13 @@ public class YDealingLine extends BaseLimitLine {
             line.setmBitmapLabelY(bitmapIconRedYLabel);
         }
         line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
+    }
+    public static void createYDealingLine(OrderAnswer order, double mCurrentValueY, boolean isAmerican){
+        YDealingLine line = new YDealingLine(Float.valueOf(String.valueOf(order.getOpenPrice())),
+                new Gson().toJson(order), null,
+                String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican, false);
+        YDealingLine.updateColorYLimitLine(line, order, mCurrentValueY);
+        rightYAxis.addLimitLine(line);
     }
 
     public Bitmap getmBitmapLabelY() {

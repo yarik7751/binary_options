@@ -218,6 +218,7 @@ public class DealingFragment extends Fragment {
                             mAdapterClose = null;
                             mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders, v -> {
                                 Log.d(TAG, "delete dealing");
+                                mProgressLayout.setVisibility(View.VISIBLE);
                                 OrderAnswer order = (OrderAnswer) v.getTag();
                                 requestDeleteDealing(order);
                             });
@@ -252,9 +253,9 @@ public class DealingFragment extends Fragment {
             Log.d(TAG, "GetResponseDeleteDealingBroadcastReceiver");
             String response = intent.getStringExtra(DeleteDealingService.RESPONSE);
             if (response == null || !response.equals(Const.CODE_SUCCESS_DELETE_DEALING)) {
-                Log.d(TAG, "CODE_SUCCESS_DELETE_DEALING ERROR");
+                CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.request_error_title), getResources().getString(R.string.request_error_request));
+                mProgressLayout.setVisibility(View.GONE);
             } else {
-                Log.d(TAG, "CODE_SUCCESS_DELETE_DEALING");
                 requestOrders();
             }
         }

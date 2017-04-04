@@ -4,6 +4,11 @@ import android.graphics.Bitmap;
 
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.google.gson.Gson;
+
+import java.util.List;
 
 /**
  * Created by Дарья Высокович on 03.04.2017.
@@ -11,10 +16,7 @@ import com.elatesoftware.grandcapital.utils.ConventDate;
 
 public class XDealingLine extends BaseLimitLine {
 
-    /** limit / maximum (the y-value or xIndex) */
     private float mLimit = 0f;
-
-    /** label string that is drawn next to the limit line */
     private String mLabel = "";
     private String mTimer = "";
     private Bitmap mBitmapLabelX = null;
@@ -22,7 +24,6 @@ public class XDealingLine extends BaseLimitLine {
     private boolean mIsAmerican = false;
     private boolean mIsActive = false;
 
-    /** for x dealing*/
     public XDealingLine(float limit, String label, Bitmap bitmapX, Bitmap bitmapY, String timer, boolean isAmerican, boolean isActive) {
         super(limit, label);
         mLimit = limit;
@@ -38,6 +39,13 @@ public class XDealingLine extends BaseLimitLine {
             super.enableDashedLine(10f, 10f, 0f);
         }
     }
+    public static void createXDealingLine(OrderAnswer order, double mCurrentValueY, boolean isAmerican){
+        XDealingLine line = new XDealingLine(ConventDate.genericTimeForChart(
+                ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000),
+                new Gson().toJson(order), null, null, String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican, false);
+        XDealingLine.updateColorXLimitLine(line, order, mCurrentValueY);
+        xAxis.addLimitLine(line);
+    }
     public static void updateColorXLimitLine(XDealingLine line, OrderAnswer order, double mCurrentValueY){
         if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
                 order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
@@ -51,7 +59,6 @@ public class XDealingLine extends BaseLimitLine {
         }
         line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
     }
-
 
     public float getmLimit() {
         return mLimit;
