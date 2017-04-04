@@ -50,15 +50,7 @@ public class GrandCapitalApplication extends Application{
     private static SSLContext sc;
     public static WebSocketClient mClient;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build()
-        );
-        GrandCapitalApplication.context = getApplicationContext();
+    static {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             @Override
             public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws java.security.cert.CertificateException {
@@ -89,6 +81,17 @@ public class GrandCapitalApplication extends Application{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
+        GrandCapitalApplication.context = getApplicationContext();
         timer = new Timer();
         startTimer();
     }
@@ -182,7 +185,6 @@ public class GrandCapitalApplication extends Application{
                         @Override
                         public void onClose(int code, String reason, boolean remote){
                             Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
-
                             SocketAnswer.clearListBackGround();
                             if(!symbolCurrent.equals("")){
                                 closeAndOpenSocket(symbolCurrent);

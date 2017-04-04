@@ -5,6 +5,7 @@ import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import com.elatesoftware.grandcapital.views.items.chart.FloatComparator;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.interfaces.datasets.IBubbleDataSet;
@@ -12,6 +13,8 @@ import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -134,9 +137,10 @@ public class Transformer {
      */
     public float[] generateTransformedValuesBubble(IBubbleDataSet data, float phaseY, int from, int to) {
 
-        final int count = (to - from + 1) * 2; // (int) Math.ceil((to - from) * phaseX) * 2;
+        int count = (to - from + 1) * 2; // (int) Math.ceil((to - from) * phaseX) * 2;
 
         if (valuePointsForGenerateTransformedValuesBubble.length != count) {
+            count++;
             valuePointsForGenerateTransformedValuesBubble = new float[count];
         }
         float[] valuePoints = valuePointsForGenerateTransformedValuesBubble;
@@ -168,19 +172,30 @@ public class Transformer {
      * @param set
      * @return
      */
-    public float[] generateTransformedValuesLine(ILineDataSet set,
-                                                 float phaseX, float phaseY,
-                                                 int min, int max) {
+    public float[] generateTransformedValuesLine(ILineDataSet set, float phaseX, float phaseY, int min, int max) {
 
-        final int count = ((int) ((max - min) * phaseX) + 1) * 2;
+         final int count = ((int) ((max - min) * phaseX) + 1) * 2;//(int) Math.ceil((to - from) * phaseX) * 2;
         /***************************************my bug**********************************************/
         try{
             if (valuePointsForGenerateTransformedValuesLine != null && valuePointsForGenerateTransformedValuesLine.length != count) {
-
                 valuePointsForGenerateTransformedValuesLine = new float[count];
             }
         }catch(NegativeArraySizeException ex){
             ex.printStackTrace();
+            /*********************xz start**************************************************/
+            /*if(valuePointsForGenerateTransformedValuesLine != null && valuePointsForGenerateTransformedValuesLine.length != 0) {
+                List<Float> values = new ArrayList<>();
+                for(Float item: valuePointsForGenerateTransformedValuesLine){
+                    values.add(item);
+                }
+                Collections.sort(values, new FloatComparator());
+                valuePointsForGenerateTransformedValuesLine = null;
+                valuePointsForGenerateTransformedValuesLine = new float[values.size()];
+                for(int i = 0; i< values.size(); i ++){
+                    valuePointsForGenerateTransformedValuesLine[i] = values.get(i);
+                }
+            }*/
+            /*********************xz end**************************************************/
         }
         float[] valuePoints = valuePointsForGenerateTransformedValuesLine;
 

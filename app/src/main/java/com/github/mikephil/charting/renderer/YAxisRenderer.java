@@ -189,7 +189,7 @@ public class YAxisRenderer extends AxisRenderer {
                     Paint paint = new Paint();
                     paint.setStyle(Paint.Style.FILL);
                     paint.setColor(line.getLineColor());
-                    paint.setTextSize(mAxisLabelPaint.getTextSize());
+                    paint.setTextSize(mYAxis.getTextSize());
 
                     Paint textPaint = mAxisLabelPaint;
                     textPaint.setColor(Color.WHITE);
@@ -227,7 +227,7 @@ public class YAxisRenderer extends AxisRenderer {
                         Paint paint = new Paint();
                         paint.setStyle(Paint.Style.FILL);
                         paint.setColor(Color.WHITE);
-                        paint.setTextSize(mAxisLabelPaint.getTextSize());
+                        paint.setTextSize(mYAxis.getTextSize());
 
                         Paint textPaint = mAxisLabelPaint;
                         textPaint.setColor(Color.WHITE);
