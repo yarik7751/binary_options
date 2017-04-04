@@ -193,7 +193,7 @@ public class YAxisRenderer extends AxisRenderer {
 
                     Paint textPaint = mAxisLabelPaint;
                     textPaint.setColor(Color.WHITE);
-                    textPaint.setTextSize(mYAxis.getTextSize());
+                    textPaint.setTextSize(mAxisLabelPaint.getTextSize());
                     textPaint.setPathEffect(null);
                     textPaint.setTypeface(l.getTypeface());
                     textPaint.setStrokeWidth(0.5f);
