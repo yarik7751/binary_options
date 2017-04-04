@@ -165,10 +165,10 @@ public class Transformer {
      * Transforms an List of Entry into a float array containing the x and
      * y values transformed with all matrices for the LINECHART.
      *
-     * @param data
+     * @param set
      * @return
      */
-    public float[] generateTransformedValuesLine(ILineDataSet data,
+    public float[] generateTransformedValuesLine(ILineDataSet set,
                                                  float phaseX, float phaseY,
                                                  int min, int max) {
 
@@ -185,7 +185,7 @@ public class Transformer {
 
         for (int j = 0; j < count; j += 2) {
 
-            Entry e = data.getEntryForIndex(j / 2 + min);
+            Entry e = set.getEntryForIndex(j / 2 + min);
 
             if (e != null) {
                 valuePoints[j] = e.getX();

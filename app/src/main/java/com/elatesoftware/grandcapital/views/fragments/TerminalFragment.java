@@ -79,6 +79,7 @@ import com.github.mikephil.charting.utils.MPPointF;
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -818,9 +819,10 @@ public class TerminalFragment extends Fragment {
                             simplyEntry.setX(x += divX);
                             simplyEntry.setY(y += divY);
                             if(numberTemporaryPoint == 1) {
-                                data.addEntry(simplyEntry, 0);
+                                //data.addEntry(simplyEntry, 0);
+                                data.getDataSetByIndex(0).addEntry(simplyEntry);
                             }
-                            data.notifyDataChanged();
+                            //data.notifyDataChanged();
                             mChart.invalidate();
                             numberTemporaryPoint++;
                             SocketLine.drawSocketLine(simplyEntry);
@@ -839,8 +841,9 @@ public class TerminalFragment extends Fragment {
             LineData data = getLineDataChart();
             if (data != null) {
                 Entry entry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getOpen())), null, null);
-                data.addEntry(entry, 0);
-                data.notifyDataChanged();
+                //data.addEntry(entry, 0);
+                //data.notifyDataChanged();
+                data.getDataSetByIndex(0).addEntry(entry);
                 mChart.notifyDataSetChanged();
             }
         }

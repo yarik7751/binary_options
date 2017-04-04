@@ -11,6 +11,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventString;
 
@@ -33,7 +34,6 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
         orderHolder.mSecondColumn.setText(ConventString.getRoundNumber(orderList.get(position).getOpenPrice()));
         orderHolder.mThirdColumn.setText(ConventString.getRoundNumber(orderList.get(position).getClosePrice()));
 
-        /**объем приходит умноженный на 100*/
         double amount = ((double) orderList.get(position).getVolume()) / 100;
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
         String numberAsString = numberFormat.format(amount);
@@ -49,7 +49,11 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
             orderHolder.mArrow.setImageDrawable(UP_DRAWABLE);
         }
         orderHolder.imgCloseDealing.setTag(orderList.get(position));
-        orderHolder.imgCloseDealing.setOnClickListener(onClickDeleteDealing);
+        if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(orderList.get(position).getOpenTime()) >= 61){
+            orderHolder.imgCloseDealing.setOnClickListener(onClickDeleteDealing);
+        }else{
+
+        }
     }
 
     public void updateAdapter(List<OrderAnswer> _orderList) {
