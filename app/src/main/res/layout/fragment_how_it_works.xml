@@ -6,7 +6,7 @@
     tools:context=".views.fragments.HowItWorksFragment"
     android:background="@drawable/bg">
 
-    <include layout="@layout/progress_bar" />
+    <include layout="@layout/incl_progress_bar" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fragment_how_it_works_questions_list"

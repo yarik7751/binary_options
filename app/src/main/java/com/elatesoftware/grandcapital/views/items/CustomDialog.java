@@ -2,10 +2,8 @@ package com.elatesoftware.grandcapital.views.items;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.webkit.SslErrorHandler;
@@ -26,7 +24,7 @@ public class CustomDialog {
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
-        dialog.setContentView(R.layout.item_dialog_information);
+        dialog.setContentView(R.layout.dialog_information);
 
         TextView tvOk = (TextView) dialog.findViewById(R.id.tvOk);
         TextView tvInfoMsg = (TextView) dialog.findViewById(R.id.tvInfoMsg);
@@ -44,7 +42,7 @@ public class CustomDialog {
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
-        dialog.setContentView(R.layout.item_dialog_logout);
+        dialog.setContentView(R.layout.dialog_logout);
 
         TextView tvOk = (TextView) dialog.findViewById(R.id.tvOk);
         TextView tvCancel = (TextView) dialog.findViewById(R.id.tvCancel);
@@ -67,7 +65,7 @@ public class CustomDialog {
         final Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
-        dialog.setContentView(R.layout.item_dialog_logout);
+        dialog.setContentView(R.layout.dialog_logout);
 
         TextView tvOk = (TextView) dialog.findViewById(R.id.tvOk);
         TextView tvCancel = (TextView) dialog.findViewById(R.id.tvCancel);

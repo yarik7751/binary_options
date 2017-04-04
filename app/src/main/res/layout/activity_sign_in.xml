@@ -131,6 +131,6 @@
                 </RelativeLayout>
             </LinearLayout>
         </RelativeLayout>
-        <include layout="@layout/progress_bar" />
+        <include layout="@layout/incl_progress_bar" />
     </RelativeLayout>
 </ScrollView>

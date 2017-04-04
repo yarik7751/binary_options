@@ -1356,7 +1356,7 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getStringExtra(SymbolHistoryService.RESPONSE) != null && intent.getStringExtra(SymbolHistoryService.RESPONSE).equals(Const.RESPONSE_CODE_SUCCESS) &&
-                    SymbolHistoryAnswer.getInstance() != null) {
+                SymbolHistoryAnswer.getInstance() != null) {
                 parseResponseSymbolHistory();
             } else {
                 GrandCapitalApplication.closeAndOpenSocket(sSymbolCurrent);

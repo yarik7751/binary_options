@@ -216,13 +216,10 @@ public class DealingFragment extends Fragment {
                     if(currentTabPosition == OPEN_TAB_POSITION) {
                         if(mAdapterOpen == null) {
                             mAdapterClose = null;
-                            mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Log.d(TAG, "delete dealing");
-                                    OrderAnswer order = (OrderAnswer) v.getTag();
-                                    requestDeleteDealing(order);
-                                }
+                            mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders, v -> {
+                                Log.d(TAG, "delete dealing");
+                                OrderAnswer order = (OrderAnswer) v.getTag();
+                                requestDeleteDealing(order);
                             });
                             mRecyclerView.setAdapter(mAdapterOpen);
                         } else {
@@ -234,7 +231,6 @@ public class DealingFragment extends Fragment {
                             mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
                             mRecyclerView.setAdapter(mAdapterClose);
                         }
-                        //cleanCloseDealings();
                     }
                 }
                 mProgressLayout.setVisibility(View.GONE);

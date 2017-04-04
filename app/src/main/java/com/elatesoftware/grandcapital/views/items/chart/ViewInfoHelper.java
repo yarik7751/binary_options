@@ -34,8 +34,8 @@ public class ViewInfoHelper {
     public ViewInfoHelper(RelativeLayout rl){
         Context mContext = GrandCapitalApplication.getAppContext();
         rlChart = rl;
-        mOpenDealingView = LayoutInflater.from(mContext).inflate(R.layout.label_open_dealing, null);
-        mCloseDealingView = LayoutInflater.from(mContext).inflate(R.layout.label_close_dealing, null);
+        mOpenDealingView = LayoutInflater.from(mContext).inflate(R.layout.incl_label_open_dealing, null);
+        mCloseDealingView = LayoutInflater.from(mContext).inflate(R.layout.incl_label_close_dealing, null);
         mOpenDealingView.setTag(TAG_OPEN_DEALING);
         mCloseDealingView.setTag(TAG_CLOSE_DEALING);
     }
