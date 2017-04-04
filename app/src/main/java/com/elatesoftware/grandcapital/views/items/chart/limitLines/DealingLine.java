@@ -34,7 +34,7 @@ public class DealingLine extends BaseLimitLine {
             if(line.getLineColor() == colorGreen){
                 currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingGreenYLabel);
                 currentLineDealing.setLineColor(colorGreen);
-            }else{
+            }else if(line.getLineColor() == colorRed){
                 currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingRedYLabel);
                 currentLineDealing.setLineColor(colorRed);
             }

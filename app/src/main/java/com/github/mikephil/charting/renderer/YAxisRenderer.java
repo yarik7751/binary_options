@@ -154,7 +154,7 @@ public class YAxisRenderer extends AxisRenderer {
                     String lastSymbol = "";
                     if (strLabel.length() > 3) {
                         if(strLabel.length() > 7){
-                            strLabel = strLabel.substring(0, 7);
+                            strLabel = strLabel.substring(0, 6);
                         }
                         lastSymbol = strLabel.substring(strLabel.length() - 1, strLabel.length());
                         strLabel = strLabel.substring(0, strLabel.length() - 1);
@@ -189,7 +189,7 @@ public class YAxisRenderer extends AxisRenderer {
                     Paint paint = new Paint();
                     paint.setStyle(Paint.Style.FILL);
                     paint.setColor(line.getLineColor());
-                    paint.setTextSize(mYAxis.getTextSize());
+                    paint.setTextSize(mAxisLabelPaint.getTextSize());
 
                     Paint textPaint = mAxisLabelPaint;
                     textPaint.setColor(Color.WHITE);
@@ -201,7 +201,7 @@ public class YAxisRenderer extends AxisRenderer {
 
                     pts[1] = lineDealing.getLimit();
                     mTrans.pointValuesToPixel(pts);
-                    String strLabel = lineDealing.getLabel();
+                    String strLabel = lineDealing.getLabel().substring(0, 6);
 
                     Bitmap bitmapLabel = lineDealing.getmBitmapLabelY();
                     float paddingVert = Utils.convertDpToPixel(8);
@@ -218,7 +218,7 @@ public class YAxisRenderer extends AxisRenderer {
                         c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz/2, posY - height_marker + paddingVert / 2, paint);
                         c.drawText(strLabel, fixedPosition, posY, textPaint);
                     }
-/************************************************** LINE_Y_DEALING_PASSIVE ************************************************************************/
+/************************************************** LINE_Y_DEALING************************************************************************/
                 }else if (line instanceof YDealingLine){
                         YDealingLine lineDealing = (YDealingLine) line;
                         lineDealing.setLineWidth(0.0f);
@@ -227,7 +227,7 @@ public class YAxisRenderer extends AxisRenderer {
                         Paint paint = new Paint();
                         paint.setStyle(Paint.Style.FILL);
                         paint.setColor(Color.WHITE);
-                        paint.setTextSize(mYAxis.getTextSize());
+                        paint.setTextSize(mAxisLabelPaint.getTextSize());
 
                         Paint textPaint = mAxisLabelPaint;
                         textPaint.setColor(Color.WHITE);

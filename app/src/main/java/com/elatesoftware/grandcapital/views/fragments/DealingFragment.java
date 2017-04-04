@@ -18,9 +18,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.services.DeleteDealingService;
 import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.utils.Const;
+import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -217,10 +219,12 @@ public class DealingFragment extends Fragment {
                         if(mAdapterOpen == null) {
                             mAdapterClose = null;
                             mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders, v -> {
-                                Log.d(TAG, "delete dealing");
-                                mProgressLayout.setVisibility(View.VISIBLE);
                                 OrderAnswer order = (OrderAnswer) v.getTag();
-                                requestDeleteDealing(order);
+                                if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                                    mProgressLayout.setVisibility(View.VISIBLE);
+                                    requestDeleteDealing(order);
+                                }
+                                // TODO check and swipe
                             });
                             mRecyclerView.setAdapter(mAdapterOpen);
                         } else {

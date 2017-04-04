@@ -458,7 +458,6 @@ public class TerminalFragment extends Fragment {
         mChart.setBackgroundColor(Color.TRANSPARENT);
         mChart.getLegend().setEnabled(false);
         mChart.setDrawMarkers(true);
-
         setLineDataChart();
 
         xAxis = mChart.getXAxis();
@@ -471,8 +470,10 @@ public class TerminalFragment extends Fragment {
         xAxis.setTextSize(9);
         xAxis.disableAxisLineDashedLine();
         xAxis.setDrawGridLines(true);
-        xAxis.setGranularity(0.00001f);
+        xAxis.setGranularity(1f);
         xAxis.setSpaceMax(600000f);
+
+        mChart.setAnimationCacheEnabled(false);
 
         YAxis leftYAxis = mChart.getAxisLeft();
         leftYAxis.setEnabled(false);
@@ -629,6 +630,8 @@ public class TerminalFragment extends Fragment {
         mCurrentValueY = 0;
         typePoint = POINT_SIMPLY;
         mChart.highlightValues(null);
+        DealingLine.deleteDealingLine();
+        SocketLine.deleteSocketLine();
         rightYAxis.removeAllLimitLines();
         xAxis.removeAllLimitLines();
         if( mChart.getLineData() != null){
