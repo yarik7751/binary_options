@@ -63,6 +63,10 @@
     <string name="grandcapital_icon_description">GrandCapital icon</string>
     <string name="menu_account_name_fish">Richard Branson</string>
     <string name="menu_account_balance_text_fish">Balance: $45,612</string>
+    
+    <string name="time_has_not_passed">Time has not passed</string>
+    <string name="dealing_can_not_be_closed">The dealing can not be closed.</string>
+    <string name="seconds_remaining">seconds remaining.</string>
 
     <!--Menu items name-->
     <string name="menu_item_terminal">Trade</string>
@@ -84,7 +88,7 @@
     <string name="toolbar_name_how_it_works">FAQ</string>
     <string name="toolbar_name_promotions">Promotions</string>
     <string name="toolbar_name_accounts">Accounts</string>
-    <string name="toolbar_name_support">Live support</string>
+    <string name="toolbar_name_support">Live support_uipouioiuouiouiouoiuipouioiuouiouiouoiuipouioiuouiouiouoiuipouioiuouiouiouoiuipouioiuouiouiouoiuipouioiuouiouiouoi</string>
     <string name="toolbar_name_settings">Account settings</string>
     <string name="toolbar_name_deposit">Deposit&amp;Withdraw</string>
 

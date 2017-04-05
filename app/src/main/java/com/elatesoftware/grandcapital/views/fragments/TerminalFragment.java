@@ -104,6 +104,7 @@ public class TerminalFragment extends Fragment {
     public static boolean isOpen = false;
     public boolean isDirection = true;
     private boolean isFirstDrawPoint = true;
+    private boolean isFirstZoom = true;
 
     public LineChart mChart;
     private TextView tvBalance;
@@ -528,7 +529,12 @@ public class TerminalFragment extends Fragment {
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
-                    if(point != null){
+                    if(point != null) {
+                        if(currEntry.getX() >= mChart.getHighestVisibleX()) {
+                            imgPointCurrent.setVisibility(View.INVISIBLE);
+                        } else {
+                            imgPointCurrent.setVisibility(View.VISIBLE);
+                        }
                         imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
                     }
@@ -537,7 +543,7 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
-                Log.d(TAG, "scale: " + mChart.getViewPortHandler().getScaleX());
+                //Log.d(TAG, "scale: " + mChart.getViewPortHandler().getScaleX());
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
@@ -575,7 +581,7 @@ public class TerminalFragment extends Fragment {
                         if (distance1 < distance2) {
                             if(mChart.getViewPortHandler().getScaleX() >= 10f) {
                                 mChart.setScaleXEnabled(false);
-                                mChart.getViewPortHandler().setZoom(10f, mChart.getViewPortHandler().getScaleY());
+                                //mChart.getViewPortHandler().setZoom(10f, mChart.getViewPortHandler().getScaleY());
                             }
                         } else if (distance1 > distance2) {
                             mChart.setScaleXEnabled(true);
@@ -882,19 +888,22 @@ public class TerminalFragment extends Fragment {
                 mCurrentValueY = Double.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen()));
                 Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
                         Float.valueOf(String.valueOf(mCurrentValueY)), null, null);
-                mChart.zoom(5f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
+                Log.d(TAG, "zoom");
+                //mChart.getViewPortHandler().zoom(10f, mChart.getViewPortHandler().getScaleY());
                 currEntry = entry;
                 getActivity().runOnUiThread(() -> {
-                    SocketLine.drawSocketLine(entry);
-                    drawCurrentPoint(entry);
                     new Handler().postDelayed(() -> {
-                        if (imgPointCurrent != null || currEntry != null) {
+                        if (imgPointCurrent != null && currEntry != null) {
+                            drawCurrentPoint(currEntry);
+                            SocketLine.drawSocketLine(currEntry);
                             MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
-                            if (point != null) {
-                                Log.d(TAG, "setPoint position");
-                                imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
-                                imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
-                            }
+                            Log.d(TAG, "setPoint position");
+                            imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                            imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+                        }
+                        if(isFirstZoom) {
+                            mChart.zoom(10f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
+                            isFirstZoom = false;
                         }
                         if (isFirstDrawPoint) {
                             imgPointCurrent.setVisibility(View.VISIBLE);

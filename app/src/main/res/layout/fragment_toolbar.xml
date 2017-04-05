@@ -33,7 +33,6 @@
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="180dp"
             android:singleLine="true"
             android:layout_toEndOf="@+id/menu_burger"
             android:layout_toRightOf="@+id/menu_burger"
@@ -49,35 +48,5 @@
             android:layout_marginRight="10dp"
             app:line_color="@color/accentButtonGradientStartColor"
             app:select_color="#55ffffff"/>
-
-        <!--<android.support.design.widget.TabLayout
-            android:id="@+id/tabLayout"
-            android:layout_width="170dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            asd:tabIndicatorColor="@color/accentButtonGradientStartColor">
-
-            <android.support.design.widget.TabItem
-                android:layout_width="0dp"
-                android:layout_height="0dp" />
-
-            <android.support.design.widget.TabItem
-                android:layout_width="0dp"
-                android:layout_height="0dp" />
-
-            <android.support.design.widget.TabItem
-                android:layout_width="0dp"
-                android:layout_height="0dp" />
-
-            <android.support.design.widget.TabItem
-                android:layout_width="0dp"
-                android:layout_height="0dp" />
-
-            <android.support.design.widget.TabItem
-                android:layout_width="0dp"
-                android:layout_height="0dp" />
-        </android.support.design.widget.TabLayout>-->
     </RelativeLayout>
 </FrameLayout>

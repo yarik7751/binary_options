@@ -221,11 +221,19 @@ public class DealingFragment extends Fragment {
                             mAdapterClose = null;
                             mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders, v -> {
                                 OrderAnswer order = (OrderAnswer) v.getTag();
-                                if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                                long dateDifference = ConventDate.getDifferenceDate(order.getOpenTime(), order.getOptionsData().getExpirationTime());
+                                if(GrandCapitalApplication.isTypeOptionAmerican &&
+                                        ConventDate.getDifferenceDate(order.getOpenTime()) >= 61 &&
+                                        dateDifference >= 120){
                                     mProgressLayout.setVisibility(View.VISIBLE);
                                     requestDeleteDealing(order);
+                                } else {
+                                    CustomDialog.showDialogInfo(getActivity(),
+                                            getString(R.string.time_has_not_passed),
+                                            getString(R.string.dealing_can_not_be_closed) +
+                                                    (dateDifference >= 120 ? "\n" + (60 - ConventDate.getDifferenceDate(order.getOpenTime())) + " " +
+                                                    getString(R.string.seconds_remaining) : ""));
                                 }
-                                // TODO check and swipe
                             });
                             mRecyclerView.setAdapter(mAdapterOpen);
                         } else {

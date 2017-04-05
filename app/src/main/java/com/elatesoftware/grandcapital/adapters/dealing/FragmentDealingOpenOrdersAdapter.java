@@ -17,11 +17,12 @@ import com.elatesoftware.grandcapital.utils.ConventString;
 
 public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapter {
 
-    private View.OnClickListener onClickDeleteDealing;
+    //private View.OnClickListener onClickDeleteDealing;
+    private OnCloseDealing onCloseDealing;
 
-    public FragmentDealingOpenOrdersAdapter(List<OrderAnswer> orderList, View.OnClickListener _onClickDeleteDealing) {
+    public FragmentDealingOpenOrdersAdapter(List<OrderAnswer> orderList, OnCloseDealing _onCloseDealing) {
         super(orderList);
-        onClickDeleteDealing = _onClickDeleteDealing;
+        onCloseDealing = _onCloseDealing;
         order = ORDER_EVEN;
     }
 
@@ -48,14 +49,23 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
             orderHolder.mThirdColumn.setTextColor(UP_TEXT_COLOR);
             orderHolder.mArrow.setImageDrawable(UP_DRAWABLE);
         }
+
+        if(!GrandCapitalApplication.isTypeOptionAmerican) {
+            orderHolder.slDealing.setSwipeEnabled(false);
+        }
         orderHolder.imgCloseDealing.setTag(orderList.get(position));
-        // if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(orderList.get(position).getOpenTime()) >= 61){
-            orderHolder.imgCloseDealing.setOnClickListener(onClickDeleteDealing);
-        //}
+        orderHolder.imgCloseDealing.setOnClickListener(v -> {
+            orderHolder.slDealing.close();
+            onCloseDealing.onClose(v);
+        });
     }
 
     public void updateAdapter(List<OrderAnswer> _orderList) {
         orderList = _orderList;
         notifyDataSetChanged();
+    }
+
+    public interface OnCloseDealing {
+        void onClose(View v);
     }
 }
