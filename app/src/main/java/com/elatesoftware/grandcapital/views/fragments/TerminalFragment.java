@@ -463,7 +463,10 @@ public class TerminalFragment extends Fragment {
         mChart.setBackgroundColor(Color.TRANSPARENT);
         mChart.getLegend().setEnabled(false);
         mChart.setDrawMarkers(true);
-        mChart.setAnimationCacheEnabled(false);
+
+        mChart.setAnimationCacheEnabled(true);
+        mChart.buildDrawingCache(true);
+        mChart.setDrawingCacheEnabled(true);
 
         setLineDataChart();
 
@@ -522,7 +525,6 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
-                Log.d(TAG, "onChartFling");
             }
 
             @Override
@@ -567,7 +569,7 @@ public class TerminalFragment extends Fragment {
         });
         mChart.setOnTouchListener((v, event) -> {
             if(event.getPointerCount() >= 3) {
-                return true;
+                return false;
             }
             if(event.getActionMasked() == MotionEvent.ACTION_MOVE && event.getPointerCount() == 2) {
                 if(x1 < 0 && y1 < 0 && x2 < 0 && y2 < 0) {
@@ -648,7 +650,7 @@ public class TerminalFragment extends Fragment {
             mChart.getLineData().clearValues();
             mChart.clearValues();
         }
-        //mChart.invalidate();
+        mChart.invalidate();
     }
     private void changeActive(){
         setEnabledBtnChooseActive(false);
@@ -836,8 +838,6 @@ public class TerminalFragment extends Fragment {
                             simplyEntry.setY(y += divY);
                             if(numberTemporaryPoint == 1) {
                                 data.getDataSetByIndex(0).addEntry(simplyEntry);
-                            }else if(numberTemporaryPoint == 6){
-                               mChart.destroyDrawingCache();
                             }
                             data.notifyDataChanged();
                             mChart.invalidate();
@@ -994,7 +994,7 @@ public class TerminalFragment extends Fragment {
                         entry.setIcon(null);
                         entry.setData(null);
                         mChart.getData().notifyDataChanged();
-                        mChart.invalidate();
+                       // mChart.invalidate();
                         break;
                     }
                 }

@@ -145,7 +145,7 @@ public class WebSocketApi {
                     }
                 }
             }
-        }, 3000, 1000);
+        }, 3000, 1500);
     }
 
     static class SocketTask extends AsyncTask<Void, Void, Void> {

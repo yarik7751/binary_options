@@ -37,7 +37,7 @@ public class PointAnimation {
     private void initRocketAnimation() {
         rocketAnimation = new CustomAnimationDrawable();
         rocketAnimation.setOneShot(true);
-        for (int i = 10; i >= 3; i--) {
+        for (int i = 7; i >= 3; i--) {
             rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(bitmapIconCurrentPoint, i)), Const.INTERVAL_ITEM);
         }
         rocketAnimation.setAnimationEndListner(() -> {
@@ -50,7 +50,7 @@ public class PointAnimation {
     private void initRocketAnimationBack() {
         rocketAnimationBack = new CustomAnimationDrawable();
         rocketAnimationBack.setOneShot(true);
-        for (int i = 3; i <= 10; i++) {
+        for (int i = 3; i <= 7; i++) {
             rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(bitmapIconCurrentPoint, i)), Const.INTERVAL_ITEM);
         }
         rocketAnimationBack.setAnimationEndListner(() -> {
