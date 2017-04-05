@@ -23,7 +23,7 @@
     <string name="cancel_dont_show">取消，且不再显示此信息。</string>
     <string name="ok">好</string>
 
-    <string name="caution">Caution!</string>
+    <string name="caution">警告！</string>
 
     <string name="logout">确定登出？</string>
     <string name="reward">利润: $</string>
@@ -136,7 +136,7 @@
     <string name="zero_dollars">$0</string>
 
     <!--нет перевода-->
-    <string name="attention">Attention!</string>
+    <string name="attention">注意！</string>
     <!--//нет перевода-->
 
     <string name="balance">余额:</string>
@@ -154,7 +154,7 @@
     <string name="no_correct_values">输入数值有误。请检查后再重试。</string>
 
     <!--нет перевода-->
-    <string name="error_max_time">Максимальное значение времени - 2880 минут</string>
+    <string name="error_max_time">最大时间周期——2880分钟</string>
     <!--//нет перевода-->
 
     <string name="error_find_signal">此资产暂无信号</string>

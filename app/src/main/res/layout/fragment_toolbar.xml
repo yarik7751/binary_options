@@ -11,8 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:gravity="center_vertical">
 
         <ImageButton
             android:id="@+id/menu_burger"
@@ -32,8 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
             android:singleLine="true"
+            android:layout_marginLeft="10dp"
             android:layout_toEndOf="@+id/menu_burger"
             android:layout_toRightOf="@+id/menu_burger"
             tools:text="yguydfuygudyyguyfdgyuyguyudfygudfygufug"
