@@ -15,6 +15,7 @@ import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SignalAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
+import com.elatesoftware.grandcapital.api.socket.WebSocketApi;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.utils.ConventDate;
@@ -172,7 +173,7 @@ public class GrandCapitalApi {
                         } else if(!InfoAnswer.getInstance().getServerName().contains("demo")) {
                             CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, -1);
                         }
-                        Log.d(GrandCapitalApplication.TAG_SOCKET, "IntervalAdvertising: " + CustomSharedPreferences.getIntervalAdvertising(GrandCapitalApplication.getAppContext()));
+                        Log.d(WebSocketApi.TAG_SOCKET, "IntervalAdvertising: " + CustomSharedPreferences.getIntervalAdvertising(GrandCapitalApplication.getAppContext()));
                     }
                 }
                 result = String.valueOf(response.code());

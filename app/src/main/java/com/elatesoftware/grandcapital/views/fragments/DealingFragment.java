@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.api.socket.WebSocketApi;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.services.DeleteDealingService;
 import com.elatesoftware.grandcapital.services.OrdersService;
@@ -220,7 +221,7 @@ public class DealingFragment extends Fragment {
                             mAdapterClose = null;
                             mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders, v -> {
                                 OrderAnswer order = (OrderAnswer) v.getTag();
-                                if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                                if(WebSocketApi.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                                     mProgressLayout.setVisibility(View.VISIBLE);
                                     requestDeleteDealing(order);
                                 }
