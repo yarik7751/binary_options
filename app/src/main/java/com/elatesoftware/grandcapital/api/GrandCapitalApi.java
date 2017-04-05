@@ -173,7 +173,7 @@ public class GrandCapitalApi {
                         } else if(!InfoAnswer.getInstance().getServerName().contains("demo")) {
                             CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, -1);
                         }
-                        Log.d(WebSocketApi.TAG_SOCKET, "IntervalAdvertising: " + CustomSharedPreferences.getIntervalAdvertising(GrandCapitalApplication.getAppContext()));
+                        Log.d(GrandCapitalApplication.TAG_SOCKET, "IntervalAdvertising: " + CustomSharedPreferences.getIntervalAdvertising(GrandCapitalApplication.getAppContext()));
                     }
                 }
                 result = String.valueOf(response.code());

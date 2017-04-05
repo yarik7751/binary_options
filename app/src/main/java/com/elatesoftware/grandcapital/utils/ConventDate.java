@@ -42,12 +42,9 @@ public class ConventDate {
     public static String getConventDate(String date) {
         //dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));//
         SDF.setTimeZone(TimeZone.getDefault());
-        //SDF.setTimeZone(TimeZone.getTimeZone("EET"));
         Date resultDate = null;
         try {
             resultDate = SDF.parse(date);
-            //resultDate.setHours(resultDate.getHours() - 2);
-            //resultDate.setTime(resultDate.getTime() + getIterationTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -79,7 +76,7 @@ public class ConventDate {
         return Math.abs(stringToUnix(date) - stringToUnix(currDate)) / 1000;
     }
 
-    public static long getDifferenceDateSign(String date) {
+    private static long getDifferenceDateSign(String date) {
         SDF.setTimeZone(TimeZone.getDefault());
         String currDate = SDF.format(new Date());
         return (stringToUnix(date) - stringToUnix(currDate)) / 1000;
@@ -89,7 +86,6 @@ public class ConventDate {
     public static boolean validationDateTimer(String date) {
         SDF.setTimeZone(TimeZone.getDefault());
         String currDate = SDF.format(new Date());
-        Log.d(TAG, "tempLong: " + ((stringToUnix(date) - stringToUnix(currDate))/1000));
         if((stringToUnix(date) - stringToUnix(currDate))/1000 >= 0){
             return true;
         }else {
@@ -122,7 +118,7 @@ public class ConventDate {
         }
     }
 
-    public static String timeClockFormat(long time) {
+    private static String timeClockFormat(long time) {
         return (time < 10) ? "0" + time : String.valueOf(time);
     }
 

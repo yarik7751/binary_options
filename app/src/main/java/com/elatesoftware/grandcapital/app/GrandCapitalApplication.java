@@ -40,8 +40,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 public class GrandCapitalApplication extends Application{
 
+    public final static String TAG_SOCKET = "debug_for_socket";
+    public static boolean isTypeOptionAmerican = false;
     private static Context context;
     public static WebSocketApi webSocketApi;
+
 
     @Override
     public void onCreate() {

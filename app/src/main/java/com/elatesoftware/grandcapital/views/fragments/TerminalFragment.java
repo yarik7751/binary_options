@@ -172,7 +172,7 @@ public class TerminalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
-        Log.d(WebSocketApi.TAG_SOCKET, "onCreateView Terminal");
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "onCreateView Terminal");
         BaseActivity.backToRootFragment = false;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
 
@@ -213,7 +213,7 @@ public class TerminalFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d(WebSocketApi.TAG_SOCKET, "onViewCreated Terminal");
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "onViewCreated Terminal");
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_terminal));
         BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
@@ -319,7 +319,7 @@ public class TerminalFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(WebSocketApi.TAG_SOCKET, "onResume Terminal");
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "onResume Terminal");
         handler = new Handler();
         llProgressBar.setVisibility(View.VISIBLE);
         isOpen = true;
@@ -342,7 +342,7 @@ public class TerminalFragment extends Fragment {
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
         }
-        Log.d(WebSocketApi.TAG_SOCKET, "onPause() Terminal");
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         isAddInChart = false;
         isFirstDrawPoint = true;
         imgPointCurrent.setVisibility(View.INVISIBLE);
@@ -354,9 +354,9 @@ public class TerminalFragment extends Fragment {
     }
     @Override
     public void onDestroy() {
-        Log.d(WebSocketApi.TAG_SOCKET, "onDestroy() Terminal");
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
         WebSocketApi.closeSocket();
-        WebSocketApi.isTypeOptionAmerican = false;
+        GrandCapitalApplication.isTypeOptionAmerican = false;
         super.onDestroy();
     }
 
@@ -548,9 +548,6 @@ public class TerminalFragment extends Fragment {
                                 imgPointCurrent.setVisibility(View.VISIBLE);
                             }
                         }
-                        /*Log.d(TAG, "dX: " + dX);
-                        Log.d(TAG, "mChart.getHighestVisibleX(): " + mChart.getHighestVisibleX());
-                        Log.d(TAG, "mChart.getXChartMax(): " + mChart.getXChartMax());*/
                         if(mChart.getViewPortHandler().getScaleX() > 4.3f) {
                             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                         } else if (mChart.getHighestVisibleX() != mChart.getXChartMax() && mChart.getLowestVisibleX() != mChart.getXChartMin()) {
@@ -635,6 +632,7 @@ public class TerminalFragment extends Fragment {
         currentDealing = null;
         mCurrentValueY = 0;
         typePoint = POINT_SIMPLY;
+        mChart.clearDisappearingChildren();
         mChart.highlightValues(null);
         DealingLine.deleteDealingLine();
         SocketLine.deleteSocketLine();
@@ -644,7 +642,7 @@ public class TerminalFragment extends Fragment {
             mChart.getLineData().clearValues();
             mChart.clearValues();
         }
-        mChart.invalidate();
+        //mChart.invalidate();
     }
     private void changeActive(){
         setEnabledBtnChooseActive(false);
@@ -735,7 +733,7 @@ public class TerminalFragment extends Fragment {
             List<SocketAnswer> list;
             if (SocketAnswer.getInstanceListBackGround() != null && SocketAnswer.getInstanceListBackGround().size() != 0) {
                 list = SocketAnswer.getInstanceListBackGround().subList(0, SocketAnswer.getInstanceListBackGround().size()-1);
-                Log.d(WebSocketApi.TAG_SOCKET, "add from background in list socketanswer size = " + (list.size() - 1));
+                Log.d(GrandCapitalApplication.TAG_SOCKET, "add from background in list socketanswer size = " + (list.size() - 1));
                 for (SocketAnswer item : list) {
                     SymbolHistoryAnswer.addSocketAnswerInSymbol(item);
                 }
@@ -776,7 +774,7 @@ public class TerminalFragment extends Fragment {
                     if (order.getTicket() == orderClosed.getTicket()) {
                         mViewInfoHelper.updateSettingsCloseDealing(orderClosed, getActivity());
                         if(order.getSymbol().equals(ConventString.getActive(tvValueActive))) {
-                            BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, WebSocketApi.isTypeOptionAmerican, mCurrentValueY);
+                            BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
                             redrawPointsDealings(orderClosed);
                         }
                         break;
@@ -832,6 +830,8 @@ public class TerminalFragment extends Fragment {
                             simplyEntry.setY(y += divY);
                             if(numberTemporaryPoint == 1) {
                                 data.getDataSetByIndex(0).addEntry(simplyEntry);
+                            }else if(numberTemporaryPoint == 6){
+                               mChart.destroyDrawingCache();
                             }
                             data.notifyDataChanged();
                             mChart.invalidate();
@@ -839,11 +839,11 @@ public class TerminalFragment extends Fragment {
                             SocketLine.drawSocketLine(simplyEntry);
                             drawCurrentPoint(simplyEntry);
                             if (numberTemporaryPoint <= 6) {
-                                handler.postDelayed(this, 100);
+                                handler.postDelayed(this, 160);
                             }
                         }
                     }
-                }, 100);
+                }, 160);
             }
         }
     }
@@ -863,7 +863,7 @@ public class TerminalFragment extends Fragment {
             threadSymbolHistory.interrupt();
         }
         threadSymbolHistory = new Thread(() -> {
-            Log.d(WebSocketApi.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
+            Log.d(GrandCapitalApplication.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
             if (listSymbol.size() != 0) {
                 for (int i = 0; i < listSymbol.size() - 1; i++) {
                     int finalI = i;
@@ -940,7 +940,7 @@ public class TerminalFragment extends Fragment {
                     }
                     typePoint = POINT_CLOSE_DEALING;
                 }else{
-                    if(WebSocketApi.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                    if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                         line.setmIsAmerican(true);
                     }
                     XDealingLine.updateColorXLimitLine(line, order, mCurrentValueY);
@@ -963,7 +963,7 @@ public class TerminalFragment extends Fragment {
                     }
                     typePoint = POINT_CLOSE_DEALING;
                 }else{
-                    if(WebSocketApi.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                    if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                         line.setmIsAmerican(true);
                     }
                     YDealingLine.updateColorYLimitLine(line, order, mCurrentValueY);
@@ -1001,7 +1001,7 @@ public class TerminalFragment extends Fragment {
                         listOpenDealings.remove(order);
                         CheckDealingService.setListOrderAnswer(listOpenDealings);
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
-                        BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, WebSocketApi.isTypeOptionAmerican, mCurrentValueY);
+                        BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
                         break;
                     }
                 }
@@ -1140,7 +1140,7 @@ public class TerminalFragment extends Fragment {
 
                         parseClosingDealings(listAllClosedDealings);
                         if (listOpenDealings != null && listOpenDealings.size() != 0 && BaseLimitLine.getXLimitLines() == null) {
-                            BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, WebSocketApi.isTypeOptionAmerican, mCurrentValueY);
+                            BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
                         }
                         break;
                     case OrdersService.GET_TICKET_ORDER:
@@ -1170,7 +1170,7 @@ public class TerminalFragment extends Fragment {
             String response = intent.getStringExtra(EarlyClosureService.RESPONSE);
             if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && EarlyClosureAnswer.getInstance() != null &&
                     InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
-                WebSocketApi.isTypeOptionAmerican = intent.getBooleanExtra(EarlyClosureService.IS_AMERICAN, false);
+                GrandCapitalApplication.isTypeOptionAmerican = intent.getBooleanExtra(EarlyClosureService.IS_AMERICAN, false);
                 tvValueRewardTerminal.setText(ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
             }
         }

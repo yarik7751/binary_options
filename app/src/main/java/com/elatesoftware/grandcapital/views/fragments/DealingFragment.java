@@ -221,7 +221,7 @@ public class DealingFragment extends Fragment {
                             mAdapterClose = null;
                             mAdapterOpen = new FragmentDealingOpenOrdersAdapter(currentOrders, v -> {
                                 OrderAnswer order = (OrderAnswer) v.getTag();
-                                if(WebSocketApi.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
+                                if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                                     mProgressLayout.setVisibility(View.VISIBLE);
                                     requestDeleteDealing(order);
                                 }

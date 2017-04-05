@@ -183,7 +183,7 @@ public class Transformer {
         }catch(NegativeArraySizeException ex){
             ex.printStackTrace();
             /*********************xz start**************************************************/
-            /*if(valuePointsForGenerateTransformedValuesLine != null && valuePointsForGenerateTransformedValuesLine.length != 0) {
+           /* if(valuePointsForGenerateTransformedValuesLine != null && valuePointsForGenerateTransformedValuesLine.length != 0) {
                 List<Float> values = new ArrayList<>();
                 for(Float item: valuePointsForGenerateTransformedValuesLine){
                     values.add(item);

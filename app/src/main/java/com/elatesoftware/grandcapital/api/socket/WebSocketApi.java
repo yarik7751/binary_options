@@ -37,9 +37,6 @@ import javax.net.ssl.X509TrustManager;
 
 public class WebSocketApi {
 
-    public final static String TAG_SOCKET = "debug_for_socket";
-    public static boolean isTypeOptionAmerican = false;
-
     private static SocketAnswer answerCurrent = null;
     private static SocketAnswer answerSave = null;
     private static Timer timer;
@@ -160,16 +157,16 @@ public class WebSocketApi {
                     mClient = new WebSocketClient(new URI(GrandCapitalApi.SOCKET_URL), new Draft_17(), null, 10000){
                         @Override
                         public void onOpen(ServerHandshake handshakedata) {
-                            Log.d(TAG_SOCKET, "Open Connect Socket");
+                            Log.d(GrandCapitalApplication.TAG_SOCKET, "Open Connect Socket");
                             if(!symbolCurrent.equals("")){
                                 mClient.send(symbolCurrent);
                                 SocketAnswer.clearListBackGround();
-                                Log.d(TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
+                                Log.d(GrandCapitalApplication.TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
                             }
                         }
                         @Override
                         public void onMessage(final String message) {
-                            Log.d(TAG_SOCKET, message);
+                            Log.d(GrandCapitalApplication.TAG_SOCKET, message);
                             if (message == null || message.equals("success") || message.equals("answer") || message.isEmpty() || message.equals("true") || message.equals("false")) {
                                 return;
                             }
@@ -180,7 +177,7 @@ public class WebSocketApi {
                         }
                         @Override
                         public void onClose(int code, String reason, boolean remote){
-                            Log.d(TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
+                            Log.d(GrandCapitalApplication.TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
                             SocketAnswer.clearListBackGround();
                             if(!symbolCurrent.equals("")){
                                 closeAndOpenSocket(symbolCurrent);
@@ -188,7 +185,7 @@ public class WebSocketApi {
                         }
                         @Override
                         public void onError(Exception ex){
-                            Log.d(TAG_SOCKET, "Error Connect in Socket - " + ex.toString());
+                            Log.d(GrandCapitalApplication.TAG_SOCKET, "Error Connect in Socket - " + ex.toString());
                             if(!symbolCurrent.equals("")){
                                 closeAndOpenSocket(symbolCurrent);
                             }

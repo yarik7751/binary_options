@@ -241,14 +241,14 @@ public class BaseLimitLine extends LimitLine {
         return null;
     }
 
-    public static void drawAllDealingsLimitLines(List<OrderAnswer> list, boolean isTypeOptionAmerican, double mCurrentValueY){
+    public static void drawAllDealingsLimitLines(List<OrderAnswer> list, double mCurrentValueY){
         xAxis.removeAllLimitLines();
         rightYAxis.removeAllLimitLines();
         if(list != null && list.size() != 0){
             for(OrderAnswer orderAnswer : list){
                 if(ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {
-                    if(isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
-                        drawDealingLimitLine(orderAnswer, isTypeOptionAmerican, mCurrentValueY);
+                    if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
+                        drawDealingLimitLine(orderAnswer, true, mCurrentValueY);
                     }else{
                         drawDealingLimitLine(orderAnswer, false, mCurrentValueY);
                     }
