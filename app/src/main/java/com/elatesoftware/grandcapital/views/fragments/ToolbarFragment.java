@@ -157,6 +157,8 @@ public class ToolbarFragment extends Fragment {
             default:
                 break;
         }
+
+        ((RelativeLayout.LayoutParams) mPageTitle.getLayoutParams()).rightMargin = AndroidUtils.dp(180 - mTabLayout.getHideTabsCount() * 170 / 5);
     }
 
     public void deselectAll() {

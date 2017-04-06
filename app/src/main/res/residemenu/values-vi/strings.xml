@@ -22,7 +22,7 @@
     <string name="cancel">Hủy bỏ</string>
     <string name="cancel_dont_show">Hủy bỏ và không hiển thị lại thông báo</string>
     <string name="ok">OK</string>
-    <string name="caution">Caution!</string>
+    <string name="caution">Thận trọng!</string>
     <string name="logout">Bạn có muốn đăng xuất?</string>
     <string name="reward">Lợi nhuận: $</string>
     <string name="open_account">Mở tài khoản</string>
@@ -134,7 +134,7 @@
     <string name="zero_dollars">$0</string>
 
     <!--нет перевода-->
-    <string name="attention">Attention!</string>
+    <string name="attention">Chú ý!</string>
     <!--//нет перевода-->
 
     <string name="balance">Số dư:</string>
@@ -152,7 +152,7 @@
     <string name="no_correct_values">Giá trị nhập vào không đúng. Vui lòng kiểm tra và thử lại.</string>
 
     <!--нет перевода-->
-    <string name="error_max_time">Максимальное значение времени - 2880 минут</string>
+    <string name="error_max_time">Khoảng thời gian tối đa - 2880 phút</string>
     <!--//нет перевода-->
 
     <string name="error_find_signal">Không có tín hiệu cho tài sản này</string>

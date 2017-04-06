@@ -22,7 +22,7 @@
     <string name="cancel">Batal</string>
     <string name="cancel_dont_show">Batal dan jangan tunjukan pesan ini lagi</string>
     <string name="ok">OK</string>
-    <string name="caution">Caution!</string>
+    <string name="caution">Peringatan!</string>
     <string name="logout">Anda ingin keluar?</string>
     <string name="reward">Keuntungan: $</string>
     <string name="open_account">Buka Akun</string>
@@ -134,7 +134,7 @@
     <string name="zero_dollars">$0</string>
 
     <!--нет перевода-->
-    <string name="attention">Attention!</string>
+    <string name="attention">Perhatian!</string>
     <!--//нет перевода-->
 
     <string name="balance">Saldo:</string>
@@ -152,7 +152,7 @@
     <string name="no_correct_values">Nilai yang dimasukan salah. Silahkan periksa dan coba lagi.</string>
 
     <!--нет перевода-->
-    <string name="error_max_time">Максимальное значение времени - 2880 минут</string>
+    <string name="error_max_time">Maksimum interval waktu - 2880 menit</string>
     <!--//нет перевода-->
 
     <string name="error_find_signal">Tidak ada sinyal yang tersedia untuk aset ini</string>

@@ -156,6 +156,17 @@ public class ToolTabsView extends LinearLayout {
         this.onChangePosition = onChangePosition;
     }
 
+    public int getHideTabsCount() {
+        int count = 0;
+        for(int i = 0; i < llTabs.getChildCount(); i++) {
+            View v = llTabs.getChildAt(i);
+            if(v.getVisibility() != VISIBLE) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private void init(Context _context) {
         context = _context;
 

@@ -88,7 +88,7 @@
     <string name="toolbar_name_how_it_works">FAQ</string>
     <string name="toolbar_name_promotions">Promotions</string>
     <string name="toolbar_name_accounts">Accounts</string>
-    <string name="toolbar_name_support">Live support_uipouioiuouiouiouoiuipouioiuouiouiouoiuipouioiuouiouiouoiuipouioiuouiouiouoiuipouioiuouiouiouoiuipouioiuouiouiouoi</string>
+    <string name="toolbar_name_support">Live support</string>
     <string name="toolbar_name_settings">Account settings</string>
     <string name="toolbar_name_deposit">Deposit&amp;Withdraw</string>
 
@@ -159,7 +159,7 @@
     <string name="no_correct_values">The entered values are not correct. Please check them and try again.</string>
 
     <!--нет перевода-->
-    <string name="error_max_time">Максимальное значение времени - 2880 минут</string>
+    <string name="error_max_time">Maximum time interval — 2880 minutes</string>
     <!--//нет перевода-->
 
     <string name="error_find_signal">No signals available for this asset</string>
