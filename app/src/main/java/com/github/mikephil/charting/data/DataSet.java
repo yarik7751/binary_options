@@ -283,15 +283,17 @@ public abstract class DataSet<T extends Entry> extends BaseDataSet<T> {
 
     @Override
     public T getEntryForIndex(int index) {
-        return mValues.get(index);
+        try{
+            return mValues.get(index);
+        }catch (IndexOutOfBoundsException ex){
+            return null;
+        }
     }
 
     @Override
     public int getEntryIndex(float xValue, float closestToY, Rounding rounding) {
-
         if (mValues == null || mValues.isEmpty())
             return -1;
-
         int low = 0;
         int high = mValues.size() - 1;
         int closest = high;

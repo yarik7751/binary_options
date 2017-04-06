@@ -15,7 +15,6 @@ import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SignalAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SummaryAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
-import com.elatesoftware.grandcapital.api.socket.WebSocketApi;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.utils.ConventDate;

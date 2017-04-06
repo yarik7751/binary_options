@@ -1,8 +1,10 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Path;
 
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.YDealingLine;
 import com.github.mikephil.charting.charts.RadarChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
@@ -197,8 +199,12 @@ public class YAxisRendererRadarChart extends YAxisRenderer {
 
             if (!l.isEnabled())
                 continue;
+            if(l instanceof YDealingLine){
+                mLimitLinePaint.setColor(Color.TRANSPARENT);
+            }else{
+                mLimitLinePaint.setColor(l.getLineColor());
+            }
 
-            mLimitLinePaint.setColor(l.getLineColor());
             mLimitLinePaint.setPathEffect(l.getDashPathEffect());
             mLimitLinePaint.setStrokeWidth(l.getLineWidth());
 

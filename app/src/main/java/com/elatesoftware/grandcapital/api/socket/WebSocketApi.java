@@ -37,12 +37,14 @@ import javax.net.ssl.X509TrustManager;
 
 public class WebSocketApi {
 
+    private static String symbolCurrent = "";
     private static SocketAnswer answerCurrent = null;
     private static SocketAnswer answerSave = null;
+
     private static Timer timer;
-    private static String symbolCurrent = "";
     public static WebSocketClient mClient;
     private static SSLContext sc;
+
     static {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             @Override
@@ -89,7 +91,6 @@ public class WebSocketApi {
     }
 
     public static void closeSocket(){
-        SocketAnswer.clearListBackGround();
         answerCurrent = null;
         answerSave = null;
         symbolCurrent = "";
@@ -132,7 +133,7 @@ public class WebSocketApi {
                                     });
                                 } else {
                                     TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                                        SocketAnswer.addItemListBackGround(answerCurrent);
+                                       // SocketAnswer.addItemListBackGround(answerCurrent);
                                     });
                                 }
                             }
@@ -160,7 +161,6 @@ public class WebSocketApi {
                             Log.d(GrandCapitalApplication.TAG_SOCKET, "Open Connect Socket");
                             if(!symbolCurrent.equals("")){
                                 mClient.send(symbolCurrent);
-                                SocketAnswer.clearListBackGround();
                                 Log.d(GrandCapitalApplication.TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
                             }
                         }
@@ -178,7 +178,6 @@ public class WebSocketApi {
                         @Override
                         public void onClose(int code, String reason, boolean remote){
                             Log.d(GrandCapitalApplication.TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
-                            SocketAnswer.clearListBackGround();
                             if(!symbolCurrent.equals("")){
                                 closeAndOpenSocket(symbolCurrent);
                             }

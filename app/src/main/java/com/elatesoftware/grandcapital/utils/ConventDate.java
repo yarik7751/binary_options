@@ -26,7 +26,7 @@ public class ConventDate {
     private final static int DIFFERENCE_FOR_POINTS = 4000;
     private static final String timeZone = "GMT+00:00:00";
 
-    private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();//getBigDateChart();//
+    private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
 
     private static long getBigDateChart() {
         SDF.setTimeZone(TimeZone.getDefault());

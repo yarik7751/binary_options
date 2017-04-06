@@ -174,7 +174,7 @@ public class Transformer {
      */
     public float[] generateTransformedValuesLine(ILineDataSet set, float phaseX, float phaseY, int min, int max) {
 
-         final int count = ((int) ((max - min) * phaseX) + 1) * 2;//(int) Math.ceil((to - from) * phaseX) * 2;
+         final int count = ((int) ((max - min) * phaseX) + 1) * 2;
         /***************************************my bug**********************************************/
         try{
             if (valuePointsForGenerateTransformedValuesLine != null && valuePointsForGenerateTransformedValuesLine.length != count) {

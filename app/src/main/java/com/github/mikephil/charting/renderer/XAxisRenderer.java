@@ -16,6 +16,7 @@ import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.XDealingLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.YDealingLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
@@ -413,7 +414,12 @@ public class XAxisRenderer extends AxisRenderer {
         mLimitLinePaint.setStrokeWidth(limitLine.getLineWidth());
         mLimitLinePaint.setPathEffect(limitLine.getDashPathEffect());
         mLimitLinePaint.setStyle(Paint.Style.STROKE);
-        mLimitLinePaint.setColor(limitLine.getLineColor());
+        if(limitLine instanceof YDealingLine){
+            mLimitLinePaint.setColor(Color.TRANSPARENT);
+        }else{
+            mLimitLinePaint.setColor(limitLine.getLineColor());
+        }
+
         if(limitLine instanceof BaseLimitLine){
             XDealingLine line = (XDealingLine) limitLine;
             if (!line.ismIsActive()) {

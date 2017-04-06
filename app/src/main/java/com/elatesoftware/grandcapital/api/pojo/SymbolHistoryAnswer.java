@@ -35,6 +35,7 @@ public class SymbolHistoryAnswer {
 
     private static List<SymbolHistoryAnswer> symbolInstance = null;
     public static List<SymbolHistoryAnswer> getInstance() {
+        sortList();
         return symbolInstance;
     }
     public static void setInstance(List<SymbolHistoryAnswer> symbolList) {
@@ -57,6 +58,9 @@ public class SymbolHistoryAnswer {
     }
 
     public static void nullInstance() {
+        if(symbolInstance != null){
+            symbolInstance.clear();
+        }
         symbolInstance = null;
     }
     public Double getHigh() {

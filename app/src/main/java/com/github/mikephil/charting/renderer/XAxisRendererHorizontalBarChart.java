@@ -2,11 +2,13 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.YDealingLine;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
@@ -242,6 +244,9 @@ public class XAxisRendererHorizontalBarChart extends XAxisRenderer {
             c.clipRect(mLimitLineClippingRect);
 
 			mLimitLinePaint.setStyle(Paint.Style.STROKE);
+            if(l instanceof YDealingLine){
+                mLimitLinePaint.setColor(Color.TRANSPARENT);
+            }
 			mLimitLinePaint.setColor(l.getLineColor());
 			mLimitLinePaint.setStrokeWidth(l.getLineWidth());
 			mLimitLinePaint.setPathEffect(l.getDashPathEffect());

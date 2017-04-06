@@ -5,6 +5,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -73,27 +75,6 @@ public class SocketAnswer {
     public static void clearSocketAnswer(){
         answersInstance = null;
     }
-
-    private static List<SocketAnswer> listSocketPointsBackGround = null;
-    public static List<SocketAnswer> getInstanceListBackGround() {
-        if(listSocketPointsBackGround == null){
-            listSocketPointsBackGround = new ArrayList<>();
-        }
-        return listSocketPointsBackGround;
-    }
-    public static void clearListBackGround(){
-        if(listSocketPointsBackGround == null){
-            listSocketPointsBackGround = new ArrayList<>();
-        }
-        listSocketPointsBackGround.clear();
-    }
-    public static void addItemListBackGround(SocketAnswer answerCurrent){
-        if(listSocketPointsBackGround == null){
-            listSocketPointsBackGround = new ArrayList<>();
-        }
-        listSocketPointsBackGround.add(answerCurrent);
-    }
-
 
     public String getSymbol() {
         return symbol;

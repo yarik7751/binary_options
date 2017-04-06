@@ -194,7 +194,7 @@ public class YAxisRenderer extends AxisRenderer {
 
                     Paint textPaint = mAxisLabelPaint;
                     textPaint.setColor(Color.WHITE);
-                    textPaint.setTextSize(mAxisLabelPaint.getTextSize());
+                    textPaint.setTextSize(mYAxis.getTextSize());
                     textPaint.setPathEffect(null);
                     textPaint.setTypeface(l.getTypeface());
                     textPaint.setStrokeWidth(0.5f);
@@ -428,7 +428,12 @@ public class YAxisRenderer extends AxisRenderer {
 
             mLimitLinePaint.setStrokeWidth(1.0f);
             mLimitLinePaint.setStyle(Paint.Style.STROKE);
-            mLimitLinePaint.setColor(l.getLineColor());
+            if(l instanceof YDealingLine){
+                mLimitLinePaint.setColor(Color.TRANSPARENT);
+            }else{
+                mLimitLinePaint.setColor(l.getLineColor());
+            }
+
             mLimitLinePaint.setStrokeWidth(l.getLineWidth());
             mLimitLinePaint.setPathEffect(l.getDashPathEffect());
 
@@ -443,7 +448,7 @@ public class YAxisRenderer extends AxisRenderer {
             limitLinePath.reset();
             // c.drawLines(pts, mLimitLinePaint);
 
-            String label = "";     /** убирает текст над линией*/
+            String label = "";
             // if drawing the limit-value label is enabled
             if (label != null && !label.equals("")) {
 
