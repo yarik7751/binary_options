@@ -22,7 +22,7 @@ public class ConventDate {
     private static final String CLOSE_DEALING = "1970-01-01T00:00:00";
     private static final DateFormat SDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final DateFormat SDF_HH_MM = new SimpleDateFormat("HH:mm");
-    private final static double DIFFERENCE_FOR_SOCKET = 1.5;
+    private final static double DIFFERENCE_FOR_SOCKET = 1;
     private final static int DIFFERENCE_FOR_POINTS = 4000;
     private static final String timeZone = "GMT+00:00:00";
 
@@ -181,7 +181,7 @@ public class ConventDate {
         }else{
             Date currentDate = new Date(currentTime);
             Date newDate = new Date(newTime);
-            if((newDate.getSeconds() - currentDate.getSeconds() <= DIFFERENCE_FOR_SOCKET)){
+            if(newDate.getSeconds() - currentDate.getSeconds() < DIFFERENCE_FOR_SOCKET){
                 return true;
             }else{
                 return false;

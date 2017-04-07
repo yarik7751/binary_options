@@ -1,5 +1,10 @@
 package com.elatesoftware.grandcapital.utils;
 
+import android.util.TypedValue;
+
+import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+
 /**
  * Created by Дарья Высокович on 28.03.2017.
  */
@@ -24,6 +29,14 @@ public class Const {
     public final static String URL_GRAND_CAPITAL_WITHDRAW = "/payments/withdraw";
 
     public final static int INTERVAL_ANIM_PANEL = 200;
-    public static final int INTERVAL_ITEM = 100;
-    public static final int MAX_TIME_MIN = 2880;
+    public final static int INTERVAL_ITEM = 100;
+    public final static int MAX_TIME_MIN = 2880;
+
+    public final static float OFFSET_CHART_Y =  getOffsetChartY();
+
+    private static float getOffsetChartY(){
+        TypedValue typedValue = new TypedValue();
+        GrandCapitalApplication.getAppContext().getResources().getValue(R.dimen.offset_y_chart, typedValue, true);
+        return typedValue.getFloat();
+    }
 }

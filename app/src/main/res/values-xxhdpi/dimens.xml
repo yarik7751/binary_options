@@ -1,0 +1,3 @@
+<resources>
+    <item name="offset_y_chart" type="dimen" format="float">130.</item>
+</resources>

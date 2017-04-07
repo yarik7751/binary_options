@@ -83,7 +83,7 @@ public class ConventString {
         return Integer.parseInt(valueStr);
     }
 
-    public static void updateBalance(TextView v){
+    public static void setBalance(TextView v){
         if(User.getInstance() != null){
             v.setText("$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
         }

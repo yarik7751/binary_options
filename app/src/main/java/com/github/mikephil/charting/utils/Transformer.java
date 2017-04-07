@@ -5,7 +5,6 @@ import android.graphics.Matrix;
 import android.graphics.Path;
 import android.graphics.RectF;
 
-import com.elatesoftware.grandcapital.views.items.chart.FloatComparator;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.interfaces.datasets.IBubbleDataSet;
@@ -13,8 +12,6 @@ import com.github.mikephil.charting.interfaces.datasets.ICandleDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.IScatterDataSet;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -173,7 +170,6 @@ public class Transformer {
      * @return
      */
     public float[] generateTransformedValuesLine(ILineDataSet set, float phaseX, float phaseY, int min, int max) {
-
          final int count = ((int) ((max - min) * phaseX) + 1) * 2;
         /***************************************my bug**********************************************/
         try{
@@ -198,11 +194,8 @@ public class Transformer {
             /*********************xz end**************************************************/
         }
         float[] valuePoints = valuePointsForGenerateTransformedValuesLine;
-
         for (int j = 0; j < count; j += 2) {
-
             Entry e = set.getEntryForIndex(j / 2 + min);
-
             if (e != null) {
                 valuePoints[j] = e.getX();
                 valuePoints[j + 1] = e.getY() * phaseY;
@@ -211,9 +204,7 @@ public class Transformer {
                 valuePoints[j + 1] = 0;
             }
         }
-
         getValueToPixelMatrix().mapPoints(valuePoints);
-
         return valuePoints;
     }
 

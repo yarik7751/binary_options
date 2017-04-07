@@ -569,9 +569,7 @@ public class LineChartRenderer extends LineRadarRenderer {
                     }
 
                     if (entry.getIcon() != null && dataSet.isDrawIconsEnabled()) {
-
                         Drawable icon = entry.getIcon();
-
                         Utils.drawImage(
                                 c,
                                 icon,

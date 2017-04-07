@@ -104,7 +104,7 @@ public class ResideMenu extends FrameLayout {
         refreshNameUser();
 
         balance = (TextView)findViewById(R.id.tvUserBalance);
-        refreshBalanceUser();
+        //refreshBalanceUser();
 
         tvDepositMenu = (TextView)findViewById(R.id.tvDepositMenu);
 
@@ -313,6 +313,7 @@ public class ResideMenu extends FrameLayout {
         scaleDown_activity.playTogether(scaleDown_shadow);
         scaleDown_activity.playTogether(alpha_menu);
         scaleDown_activity.start();
+        refreshBalanceUser();
     }
     /**
      * Close the menu;

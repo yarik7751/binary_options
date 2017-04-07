@@ -43,7 +43,7 @@ public class BaseActivity extends CustomFontsActivity {
     public static String sMainTagFragment = "";
     public static String sCurrentTagFragment = "";
 
-    public ResideMenu mResideMenu;
+    public static ResideMenu mResideMenu;
     private ResideMenuItem mTerminal;
     private ResideMenuItem mSupport;
     private ResideMenuItemWithMark mDealing;
@@ -328,7 +328,7 @@ public class BaseActivity extends CustomFontsActivity {
 
     }
 
-    public ResideMenu getResideMenu() {
+    public static ResideMenu getResideMenu() {
         return mResideMenu;
     }
 

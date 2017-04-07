@@ -202,8 +202,10 @@ public class YAxisRenderer extends AxisRenderer {
 
                     pts[1] = lineDealing.getLimit();
                     mTrans.pointValuesToPixel(pts);
-                    String strLabel = lineDealing.getLabel().substring(0, 6);
-
+                    String strLabel = lineDealing.getLabel();
+                    if(strLabel != null && strLabel.length() > 7){
+                        strLabel = strLabel.substring(0, 6);
+                    }
                     Bitmap bitmapLabel = lineDealing.getmBitmapLabelY();
                     float paddingVert = Utils.convertDpToPixel(8);
                     float paddingHoriz = Utils.convertDpToPixel(10);

@@ -72,4 +72,8 @@ public class User {
                 ", serverName='" + serverName + '\'' +
                 '}';
     }
+
+    public Double updateBalance(double money){
+        return  (balance += money);
+    }
 }

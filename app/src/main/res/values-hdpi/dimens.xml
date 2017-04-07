@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="login_image_padding">115dp</dimen>
+    <item name="offset_y_chart" type="dimen" format="float">80.</item>
+</resources>

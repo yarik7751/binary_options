@@ -38,6 +38,7 @@ import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.api.pojo.SymbolHistoryAnswer;
 import com.elatesoftware.grandcapital.api.socket.WebSocketHTTP3;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.DeleteDealingService;
 import com.elatesoftware.grandcapital.services.EarlyClosureService;
@@ -324,21 +325,19 @@ public class TerminalFragment extends Fragment {
         handler = new Handler();
         mTimerRedraw = new Timer();
         startTimerRedrawLimitLines();
-        llProgressBar.setVisibility(View.VISIBLE);
+        startProgress();
         isOpen = true;
         ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
         registerBroadcasts();
         clearChart();
-        ConventString.updateBalance(tvBalance);
+        updateBalance(0);
         if (sSymbolCurrent != null && !sSymbolCurrent.equals("")) {
             tvValueActive.setText(sSymbolCurrent);
             drawDataSymbolHistory( ConventString.getActive(tvValueActive));
-            llProgressBar.setVisibility(View.GONE);
         } else {
             changeActive();
         }
         requestGetAllOrders();
-        setEnabledBtnChooseActive(true);
     }
 
     @Override
@@ -433,6 +432,17 @@ public class TerminalFragment extends Fragment {
         rlChart.addView(imgPointCurrent, params);
         imgPointCurrent.setVisibility(View.INVISIBLE);
         pointAnimation.start();
+    }
+
+    private void startProgress(){
+        llProgressBar.setVisibility(View.VISIBLE);
+        setEnabledBtnTerminal(false);
+        setEnabledBtnChooseActive(false);
+    }
+    private void stopProgress(){
+        llProgressBar.setVisibility(View.GONE);
+        setEnabledBtnTerminal(true);
+        setEnabledBtnChooseActive(true);
     }
     private void setEnabledBtnTerminal(boolean enabled) {
         llHigherTerminal.setEnabled(enabled);
@@ -659,7 +669,8 @@ public class TerminalFragment extends Fragment {
         mChart.invalidate();
     }
     private void changeActive(){
-        setEnabledBtnChooseActive(false);
+        startProgress();
+        imgPointCurrent.setVisibility(View.INVISIBLE);
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
         }
@@ -670,8 +681,6 @@ public class TerminalFragment extends Fragment {
             sSymbolCurrent = Const.SYMBOL;
         }
         isFirstDrawPoint = true;
-        imgPointCurrent.setVisibility(View.INVISIBLE);
-        llProgressBar.setVisibility(View.VISIBLE);
         tvValueActive.setText(sSymbolCurrent);
         SymbolHistoryAnswer.nullInstance();
         SocketAnswer.nullInstance();
@@ -681,6 +690,12 @@ public class TerminalFragment extends Fragment {
         requestSymbolHistory(ConventString.getActive(tvValueActive));
         requestGetAllOrders();
     }
+    private void updateBalance(double volume){
+        if(volume != 0){
+            User.getInstance().updateBalance(volume);
+        }
+        ConventString.setBalance(tvBalance);
+    }
 
     private void startTimerRedrawLimitLines(){
         mTimerRedraw.scheduleAtFixedRate(new TimerTask() {
@@ -688,7 +703,7 @@ public class TerminalFragment extends Fragment {
             public void run() {
                 getActivity().runOnUiThread(() -> redrawXYDealingLimitLines());
             }
-        }, 2000, 1000);
+        }, 1000, 1000);
     }
     private void stopTimerRedrawLimitLines(){
         if(mTimerRedraw != null){
@@ -713,13 +728,11 @@ public class TerminalFragment extends Fragment {
         getActivity().startService(intentService);
     }
     private void requestMakeDealing(String lowerOrHeight) {
-        llProgressBar.setVisibility(View.VISIBLE);
-        setEnabledBtnTerminal(false);
+        startProgress();
         if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).isEmpty()) {
             if(ConventString.getTimeValue(etValueTime) > Const.MAX_TIME_MIN) {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.error_max_time));
-                llProgressBar.setVisibility(View.GONE);
-                setEnabledBtnTerminal(true);
+                stopProgress();
                 return;
             }
             Intent intentService = new Intent(getActivity(), MakeDealingService.class);
@@ -730,8 +743,7 @@ public class TerminalFragment extends Fragment {
             getActivity().startService(intentService);
         } else {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
-            llProgressBar.setVisibility(View.GONE);
-            setEnabledBtnTerminal(true);
+            stopProgress();
         }
     }
     private void requestGetAllOrders() {
@@ -785,6 +797,7 @@ public class TerminalFragment extends Fragment {
             for(OrderAnswer order : listCurrentClosingDealings){
                 for(OrderAnswer orderClosed : listAllClosedDealings){
                     if ((int)order.getTicket() == orderClosed.getTicket()) {
+                        updateBalance(orderClosed.getProfit());
                         mViewInfoHelper.updateSettingsCloseDealing(orderClosed, getActivity());
                         if(order.getSymbol().equals(ConventString.getActive(tvValueActive))) {
                             BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
@@ -800,7 +813,7 @@ public class TerminalFragment extends Fragment {
 
     public synchronized void answerSocket(final SocketAnswer answer) {
         if (answer != null) {
-            if(isAddInChart) {
+            if (isAddInChart) {
                 addEntry(answer);
             } else {
                 SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
@@ -808,64 +821,74 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-    public synchronized void addEntry(final SocketAnswer answer) {
+    public  synchronized void addEntry(final SocketAnswer answer) {
         if (answer != null && answer.getTime() != null && answer.getAsk() != null) {
             LineData data = getLineDataChart();
+            currEntry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
             if (data != null && data.getEntryCount() != 0) {
-                SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
                 mCurrentValueY = answer.getAsk();
-                currEntry = new Entry(ConventDate.genericTimeForChart(answer.getTime()), Float.valueOf(String.valueOf(answer.getAsk())), null, null);
                 if (data.getDataSetByIndex(0).getEntryCount() != 0) {
-                    entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount() - 1);
-                }
-                if (entryLast != null){
-                    switch (typePoint) {
-                        case POINT_CLOSE_DEALING:
-                            entryLast.setIcon(drawableMarkerDealing);
-                            entryLast.setData(null);
-                            typePoint = POINT_SIMPLY;
-                            break;
-                        case POINT_OPEN_DEALING:
-                            OrderAnswer order = currentDealing;
-                            order.setOpenPrice((double) entryLast.getY());
-                            String dataEntry = new Gson().toJson(order);
-                            entryLast.setIcon(drawableMarkerDealing);
-                            entryLast.setData(dataEntry);
-                            BaseLimitLine.drawDealingLimitLine(order, false, mCurrentValueY);
-                            currentDealing = null;
-                            typePoint = POINT_SIMPLY;
-                            break;
-                        default:
-                            break;
-                    }
-                    divX = (currEntry.getX() - entryLast.getX()) / 10.f;
-                    divY = (currEntry.getY() - entryLast.getY()) / 10.f;
-                    numberTemporaryPoint = 1;
-                    final Entry simplyEntry = new Entry(entryLast.getX(), entryLast.getY(), null, null);
-                    handler.postAtTime(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (entryLast != null && currEntry != null) {
-                                float x = simplyEntry.getX();
-                                float y = simplyEntry.getY();
-                                simplyEntry.setX(x += divX);
-                                simplyEntry.setY(y += divY);
-                                if (numberTemporaryPoint == 1) {
-                                    data.getDataSetByIndex(0).addEntry(simplyEntry);
-                                }
-                                data.notifyDataChanged();
-                                mChart.invalidate();
-                                numberTemporaryPoint++;
-                                SocketLine.drawSocketLine(simplyEntry);
-                                drawCurrentPoint(simplyEntry);
-                                if (numberTemporaryPoint <= 10) {
-                                    handler.postDelayed(this, 70);
-                                }
-                            }
+                    entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
+                    if (entryLast != null) {
+                        if(entryLast.getX() > currEntry.getX()){
+                            return;
                         }
-                    }, 70);
+                        switch (typePoint) {
+                            case POINT_CLOSE_DEALING:
+                                entryLast.setIcon(drawableMarkerDealing);
+                                entryLast.setData(null);
+                                typePoint = POINT_SIMPLY;
+                                break;
+                            case POINT_OPEN_DEALING:
+                                OrderAnswer order = currentDealing;
+                                order.setOpenPrice((double) entryLast.getY());
+                                String dataEntry = new Gson().toJson(order);
+                                entryLast.setIcon(drawableMarkerDealing);
+                                entryLast.setData(dataEntry);
+                                BaseLimitLine.drawDealingLimitLine(order, false, mCurrentValueY);
+                                currentDealing = null;
+                                typePoint = POINT_SIMPLY;
+                                break;
+                            default:
+                                break;
+                        }
+                        divX = (currEntry.getX() - entryLast.getX()) / 7.f;
+                        divY = (currEntry.getY() - entryLast.getY()) / 7.f;
+                        numberTemporaryPoint = 0;
+                        final Entry simplyEntry = new Entry(entryLast.getX(), entryLast.getY(), null, null);
+                        handler.postAtTime(new Runnable() {
+                            @Override
+                            public void run() {
+                                    if (entryLast != null && currEntry != null) {
+                                        float x = simplyEntry.getX();
+                                        float y = simplyEntry.getY();
+                                        simplyEntry.setX(x += divX);
+                                        simplyEntry.setY(y += divY);
+                                        if (numberTemporaryPoint == 0 && simplyEntry.getX() > entryLast.getX()) {
+                                            data.getDataSetByIndex(0).addEntry(simplyEntry);
+                                            SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
+                                        }
+                                        data.notifyDataChanged();
+                                        mChart.invalidate();
+                                        numberTemporaryPoint ++;
+                                        SocketLine.drawSocketLine(simplyEntry);
+                                        drawCurrentPoint(simplyEntry);
+                                        if (numberTemporaryPoint < 7) {
+                                            handler.postDelayed(this, 70);
+                                        }
+                                    }
+                            }
+                        }, 70);
+                    }
                 }
-            }
+            }else if (data != null && currEntry != null) {
+                    data.getDataSetByIndex(0).addEntry(currEntry);
+                    data.notifyDataChanged();
+                    mChart.invalidate();
+                    SocketLine.drawSocketLine(currEntry);
+                    drawCurrentPoint(currEntry);
+                    SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
+                }
         }
     }
     private synchronized void addEntry(final SymbolHistoryAnswer answer) {
@@ -922,7 +945,7 @@ public class TerminalFragment extends Fragment {
                                 imgPointCurrent.setVisibility(View.VISIBLE);
                                 isFirstDrawPoint = false;
                             }
-                            setEnabledBtnChooseActive(true);
+                            stopProgress();
                         }, 10);
                     });
                 }
@@ -1027,6 +1050,7 @@ public class TerminalFragment extends Fragment {
                         redrawPointsDealings(order);
                         listOpenDealings.remove(order);
                         CheckDealingService.setListOrderAnswer(listOpenDealings);
+                        updateBalance(order.getProfit());
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
                         break;
@@ -1099,7 +1123,7 @@ public class TerminalFragment extends Fragment {
                     sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));
                     changeActive();
                 }
-                ConventString.updateBalance(tvBalance);
+                updateBalance(0);
             }
             requestSignals();
          }
@@ -1111,10 +1135,10 @@ public class TerminalFragment extends Fragment {
                 SymbolHistoryAnswer.getInstance() != null) {
                 drawDataSymbolHistory( ConventString.getActive(tvValueActive));
             } else {
+                isAddInChart = true;
                 mWebSocket = new WebSocketHTTP3(sSymbolCurrent);
-                setEnabledBtnChooseActive(true);
+                stopProgress();
             }
-            llProgressBar.setVisibility(View.GONE);
         }
     }
     public class GetResponseOpenDealingBroadcastReceiver extends BroadcastReceiver {
@@ -1134,17 +1158,17 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setOptionsData(optionsData);
                 currentDealing.setOpenTime(ConventDate.getCurrentDate());
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
+                updateBalance(-1 * Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)));
                 typePoint = POINT_OPEN_DEALING;
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
-                        intent.getStringExtra(MakeDealingService.VOLUME),
-                        intent.getStringExtra(MakeDealingService.EXPIRATION));
+                                                    intent.getStringExtra(MakeDealingService.VOLUME),
+                                                    intent.getStringExtra(MakeDealingService.EXPIRATION));
                 etValueAmount.setText(getResources().getString(R.string.zero_dollars));
                 etValueTime.setText(getResources().getString(R.string.zero_min));
             } else {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.request_error_request));
             }
-            llProgressBar.setVisibility(View.GONE);
-            setEnabledBtnTerminal(true);
+            stopProgress();
         }
     }
     public class GetResponseCheckClosedDealingBroadcastReceiver extends BroadcastReceiver {

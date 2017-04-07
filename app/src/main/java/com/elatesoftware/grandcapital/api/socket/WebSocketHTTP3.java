@@ -14,6 +14,8 @@ import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import okhttp3.WebSocket;
 import okhttp3.OkHttpClient;
@@ -88,8 +90,14 @@ public final class WebSocketHTTP3 extends WebSocketListener {
                 if(mSymbolCurrent != null &&  mMessageCurrent != null && TerminalFragment.getInstance().getActivity() != null && TerminalFragment.getInstance() != null){
                     answerCurrent = SocketAnswer.getSetInstance(mMessageCurrent);
                     if(answerCurrent != null && mSymbolCurrent.equals(answerCurrent.getSymbol())){
-                        if(answerSave != null &&  mSymbolCurrent.equals(answerSave.getSymbol()) && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())){
-                            answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
+                        if(answerSave != null && mSymbolCurrent.equals(answerSave.getSymbol())){
+                            if(answerCurrent.getTime() - answerSave.getTime() >= 0){
+                                if(ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())){
+                                    answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
+                                }
+                            }else{
+                                return;
+                            }
                         }
                         TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
                             TerminalFragment.getInstance().answerSocket(answerCurrent);
@@ -98,10 +106,11 @@ public final class WebSocketHTTP3 extends WebSocketListener {
                     }else{
                         answerSave = null;
                         answerCurrent = null;
+                        mMessageCurrent = "";
                     }
                 }
             }
-        }, 1000, 1000);
+        }, 2000, 1200);
     }
 
     public void closeSocket(){
