@@ -828,37 +828,38 @@ public class TerminalFragment extends Fragment {
             if (data != null && data.getEntryCount() != 0) {
                 mCurrentValueY = answer.getAsk();
                 if (data.getDataSetByIndex(0).getEntryCount() != 0) {
-                    entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
-                    if (entryLast != null) {
-                        if(entryLast.getX() > currEntry.getX()){
-                            return;
-                        }
-                        switch (typePoint) {
-                            case POINT_CLOSE_DEALING:
-                                entryLast.setIcon(drawableMarkerDealing);
-                                entryLast.setData(null);
-                                typePoint = POINT_SIMPLY;
-                                break;
-                            case POINT_OPEN_DEALING:
-                                OrderAnswer order = currentDealing;
-                                order.setOpenPrice((double) entryLast.getY());
-                                String dataEntry = new Gson().toJson(order);
-                                entryLast.setIcon(drawableMarkerDealing);
-                                entryLast.setData(dataEntry);
-                                BaseLimitLine.drawDealingLimitLine(order, false, mCurrentValueY);
-                                currentDealing = null;
-                                typePoint = POINT_SIMPLY;
-                                break;
-                            default:
-                                break;
-                        }
-                        divX = (currEntry.getX() - entryLast.getX()) / 7.f;
-                        divY = (currEntry.getY() - entryLast.getY()) / 7.f;
-                        numberTemporaryPoint = 0;
-                        final Entry simplyEntry = new Entry(entryLast.getX(), entryLast.getY(), null, null);
-                        handler.postAtTime(new Runnable() {
-                            @Override
-                            public void run() {
+                        entryLast = data.getDataSetByIndex(0).getEntryForIndex(data.getDataSetByIndex(0).getEntryCount()-1);
+                        synchronized (entryLast){
+                        if (entryLast != null) {
+                            if(entryLast.getX() > currEntry.getX()){
+                                return;
+                            }
+                            switch (typePoint) {
+                                case POINT_CLOSE_DEALING:
+                                    entryLast.setIcon(drawableMarkerDealing);
+                                    entryLast.setData(null);
+                                    typePoint = POINT_SIMPLY;
+                                    break;
+                                case POINT_OPEN_DEALING:
+                                    OrderAnswer order = currentDealing;
+                                    order.setOpenPrice((double) entryLast.getY());
+                                    String dataEntry = new Gson().toJson(order);
+                                    entryLast.setIcon(drawableMarkerDealing);
+                                    entryLast.setData(dataEntry);
+                                    BaseLimitLine.drawDealingLimitLine(order, false, mCurrentValueY);
+                                    currentDealing = null;
+                                    typePoint = POINT_SIMPLY;
+                                    break;
+                                default:
+                                    break;
+                            }
+                            divX = (currEntry.getX() - entryLast.getX()) / 7.f;
+                            divY = (currEntry.getY() - entryLast.getY()) / 7.f;
+                            numberTemporaryPoint = 0;
+                            final Entry simplyEntry = new Entry(entryLast.getX(), entryLast.getY(), null, null);
+                            handler.postAtTime(new Runnable() {
+                                @Override
+                                public void run() {
                                     if (entryLast != null && currEntry != null) {
                                         float x = simplyEntry.getX();
                                         float y = simplyEntry.getY();
@@ -877,8 +878,9 @@ public class TerminalFragment extends Fragment {
                                             handler.postDelayed(this, 70);
                                         }
                                     }
-                            }
-                        }, 70);
+                                }
+                            }, 70);
+                        }
                     }
                 }
             }else if (data != null && currEntry != null) {
@@ -888,7 +890,7 @@ public class TerminalFragment extends Fragment {
                     SocketLine.drawSocketLine(currEntry);
                     drawCurrentPoint(currEntry);
                     SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
-                }
+            }
         }
     }
     private synchronized void addEntry(final SymbolHistoryAnswer answer) {
