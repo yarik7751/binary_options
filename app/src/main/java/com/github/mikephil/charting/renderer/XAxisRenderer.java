@@ -210,7 +210,7 @@ public class XAxisRenderer extends AxisRenderer {
                 drawLabel(c, label, x, pos, anchor, labelRotationAngleDegrees);
 
                 List<LimitLine> limitLines = mXAxis.getLimitLines();
-                if(limitLines != null && limitLines.size()!= 0){
+                if(limitLines != null && limitLines.size() != 0){
                     float[] pts = new float[2];
                     Paint paint = new Paint();
                     paint.setStyle(Paint.Style.FILL);
@@ -225,21 +225,18 @@ public class XAxisRenderer extends AxisRenderer {
                     for (LimitLine l : limitLines) {
                         if (l instanceof XDealingLine) {
                             XDealingLine line = (XDealingLine) l;
-
                             OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-
                             String strLabelX = String.valueOf(ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(line.getLimit())));
                             String strLabelY = ConventDate.getDifferenceDateToString(Long.valueOf(line.getmTimer()));
                             Bitmap iconLabelX = line.getmBitmapLabelX();
                             Bitmap iconLabelY = line.getmBitmapLabelY();
-                            Bitmap iconClose = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.close_button);
+                            Bitmap iconClose = BaseLimitLine.iconClose;
                             Bitmap iconCMD;
                             if(order.getCmd() == 1){
-                                iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.down);
+                                iconCMD = BaseLimitLine.iconCMDDown;
                             }else{
-                                iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
+                                iconCMD = BaseLimitLine.iconCMDUp;
                             }
-
                             if (!line.ismIsActive()) {
                                 line.enableDashedLine(10f, 10f, 0f);
                             }else {

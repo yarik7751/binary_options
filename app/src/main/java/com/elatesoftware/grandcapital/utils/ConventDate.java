@@ -22,7 +22,7 @@ public class ConventDate {
     private static final String CLOSE_DEALING = "1970-01-01T00:00:00";
     private static final DateFormat SDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final DateFormat SDF_HH_MM = new SimpleDateFormat("HH:mm");
-    private final static double DIFFERENCE_FOR_SOCKET = 1.5;
+    private final static double DIFFERENCE_FOR_SOCKET = 1;
     private final static int DIFFERENCE_FOR_POINTS = 4000;
     private static final String timeZone = "GMT+00:00:00";
 
@@ -46,10 +46,11 @@ public class ConventDate {
     }
 
     public static float genericTimeForChart(long currentTimePoint){
-        return (float)((currentTimePoint - BIG_DATE_FOR_EQUALS));
+        return (float)((currentTimePoint - BIG_DATE_FOR_EQUALS) / 10000.);
     }
     public static long genericTimeForChartLabels(float currentTimePoint){
-        return (BIG_DATE_FOR_EQUALS + (long) currentTimePoint);
+        long res = (BIG_DATE_FOR_EQUALS + (long) (currentTimePoint * 10000.));
+        return res;
     }
     private static long getBigTimeForEquals(){
         Date date = new Date();
@@ -93,8 +94,6 @@ public class ConventDate {
     }
 
     public static long getDifferenceDate(String date1, String date2) {
-        Log.d(TAG, "date1: " + stringToUnix(date1));
-        Log.d(TAG, "date2: " + stringToUnix(date2));
         return Math.abs(stringToUnix(date1) - stringToUnix(date2)) / 1000;
     }
 
@@ -114,17 +113,17 @@ public class ConventDate {
     }
     public static String getDifferenceDateToString(long difSec) {
         if(difSec < 60) {
-            return ":" + timeClockFormat(difSec);
+                return ":" + timeClockFormat(difSec);
         } else if(difSec < 60 * 60) {
-            long min = difSec / 60;
-            long sec = difSec % 60;
-            return timeClockFormat(min) + ":" + timeClockFormat(sec);
+                long min = difSec / 60;
+                long sec = difSec % 60;
+                return timeClockFormat(min) + ":" + timeClockFormat(sec);
         } else if(difSec < 60 * 60 * 24) {
-            long hour = difSec / 60 / 60;
-            difSec -= hour * 60 * 60;
-            long min = difSec / 60;
-            long sec = difSec % 60;
-            return hour + "h " + timeClockFormat(min) + "m";
+                long hour = difSec / 60 / 60;
+                difSec -= hour * 60 * 60;
+                long min = difSec / 60;
+                long sec = difSec % 60;
+                return hour + "h " + timeClockFormat(min) + "m";
         } else {
             long day = difSec / 60 / 60 / 24;
             difSec -= day * 60 * 60 * 24;
@@ -133,7 +132,6 @@ public class ConventDate {
             long min = difSec / 60;
             long sec = difSec % 60;
             return day + "d " + hour + "h ";
-
         }
     }
     private static String timeClockFormat(long time) {
@@ -190,8 +188,6 @@ public class ConventDate {
     }
     public static boolean equalsTimeDealing(String date) {
         long tempLong = ConventDate.getDifferenceDateSign(date);
-        Log.d(TAG, "date: " + date);
-        Log.d(TAG, "tempLong: " + tempLong);
         if (tempLong <= 0){
             return true;
         }else{

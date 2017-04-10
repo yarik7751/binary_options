@@ -14,8 +14,6 @@ import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import okhttp3.WebSocket;
 import okhttp3.OkHttpClient;
@@ -81,6 +79,7 @@ public final class WebSocketHTTP3 extends WebSocketListener {
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "FailSocket = " +  t.getMessage());
+        new WebSocketHTTP3(mSymbolCurrent);
     }
 
     private void startTimer(){
@@ -91,18 +90,17 @@ public final class WebSocketHTTP3 extends WebSocketListener {
                     answerCurrent = SocketAnswer.getSetInstance(mMessageCurrent);
                     if(answerCurrent != null && mSymbolCurrent.equals(answerCurrent.getSymbol())){
                         if(answerSave != null && mSymbolCurrent.equals(answerSave.getSymbol())){
-                            if(answerCurrent.getTime() - answerSave.getTime() >= 0){
-                                if(ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())){
+                            if(answerCurrent.getTime() >= answerSave.getTime() && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())){
                                     answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
-                                }
                             }else{
-                                return;
+                                answerCurrent = answerSave;
+                                answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
                             }
                         }
+                        answerSave = answerCurrent;
                         TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
                             TerminalFragment.getInstance().answerSocket(answerCurrent);
                         });
-                        answerSave = answerCurrent;
                     }else{
                         answerSave = null;
                         answerCurrent = null;
@@ -110,7 +108,7 @@ public final class WebSocketHTTP3 extends WebSocketListener {
                     }
                 }
             }
-        }, 2000, 1200);
+        }, 1000, 1000);
     }
 
     public void closeSocket(){

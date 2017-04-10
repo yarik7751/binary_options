@@ -72,9 +72,17 @@ public class SocketAnswer {
         answersInstance = new Gson().fromJson(message, SocketAnswer.class);
         return answersInstance;
     }
-    public static void clearSocketAnswer(){
-        answersInstance = null;
+    public static void sortList(List<SocketAnswer> list){
+        if(list != null){
+            Collections.sort(list, new Comparator<SocketAnswer>() {
+                @Override
+                public int compare(SocketAnswer o1, SocketAnswer o2) {
+                    return o1.getTime().compareTo(o2.getTime());
+                }
+            });
+        }
     }
+
 
     public String getSymbol() {
         return symbol;
@@ -82,11 +90,6 @@ public class SocketAnswer {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
-    }
-
-    public SocketAnswer withSymbol(String symbol) {
-        this.symbol = symbol;
-        return this;
     }
 
     public Double getBid() {

@@ -161,7 +161,7 @@ public class YAxisRenderer extends AxisRenderer {
                         strLabel = strLabel.substring(0, strLabel.length() - 1);
                     }
 
-                    Bitmap bitmapLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.whitevert);
+                    Bitmap bitmapLabel = BaseLimitLine.bitmapLabel;
 
                     float paddingVert = Utils.convertDpToPixel(15);
                     float paddingHoriz = Utils.convertDpToPixel(18);
@@ -216,7 +216,7 @@ public class YAxisRenderer extends AxisRenderer {
                     float height_marker = height + paddingVert;
                     float width_marker = width + paddingHoriz*2;
 
-                    if (bitmapLabel != null) {
+                    if (bitmapLabel != null && strLabel != null) {
                         bitmapLabel = Bitmap.createScaledBitmap(bitmapLabel, (int) width_marker, (int) height_marker, false);
                         c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz/2, posY - height_marker + paddingVert / 2, paint);
                         c.drawText(strLabel, fixedPosition, posY, textPaint);
@@ -249,9 +249,9 @@ public class YAxisRenderer extends AxisRenderer {
                         Bitmap iconClose = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.close_button);
                         Bitmap iconCMD;
                         if(order.getCmd() == 1){
-                            iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.down);
+                            iconCMD = BaseLimitLine.iconCMDDown;
                         }else{
-                            iconCMD = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
+                            iconCMD = BaseLimitLine.iconCMDUp;
                         }
                         float height_markerIconCMD = Utils.convertDpToPixel(12);
                         float width_markerIconCMD = Utils.convertDpToPixel(12);

@@ -35,6 +35,10 @@ public class BaseLimitLine extends LimitLine {
     static Bitmap bitmapIconRedXLabel;
     static Bitmap bitmapIconCurrentDealingGreenYLabel;
     static Bitmap bitmapIconCurrentDealingRedYLabel;
+    public static Bitmap iconClose;
+    public static Bitmap iconCMDDown;
+    public static Bitmap iconCMDUp;
+    public static Bitmap bitmapLabel;
 
     static XAxis xAxis;
     static YAxis rightYAxis;
@@ -46,20 +50,26 @@ public class BaseLimitLine extends LimitLine {
 
     BaseLimitLine (float limit, String label) {
         super(limit, label);
-        colorGreen = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.chat_green);
-        colorRed = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.color_red_chart);
-        bitmapIconGreenXLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.green_vert);
-        bitmapIconRedXLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.red_vert);
-        bitmapIconRedYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(GrandCapitalApplication.getAppContext()).inflate(R.layout.incl_chart_label_red, null));
-        bitmapIconGreenYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(GrandCapitalApplication.getAppContext()).inflate(R.layout.incl_chart_label_green, null));
-        bitmapIconCurrentDealingGreenYLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.green_hor);
-        bitmapIconCurrentDealingRedYLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.red_hor);
     }
+
     private static void initialization(){
         if(TerminalFragment.getInstance() != null){
             mChart = TerminalFragment.getInstance().mChart;
             rightYAxis = TerminalFragment.getInstance().rightYAxis;
             xAxis = TerminalFragment.getInstance().xAxis;
+
+            colorGreen = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.chat_green);
+            colorRed = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.color_red_chart);
+            bitmapIconGreenXLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.green_vert);
+            bitmapIconRedXLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.red_vert);
+            bitmapIconRedYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(GrandCapitalApplication.getAppContext()).inflate(R.layout.incl_chart_label_red, null));
+            bitmapIconGreenYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(GrandCapitalApplication.getAppContext()).inflate(R.layout.incl_chart_label_green, null));
+            bitmapIconCurrentDealingGreenYLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.green_hor);
+            bitmapIconCurrentDealingRedYLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.red_hor);
+            iconClose = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.close_button);
+            iconCMDDown = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.down);
+            iconCMDUp = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
+            bitmapLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.whitevert);
         }
     }
 
@@ -242,8 +252,14 @@ public class BaseLimitLine extends LimitLine {
     }
 
     public static void drawAllDealingsLimitLines(List<OrderAnswer> list, double mCurrentValueY){
-        xAxis.removeAllLimitLines();
-        rightYAxis.removeAllLimitLines();
+        if(getXLimitLines() != null && getXLimitLines().size() != 0){
+            xAxis.removeAllLimitLines();
+        }
+        if(getYLimitLines() != null && getYLimitLines().size() != 0){
+            for(YDealingLine line : getYLimitLines()){
+                rightYAxis.removeLimitLine(line);
+            }
+        }
         if(list != null && list.size() != 0){
             for(OrderAnswer orderAnswer : list){
                 if(ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {
@@ -265,5 +281,11 @@ public class BaseLimitLine extends LimitLine {
                 XDealingLine.createXDealingLine(order, mCurrentValueY, isAmerican);
             }
         }
+    }
+    public static void deleteDealingLimitLine(OrderAnswer order) {
+
+
+
+
     }
 }
