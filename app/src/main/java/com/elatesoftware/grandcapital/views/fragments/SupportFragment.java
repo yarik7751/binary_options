@@ -32,9 +32,11 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.orm.query.Select;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import at.markushi.ui.CircleButton;
 
@@ -46,12 +48,11 @@ public class SupportFragment extends Fragment {
 
     private ScrollView svMessages;
     private EditText edMessage;
-    private LinearLayout llMessages;
+    private LinearLayout llMessages, llMain;
 
     private String caseId = null;
     private int lastIndex = -1;
     private boolean isChatCreated = false;
-    private LinkedList<HistoryMessage> historyChat = new LinkedList<>();
 
     private GetChatBroadcastReceiver mChatBroadcastReceiver;
 
@@ -83,6 +84,12 @@ public class SupportFragment extends Fragment {
         CircleButton cbSendMessage = (CircleButton) view.findViewById(R.id.cb_send_message);
         edMessage = (EditText) view.findViewById(R.id.ed_message);
         llMessages = (LinearLayout) view.findViewById(R.id.ll_messages);
+        llMain = (LinearLayout) view.findViewById(R.id.ll_main);
+
+        llMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {}
+        });
 
         cbSendMessage.setOnClickListener(v -> {
             Log.d(TAG, "cbSendMessage click");
@@ -92,6 +99,7 @@ public class SupportFragment extends Fragment {
                 Intent intent = new Intent(getContext(), ChatService.class);
                 if (!isChatCreated) {
                     llMessages.removeAllViews();
+                    HistoryMessage.deleteAll(HistoryMessage.class);
                     intent.putExtra(ChatService.ACTION, ChatService.CREATE_CHAT);
                     intent.putExtra(ChatService.WIDGET_ID, WIDGET_ID);
                     intent.putExtra(ChatService.VISITOR_MESSAGE, message);
@@ -124,12 +132,6 @@ public class SupportFragment extends Fragment {
         handler.removeCallbacks(runnablePollChat);
         getActivity().unregisterReceiver(mChatBroadcastReceiver);
         super.onStop();
-        if(!isChatCreated) {
-            return;
-        }
-        Gson gson = new Gson();
-        String historyStr = gson.toJson(historyChat, new TypeToken<LinkedList<HistoryMessage>>(){}.getType());
-        CustomSharedPreferences.saveChatHistory(getContext(), historyStr);
     }
 
     private void addYourMessageInView(String message, long unix, boolean addInHistory) {
@@ -144,7 +146,7 @@ public class SupportFragment extends Fragment {
         svMessages.post(() -> svMessages.fullScroll(ScrollView.FOCUS_DOWN));
         if(addInHistory) {
             HistoryMessage historyMessage = new HistoryMessage(false, message, System.currentTimeMillis());
-            historyChat.add(historyMessage);
+            historyMessage.save();
         }
     }
 
@@ -160,7 +162,7 @@ public class SupportFragment extends Fragment {
         svMessages.post(() -> svMessages.fullScroll(ScrollView.FOCUS_DOWN));
         if(addInHistory) {
             HistoryMessage historyMessage = new HistoryMessage(true, message, System.currentTimeMillis());
-            historyChat.add(historyMessage);
+            historyMessage.save();
         }
     }
 
@@ -234,12 +236,10 @@ public class SupportFragment extends Fragment {
     }
 
     private void loadChatHistory() {
-        Gson gson = new Gson();
-        String historyStr = CustomSharedPreferences.getChatHistory(getContext());
-        if(TextUtils.isEmpty(historyStr)) {
-            return;
-        }
-        LinkedList<HistoryMessage> history = gson.fromJson(historyStr, new TypeToken<LinkedList<HistoryMessage>>(){}.getType());
+
+        List<HistoryMessage> history = HistoryMessage.listAll(HistoryMessage.class);
+        Log.d(TAG, "dbHistoryList: " + history);
+        Log.d(TAG, "dbHistoryList.size(): " + history.size());
         for(HistoryMessage msg : history) {
             if(msg.isTheir) {
                 addTheirMessageInView(msg.text, msg.time, false);
