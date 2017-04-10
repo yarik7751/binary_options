@@ -469,7 +469,7 @@ public class TerminalFragment extends Fragment {
         mChart.setPadding(0, 0, 0, 0);
         mChart.setAutoScaleMinMaxEnabled(true);
         mChart.setScaleYEnabled(false);
-        mChart.setScaleMinima(0.4f, 1f);
+        //mChart.setScaleMinima(0.4f, 1f);
         mChart.setDoubleTapToZoomEnabled(false);
         mChart.getDescription().setEnabled(false);
         mChart.setTouchEnabled(true);
@@ -496,8 +496,8 @@ public class TerminalFragment extends Fragment {
         xAxis.setTextSize(9);
         xAxis.disableAxisLineDashedLine();
         xAxis.setDrawGridLines(true);
-        xAxis.setGranularity(1f);
-        xAxis.setSpaceMax(600000f);
+        //xAxis.setGranularity(1f);
+        xAxis.setSpaceMax(60f);
         xAxis.setGranularityEnabled(true);
 
         YAxis leftYAxis = mChart.getAxisLeft();

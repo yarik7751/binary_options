@@ -46,10 +46,13 @@ public class ConventDate {
     }
 
     public static float genericTimeForChart(long currentTimePoint){
-        return (float)((currentTimePoint - BIG_DATE_FOR_EQUALS));
+        return (float)((currentTimePoint - BIG_DATE_FOR_EQUALS) / 10000.);
     }
     public static long genericTimeForChartLabels(float currentTimePoint){
-        return (BIG_DATE_FOR_EQUALS + (long) currentTimePoint);
+        long res = (BIG_DATE_FOR_EQUALS + (long) (currentTimePoint * 10000.));
+        Log.d(TAG, "genericTimeForChartLabels res: " + res);
+        Log.d(TAG, "genericTimeForChartLabels currentTimePoint: " + currentTimePoint);
+        return res;
     }
     private static long getBigTimeForEquals(){
         Date date = new Date();
