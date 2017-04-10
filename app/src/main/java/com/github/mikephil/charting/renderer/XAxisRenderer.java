@@ -297,6 +297,10 @@ public class XAxisRenderer extends AxisRenderer {
                                     c.drawBitmap(iconClose,  posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*4/7 +
                                             width_markerIconCMD*2 + widthStrLabelY/2, posYLabel - height_markerIconCMD / 2, paint);
                                 }
+                                iconClose.recycle();
+                                iconCMD.recycle();
+                                iconLabelX.recycle();
+                                iconLabelY.recycle();
                             }
                         }
                     }
