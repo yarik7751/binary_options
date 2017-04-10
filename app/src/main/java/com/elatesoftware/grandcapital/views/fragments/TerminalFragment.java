@@ -106,6 +106,7 @@ public class TerminalFragment extends Fragment {
     public boolean isDirection = true;
     private boolean isFirstDrawPoint = true;
     private boolean isFirstZoom = true;
+    private boolean isFirstLoopPoint = true;
     private static boolean isFinishedDrawPoint = true;
 
     public LineChart mChart;
@@ -685,6 +686,7 @@ public class TerminalFragment extends Fragment {
             sSymbolCurrent = Const.SYMBOL;
         }
         isFirstDrawPoint = true;
+        isFirstLoopPoint = true;
         tvValueActive.setText(sSymbolCurrent);
         SymbolHistoryAnswer.nullInstance();
         SocketAnswer.nullInstance();
@@ -850,6 +852,7 @@ public class TerminalFragment extends Fragment {
     public void answerSocket(final SocketAnswer answer) {
         if (answer != null) {
             if (isAddInChart) {
+                isFirstLoopPoint = false;
                 if(listSocketAnswerQueue == null){
                     listSocketAnswerQueue = new ArrayList<>();
                 }
@@ -972,25 +975,33 @@ public class TerminalFragment extends Fragment {
                     //mChart.getViewPortHandler().zoom(5f, mChart.getViewPortHandler().getScaleY());
                     currEntry = entry;
                     getActivity().runOnUiThread(() -> {
-                        new Handler().postDelayed(() -> {
-                            if (imgPointCurrent != null && currEntry != null) {
-                                drawCurrentPoint(currEntry);
-                                SocketLine.drawSocketLine(currEntry);
-                                MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
-                                Log.d(TAG, "setPoint position");
-                                imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
-                                imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (imgPointCurrent != null && currEntry != null) {
+                                    drawCurrentPoint(currEntry);
+                                    SocketLine.drawSocketLine(currEntry);
+                                    MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
+                                    Log.d(TAG, "setPoint position");
+                                    imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                                    imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+                                }
+                                if(isFirstZoom) {
+                                    mChart.zoom(10f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
+                                    isFirstZoom = false;
+                                }
+                                if (isFirstDrawPoint) {
+                                    imgPointCurrent.setVisibility(View.VISIBLE);
+                                    isFirstDrawPoint = false;
+                                }
+                                if(isFirstLoopPoint) {
+                                    new Handler().postDelayed(this, 50);
+                                } else {
+                                    Log.d(TAG, "setPoint position END");
+                                }
+                                stopProgress();
                             }
-                            if(isFirstZoom) {
-                                mChart.zoom(10f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
-                                isFirstZoom = false;
-                            }
-                            if (isFirstDrawPoint) {
-                                imgPointCurrent.setVisibility(View.VISIBLE);
-                                isFirstDrawPoint = false;
-                            }
-                            stopProgress();
-                        }, 10);
+                        }, 50);
                     });
                 }
             }

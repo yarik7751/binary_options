@@ -56,5 +56,11 @@
         <service android:name=".services.CheckDealingService"/>
         <service android:name=".services.EarlyClosureService"/>
         <service android:name=".services.DeleteDealingService"/>
+
+        <!--SugarORM-->
+        <meta-data android:name="DATABASE" android:value="grandcapital_chat.db"/>
+        <meta-data android:name="VERSION" android:value="1"/>
+        <meta-data android:name="QUERY_LOG" android:value="true"/>
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.elatesoftware.grandcapital.api.pojo.pojo_chat"/>
     </application>
 </manifest>

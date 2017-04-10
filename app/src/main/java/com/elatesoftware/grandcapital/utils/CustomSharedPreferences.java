@@ -64,16 +64,6 @@ public class CustomSharedPreferences {
         User.setInstance(currentUser);
     }
 
-    public static void saveChatHistory(Context context, String history) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString(SHARED_PREFERENCES_CHAT_HISTORY, history).apply();
-    }
-
-    public static String getChatHistory(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(SHARED_PREFERENCES_CHAT_HISTORY, null);
-    }
-
     public static void saveSelectedQuotes(Context context, String quotes) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
         sharedPreferences.edit().putString(SHARED_PREFERENCES_SELECTED_QUOTES, quotes).apply();
