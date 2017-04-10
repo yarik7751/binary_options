@@ -497,7 +497,7 @@ public class TerminalFragment extends Fragment {
         xAxis.disableAxisLineDashedLine();
         xAxis.setDrawGridLines(true);
         //xAxis.setGranularity(1f);
-        xAxis.setSpaceMax(60f);
+        xAxis.setSpaceMax(600000f);
         xAxis.setGranularityEnabled(true);
 
         YAxis leftYAxis = mChart.getAxisLeft();
@@ -920,6 +920,7 @@ public class TerminalFragment extends Fragment {
                     for (int i = 0; i < listSymbol.size() - 1; i++) {
                         if (listSymbol.size() != 0) {
                             addEntry(listSymbol.get(i));
+                            Log.d(GrandCapitalApplication.TAG_SOCKET, "listSymbol getTime = " + listSymbol.get(i).getTime());
                         }
                     }
                 });

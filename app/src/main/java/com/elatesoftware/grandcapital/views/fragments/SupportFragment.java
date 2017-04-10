@@ -86,23 +86,26 @@ public class SupportFragment extends Fragment {
 
         cbSendMessage.setOnClickListener(v -> {
             Log.d(TAG, "cbSendMessage click");
-            String message = edMessage.getText().toString();
-            Intent intent = new Intent(getContext(), ChatService.class);
-            if(!isChatCreated) {
-                llMessages.removeAllViews();
-                intent.putExtra(ChatService.ACTION, ChatService.CREATE_CHAT);
-                intent.putExtra(ChatService.WIDGET_ID, WIDGET_ID);
-                intent.putExtra(ChatService.VISITOR_MESSAGE, message);
-                isChatCreated = true;
-            } else {
-                intent.putExtra(ChatService.ACTION, ChatService.SEND_MESSAGE_CHAT);
-                intent.putExtra(ChatService.CASE_ID, caseId);
-                intent.putExtra(ChatService.MESSAGE_TYPE, 1);
-                intent.putExtra(ChatService.MESSAGE_BODY, message);
+            edMessage.setText(edMessage.getText().toString().trim());
+            if(!TextUtils.isEmpty(edMessage.getText().toString())) {
+                String message = edMessage.getText().toString();
+                Intent intent = new Intent(getContext(), ChatService.class);
+                if (!isChatCreated) {
+                    llMessages.removeAllViews();
+                    intent.putExtra(ChatService.ACTION, ChatService.CREATE_CHAT);
+                    intent.putExtra(ChatService.WIDGET_ID, WIDGET_ID);
+                    intent.putExtra(ChatService.VISITOR_MESSAGE, message);
+                    isChatCreated = true;
+                } else {
+                    intent.putExtra(ChatService.ACTION, ChatService.SEND_MESSAGE_CHAT);
+                    intent.putExtra(ChatService.CASE_ID, caseId);
+                    intent.putExtra(ChatService.MESSAGE_TYPE, 1);
+                    intent.putExtra(ChatService.MESSAGE_BODY, message);
+                }
+                getActivity().startService(intent);
+                addYourMessageInView(message, System.currentTimeMillis(), true);
+                edMessage.setText("");
             }
-            getActivity().startService(intent);
-            addYourMessageInView(message, System.currentTimeMillis(), true);
-            edMessage.setText("");
         });
         loadChatHistory();
     }
@@ -179,6 +182,7 @@ public class SupportFragment extends Fragment {
                         caseId = ChatCreateAnswer.getInstance().getCaseId();
                         handler.postDelayed(runnablePollChat, INTERVAL);
                     } else {
+                        Log.d(TAG, "CREATE_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),
                                 getString(R.string.request_error_title),
                                 getString(R.string.request_error_text));
@@ -197,6 +201,7 @@ public class SupportFragment extends Fragment {
                             }
                         }
                     } else {
+                        Log.d(TAG, "POLL_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),
                                 getString(R.string.request_error_title),
                                 getString(R.string.request_error_text));
@@ -206,6 +211,7 @@ public class SupportFragment extends Fragment {
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SendMessageAnswer.getInstance() != null) {
                         Log.d(TAG, SendMessageAnswer.getInstance() + "");
                     } else {
+                        Log.d(TAG, "SEND_MESSAGE_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),
                                 getString(R.string.request_error_title),
                                 getString(R.string.request_error_text));

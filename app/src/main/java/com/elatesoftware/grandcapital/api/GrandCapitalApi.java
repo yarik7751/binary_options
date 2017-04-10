@@ -45,6 +45,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GrandCapitalApi {
 
+    public static final String TAG = "GrandCapitalApi_Log";
+
     private static IGrandCapitalApi grandCapitalApiService = null;
 
     private static final String BASE_URL = "https://grandcapital.ru";
@@ -221,6 +223,7 @@ public class GrandCapitalApi {
         String result = null;
         String toTime = ConventDate.getTimeStampCurrentDate();
         String fromTime = ConventDate.getTimeStampLastDate();
+        Log.d(TAG, "toTime: " + toTime);
         Call<List<SymbolHistoryAnswer>> call = getApiService().getSymbolHistory(User.getInstance().getLogin(), fromTime, toTime, "1", symbol);
         try {
             response = call.execute();

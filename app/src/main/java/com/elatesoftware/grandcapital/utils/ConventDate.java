@@ -22,7 +22,7 @@ public class ConventDate {
     private static final String CLOSE_DEALING = "1970-01-01T00:00:00";
     private static final DateFormat SDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final DateFormat SDF_HH_MM = new SimpleDateFormat("HH:mm");
-    private final static double DIFFERENCE_FOR_SOCKET = 1;
+    private final static double DIFFERENCE_FOR_SOCKET = 1.5;
     private final static int DIFFERENCE_FOR_POINTS = 4000;
     private static final String timeZone = "GMT+00:00:00";
 
@@ -46,13 +46,10 @@ public class ConventDate {
     }
 
     public static float genericTimeForChart(long currentTimePoint){
-        return (float)((currentTimePoint - BIG_DATE_FOR_EQUALS) / 10000.);
+        return (float)((currentTimePoint - BIG_DATE_FOR_EQUALS));
     }
     public static long genericTimeForChartLabels(float currentTimePoint){
-        long res = (BIG_DATE_FOR_EQUALS + (long) (currentTimePoint * 10000.));
-        Log.d(TAG, "genericTimeForChartLabels res: " + res);
-        Log.d(TAG, "genericTimeForChartLabels currentTimePoint: " + currentTimePoint);
-        return res;
+        return (BIG_DATE_FOR_EQUALS + (long) currentTimePoint);
     }
     private static long getBigTimeForEquals(){
         Date date = new Date();
@@ -193,6 +190,8 @@ public class ConventDate {
     }
     public static boolean equalsTimeDealing(String date) {
         long tempLong = ConventDate.getDifferenceDateSign(date);
+        Log.d(TAG, "date: " + date);
+        Log.d(TAG, "tempLong: " + tempLong);
         if (tempLong <= 0){
             return true;
         }else{
