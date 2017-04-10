@@ -12,6 +12,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -92,6 +93,9 @@ public class OrderAnswer {
 
     private static List<OrderAnswer> ordersInstance = null;
     public static List<OrderAnswer> getInstance() {
+        if(ordersInstance != null && ordersInstance.size() > 1 ){
+            Collections.sort(ordersInstance, (o1, o2) -> o2.getOpenTime().compareTo(o1.getOpenTime()));
+        }
         return ordersInstance;
     }
     public static void setInstance(List<OrderAnswer> order) {

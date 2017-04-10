@@ -115,7 +115,7 @@ public class DealingFragment extends Fragment {
     }
     private void requestOrders(){
         Intent intentService = new Intent(getActivity(), OrdersService.class);
-        intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS);
+        intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS_DEALING);
         getActivity().startService(intentService);
     }
 

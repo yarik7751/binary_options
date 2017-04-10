@@ -47,7 +47,7 @@ public class SymbolHistoryAnswer {
         }
     }
     private static void sortList(){
-        if(symbolInstance != null){
+        if(symbolInstance != null && symbolInstance.size() > 1){
             Collections.sort((List)symbolInstance, new Comparator<SymbolHistoryAnswer>() {
                 @Override
                 public int compare(SymbolHistoryAnswer o1, SymbolHistoryAnswer o2) {

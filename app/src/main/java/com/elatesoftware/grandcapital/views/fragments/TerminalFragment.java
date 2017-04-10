@@ -88,6 +88,7 @@ import java.util.TimerTask;
 public class TerminalFragment extends Fragment {
 
     public final static String TAG = "TerminalFragment_Logs";
+    private static int TIME_ANIMATION_DRAW_POINT = 100;
 
     private static String sSymbolCurrent = "";
     public static double mCurrentValueY = 0;
@@ -335,7 +336,7 @@ public class TerminalFragment extends Fragment {
         updateBalance(0);
         if (sSymbolCurrent != null && !sSymbolCurrent.equals("")) {
             tvValueActive.setText(sSymbolCurrent);
-            drawDataSymbolHistory( ConventString.getActive(tvValueActive));
+            drawDataSymbolHistory(ConventString.getActive(tvValueActive));
         } else {
             changeActive();
         }
@@ -705,7 +706,7 @@ public class TerminalFragment extends Fragment {
         mTimerRedraw.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                 getActivity().runOnUiThread(() -> {
+                /*getActivity().runOnUiThread(() -> {
                      if(isFinishedDrawPoint && listSocketAnswerQueue != null && listSocketAnswerQueue.size() != 0) {
                          if(listSocketAnswerQueue.size() > 1){
                              SocketAnswer.sortList(listSocketAnswerQueue);
@@ -720,8 +721,23 @@ public class TerminalFragment extends Fragment {
                              addEntry(socketAnswer);
                          }
                      }
-                 });
-                 getActivity().runOnUiThread(() -> redrawXYDealingLimitLines());
+                 });*/
+                getActivity().runOnUiThread(() -> {
+                    if(isFinishedDrawPoint && listSocketAnswerQueue != null && listSocketAnswerQueue.size() != 0) {
+                        if(listSocketAnswerQueue.size() > 1){
+                            SocketAnswer.sortList(listSocketAnswerQueue);
+                            TIME_ANIMATION_DRAW_POINT = 10;
+                            for (int i = 0; i < listSocketAnswerQueue.size(); i++) {
+                                addEntry(listSocketAnswerQueue.get(i));
+                            }
+                            listSocketAnswerQueue.clear();
+                            TIME_ANIMATION_DRAW_POINT = 100;
+                        }else{
+                            addEntry(listSocketAnswerQueue.get(0));
+                        }
+                    }
+                    redrawXYDealingLimitLines();
+                });
             }
         }, 1000, 1000);
     }
@@ -769,7 +785,7 @@ public class TerminalFragment extends Fragment {
     private void requestGetAllOrders() {
         if(isAdded()) {
             Intent intentService = new Intent(getActivity(), OrdersService.class);
-            intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS);
+            intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS_TERMINAL);
             getActivity().startService(intentService);
         }
     }
@@ -901,11 +917,11 @@ public class TerminalFragment extends Fragment {
                                             isFinishedDrawPoint = true;
                                         }
                                         if (numberTemporaryPoint < 10) {
-                                            handler.postDelayed(this, 100);
+                                            handler.postDelayed(this, TIME_ANIMATION_DRAW_POINT);
                                         }
                                     }
                                 }
-                            }, 100);
+                            }, TIME_ANIMATION_DRAW_POINT);
                         }
                 }
             }else if (data != null && currEntry != null) {
@@ -1072,18 +1088,16 @@ public class TerminalFragment extends Fragment {
         }
     }
     private void deleteDealingLimitLine(final int ticket){
-        if(OrderAnswer.getInstance() != null && ticket != 0){
-            if(listOpenDealings != null && listOpenDealings.size() != 0){
-                for(OrderAnswer order: listOpenDealings){
-                    if(order.getTicket() == ticket){
-                        redrawPointsDealings(order);
-                        listOpenDealings.remove(order);
-                        CheckDealingService.setListOrderAnswer(listOpenDealings);
-                        updateBalance(order.getProfit());
-                        mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
-                        BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
-                        break;
-                    }
+        if(ticket != 0 && listOpenDealings != null && listOpenDealings.size() != 0){
+            for(OrderAnswer order: listOpenDealings){
+                if(order.getTicket() == ticket){
+                    redrawPointsDealings(order);
+                    listOpenDealings.remove(order);
+                    CheckDealingService.setListOrderAnswer(listOpenDealings);
+                    updateBalance(order.getProfit());
+                    mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
+                    BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
+                    break;
                 }
             }
         }
@@ -1161,8 +1175,8 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getStringExtra(SymbolHistoryService.RESPONSE) != null && intent.getStringExtra(SymbolHistoryService.RESPONSE).equals(Const.RESPONSE_CODE_SUCCESS) &&
-                SymbolHistoryAnswer.getInstance() != null) {
-                drawDataSymbolHistory( ConventString.getActive(tvValueActive));
+                SymbolHistoryAnswer.getInstance() != null){
+                    drawDataSymbolHistory( ConventString.getActive(tvValueActive));
             } else {
                 isAddInChart = true;
                 mWebSocket = new WebSocketHTTP3(sSymbolCurrent);
@@ -1212,20 +1226,24 @@ public class TerminalFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if (OrderAnswer.getInstance() != null) {
                 switch (intent.getIntExtra(OrdersService.FUNCTION, 0)){
-                    case OrdersService.GET_ALL_ORDERS:
+                    case OrdersService.GET_ALL_ORDERS_TERMINAL:
                         List<OrderAnswer> listAllOpenDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION);
                         listOpenDealings = OrderAnswer.filterOrdersCurrentActive(listAllOpenDealings, DealingFragment.OPEN_TAB_POSITION, ConventString.getActive(tvValueActive));
                         List<OrderAnswer> listAllClosedDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
                         CheckDealingService.setListOrderAnswer(listAllOpenDealings);
-
                         parseClosingDealings(listAllClosedDealings);
                         if (listOpenDealings != null && listOpenDealings.size() != 0 && BaseLimitLine.getXLimitLines() == null) {
                             BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
                         }
+                        OrderAnswer.setInstance(null);
                         break;
                     case OrdersService.GET_TICKET_ORDER:
                         listOpenDealings = OrderAnswer.filterOrdersCurrentActive(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION, ConventString.getActive(tvValueActive));
                         requestDeleteDealing(new Gson().fromJson(intent.getStringExtra(OrdersService.RESPONSE), OrderAnswer.class));
+                        OrderAnswer.setInstance(null);
+                        break;
+                    case OrdersService.GET_ALL_ORDERS_DEALING:
+
                         break;
                     default:
                         break;

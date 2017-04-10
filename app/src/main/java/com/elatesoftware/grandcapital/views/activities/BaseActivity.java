@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
@@ -89,6 +90,8 @@ public class BaseActivity extends CustomFontsActivity {
                 getInfoUser();
                 startService(new Intent(this, CheckDealingService.class));
             }
+            int[] a = new int[60000000];
+
         }
     }
 
@@ -142,11 +145,6 @@ public class BaseActivity extends CustomFontsActivity {
 
     public void setDealings() {
         mDealing.setValue(CustomSharedPreferences.getAmtCloseDealings(this));
-    }
-    private void requestOrders() {
-        Intent intentService = new Intent(BaseActivity.this, OrdersService.class);
-        intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS);
-        startService(intentService);
     }
     private void addItems() {
         mTerminal = new ResideMenuItem(this, getString(R.string.menu_item_terminal));
@@ -319,8 +317,6 @@ public class BaseActivity extends CustomFontsActivity {
     }
 
     private static void changeToolbarFragment(Fragment targetFragment) {
-        //Опасно! Не ясно, что делает эта строка
-       // mResideMenu.clearIgnoredViewList();
         fragmentManager.beginTransaction()
                 .replace(R.id.toolbar, targetFragment, "fragment")
                 .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

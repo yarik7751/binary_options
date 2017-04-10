@@ -24,8 +24,10 @@ public class OrdersService extends IntentService {
     public final static String FUNCTION = "function";
     public final static String ORDER = "order";
 
-    public final static int GET_ALL_ORDERS = 0;
-    public final static int GET_TICKET_ORDER = 1;
+    public final static int GET_ALL_ORDERS_TERMINAL = 0;
+    public final static int GET_ALL_ORDERS_DEALING = 1;
+    public final static int GET_TICKET_ORDER = 2;
+
 
     public OrdersService() {
         super(NAME_STREAM);
@@ -38,25 +40,33 @@ public class OrdersService extends IntentService {
         Intent responseIntent = new Intent();
         responseIntent.setAction(ACTION_SERVICE_ORDERS);
         responseIntent.addCategory(Intent.CATEGORY_DEFAULT);
-        if(intent.getIntExtra(FUNCTION, 0) == GET_ALL_ORDERS){
-            responseIntent.putExtra(RESPONSE, response);
-            responseIntent.putExtra(FUNCTION, GET_ALL_ORDERS);
-        }else{
-            OrderAnswer orderAnswer = new Gson().fromJson(intent.getStringExtra(ORDER), OrderAnswer.class);
-            if(OrderAnswer.getInstance() != null){
-                List<OrderAnswer> listOrders = OrderAnswer.filterOrdersCurrentActive(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION, orderAnswer.getSymbol());
-                if(listOrders != null && listOrders.size() != 0){
-                    for(OrderAnswer order: listOrders){
-                        if(ConventDate.equalsTimePoints(order.getOpenTime(), orderAnswer.getOpenTime()) &&
-                                ConventDate.equalsTimePoints(order.getOptionsData().getExpirationTime(), orderAnswer.getOptionsData().getExpirationTime())){
-                            responseIntent.putExtra(RESPONSE, new Gson().toJson(order));
-                            responseIntent.putExtra(FUNCTION, GET_TICKET_ORDER);
-                            break;
+        switch(intent.getIntExtra(FUNCTION, 0)){
+            case GET_ALL_ORDERS_TERMINAL:
+                responseIntent.putExtra(RESPONSE, response);
+                responseIntent.putExtra(FUNCTION, GET_ALL_ORDERS_TERMINAL);
+                break;
+            case GET_TICKET_ORDER:
+                OrderAnswer orderAnswer = new Gson().fromJson(intent.getStringExtra(ORDER), OrderAnswer.class);
+                if(OrderAnswer.getInstance() != null){
+                    List<OrderAnswer> listOrders = OrderAnswer.filterOrdersCurrentActive(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION, orderAnswer.getSymbol());
+                    if(listOrders != null && listOrders.size() != 0){
+                        for(OrderAnswer order: listOrders){
+                            if(ConventDate.equalsTimePoints(order.getOpenTime(), orderAnswer.getOpenTime()) &&
+                                    ConventDate.equalsTimePoints(order.getOptionsData().getExpirationTime(), orderAnswer.getOptionsData().getExpirationTime())){
+                                responseIntent.putExtra(RESPONSE, new Gson().toJson(order));
+                                responseIntent.putExtra(FUNCTION, GET_TICKET_ORDER);
+                                break;
+                            }
                         }
                     }
                 }
-            }
-
+                break;
+            case GET_ALL_ORDERS_DEALING:
+                responseIntent.putExtra(RESPONSE, response);
+                responseIntent.putExtra(FUNCTION, GET_ALL_ORDERS_DEALING);
+                break;
+            default:
+                break;
         }
         sendBroadcast(responseIntent);
     }
