@@ -69,4 +69,5 @@ dependencies {
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
     compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.6.0'
     compile 'com.github.satyan:sugar:1.4'
+    compile 'com.google.android.gms:play-services-analytics:10.2.0'
 }

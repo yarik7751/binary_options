@@ -34,6 +34,38 @@ public class Const {
 
     public final static float OFFSET_CHART_Y =  getOffsetChartY();
 
+    public final static String ANALYTICS_QUOTES_SCREEN = "QUOTES_SCREEN";
+    public final static String ANALYTICS_BUTTON_FAVORITES = "BUTTON_FAVORITES";
+    public final static String ANALYTICS_BUTTON_DELETE_FAVORITES = "BUTTON_DELETE_FAVORITES";
+
+    public final static String ANALYTICS_SUPPORT_SCREEN = "SUPPORT_SCREEN";
+    public final static String ANALYTICS_BUTTON_SEND_MESSAGE = "BUTTON_SEND_MESSAGE";
+
+    public final static String ANALYTICS_TERMINAL_SCREEN = "TERMINAL_SCREEN";
+    public final static String ANALYTICS_BUTTON_CHANGE_ACTIVE = "BUTTON_CHANGE_ACTIVE";
+    public final static String ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS = "BUTTON_CHANGE_AMOUNT_INVESTMENTS";
+    public final static String ANALYTICS_BUTTON_CHANGE_TIME = "BUTTON_CHANGE_TIME";
+    public final static String ANALYTICS_BUTTON_UP = "BUTTON_UP";
+    public final static String ANALYTICS_BUTTON_DOWN = "BUTTON_DOWN";
+    public final static String ANALYTICS_BUTTON_CLOSE_DEALINGS = "BUTTON_CLOSE_DEALINGS";
+    public final static String ANALYTICS_BUTTON_WIDGET_SIGNALS = "BUTTON_WIDGET_SIGNALS";
+
+    public final static String ANALYTICS_DEALINGS_SCREEN = "DEALINGS_SCREEN";
+    public final static String ANALYTICS_TAB_OPEN_DEALINGS = "TAB_OPEN_DEALINGS";
+    public final static String ANALYTICS_TAB_CLOSE_DEALINGS = "TAB_CLOSE_DEALINGS";
+
+    public final static String ANALYTICS_IN_OUT_SCREEN = "IN_OUT_SCREEN";
+    public final static String ANALYTICS_BUTTON_WITHDRAW = "BUTTON_WITHDRAW";
+    public final static String ANALYTICS_BUTTON_DEPOSIT = "BUTTON_DEPOSIT";
+
+    public final static String ANALYTICS_QUESTION_SCREEN = "QUESTION_SCREEN";
+    public final static String ANALYTICS_LIST_QUESTION = "LIST_QUESTION";
+
+    public final static String ANALYTICS_PROMOTIONS_SCREEN = "PROMOTIONS_SCREEN";
+    public final static String ANALYTICS_LIST_PROMOTION = "LIST_PROMOTION";
+
+    public final static String ANALYTICS_EVENT_EXIT = "EVENT_EXIT";
+
     private static float getOffsetChartY(){
         TypedValue typedValue = new TypedValue();
         GrandCapitalApplication.getAppContext().getResources().getValue(R.dimen.offset_y_chart, typedValue, true);

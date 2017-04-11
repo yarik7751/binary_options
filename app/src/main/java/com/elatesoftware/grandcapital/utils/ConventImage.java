@@ -30,6 +30,7 @@ public class ConventImage {
                 paddingImage.getHeight() / 2 - smallImage.getHeight() / 2,
                 null
         );
+        smallImage.recycle();
         return paddingImage;
     }
 

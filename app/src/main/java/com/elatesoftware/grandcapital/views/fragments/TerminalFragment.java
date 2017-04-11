@@ -5,6 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.EarlyClosureAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
@@ -74,6 +77,7 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.EntryXComparator;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.gson.Gson;
 import com.github.mikephil.charting.utils.MPPointF;
 
@@ -268,18 +272,21 @@ public class TerminalFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
         tvMinusAmount.setOnClickListener(v -> {
             ConventString.changeAmountValue(etValueAmount, false);
         });
         tvPlusAmount.setOnClickListener(v -> {
             ConventString.changeAmountValue(etValueAmount, true);
         });
+
         tvPlusTime.setOnClickListener(v -> {
             ConventString.changeTimeValue(etValueTime, true);
         });
         tvMinusTime.setOnClickListener(v -> {
             ConventString.changeTimeValue(etValueTime, false);
         });
+
         tvLeftActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
@@ -311,6 +318,7 @@ public class TerminalFragment extends Fragment {
         tvDeposit.setOnClickListener(v -> {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
+
         llLowerTerminal.setOnClickListener(v -> {
             llLowerTerminal.setEnabled(false);
             requestMakeDealing(Const.CMD_LOWER);
@@ -319,6 +327,7 @@ public class TerminalFragment extends Fragment {
             llHigherTerminal.setEnabled(false);
             requestMakeDealing(Const.CMD_HEIGHT);
         });
+
         initializationCurrentPoint();
         initializationChart();
         setSizeHeight();
@@ -676,6 +685,7 @@ public class TerminalFragment extends Fragment {
     }
     private void changeActive(){
         startProgress();
+        llDeposit.setBackgroundColor(getResources().getColor(R.color.dialog_bg));
         imgPointCurrent.setVisibility(View.INVISIBLE);
         if (threadSymbolHistory != null) {
             threadSymbolHistory.interrupt();
@@ -689,6 +699,13 @@ public class TerminalFragment extends Fragment {
         isFirstDrawPoint = true;
         isFirstLoopPoint = true;
         tvValueActive.setText(sSymbolCurrent);
+        Log.d(TAG, "sSymbolCurrent: " + sSymbolCurrent);
+        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
+                .setAction(Const.ANALYTICS_BUTTON_CHANGE_ACTIVE)
+                .setLabel(sSymbolCurrent)
+                .build()
+        );
         SymbolHistoryAnswer.nullInstance();
         SocketAnswer.nullInstance();
         clearChart();
@@ -782,6 +799,11 @@ public class TerminalFragment extends Fragment {
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
             intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
             getActivity().startService(intentService);
+            GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
+                    .setAction(lowerOrHeight == Const.CMD_HEIGHT ? Const.ANALYTICS_BUTTON_UP : Const.ANALYTICS_BUTTON_DOWN)
+                    .build()
+            );
         } else {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
             stopProgress();
@@ -967,7 +989,8 @@ public class TerminalFragment extends Fragment {
                 getActivity().runOnUiThread(() -> {
                     if (listSymbol.size() != 0) {
                         for (int i = 0; i < listSymbol.size(); i++) {
-                                addEntry(listSymbol.get(i));
+                            addEntry(listSymbol.get(i));
+                            Log.d(GrandCapitalApplication.TAG_SOCKET, listSymbol.get(i).getTime() + "");
                         }
                     }
                 });
@@ -1292,6 +1315,11 @@ public class TerminalFragment extends Fragment {
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         BaseLimitLine.deleteDealingLimitLine(ticket);
                         typePoint = POINT_CLOSE_DEALING;
+                        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                                .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
+                                .setAction(Const.ANALYTICS_BUTTON_CLOSE_DEALINGS)
+                                .build()
+                        );
                     }
                 }
             }

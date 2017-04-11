@@ -11,10 +11,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.activities.SignInActivity;
+import com.google.android.gms.analytics.HitBuilders;
 
 public class CustomDialog {
 
@@ -81,6 +83,10 @@ public class CustomDialog {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             activity.startActivity(intent);
             CustomSharedPreferences.setIntervalAdvertising(activity.getApplicationContext(), -1);
+            GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(Const.ANALYTICS_EVENT_EXIT)
+                    .build()
+            );
             dialog.cancel();
             BaseActivity.removeTerminal();
             activity.finish();

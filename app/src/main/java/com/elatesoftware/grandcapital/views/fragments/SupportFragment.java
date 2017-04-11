@@ -23,6 +23,7 @@ import com.elatesoftware.grandcapital.api.pojo.pojo_chat.ChatCreateAnswer;
 import com.elatesoftware.grandcapital.api.pojo.pojo_chat.HistoryMessage;
 import com.elatesoftware.grandcapital.api.pojo.pojo_chat.PollChatAnswer;
 import com.elatesoftware.grandcapital.api.pojo.pojo_chat.SendMessageAnswer;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.services.ChatService;
 import com.elatesoftware.grandcapital.services.SignInService;
 import com.elatesoftware.grandcapital.utils.Const;
@@ -30,6 +31,7 @@ import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.orm.query.Select;
@@ -51,6 +53,7 @@ public class SupportFragment extends Fragment {
     private LinearLayout llMessages, llMain;
 
     private String caseId = null;
+    private String message;
     private int lastIndex = -1;
     private boolean isChatCreated = false;
 
@@ -95,7 +98,7 @@ public class SupportFragment extends Fragment {
             Log.d(TAG, "cbSendMessage click");
             edMessage.setText(edMessage.getText().toString().trim());
             if(!TextUtils.isEmpty(edMessage.getText().toString())) {
-                String message = edMessage.getText().toString();
+                message = edMessage.getText().toString();
                 Intent intent = new Intent(getContext(), ChatService.class);
                 if (!isChatCreated) {
                     llMessages.removeAllViews();
@@ -183,6 +186,12 @@ public class SupportFragment extends Fragment {
                         Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
                         caseId = ChatCreateAnswer.getInstance().getCaseId();
                         handler.postDelayed(runnablePollChat, INTERVAL);
+                        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                                .setCategory(Const.ANALYTICS_SUPPORT_SCREEN)
+                                .setAction(Const.ANALYTICS_BUTTON_SEND_MESSAGE)
+                                .setLabel(message)
+                                .build()
+                        );
                     } else {
                         Log.d(TAG, "CREATE_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),
@@ -212,6 +221,12 @@ public class SupportFragment extends Fragment {
                 case ChatService.SEND_MESSAGE_CHAT:
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SendMessageAnswer.getInstance() != null) {
                         Log.d(TAG, SendMessageAnswer.getInstance() + "");
+                        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                                .setCategory(Const.ANALYTICS_SUPPORT_SCREEN)
+                                .setAction(Const.ANALYTICS_BUTTON_SEND_MESSAGE)
+                                .setLabel(message)
+                                .build()
+                        );
                     } else {
                         Log.d(TAG, "SEND_MESSAGE_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),

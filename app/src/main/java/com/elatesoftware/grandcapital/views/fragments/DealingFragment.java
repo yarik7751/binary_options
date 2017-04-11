@@ -29,6 +29,7 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingOpenOrdersAdapter;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,6 +140,7 @@ public class DealingFragment extends Fragment {
 
         mTabs = (TabLayout) getView().findViewById(R.id.dealingTabs);
         mTabs.getTabAt(currentTabPosition).select();
+        analytics(currentTabPosition);
         requestOrders();
         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -148,6 +150,7 @@ public class DealingFragment extends Fragment {
                 currentTabPosition = mTabs.getSelectedTabPosition();
                 mProgressLayout.setVisibility(View.VISIBLE);
                 mListLayout.setVisibility(View.INVISIBLE);
+                analytics(currentTabPosition);
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -157,6 +160,14 @@ public class DealingFragment extends Fragment {
             }
         });
         mTabs.getTabAt(currentTabPosition).select();
+    }
+
+    private void analytics(int tabPosition) {
+        HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder();
+        builder.setCategory(Const.ANALYTICS_DEALINGS_SCREEN);
+        builder.setAction(tabPosition == 0 ? Const.ANALYTICS_TAB_OPEN_DEALINGS : Const.ANALYTICS_TAB_CLOSE_DEALINGS);
+        GrandCapitalApplication.getDefaultTracker().send(builder.build());
+        Log.d(TAG, "currentTabPosition: " + currentTabPosition);
     }
 
     private void initListHeaders() {

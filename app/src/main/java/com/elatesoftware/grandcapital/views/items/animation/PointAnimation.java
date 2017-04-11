@@ -11,6 +11,9 @@ import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.views.items.animation.CustomAnimationDrawable;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by Ярослав Левшунов on 31.03.2017.
  */
@@ -21,10 +24,12 @@ public class PointAnimation {
     ImageView imgPointCurrent;
     private Bitmap bitmapIconCurrentPoint;
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
+    private List<Bitmap> bitmapCache;
 
     public PointAnimation(Context _context, ImageView _imgPointCurrent) {
         context = _context;
         imgPointCurrent = _imgPointCurrent;
+        bitmapCache = new LinkedList<>();
         bitmapIconCurrentPoint = BitmapFactory.decodeResource(context.getResources(), R.drawable.front_elipsa);
         initRocketAnimation();
     }
@@ -38,9 +43,12 @@ public class PointAnimation {
         rocketAnimation = new CustomAnimationDrawable();
         rocketAnimation.setOneShot(true);
         for (int i = 7; i >= 3; i--) {
-            rocketAnimation.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(bitmapIconCurrentPoint, i)), Const.INTERVAL_ITEM);
+            Bitmap bitmap = ConventImage.getPaddingImage(bitmapIconCurrentPoint, i);
+            rocketAnimation.addFrame(new BitmapDrawable(bitmap), Const.INTERVAL_ITEM);
+            bitmapCache.add(bitmap);
         }
         rocketAnimation.setAnimationEndListner(() -> {
+            recycleAnimation(rocketAnimation);
             initRocketAnimationBack();
             imgPointCurrent.setImageDrawable(rocketAnimationBack);
             rocketAnimationBack.start();
@@ -51,12 +59,22 @@ public class PointAnimation {
         rocketAnimationBack = new CustomAnimationDrawable();
         rocketAnimationBack.setOneShot(true);
         for (int i = 3; i <= 7; i++) {
-            rocketAnimationBack.addFrame(new BitmapDrawable(ConventImage.getPaddingImage(bitmapIconCurrentPoint, i)), Const.INTERVAL_ITEM);
+            Bitmap bitmap = ConventImage.getPaddingImage(bitmapIconCurrentPoint, i);
+            rocketAnimationBack.addFrame(new BitmapDrawable(bitmap), Const.INTERVAL_ITEM);
+            bitmapCache.add(bitmap);
         }
         rocketAnimationBack.setAnimationEndListner(() -> {
+            recycleAnimation(rocketAnimationBack);
             initRocketAnimation();
             imgPointCurrent.setImageDrawable(rocketAnimation);
             rocketAnimation.start();
         });
+    }
+
+    private void recycleAnimation(CustomAnimationDrawable animation) {
+        for(Bitmap bitmap : bitmapCache) {
+            bitmap.recycle();
+        }
+        bitmapCache.clear();
     }
 }

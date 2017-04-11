@@ -12,7 +12,10 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,12 +97,24 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
                     }
                     CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
                     Log.d(TAG, "selectedQuotes: " + selectedQuotes);
+                    GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                            .setCategory(Const.ANALYTICS_QUOTES_SCREEN)
+                            .setAction(Const.ANALYTICS_BUTTON_FAVORITES)
+                            .setLabel(selectedInstruments.get(position).getSymbol())
+                            .build()
+                    );
                 } else if(variant == SELECT_QUOTES) {
                     Log.d(TAG, "getSymbol(): " + selectedInstruments.get(position).getSymbol());
                     Log.d(TAG, "selectedQuotes: " + selectedQuotes);
                     selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol().toUpperCase() + ";", "");
                     CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
                     Log.d(TAG, "selectedQuotes (CHANGE): " + selectedQuotes);
+                    GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                            .setCategory(Const.ANALYTICS_QUOTES_SCREEN)
+                            .setAction(Const.ANALYTICS_BUTTON_DELETE_FAVORITES)
+                            .setLabel(selectedInstruments.get(position).getSymbol())
+                            .build()
+                    );
                 }
                 onSharedPreferencesChange.onChange();
             }

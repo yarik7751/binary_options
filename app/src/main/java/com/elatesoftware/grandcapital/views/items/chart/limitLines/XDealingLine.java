@@ -18,6 +18,8 @@ import java.util.List;
 
 public class XDealingLine extends BaseLimitLine {
 
+    public static final String TAG = "XDealingLine_Logs";
+
     private float mLimit = 0f;
     private String mLabel = "";
     private String mTimer = "";
@@ -60,9 +62,10 @@ public class XDealingLine extends BaseLimitLine {
             line.setmBitmapLabelY(bitmapIconRedYLabel);
         }
         line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
-        Log.d(GrandCapitalApplication.TAG_SOCKET, "timer = " + line.getmTimer());
-        Log.d(GrandCapitalApplication.TAG_SOCKET, "order.getOptionsData().getExpirationTime() = " + order.getOptionsData().getExpirationTime());
-        Log.d(GrandCapitalApplication.TAG_SOCKET, "ConventDate.getDifferenceDate = " + String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
+        Log.d(TAG, "order.getOptionsData().getExpirationTime(): " + order.getOptionsData().getExpirationTime());
+        Log.d(TAG, "ConventDate.getDifferenceDate: " + ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime()));
+        Log.d(TAG, "timer: " + line.getmTimer());
+        Log.d(TAG, "-------------------------------------------------------------------------------------------------------");
     }
 
     public float getmLimit() {

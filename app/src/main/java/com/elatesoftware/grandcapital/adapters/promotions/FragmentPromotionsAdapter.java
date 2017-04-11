@@ -14,10 +14,13 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuestionFragment;
 import com.elatesoftware.grandcapital.views.fragments.WebFragment;
+import com.google.android.gms.analytics.HitBuilders;
 
 /**
  * Created by Ярослав Левшунов on 24.02.2017.
@@ -59,6 +62,13 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
             Bundle bundle = new Bundle();
             bundle.putString(QuestionFragment.HEADER_TEXT, binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
             bundle.putString(QuestionFragment.CONTENT_TEXT, binaryOptionAnswer.getElements().get(position).getLongDescription());
+
+            GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                    .setCategory(Const.ANALYTICS_PROMOTIONS_SCREEN)
+                    .setAction(Const.ANALYTICS_LIST_PROMOTION)
+                    .setLabel(binaryOptionAnswer.getElements().get(position).getShortDescription())
+                    .build()
+            );
 
             BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
             QuestionFragment questionFragment = new QuestionFragment();

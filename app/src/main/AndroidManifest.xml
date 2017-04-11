@@ -8,16 +8,22 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
-    <!--android:hardwareAccelerated="false"-->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name=".app.GrandCapitalApplication"
         android:allowBackup="true"
-        android:icon="@drawable/icon_logo"
+        android:icon="@mipmap/ic_launcher_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:largeHeap="true"
         android:hardwareAccelerated="false"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <activity
             android:name=".views.activities.BaseActivity"
             android:label="@string/app_name"
@@ -56,6 +62,16 @@
         <service android:name=".services.CheckDealingService"/>
         <service android:name=".services.EarlyClosureService"/>
         <service android:name=".services.DeleteDealingService"/>
+
+        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false"/>
 
         <!--SugarORM-->
         <meta-data android:name="DATABASE" android:value="grandcapital_chat.db"/>

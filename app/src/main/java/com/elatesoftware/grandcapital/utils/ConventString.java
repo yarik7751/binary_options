@@ -7,7 +7,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
+import com.google.android.gms.analytics.HitBuilders;
 
 /**
  * Created by Darya on 12.03.2017.
@@ -50,6 +52,13 @@ public class ConventString {
             }
         }
         v.setText(time + " MIN");
+        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
+                .setAction(Const.ANALYTICS_BUTTON_CHANGE_TIME)
+                .setLabel(isAdd ? "+" : "-")
+                .setValue(time)
+                .build()
+        );
     }
     public static void changeAmountValue(EditText v, boolean isAdd) {
         String str = v.getText().toString();
@@ -64,6 +73,13 @@ public class ConventString {
             }
         }
         v.setText("$" + amout);
+        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
+                .setAction(Const.ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS)
+                .setLabel(isAdd ? "+" : "-")
+                .setValue(amout)
+                .build()
+        );
     }
     public static double getAmountValue(EditText v) {
         String valueStr = v.getText().toString();

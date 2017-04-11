@@ -90,7 +90,11 @@ public class ConventDate {
     public static long getDifferenceDate(String date) {
         SDF.setTimeZone(TimeZone.getDefault());
         String currDate = SDF.format(new Date());
-        return Math.abs(stringToUnix(date) - stringToUnix(currDate)) / 1000;
+        Log.d(TAG, "currDate str: " + currDate);
+        Log.d(TAG, "currDate: " + stringToUnix(currDate));
+        long tempData = Math.abs(stringToUnix(date) - stringToUnix(currDate)) / 1000;
+        Log.d(TAG, "tempData: " + tempData);
+        return tempData;
     }
 
     public static long getDifferenceDate(String date1, String date2) {
@@ -99,7 +103,7 @@ public class ConventDate {
 
     public static long getDifferenceDateSign(String date) {
         SDF.setTimeZone(TimeZone.getDefault());
-        String currDate = SDF.format(new Date());
+        String currDate = SDF.format(new Date(System.currentTimeMillis()));
         return (stringToUnix(date) - stringToUnix(currDate)) / 1000;
     }
     public static boolean validationDateTimer(String date) {
@@ -188,6 +192,7 @@ public class ConventDate {
     }
     public static boolean equalsTimeDealing(String date) {
         long tempLong = ConventDate.getDifferenceDateSign(date);
+        //Log.d(TAG, "tempLong: " + tempLong);
         if (tempLong <= 0){
             return true;
         }else{
