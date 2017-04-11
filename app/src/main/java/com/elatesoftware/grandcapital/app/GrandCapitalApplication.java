@@ -5,10 +5,7 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.api.socket.WebSocketHTTP3;
-import com.orm.SugarApp;
 import com.orm.SugarContext;
-import com.orm.SugarDb;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 

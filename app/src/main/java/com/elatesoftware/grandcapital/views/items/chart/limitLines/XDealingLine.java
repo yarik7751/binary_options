@@ -1,8 +1,10 @@
 package com.elatesoftware.grandcapital.views.items.chart.limitLines;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -58,6 +60,9 @@ public class XDealingLine extends BaseLimitLine {
             line.setmBitmapLabelY(bitmapIconRedYLabel);
         }
         line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "timer = " + line.getmTimer());
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "order.getOptionsData().getExpirationTime() = " + order.getOptionsData().getExpirationTime());
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "ConventDate.getDifferenceDate = " + String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
     }
 
     public float getmLimit() {

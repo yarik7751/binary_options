@@ -1,6 +1,9 @@
 package com.elatesoftware.grandcapital.api.socket;
 
-import android.os.AsyncTask;
+/**
+ * Created by Дарья Высокович on 06.04.2017.
+ */
+
 import android.util.Log;
 
 import com.elatesoftware.grandcapital.api.GrandCapitalApi;
@@ -9,198 +12,116 @@ import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 
-import org.java_websocket.WebSocket;
-import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_17;
-import org.java_websocket.handshake.ServerHandshake;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import okhttp3.WebSocket;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.WebSocketListener;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+public final class WebSocketApi extends WebSocketListener {
 
-/**
- * Created by Дарья Высокович on 05.04.2017.
- */
+    private WebSocket webSocket = null;
+    private Timer mTimer;
 
-public class WebSocketApi {
+    private static String mSymbolCurrent = null;
+    private String mMessageCurrent = null;
 
-    private static String symbolCurrent = "";
-    private static SocketAnswer answerCurrent = null;
-    private static SocketAnswer answerSave = null;
+    private SocketAnswer answerCurrent = null;
+    private SocketAnswer answerSave = null;
 
-    private static Timer timer;
-    public static WebSocketClient mClient;
-    private static SSLContext sc;
-
-    static {
-        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws java.security.cert.CertificateException {
-            }
-            @Override
-            public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws java.security.cert.CertificateException {
-
-            }
-            @Override
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return new java.security.cert.X509Certificate[0];
-            }
-        }};
-
-        KeyManager[] keyManager = null;
-        try {
-            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            KeyManagerFactory factory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            factory.init(keyStore, null);
-            keyManager = factory.getKeyManagers();
-        } catch (NoSuchAlgorithmException | UnrecoverableKeyException | KeyStoreException e) {
-            e.printStackTrace();
+    public WebSocketApi(String symbol){
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .build();
+        Request request = new Request.Builder()
+                .url(GrandCapitalApi.SOCKET_URL)
+                .build();
+        if(webSocket != null){
+            closeSocket();
         }
-        try {
-            sc = SSLContext.getInstance("TLS");
-            sc.init(keyManager, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        webSocket = client.newWebSocket(request, this);
+        client.dispatcher().executorService().shutdown();
+        mTimer = new Timer();
+        mSymbolCurrent = symbol.replace("_OP", "") + "_OP";
     }
 
-    private static WebSocketApi webSocketApi = null;
-    public static WebSocketApi getInstance(){
-        if(webSocketApi == null){
-            webSocketApi = new WebSocketApi();
+    @Override
+    public void onOpen(WebSocket webSocket, Response response) {
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "Open Connect Socket " + mSymbolCurrent);
+        if(mSymbolCurrent != null && !mSymbolCurrent.isEmpty()){
+            webSocket.send(mSymbolCurrent);
         }
-        return webSocketApi;
-    }
-    private WebSocketApi(){
-        timer = new Timer();
         startTimer();
     }
 
-    public static void closeSocket(){
+    @Override
+    public void onMessage(WebSocket webSocket, String text) {
+        Log.d(GrandCapitalApplication.TAG_SOCKET, text);
+        if (text == null ||  text.equals("true") || text.equals("false")) {
+            return;
+        }
+        mMessageCurrent = text;
+    }
+    @Override
+    public void onClosing(WebSocket webSocket, int code, String reason) {
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "CloseSocket = " + reason);
+    }
+    @Override
+    public void onClosed(WebSocket webSocket, int code, String reason) {
+        super.onClosed(webSocket, code, reason);
         answerCurrent = null;
         answerSave = null;
-        symbolCurrent = "";
-        if (mClient != null && (mClient.getReadyState() == WebSocket.READYSTATE.OPEN
-                || mClient.getReadyState() == WebSocket.READYSTATE.CONNECTING
-                || mClient.getReadyState() == WebSocket.READYSTATE.NOT_YET_CONNECTED)){
-            mClient.close();
-            while(mClient.getReadyState() == WebSocket.READYSTATE.OPEN || mClient.getReadyState() == WebSocket.READYSTATE.CONNECTING){
-
-            }
-        }
+        mSymbolCurrent = null;
     }
-    public static void closeAndOpenSocket(final String symbol){
-        closeSocket();
-        symbolCurrent = symbol.replace("_OP", "") + "_OP";
-        if (mClient != null){
-            while(mClient.getReadyState() == WebSocket.READYSTATE.OPEN || mClient.getReadyState() == WebSocket.READYSTATE.CONNECTING){
-
-            }
-        }
-        if(!symbolCurrent.equals("")){
-            new SocketTask().execute();
-        }
+    @Override
+    public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+        Log.d(GrandCapitalApplication.TAG_SOCKET, "FailSocket = " +  t.getMessage());
+        new WebSocketApi(mSymbolCurrent);
     }
 
-    private static void startTimer(){
-        timer.schedule(new TimerTask() {
+    private void startTimer(){
+        mTimer.scheduleAtFixedRate(new TimerTask(){
             @Override
             public void run() {
-                if(TerminalFragment.getInstance().getActivity() != null && TerminalFragment.getInstance() != null){
-                    if(!symbolCurrent.equals("") && answerCurrent != null && symbolCurrent.equals(answerCurrent.getSymbol())){
-                        if(answerCurrent != null && answerCurrent.getTime() != null && answerCurrent.getTime() != 0L) {
-                            if (answerSave != null && answerSave.getTime() != null && answerSave.getTime() != 0L && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())) {
+                if(mSymbolCurrent != null &&  mMessageCurrent != null && TerminalFragment.getInstance().getActivity() != null && TerminalFragment.getInstance() != null){
+                    answerCurrent = SocketAnswer.getSetInstance(mMessageCurrent);
+                    if(answerCurrent != null && mSymbolCurrent.equals(answerCurrent.getSymbol())){
+                        if(answerSave != null && mSymbolCurrent.equals(answerSave.getSymbol())){
+                            if(answerCurrent.getTime() >= answerSave.getTime() && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())){
+                                    answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
+                            }else{
+                                answerCurrent = answerSave;
                                 answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);
-                            }
-                            if (TerminalFragment.getInstance() != null) {
-                                if(TerminalFragment.isAddInChart) {
-                                    TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                                        TerminalFragment.getInstance().addEntry(answerCurrent);
-                                    });
-                                } else {
-                                    TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                                       // SocketAnswer.addItemListBackGround(answerCurrent);
-                                    });
-                                }
                             }
                         }
                         answerSave = answerCurrent;
-                    }else{
                         TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                            TerminalFragment.getInstance().redrawXYDealingLimitLines();
+                            TerminalFragment.getInstance().answerSocket(answerCurrent);
                         });
+                    }else{
+                        answerSave = null;
+                        answerCurrent = null;
+                        mMessageCurrent = "";
                     }
                 }
             }
-        }, 3000, 1500);
+        }, 1000, 1000);
     }
 
-    static class SocketTask extends AsyncTask<Void, Void, Void> {
+    public void closeSocket(){
+        mTimer.purge();
+        mTimer.cancel();
+        webSocket.close(1000, "Goodbye, Socket!");
+    }
 
-        @Override
-        protected Void doInBackground(Void... params){
-            if(mClient == null || mClient.getReadyState() != WebSocket.READYSTATE.OPEN){
-                try {
-                    mClient = new WebSocketClient(new URI(GrandCapitalApi.SOCKET_URL), new Draft_17(), null, 10000){
-                        @Override
-                        public void onOpen(ServerHandshake handshakedata) {
-                            Log.d(GrandCapitalApplication.TAG_SOCKET, "Open Connect Socket");
-                            if(!symbolCurrent.equals("")){
-                                mClient.send(symbolCurrent);
-                                Log.d(GrandCapitalApplication.TAG_SOCKET, "Open Connect Socket for symbol - " + symbolCurrent);
-                            }
-                        }
-                        @Override
-                        public void onMessage(final String message) {
-                            Log.d(GrandCapitalApplication.TAG_SOCKET, message);
-                            if (message == null || message.equals("success") || message.equals("answer") || message.isEmpty() || message.equals("true") || message.equals("false")) {
-                                return;
-                            }
-                            answerCurrent = SocketAnswer.getSetInstance(message);
-                            if(answerCurrent != null && !answerCurrent.getSymbol().equals(symbolCurrent)){
-                                answerCurrent = null;
-                            }
-                        }
-                        @Override
-                        public void onClose(int code, String reason, boolean remote){
-                            Log.d(GrandCapitalApplication.TAG_SOCKET, " Closed Connect in Socket  because - " + reason);
-                            if(!symbolCurrent.equals("")){
-                                closeAndOpenSocket(symbolCurrent);
-                            }
-                        }
-                        @Override
-                        public void onError(Exception ex){
-                            Log.d(GrandCapitalApplication.TAG_SOCKET, "Error Connect in Socket - " + ex.toString());
-                            if(!symbolCurrent.equals("")){
-                                closeAndOpenSocket(symbolCurrent);
-                            }
-                        }
-                    };
-                    WebSocketClient.WebSocketClientFactory factory = new DefaultSSLWebSocketClientFactory(getSSLContext());
-                    mClient.setWebSocketFactory(factory);
-                    mClient.connect();
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
+    public static String getmSymbolCurrent() {
+        if(mSymbolCurrent == null){
+            return "";
+        }else{
+            return mSymbolCurrent.replace("_OP", "");
         }
-    }
-    public static SSLContext getSSLContext() {
-        return sc;
     }
 }

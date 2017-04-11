@@ -180,7 +180,7 @@ public class YAxisRenderer extends AxisRenderer {
                             textPaint.setColor(Color.parseColor("#FD3E3C"));
                             c.drawText(lastSymbol, fixedPosition - paddingHoriz / 3 + width, posY, textPaint);
                         }
-                        bitmapLabel.recycle();
+                        lineSocket.setCanvasLine(null);
                     }
 /************************************************** LINE_CURRENT_DEALING ************************************************************************/
                 } else if (line instanceof DealingLine) {
@@ -221,7 +221,7 @@ public class YAxisRenderer extends AxisRenderer {
                         bitmapLabel = Bitmap.createScaledBitmap(bitmapLabel, (int) width_marker, (int) height_marker, false);
                         c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz/2, posY - height_marker + paddingVert / 2, paint);
                         c.drawText(strLabel, fixedPosition, posY, textPaint);
-                        bitmapLabel.recycle();
+                        lineDealing.setCanvasLine(null);
                     }
 /************************************************** LINE_Y_DEALING************************************************************************/
                 }else if (line instanceof YDealingLine){
@@ -267,29 +267,27 @@ public class YAxisRenderer extends AxisRenderer {
 
                         float posY = pts[1] + heightStrLabelY / 2;
 
-                    if (iconLabelY != null && iconCMD != null) {
-                        if(lineDealing.ismIsAmerican()){
-                            float height_markerIconClose = Utils.convertDpToPixel(12);
-                            float width_markerIconClose =  Utils.convertDpToPixel(12);
-                            iconClose = Bitmap.createScaledBitmap(iconClose, (int) width_markerIconClose, (int) height_markerIconClose, false);
-                            paddingHorizIconLabelY = Utils.convertDpToPixel(16);
-                            width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY*6/5 + width_markerIconCMD +  width_markerIconClose;
-                        }
-                        /**create bitmaps*/
-                        iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_markerIconLabelY, (int) height_markerIconLabelY, false);
-                        iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_markerIconCMD, (int) height_markerIconCMD, false);
+                        if (iconLabelY != null && iconCMD != null) {
+                            if(lineDealing.ismIsAmerican()){
+                                float height_markerIconClose = Utils.convertDpToPixel(12);
+                                float width_markerIconClose =  Utils.convertDpToPixel(12);
+                                iconClose = Bitmap.createScaledBitmap(iconClose, (int) width_markerIconClose, (int) height_markerIconClose, false);
+                                paddingHorizIconLabelY = Utils.convertDpToPixel(16);
+                                width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY*6/5 + width_markerIconCMD +  width_markerIconClose;
+                            }
+                            /**create bitmaps*/
+                            iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_markerIconLabelY, (int) height_markerIconLabelY, false);
+                            iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_markerIconCMD, (int) height_markerIconCMD, false);
 
-                        /**positionBitmap Y*/
-                        c.drawBitmap(iconLabelY, fixedPosition - width_markerIconLabelY/2 - paddingHorizIconLabelY/3, posY - height_markerIconLabelY + paddingVertIconLabelY/2, paint);
-                        c.drawBitmap(iconCMD, fixedPosition - width_markerIconLabelY/2, posY - height_markerIconLabelY/2, paint);
-                        c.drawText(strLabelY, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*5/4, posY - heightStrLabelY/7, textPaint);
-                        if(lineDealing.ismIsAmerican()){
-                            c.drawBitmap(iconClose, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*3/2 + widthStrLabelY, posY - height_markerIconLabelY/2, paint);
+                            /**positionBitmap Y*/
+                            c.drawBitmap(iconLabelY, fixedPosition - width_markerIconLabelY/2 - paddingHorizIconLabelY/3, posY - height_markerIconLabelY + paddingVertIconLabelY/2, paint);
+                            c.drawBitmap(iconCMD, fixedPosition - width_markerIconLabelY/2, posY - height_markerIconLabelY/2, paint);
+                            c.drawText(strLabelY, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*5/4, posY - heightStrLabelY/7, textPaint);
+                            if(lineDealing.ismIsAmerican()){
+                                c.drawBitmap(iconClose, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*3/2 + widthStrLabelY, posY - height_markerIconLabelY/2, paint);
+                            }
+                            lineDealing.setCanvasLine(c);
                         }
-                        iconCMD.recycle();
-                        iconLabelY.recycle();
-                    }
-                    iconClose.recycle();
                 }
             }
         }

@@ -57,12 +57,21 @@ public class CheckDealingService extends Service {
     public static List<OrderAnswer> getListOrderAnswer() {
         return listOrderAnswer;
     }
-    public static void addOrderAnswerList(OrderAnswer order) {
-        listOrderAnswer.add(order);
+    public synchronized static OrderAnswer deleteOrder(int ticket) {
+        if(listOrderAnswer != null && listOrderAnswer.size() != 0){
+            for(OrderAnswer order : listOrderAnswer){
+                if(order.getTicket() == ticket){
+                    listOrderAnswer.remove(order);
+                    return order;
+                }
+            }
+        }
+        return null;
     }
     public static void setListOrderAnswer(List<OrderAnswer> listOrderAnswer) {
         CheckDealingService.listOrderAnswer = listOrderAnswer;
     }
+
 
     @Nullable
     @Override
