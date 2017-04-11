@@ -13,21 +13,21 @@ public class ConventDimens {
     }
 
     public static boolean isClickOnXDealingNoAmerican(final double point1X, final double point2X, final double point1Y, final double point2Y, final int maxX) {
-        if (Math.abs(point1Y - point2Y) <= DIFFERENCE_Y_CLICK && Math.abs(point1X - point2X) < maxX/4) {
+        if (maxX !=0 && Math.abs(point1Y - point2Y) <= DIFFERENCE_Y_CLICK && Math.abs(point1X - point2X) < maxX/4) {
             return true;
         }else{
             return false;
         }
     }
     public static boolean isClickOnXYDealingAmerican(final double point1X, final double point2X, final double point1Y, final double point2Y, final int maxX) {
-        if (Math.abs(point1Y - point2Y) <= DIFFERENCE_Y_CLICK && Math.abs(point1X - point2X) < maxX/4 && point1X >= point2X) {
+        if (maxX !=0 && Math.abs(point1Y - point2Y) <= DIFFERENCE_Y_CLICK && Math.abs(point1X - point2X) < maxX/4 && point1X >= point2X) {
             return true;
         }else{
             return false;
         }
     }
     public static boolean isClickOnYDealingNoAmerican(double point1X, double point2X, double point1Y, double point2Y, int maxX) {
-        if (Math.abs(point1Y - point2Y) <= DIFFERENCE_Y_CLICK && Math.abs(point1X - point2X) < maxX/4) {
+        if (maxX !=0 && Math.abs(point1Y - point2Y) <= DIFFERENCE_Y_CLICK && Math.abs(point1X - point2X) < maxX/4) {
             return true;
         }else{
             return false;

@@ -72,15 +72,19 @@ public class SocketAnswer {
         answersInstance = new Gson().fromJson(message, SocketAnswer.class);
         return answersInstance;
     }
-    public static void sortList(List<SocketAnswer> list){
-        if(list != null){
-            Collections.sort(list, new Comparator<SocketAnswer>() {
-                @Override
-                public int compare(SocketAnswer o1, SocketAnswer o2) {
-                    return o1.getTime().compareTo(o2.getTime());
+    public static List<SocketAnswer> sortList(List<SocketAnswer> list, float xMax){
+        List<SocketAnswer> listTemp = new ArrayList<>();
+        if(list != null && list.size() != 0){
+            for(SocketAnswer l: list){
+                if(l.getTime() > xMax){
+                    listTemp.add(l);
                 }
-            });
+            }
+            if(listTemp.size() != 0){
+                Collections.sort(listTemp, (o1, o2) -> o1.getTime().compareTo(o2.getTime()));
+            }
         }
+        return listTemp;
     }
 
 

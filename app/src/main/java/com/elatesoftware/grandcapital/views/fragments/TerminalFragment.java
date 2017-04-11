@@ -705,10 +705,10 @@ public class TerminalFragment extends Fragment {
         mTimerRedraw.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                /*getActivity().runOnUiThread(() -> {
+                getActivity().runOnUiThread(() -> {
                      if(isFinishedDrawPoint && listSocketAnswerQueue != null && listSocketAnswerQueue.size() != 0) {
                          if(listSocketAnswerQueue.size() > 1){
-                             SocketAnswer.sortList(listSocketAnswerQueue);
+                             listSocketAnswerQueue = SocketAnswer.sortList(listSocketAnswerQueue, mChart.getLineData().getDataSetByIndex(0).getXMax());
                              for (int i = 0; i < listSocketAnswerQueue.size()-1; i++) {
                                  SymbolHistoryAnswer.addSocketAnswerInSymbol(listSocketAnswerQueue.get(i));
                                  addEntry(SymbolHistoryAnswer.getInstance().get(SymbolHistoryAnswer.getInstance().size() -1));
@@ -720,8 +720,8 @@ public class TerminalFragment extends Fragment {
                              addEntry(socketAnswer);
                          }
                      }
-                 });*/
-                getActivity().runOnUiThread(() -> {
+                 });
+                /*getActivity().runOnUiThread(() -> {
                     if(isFinishedDrawPoint && listSocketAnswerQueue != null && listSocketAnswerQueue.size() != 0) {
                         if(listSocketAnswerQueue.size() > 1){
                             SocketAnswer.sortList(listSocketAnswerQueue);
@@ -735,9 +735,9 @@ public class TerminalFragment extends Fragment {
                         }else{
                             addEntry(listSocketAnswerQueue.get(0));
                         }
-                    }
-                    redrawXYDealingLimitLines();
-                });
+                    }*/
+                    //redrawItemsChart();
+                //});
             }
         }, 1000, 1000);
     }
@@ -912,8 +912,9 @@ public class TerminalFragment extends Fragment {
                                         data.notifyDataChanged();
                                         mChart.invalidate();
                                         numberTemporaryPoint++;
-                                        SocketLine.drawSocketLine(simplyEntry);
-                                        drawCurrentPoint(simplyEntry);
+
+                                        redrawItemsChart(simplyEntry);
+
                                         if(numberTemporaryPoint == 10){
                                             isFinishedDrawPoint = true;
                                         }
@@ -929,8 +930,7 @@ public class TerminalFragment extends Fragment {
                     data.getDataSetByIndex(0).addEntry(currEntry);
                     data.notifyDataChanged();
                     mChart.invalidate();
-                    SocketLine.drawSocketLine(currEntry);
-                    drawCurrentPoint(currEntry);
+                    redrawItemsChart(currEntry);
                     SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
                     isFinishedDrawPoint = true;
             }
@@ -1025,10 +1025,11 @@ public class TerminalFragment extends Fragment {
             imgPointCurrent.setY(y - imgPointCurrent.getHeight() / 2);
         }
     }
-    public void redrawXYDealingLimitLines(){
+    public void redrawItemsChart(Entry entry){
+        SocketLine.drawSocketLine(entry);
         redrawXLimitLines();
         redrawYLimitLines();
-        mChart.invalidate();
+        drawCurrentPoint(entry);
     }
     private void redrawXLimitLines(){
         List<XDealingLine> list = BaseLimitLine.getXLimitLines();

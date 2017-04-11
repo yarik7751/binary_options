@@ -45,12 +45,9 @@ public class BaseLimitLine extends LimitLine {
     static YAxis rightYAxis;
     private static LineChart mChart;
 
-    private Canvas canvasLine;
+    private int maxWeightCanvasLabel;
 
     private static List<BaseLimitLine> listQueueDrawingItemsChart = new ArrayList<>();
-    private final static int PRIORITET_SOCKET_LINE = 0;
-    private final static int PRIORITET_ACTIVE_LINE = 1;
-    private final static int PRIORITET_DEALING_LINE = 2;
 
     static {
         initialization();
@@ -225,9 +222,9 @@ public class BaseLimitLine extends LimitLine {
                     OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                     if (order != null && order.getOpenPrice() != null) {
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-                        if (line.ismIsAmerican() && ConventDimens.isClickOnXYDealingAmerican(point.x, line.getLimit(), point.y, tappedY, line.getCanvasLine().getMaximumBitmapWidth())) {
+                        if (line.ismIsAmerican() && ConventDimens.isClickOnXYDealingAmerican(point.x, line.getLimit(), point.y, tappedY, line.getMaxWeightCanvasLabel())) {
                             return order;
-                        }else if (ConventDimens.isClickOnXDealingNoAmerican(line.getLimit(), point.x, tappedY, point.y, line.getCanvasLine().getMaximumBitmapWidth())) {
+                        }else if (ConventDimens.isClickOnXDealingNoAmerican(line.getLimit(), point.x, tappedY, point.y, line.getMaxWeightCanvasLabel())) {
                             BaseLimitLine.makeActiveSelectedDealing(line);
                             return null;
                         }
@@ -247,9 +244,9 @@ public class BaseLimitLine extends LimitLine {
                     OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                     if (order != null && order.getOpenPrice() != null) {
                         float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-                        if (line.ismIsAmerican() && ConventDimens.isClickOnXYDealingAmerican(point.x, xMax, tappedY, point.y, line.getCanvasLine().getMaximumBitmapWidth())) {
+                        if (line.ismIsAmerican() && ConventDimens.isClickOnXYDealingAmerican(point.x, xMax, tappedY, point.y, line.getMaxWeightCanvasLabel())) {
                             return order;
-                        }else if (ConventDimens.isClickOnYDealingNoAmerican(point.x, xMax, tappedY, point.y, line.getCanvasLine().getMaximumBitmapWidth())) {
+                        }else if (ConventDimens.isClickOnYDealingNoAmerican(point.x, xMax, tappedY, point.y, line.getMaxWeightCanvasLabel())) {
                             BaseLimitLine.makeActiveSelectedDealing(line);
                             return null;
                         }
@@ -324,11 +321,11 @@ public class BaseLimitLine extends LimitLine {
         }
     }
 
-    public Canvas getCanvasLine() {
-        return canvasLine;
+    public int getMaxWeightCanvasLabel() {
+        return maxWeightCanvasLabel;
     }
-    public void setCanvasLine(Canvas canvasLine) {
-        this.canvasLine = canvasLine;
+    public void setMaxWeightCanvasLabel(int maxWeightCanvasLabel) {
+        this.maxWeightCanvasLabel = maxWeightCanvasLabel;
     }
 
     public static List<BaseLimitLine> getListQueueDrawingItemsChart() {

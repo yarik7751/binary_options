@@ -180,7 +180,7 @@ public class YAxisRenderer extends AxisRenderer {
                             textPaint.setColor(Color.parseColor("#FD3E3C"));
                             c.drawText(lastSymbol, fixedPosition - paddingHoriz / 3 + width, posY, textPaint);
                         }
-                        lineSocket.setCanvasLine(null);
+                        lineSocket.setMaxWeightCanvasLabel(0);
                     }
 /************************************************** LINE_CURRENT_DEALING ************************************************************************/
                 } else if (line instanceof DealingLine) {
@@ -221,7 +221,7 @@ public class YAxisRenderer extends AxisRenderer {
                         bitmapLabel = Bitmap.createScaledBitmap(bitmapLabel, (int) width_marker, (int) height_marker, false);
                         c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz/2, posY - height_marker + paddingVert / 2, paint);
                         c.drawText(strLabel, fixedPosition, posY, textPaint);
-                        lineDealing.setCanvasLine(null);
+                        lineDealing.setMaxWeightCanvasLabel(0);
                     }
 /************************************************** LINE_Y_DEALING************************************************************************/
                 }else if (line instanceof YDealingLine){
@@ -286,7 +286,7 @@ public class YAxisRenderer extends AxisRenderer {
                             if(lineDealing.ismIsAmerican()){
                                 c.drawBitmap(iconClose, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*3/2 + widthStrLabelY, posY - height_markerIconLabelY/2, paint);
                             }
-                            lineDealing.setCanvasLine(c);
+                            lineDealing.setMaxWeightCanvasLabel(c.getMaximumBitmapWidth());
                         }
                 }
             }
