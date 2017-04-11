@@ -312,9 +312,11 @@ public class TerminalFragment extends Fragment {
             BaseActivity.changeMainFragment(new DepositFragment());
         });
         llLowerTerminal.setOnClickListener(v -> {
+            llLowerTerminal.setEnabled(false);
             requestMakeDealing(Const.CMD_LOWER);
         });
         llHigherTerminal.setOnClickListener(v -> {
+            llHigherTerminal.setEnabled(false);
             requestMakeDealing(Const.CMD_HEIGHT);
         });
         initializationCurrentPoint();
@@ -661,6 +663,7 @@ public class TerminalFragment extends Fragment {
         typePoint = POINT_SIMPLY;
         mChart.clearDisappearingChildren();
         mChart.highlightValues(null);
+        BaseLimitLine.deleteQueueDrawingItemsChart();
         DealingLine.deleteDealingLine();
         SocketLine.deleteSocketLine();
         rightYAxis.removeAllLimitLines();
@@ -708,11 +711,13 @@ public class TerminalFragment extends Fragment {
                 getActivity().runOnUiThread(() -> {
                      if(isFinishedDrawPoint && listSocketAnswerQueue != null && listSocketAnswerQueue.size() != 0) {
                          if(listSocketAnswerQueue.size() > 1){
+                             isFinishedDrawPoint = false;
                              listSocketAnswerQueue = SocketAnswer.sortList(listSocketAnswerQueue, mChart.getLineData().getDataSetByIndex(0).getXMax());
                              for (int i = 0; i < listSocketAnswerQueue.size()-1; i++) {
                                  SymbolHistoryAnswer.addSocketAnswerInSymbol(listSocketAnswerQueue.get(i));
                                  addEntry(SymbolHistoryAnswer.getInstance().get(SymbolHistoryAnswer.getInstance().size() -1));
                              }
+                             isFinishedDrawPoint = true;
                          }
                          SocketAnswer socketAnswer = listSocketAnswerQueue.get(listSocketAnswerQueue.size()-1);
                          listSocketAnswerQueue.clear();
@@ -977,8 +982,7 @@ public class TerminalFragment extends Fragment {
                             @Override
                             public void run() {
                                 if (imgPointCurrent != null && currEntry != null) {
-                                    drawCurrentPoint(currEntry);
-                                    SocketLine.drawSocketLine(currEntry);
+                                    redrawItemsChart(currEntry);
                                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                                     imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                                     imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
@@ -1027,9 +1031,10 @@ public class TerminalFragment extends Fragment {
     }
     public void redrawItemsChart(Entry entry){
         SocketLine.drawSocketLine(entry);
+        drawCurrentPoint(entry);
         redrawXLimitLines();
         redrawYLimitLines();
-        drawCurrentPoint(entry);
+        BaseLimitLine.drawItems();
     }
     private void redrawXLimitLines(){
         List<XDealingLine> list = BaseLimitLine.getXLimitLines();
@@ -1037,6 +1042,7 @@ public class TerminalFragment extends Fragment {
             for(XDealingLine line : list){
             OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                 if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime()) || Long.parseLong(line.getmTimer()) <= 0.5){
+                    BaseLimitLine.deleteItemQueueDrawingItemsChart(line);
                     xAxis.removeLimitLine(line);
                     if(line.ismIsActive()){
                         BaseLimitLine.makeActiveSelectedDealing(null);
@@ -1060,6 +1066,7 @@ public class TerminalFragment extends Fragment {
             for(YDealingLine line : list){
                 OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                 if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime()) || Long.parseLong(line.getmTimer()) < 0.5){
+                    BaseLimitLine.deleteItemQueueDrawingItemsChart(line);
                     rightYAxis.removeLimitLine(line);
                     if(line.ismIsActive()){
                         BaseLimitLine.makeActiveSelectedDealing(null);

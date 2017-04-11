@@ -39,10 +39,10 @@ public class YDealingLine extends BaseLimitLine {
     }
     static void createYDealingLine(OrderAnswer order, double mCurrentValueY, boolean isAmerican){
         YDealingLine line = new YDealingLine(Float.valueOf(String.valueOf(order.getOpenPrice())),
-                new Gson().toJson(order), null,
-                String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican, false);
+                                            new Gson().toJson(order), null,
+                                            String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican, false);
         YDealingLine.updateColorYLimitLine(line, order, mCurrentValueY);
-        rightYAxis.addLimitLine(line);
+        BaseLimitLine.addLineQueueDrawingChart(line);
     }
 
     public Bitmap getmBitmapLabelY() {

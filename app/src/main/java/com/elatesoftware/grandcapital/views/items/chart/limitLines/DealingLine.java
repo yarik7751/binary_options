@@ -38,13 +38,18 @@ public class DealingLine extends BaseLimitLine {
                 currentLineDealing.setmBitmapLabelY(bitmapIconCurrentDealingRedYLabel);
                 currentLineDealing.setLineColor(colorRed);
             }
-            rightYAxis.addLimitLine(currentLineDealing);
+            BaseLimitLine.addLineQueueDrawingChart(currentLineDealing);
         }
     }
     public static void deleteDealingLine(){
         if (currentLineDealing != null) {
             rightYAxis.removeLimitLine(currentLineDealing);
+            BaseLimitLine.deleteItemQueueDrawingItemsChart(currentLineDealing);
         }
+    }
+
+    public static DealingLine getCurrentLineDealing() {
+        return currentLineDealing;
     }
 
     public float getmLimit() {

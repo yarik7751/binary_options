@@ -23,17 +23,20 @@ public class SocketLine extends BaseLimitLine {
     }
     public static void drawSocketLine(Entry entry) {
         if (entry != null) {
-            if (lineSocket != null) {
-                rightYAxis.removeLimitLine(lineSocket);
-            }
+            deleteSocketLine();
             lineSocket = new SocketLine(entry.getY(), String.valueOf(entry.getY()));
-            rightYAxis.addLimitLine(lineSocket);
+            BaseLimitLine.addLineQueueDrawingChart(lineSocket);
         }
     }
     public static void deleteSocketLine(){
         if (lineSocket != null) {
             rightYAxis.removeLimitLine(lineSocket);
+            BaseLimitLine.deleteItemQueueDrawingItemsChart(lineSocket);
         }
+    }
+
+    public static SocketLine getLineSocket() {
+        return lineSocket;
     }
 
     public String getmLabel() {

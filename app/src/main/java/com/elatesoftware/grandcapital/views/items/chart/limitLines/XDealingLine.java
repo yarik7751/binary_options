@@ -46,7 +46,7 @@ public class XDealingLine extends BaseLimitLine {
                 ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000),
                 new Gson().toJson(order), null, null, String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), isAmerican, false);
         XDealingLine.updateColorXLimitLine(line, order, mCurrentValueY);
-        xAxis.addLimitLine(line);
+        BaseLimitLine.addLineQueueDrawingChart(line);
     }
     public static void updateColorXLimitLine(XDealingLine line, OrderAnswer order, double mCurrentValueY){
         if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
