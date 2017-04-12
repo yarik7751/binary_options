@@ -1,7 +1,6 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,12 +8,10 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
-import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.DealingLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.ActiveDealingLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.SocketLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.YDealingLine;
 import com.github.mikephil.charting.components.LimitLine;
@@ -126,6 +123,41 @@ public class YAxisRenderer extends AxisRenderer {
         // limitline labels
         List<LimitLine> limitLines = mYAxis.getLimitLines();
         float[] pts = new float[2];
+
+        SocketLine socketLine = null;
+        YDealingLine yDealingLine = null;
+        ActiveDealingLine dealingLine = null;
+
+        for(LimitLine lineLimit: limitLines){
+            if(lineLimit instanceof SocketLine){
+                socketLine = (SocketLine) lineLimit;
+            }else if(lineLimit instanceof ActiveDealingLine){
+                dealingLine = (ActiveDealingLine) lineLimit;
+            }else if(lineLimit instanceof YDealingLine && ((YDealingLine) lineLimit).ismIsActive()){
+                yDealingLine = (YDealingLine) lineLimit;
+            }
+        }
+        //********remove***************
+        if(socketLine != null){
+            limitLines.remove(socketLine);
+        }
+        if(dealingLine != null){
+            limitLines.remove(dealingLine);
+        }
+        if(yDealingLine != null){
+            limitLines.remove(yDealingLine);
+        }
+        //********add***************
+        if(socketLine != null){
+            limitLines.add(socketLine);
+        }
+        if(dealingLine != null){
+            limitLines.add(dealingLine);
+        }
+        if(yDealingLine != null){
+            limitLines.add(yDealingLine);
+        }
+        //********draw***************
         for (LimitLine l : limitLines) {
             if (l instanceof BaseLimitLine) {
                 BaseLimitLine line = (BaseLimitLine) l;
@@ -146,7 +178,7 @@ public class YAxisRenderer extends AxisRenderer {
                     textPaint.setTextSize(mYAxis.getTextSize() + 2f);
                     textPaint.setPathEffect(null);
                     textPaint.setTypeface(l.getTypeface());
-                    textPaint.setStrokeWidth(0.5f);
+                    textPaint.setStrokeWidth(1f);
                     textPaint.setStyle(l.getTextStyle());
 
                     pts[1] = lineSocket.getLimit();
@@ -183,8 +215,8 @@ public class YAxisRenderer extends AxisRenderer {
                         lineSocket.setMaxWeightCanvasLabel(0);
                     }
 /************************************************** LINE_CURRENT_DEALING ************************************************************************/
-                } else if (line instanceof DealingLine) {
-                    DealingLine lineDealing = (DealingLine) line;
+                } else if (line instanceof ActiveDealingLine) {
+                    ActiveDealingLine lineDealing = (ActiveDealingLine) line;
                     lineDealing.setLineWidth(1.0f);
                     lineDealing.setLineColor(line.getLineColor());
                     lineDealing.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);

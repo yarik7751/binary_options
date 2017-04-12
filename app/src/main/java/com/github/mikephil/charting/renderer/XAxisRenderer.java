@@ -211,6 +211,7 @@ public class XAxisRenderer extends AxisRenderer {
 
                 List<LimitLine> limitLines = mXAxis.getLimitLines();
                 if(limitLines != null && limitLines.size() != 0){
+
                     float[] pts = new float[2];
                     Paint paint = new Paint();
                     paint.setStyle(Paint.Style.FILL);
@@ -221,6 +222,14 @@ public class XAxisRenderer extends AxisRenderer {
                     textPaint.setTextSize(mAxisLabelPaint.getTextSize());
                     textPaint.setPathEffect(null);
                     textPaint.setStrokeWidth(0.5f);
+
+                    for(LimitLine lineLimit: limitLines){
+                        if(lineLimit instanceof XDealingLine && ((XDealingLine) lineLimit).ismIsActive()){
+                            limitLines.remove(lineLimit);
+                            limitLines.add(lineLimit);
+                            break;
+                        }
+                    }
 
                     for (LimitLine l : limitLines) {
                         if (l instanceof XDealingLine) {

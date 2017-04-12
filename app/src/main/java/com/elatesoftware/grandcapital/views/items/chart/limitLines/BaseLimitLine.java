@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
-import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventDimens;
@@ -46,8 +45,6 @@ public class BaseLimitLine extends LimitLine {
     private static LineChart mChart;
 
     private int maxWeightCanvasLabel;
-
-    private static List<BaseLimitLine> listQueueDrawingItemsChart = new ArrayList<>();
 
     static {
         initialization();
@@ -114,11 +111,10 @@ public class BaseLimitLine extends LimitLine {
                             lineX.getLabel(), lineX.getmBitmapLabelY(),
                             String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), lineX.ismIsAmerican(), lineX.ismIsActive());
                     if (lineX.ismIsActive()){
-                        DealingLine.deleteDealingLine();
-                        DealingLine.drawActiveDealingLine(lineY, (new Gson().fromJson(lineY.getLabel(), OrderAnswer.class)));
+                        ActiveDealingLine.deleteDealingLine();
+                        ActiveDealingLine.drawActiveDealingLine(lineY, (new Gson().fromJson(lineY.getLabel(), OrderAnswer.class)));
                     }
-                    BaseLimitLine.addLineQueueDrawingChart(lineY);
-                    BaseLimitLine.deleteItemQueueDrawingItemsChart(lineX);
+                    rightYAxis.addLimitLine(lineY);
                     xAxis.removeLimitLine(lineX);
                 }
             }
@@ -132,11 +128,10 @@ public class BaseLimitLine extends LimitLine {
                             new Gson().toJson(order), null, lineY.getmBitmapLabelY(), lineY.getmTimer(), lineY.ismIsAmerican(), lineY.ismIsActive());
                     if(lineY.ismIsActive()){
                         lineX.enableDashedLine(0f, 0f, 0f);
-                        DealingLine.deleteDealingLine();
-                        DealingLine.drawActiveDealingLine(lineX, (new Gson().fromJson(lineX.getLabel(), OrderAnswer.class)));
+                        ActiveDealingLine.deleteDealingLine();
+                        ActiveDealingLine.drawActiveDealingLine(lineX, (new Gson().fromJson(lineX.getLabel(), OrderAnswer.class)));
                     }
-                    BaseLimitLine.addLineQueueDrawingChart(lineX);
-                    BaseLimitLine.deleteItemQueueDrawingItemsChart(lineY);
+                    xAxis.addLimitLine(lineX);
                     rightYAxis.removeLimitLine(lineY);
                 }
             }
@@ -147,7 +142,7 @@ public class BaseLimitLine extends LimitLine {
             if (line instanceof XDealingLine && ((XDealingLine) line).ismIsActive()){
                 line.enableDashedLine(10f, 10f, 0f);
                 ((XDealingLine) line).setmIsActive(false);
-                DealingLine.deleteDealingLine();
+                ActiveDealingLine.deleteDealingLine();
             }else if(line instanceof XDealingLine && !((XDealingLine) line).ismIsActive()){
                 List<XDealingLine> listX = BaseLimitLine.getXLimitLines();
                 List<YDealingLine> listY = BaseLimitLine.getYLimitLines();
@@ -156,7 +151,7 @@ public class BaseLimitLine extends LimitLine {
                         if(l.ismIsActive()){
                             l.enableDashedLine(10f, 10f, 0f);
                             l.setmIsActive(false);
-                            DealingLine.deleteDealingLine();
+                            ActiveDealingLine.deleteDealingLine();
                             break;
                         }
                     }
@@ -164,18 +159,18 @@ public class BaseLimitLine extends LimitLine {
                         for(YDealingLine l: listY){
                             if(l.ismIsActive()){
                                 l.setmIsActive(false);
-                                DealingLine.deleteDealingLine();
+                                ActiveDealingLine.deleteDealingLine();
                                 break;
                             }
                         }
                     }
                     line.enableDashedLine(0f, 0f, 0f);
                     ((XDealingLine) line).setmIsActive(true);
-                    DealingLine.drawActiveDealingLine(line, (new Gson().fromJson(line.getLabel(), OrderAnswer.class)));
+                    ActiveDealingLine.drawActiveDealingLine(line, (new Gson().fromJson(line.getLabel(), OrderAnswer.class)));
                 }
             }else if(line instanceof YDealingLine && ((YDealingLine) line).ismIsActive()){
                 ((YDealingLine) line).setmIsActive(false);
-                DealingLine.deleteDealingLine();
+                ActiveDealingLine.deleteDealingLine();
             }else if(line instanceof YDealingLine && !((YDealingLine) line).ismIsActive()){
                 List<YDealingLine> listY = BaseLimitLine.getYLimitLines();
                 if(listY != null && listY.size() != 0) {
@@ -185,18 +180,18 @@ public class BaseLimitLine extends LimitLine {
                             if (l.ismIsActive()) {
                                 l.enableDashedLine(10f, 10f, 0f);
                                 l.setmIsActive(false);
-                                DealingLine.deleteDealingLine();
+                                ActiveDealingLine.deleteDealingLine();
                             }
                         }
                     }
                     for (YDealingLine l : listY) {
                         if (l.ismIsActive()) {
                             l.setmIsActive(false);
-                            DealingLine.deleteDealingLine();
+                            ActiveDealingLine.deleteDealingLine();
                         }
                     }
                     ((YDealingLine) line).setmIsActive(true);
-                    DealingLine.drawActiveDealingLine(line, (new Gson().fromJson(((YDealingLine) line).getLabel(), OrderAnswer.class)));
+                    ActiveDealingLine.drawActiveDealingLine(line, (new Gson().fromJson(((YDealingLine) line).getLabel(), OrderAnswer.class)));
                 }
             }
         }else{
@@ -204,55 +199,65 @@ public class BaseLimitLine extends LimitLine {
             List<YDealingLine> listY = BaseLimitLine.getYLimitLines();
             if(listX != null && listX.size() != 0){
                 listX.get(0).setmIsActive(true);
-                DealingLine.drawActiveDealingLine(listX.get(0), (new Gson().fromJson(listX.get(0).getLabel(), OrderAnswer.class)));
+                ActiveDealingLine.drawActiveDealingLine(listX.get(0), (new Gson().fromJson(listX.get(0).getLabel(), OrderAnswer.class)));
                 return;
             }
             if(listY != null && listY.size() != 0){
                 listY.get(0).setmIsActive(true);
-                DealingLine.drawActiveDealingLine(listY.get(0), (new Gson().fromJson(listY.get(0).getLabel(), OrderAnswer.class)));
+                ActiveDealingLine.drawActiveDealingLine(listY.get(0), (new Gson().fromJson(listY.get(0).getLabel(), OrderAnswer.class)));
                 return;
             }
-            DealingLine.deleteDealingLine();
+            ActiveDealingLine.deleteDealingLine();
         }
     }
 
-    public static OrderAnswer onClickXLimitLines(float x, float y){
-        List<XDealingLine> listLimit = BaseLimitLine.getXLimitLines();
-        if(listLimit != null && listLimit.size() != 0){
-            MPPointD point = mChart.getTransformer(YAxis.AxisDependency.RIGHT).getValuesByTouchPoint(x, y);
-            if(point != null){
-                for(XDealingLine line: listLimit) {
-                    OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                    if (order != null && order.getOpenPrice() != null) {
-                        float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-                        if (line.ismIsAmerican() && ConventDimens.isClickOnXYDealingAmerican(point.x, line.getLimit(), point.y, tappedY, line.getMaxWeightCanvasLabel())) {
-                            return order;
-                        }else if (ConventDimens.isClickOnXDealingNoAmerican(line.getLimit(), point.x, tappedY, point.y, line.getMaxWeightCanvasLabel())) {
-                            BaseLimitLine.makeActiveSelectedDealing(line);
-                            return null;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    public static OrderAnswer onClickYLimitLines(float x, float y){
+    public static OrderAnswer onClickLimitLines(float x, float y){
         float xMax = mChart.getHighestVisibleX();
-        List<YDealingLine> listLimit = BaseLimitLine.getYLimitLines();
-        if(listLimit != null && listLimit.size() != 0){
-            MPPointD point = mChart.getTransformer(YAxis.AxisDependency.RIGHT).getValuesByTouchPoint(x, y);
-            if(point != null){
-                for(YDealingLine line: listLimit){
-                    OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                    if (order != null && order.getOpenPrice() != null) {
-                        float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-                        if (line.ismIsAmerican() && ConventDimens.isClickOnXYDealingAmerican(point.x, xMax, tappedY, point.y, line.getMaxWeightCanvasLabel())) {
-                            return order;
-                        }else if (ConventDimens.isClickOnYDealingNoAmerican(point.x, xMax, tappedY, point.y, line.getMaxWeightCanvasLabel())) {
-                            BaseLimitLine.makeActiveSelectedDealing(line);
-                            return null;
+        MPPointD point = mChart.getTransformer(YAxis.AxisDependency.RIGHT).getValuesByTouchPoint(x, y);
+        if(point != null){
+            DealingLine selectedLine = selectOnClickLine(point, xMax);
+            if(selectedLine != null){
+                return makeOnClickLabel(selectedLine, point, xMax);
+            }
+        }
+        return null;
+    }
+    private static DealingLine selectOnClickLine(MPPointD pointClick, float xMax){
+        List<XDealingLine> listLimitX = BaseLimitLine.getXLimitLines();
+        List<YDealingLine> listLimitY = BaseLimitLine.getYLimitLines();
+        List<DealingLine> listLimits = new ArrayList<>();
+        if(listLimitX != null && listLimitX.size() != 0){
+            listLimits.addAll(listLimitX);
+        }
+        if(listLimitY != null && listLimitY.size() != 0){
+            listLimits.addAll(listLimitY);
+        }
+        if(listLimits.size() != 0){
+            List<DealingLine> listSelectedLines = new ArrayList<>();
+            for(DealingLine line : listLimits){
+                OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+                float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
+                if(line instanceof XDealingLine && ConventDimens.isClickOnXDealingNoAmerican(line.getLimit(), pointClick.x, tappedY, pointClick.y, line.getMaxWeightCanvasLabel())){
+                    listSelectedLines.add(line);
+                }else if(ConventDimens.isClickOnYDealingNoAmerican(pointClick.x, xMax, tappedY, pointClick.y, line.getMaxWeightCanvasLabel())){
+                    listSelectedLines.add(line);
+                }
+            }
+            if(listSelectedLines.size() != 0){
+                if(listSelectedLines.size() == 1){
+                    return listSelectedLines.get(0);
+                }else{
+                    DealingLine activeDealingLine = null;
+                    for(DealingLine l : listSelectedLines){
+                        if(l.ismIsActive()){
+                            activeDealingLine = l;
+                            break;
                         }
+                    }
+                    if(activeDealingLine != null){
+                        return activeDealingLine;
+                    }else{
+                        return listSelectedLines.get(0);
                     }
                 }
             }
@@ -260,6 +265,20 @@ public class BaseLimitLine extends LimitLine {
         return null;
     }
 
+    private static OrderAnswer makeOnClickLabel(DealingLine line, MPPointD point, float xMax){
+        OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
+        if (order != null && order.getOpenPrice() != null) {
+            float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
+            if (line.ismIsAmerican() && ((line instanceof XDealingLine && ConventDimens.isClickOnXYDealingAmerican(point.x, line.getLimit(), point.y, tappedY, line.getMaxWeightCanvasLabel()))
+                    || (line instanceof YDealingLine && ConventDimens.isClickOnXYDealingAmerican(point.x, xMax, tappedY, point.y, line.getMaxWeightCanvasLabel())))) {
+                return order;
+            }else{
+                BaseLimitLine.makeActiveSelectedDealing(line);
+                return null;
+            }
+        }
+        return null;
+    }
     public static void drawAllDealingsLimitLines(List<OrderAnswer> list, double mCurrentValueY){
         if(getXLimitLines() != null && getXLimitLines().size() != 0){
             xAxis.removeAllLimitLines();
@@ -267,7 +286,6 @@ public class BaseLimitLine extends LimitLine {
         if(getYLimitLines() != null && getYLimitLines().size() != 0){
             for(YDealingLine line : getYLimitLines()){
                 rightYAxis.removeLimitLine(line);
-                BaseLimitLine.deleteItemQueueDrawingItemsChart(line);
             }
         }
         if(list != null && list.size() != 0){
@@ -297,10 +315,9 @@ public class BaseLimitLine extends LimitLine {
             for(XDealingLine line : getXLimitLines()){
                 OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                 if(ticket == order.getTicket()){
-                    BaseLimitLine.deleteItemQueueDrawingItemsChart(line);
                     xAxis.removeLimitLine(line);
                     if(line.ismIsActive()){
-                        DealingLine.deleteDealingLine();
+                        ActiveDealingLine.deleteDealingLine();
                         if(getXLimitLines() != null && getXLimitLines().size() != 0){
                             BaseLimitLine.makeActiveSelectedDealing(null);
                         }
@@ -313,10 +330,9 @@ public class BaseLimitLine extends LimitLine {
             for(YDealingLine line : getYLimitLines()){
                 OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                 if(ticket == order.getTicket()){
-                    BaseLimitLine.deleteItemQueueDrawingItemsChart(line);
                     rightYAxis.removeLimitLine(line);
                     if(line.ismIsActive()){
-                        DealingLine.deleteDealingLine();
+                        ActiveDealingLine.deleteDealingLine();
                         if(getYLimitLines() != null && getYLimitLines().size() != 0){
                             BaseLimitLine.makeActiveSelectedDealing(null);
                         }
@@ -334,83 +350,4 @@ public class BaseLimitLine extends LimitLine {
         this.maxWeightCanvasLabel = maxWeightCanvasLabel;
     }
 
-    public static void deleteItemQueueDrawingItemsChart(BaseLimitLine line) {
-        if(listQueueDrawingItemsChart.contains(line)){
-            listQueueDrawingItemsChart.remove(line);
-        }
-    }
-    public static void deleteQueueDrawingItemsChart() {
-        listQueueDrawingItemsChart.clear();
-    }
-
-    public static void addLineQueueDrawingChart(BaseLimitLine line) {
-        if(listQueueDrawingItemsChart == null){
-            listQueueDrawingItemsChart = new ArrayList<>();
-        }
-        listQueueDrawingItemsChart.add(line);
-    }
-
-    public static void drawItems(){
-        if(listQueueDrawingItemsChart != null && listQueueDrawingItemsChart.size() != 0){
-            sortQueueDrawingItemsChart();
-            addItemsChart();
-        }else{
-            rightYAxis.removeAllLimitLines();
-            xAxis.removeAllLimitLines();
-        }
-    }
-    private static void sortQueueDrawingItemsChart(){
-        if(listQueueDrawingItemsChart != null && listQueueDrawingItemsChart.size() != 0){
-            DealingLine dealingLine = null;
-            SocketLine socketLine = null;
-            XDealingLine xDealingLine = null;
-            YDealingLine yDealingLine = null;
-            for(BaseLimitLine line: listQueueDrawingItemsChart){
-               if(line instanceof SocketLine){
-                   socketLine = (SocketLine) line;
-               }else if(line instanceof DealingLine){
-                   dealingLine = (DealingLine) line;
-               }else if(line instanceof XDealingLine){
-                   if(((XDealingLine) line).ismIsActive()){
-                       xDealingLine = (XDealingLine) line;
-                   }
-               }else if(line instanceof YDealingLine){
-                   if(((YDealingLine) line).ismIsActive()){
-                       yDealingLine = (YDealingLine) line;
-                   }
-               }
-           }
-            if(socketLine != null){
-                listQueueDrawingItemsChart.remove(socketLine);
-                listQueueDrawingItemsChart.add(0, socketLine);
-            }
-            if(dealingLine != null){
-                listQueueDrawingItemsChart.remove(dealingLine);
-                listQueueDrawingItemsChart.add(listQueueDrawingItemsChart.size()-1, dealingLine);
-            }
-            if(xDealingLine != null){
-                listQueueDrawingItemsChart.remove(xDealingLine);
-                listQueueDrawingItemsChart.add(listQueueDrawingItemsChart.size()-1, xDealingLine);
-            }else if(yDealingLine != null){
-                listQueueDrawingItemsChart.remove(yDealingLine);
-                listQueueDrawingItemsChart.add(listQueueDrawingItemsChart.size()-1, yDealingLine);
-            }
-        }
-    }
-    private static void addItemsChart(){
-        if(listQueueDrawingItemsChart != null && listQueueDrawingItemsChart.size() != 0){
-            for(BaseLimitLine line: listQueueDrawingItemsChart){
-                if(line instanceof SocketLine){
-                    rightYAxis.addLimitLine(line);
-                }else if(line instanceof DealingLine){
-                    rightYAxis.addLimitLine(line);
-                }else if(line instanceof XDealingLine){
-                    xAxis.addLimitLine(line);
-                }else if(line instanceof YDealingLine){
-                    rightYAxis.addLimitLine(line);
-                }
-            }
-            listQueueDrawingItemsChart.clear();
-        }
-    }
 }

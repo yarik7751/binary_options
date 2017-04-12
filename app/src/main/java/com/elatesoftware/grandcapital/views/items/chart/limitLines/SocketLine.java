@@ -25,13 +25,13 @@ public class SocketLine extends BaseLimitLine {
         if (entry != null) {
             deleteSocketLine();
             lineSocket = new SocketLine(entry.getY(), String.valueOf(entry.getY()));
-            BaseLimitLine.addLineQueueDrawingChart(lineSocket);
+            rightYAxis.addLimitLine(lineSocket);
         }
     }
     public static void deleteSocketLine(){
         if (lineSocket != null) {
             rightYAxis.removeLimitLine(lineSocket);
-            BaseLimitLine.deleteItemQueueDrawingItemsChart(lineSocket);
+            lineSocket = null;
         }
     }
 

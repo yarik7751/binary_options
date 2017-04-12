@@ -5,8 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -30,7 +28,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.EarlyClosureAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
@@ -62,6 +59,7 @@ import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.animation.PointAnimation;
 import com.elatesoftware.grandcapital.views.items.chart.ViewInfoHelper;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.ActiveDealingLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.DealingLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.SocketLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.XDealingLine;
@@ -478,7 +476,7 @@ public class TerminalFragment extends Fragment {
     private void initializationChart() {
         mChart.setNoDataText("Loading Data...");
         mChart.setNoDataText(getResources().getString(R.string.request_error_title));
-        mChart.setDragDecelerationFrictionCoef(0.8f);
+        mChart.setDragDecelerationFrictionCoef(0.3f);
         mChart.setDragDecelerationEnabled(true);
         mChart.setHighlightPerDragEnabled(false);
         mChart.setHighlightPerTapEnabled(false);
@@ -546,12 +544,9 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartSingleTapped(MotionEvent event) {
-                OrderAnswer orderClickX = BaseLimitLine.onClickXLimitLines(event.getX(), event.getY());
-                OrderAnswer orderClickY = BaseLimitLine.onClickYLimitLines(event.getX(), event.getY());
-                if(orderClickX != null){
-                    showViewCloseDealing(orderClickX);
-                }else if(orderClickY != null){
-                    showViewCloseDealing(orderClickY);
+                OrderAnswer orderClick = BaseLimitLine.onClickLimitLines(event.getX(), event.getY());
+                if(orderClick != null){
+                    showViewCloseDealing(orderClick);
                 }
             }
             @Override
@@ -672,8 +667,7 @@ public class TerminalFragment extends Fragment {
         typePoint = POINT_SIMPLY;
         mChart.clearDisappearingChildren();
         mChart.highlightValues(null);
-        BaseLimitLine.deleteQueueDrawingItemsChart();
-        DealingLine.deleteDealingLine();
+        ActiveDealingLine.deleteDealingLine();
         SocketLine.deleteSocketLine();
         rightYAxis.removeAllLimitLines();
         xAxis.removeAllLimitLines();
@@ -992,6 +986,7 @@ public class TerminalFragment extends Fragment {
                             addEntry(listSymbol.get(i));
                             Log.d(GrandCapitalApplication.TAG_SOCKET, listSymbol.get(i).getTime() + "");
                         }
+                        mChart.invalidate();
                     }
                 });
                 if (mChart.getLineData() != null && listSymbol.size() != 0) {
@@ -1055,9 +1050,8 @@ public class TerminalFragment extends Fragment {
     public void redrawItemsChart(Entry entry){
         SocketLine.drawSocketLine(entry);
         drawCurrentPoint(entry);
-        redrawXLimitLines();
         redrawYLimitLines();
-        BaseLimitLine.drawItems();
+        redrawXLimitLines();
     }
     private void redrawXLimitLines(){
         List<XDealingLine> list = BaseLimitLine.getXLimitLines();
@@ -1065,7 +1059,6 @@ public class TerminalFragment extends Fragment {
             for(XDealingLine line : list){
             OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                 if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime()) || Long.parseLong(line.getmTimer()) <= 0.5){
-                    BaseLimitLine.deleteItemQueueDrawingItemsChart(line);
                     xAxis.removeLimitLine(line);
                     if(line.ismIsActive()){
                         BaseLimitLine.makeActiveSelectedDealing(null);
@@ -1075,9 +1068,9 @@ public class TerminalFragment extends Fragment {
                     if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                         line.setmIsAmerican(true);
                     }
-                    XDealingLine.updateColorXLimitLine(line, order, mCurrentValueY);
+                    DealingLine.updateColorDealingLine(line, order, mCurrentValueY);
                     if(line.ismIsActive()){
-                        DealingLine.drawActiveDealingLine(line, order);
+                        ActiveDealingLine.drawActiveDealingLine(line, order);
                     }
                 }
             }
@@ -1089,7 +1082,6 @@ public class TerminalFragment extends Fragment {
             for(YDealingLine line : list){
                 OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                 if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime()) || Long.parseLong(line.getmTimer()) < 0.5){
-                    BaseLimitLine.deleteItemQueueDrawingItemsChart(line);
                     rightYAxis.removeLimitLine(line);
                     if(line.ismIsActive()){
                         BaseLimitLine.makeActiveSelectedDealing(null);
@@ -1099,9 +1091,9 @@ public class TerminalFragment extends Fragment {
                     if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                         line.setmIsAmerican(true);
                     }
-                    YDealingLine.updateColorYLimitLine(line, order, mCurrentValueY);
+                    DealingLine.updateColorDealingLine(line, order, mCurrentValueY);
                     if(line.ismIsActive()){
-                        DealingLine.drawActiveDealingLine(line, order);
+                        ActiveDealingLine.drawActiveDealingLine(line, order);
                     }
                 }
             }
