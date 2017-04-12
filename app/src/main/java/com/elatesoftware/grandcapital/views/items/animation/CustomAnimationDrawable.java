@@ -12,10 +12,6 @@ public class CustomAnimationDrawable extends AnimationDrawable {
     private AnimationEndListner animationEndListner;
     private boolean finished = false;
 
-    public AnimationEndListner getAnimationEndListner() {
-        return animationEndListner;
-    }
-
     public void setAnimationEndListner(AnimationEndListner animationEndListner) {
         this.animationEndListner = animationEndListner;
     }
