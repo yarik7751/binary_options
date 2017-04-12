@@ -20,20 +20,23 @@ public class ConventDate {
 
     public static final String TAG = "ConventDate_Logs";
     private static final String CLOSE_DEALING = "1970-01-01T00:00:00";
-    private static final DateFormat SDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    private static final DateFormat SDF_HH_MM = new SimpleDateFormat("HH:mm");
+    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+    private static final String DATE_FORMAT_CLOSK = "HH:mm";
+    //private static final DateFormat SDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    //private static final DateFormat SDF_HH_MM = new SimpleDateFormat("HH:mm");
     private final static double DIFFERENCE_FOR_SOCKET = 1;
     private final static int DIFFERENCE_FOR_POINTS = 4000;
-    private static final String timeZone = "GMT+00:00:00";
+    private static final String TIME_ZONE = "GMT+00:00:00";
 
     private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
 
     private static long getBigDateChart() {
-        SDF.setTimeZone(TimeZone.getDefault());
-        String currDate = SDF.format(new Date());
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        sdf.setTimeZone(TimeZone.getDefault());
+        String currDate = sdf.format(new Date());
         Date resultDate = null;
         try {
-            resultDate = SDF.parse(currDate);
+            resultDate = sdf.parse(currDate);
             resultDate.setHours(resultDate.getHours() + 2);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -59,11 +62,12 @@ public class ConventDate {
     }
 
     public static String getConventDate(String date) {
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         //dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));//
-        SDF.setTimeZone(TimeZone.getDefault());
+        sdf.setTimeZone(TimeZone.getDefault());
         Date resultDate = null;
         try {
-            resultDate = SDF.parse(date);
+            resultDate = sdf.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -74,10 +78,11 @@ public class ConventDate {
         }
     }
     public static long stringToUnix(String date) {
-        SDF.setTimeZone(TimeZone.getTimeZone(timeZone));
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        sdf.setTimeZone(TimeZone.getTimeZone(TIME_ZONE));
         Date resultDate = null;
         try {
-            resultDate = SDF.parse(date);
+            resultDate = sdf.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -88,12 +93,15 @@ public class ConventDate {
         }
     }
     public static long getDifferenceDate(String date) {
-        SDF.setTimeZone(TimeZone.getDefault());
-        String currDate = SDF.format(new Date());
-        Log.d(TAG, "currDate str: " + currDate);
-        Log.d(TAG, "currDate: " + stringToUnix(currDate));
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getDefault());
+        String currDate = sdf.format(new Date(System.currentTimeMillis()));
         long tempData = Math.abs(stringToUnix(date) - stringToUnix(currDate)) / 1000;
-        Log.d(TAG, "tempData: " + tempData);
+        if(tempData > 10000) {
+            Log.d(TAG, "currDate str: " + currDate);
+            Log.d(TAG, "currDate: " + stringToUnix(currDate));
+            Log.d(TAG, "tempData: " + tempData);
+        }
         return tempData;
     }
 
@@ -102,13 +110,15 @@ public class ConventDate {
     }
 
     public static long getDifferenceDateSign(String date) {
-        SDF.setTimeZone(TimeZone.getDefault());
-        String currDate = SDF.format(new Date(System.currentTimeMillis()));
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        sdf.setTimeZone(TimeZone.getDefault());
+        String currDate = sdf.format(new Date(System.currentTimeMillis()));
         return (stringToUnix(date) - stringToUnix(currDate)) / 1000;
     }
     public static boolean validationDateTimer(String date) {
-        SDF.setTimeZone(TimeZone.getDefault());
-        String currDate = SDF.format(new Date());
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        sdf.setTimeZone(TimeZone.getDefault());
+        String currDate = sdf.format(new Date());
         if((stringToUnix(date) - stringToUnix(currDate))/1000 >= 0){
             return true;
         }else {
@@ -142,20 +152,22 @@ public class ConventDate {
         return (time < 10) ? "0" + time : String.valueOf(time);
     }
     public static long getConvertDateInMilliseconds(String strDate) {
-        SDF.setTimeZone(TimeZone.getTimeZone(timeZone));
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        sdf.setTimeZone(TimeZone.getTimeZone(TIME_ZONE));
         Date date = null;
         try {
-            date = SDF.parse(strDate);
+            date = sdf.parse(strDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return date.getTime()/1000;
     }
     public static String convertDateFromMilSecHHMM(long time) {
-        SDF_HH_MM.setTimeZone(TimeZone.getDefault());
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT_CLOSK);
+        sdf.setTimeZone(TimeZone.getDefault());
         Date date = new Date(time);
         date.setHours(date.getHours() - 3);
-        return SDF_HH_MM.format(date);
+        return sdf.format(date);
     }
     private static int getIterationTime() {
         long rawOffset = TimeZone.getDefault().getRawOffset();
@@ -166,7 +178,8 @@ public class ConventDate {
         if(currentTime == 0L){
             return false;
         }else{
-             SDF.setTimeZone(TimeZone.getTimeZone(timeZone));
+            DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+             sdf.setTimeZone(TimeZone.getTimeZone(TIME_ZONE));
              Date currentDate = new Date(currentTime);
              Date newDate = new Date(newTime);
             if((currentDate.getSeconds() == newDate.getSeconds()) ||
@@ -212,31 +225,36 @@ public class ConventDate {
         return time.equals(CLOSE_DEALING);
     }
     public static String getCurrentDate(){
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         Date date = new Date();
-        SDF.setTimeZone(TimeZone.getDefault());
-        return SDF.format(date);
+        sdf.setTimeZone(TimeZone.getDefault());
+        return sdf.format(date);
     }
     public static String getTimeStampCurrentDate() {
-        SDF.setTimeZone(TimeZone.getDefault());
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        sdf.setTimeZone(TimeZone.getDefault());
         Date date = new Date();
         return String.valueOf(date.getTime() / 1000);
     }
     public static String getTimeStampLastDate() {
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         Date date = new Date();
-        SDF.setTimeZone(TimeZone.getDefault());
+        sdf.setTimeZone(TimeZone.getDefault());
         date.setMinutes(date.getMinutes() - 30);
         return String.valueOf(date.getTime() / 1000);
     }
     public static String getTimeCloseDealing(int expiration) {
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         Date date = new Date();
-        SDF.setTimeZone(TimeZone.getDefault());
+        sdf.setTimeZone(TimeZone.getDefault());
         //date.setHours(date.getHours() + 2);
         date.setMinutes(date.getMinutes() + expiration);
-        return SDF.format(date);
+        return sdf.format(date);
     }
     public static long getTimePlusOneSecond(long time) {
+        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         Date date = new Date(time);
-        SDF.setTimeZone(TimeZone.getTimeZone(timeZone));
+        sdf.setTimeZone(TimeZone.getTimeZone(TIME_ZONE));
         date.setSeconds(date.getSeconds() + 1);
         return date.getTime();
     }

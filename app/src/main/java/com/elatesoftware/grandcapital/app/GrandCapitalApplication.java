@@ -5,7 +5,6 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.api.socket.WebSocketHTTP3;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.orm.SugarApp;
