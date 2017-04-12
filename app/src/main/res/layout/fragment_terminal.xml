@@ -265,30 +265,30 @@
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:orientation="horizontal"
                     android:layout_weight="1">
 
-                        <TextView
+                        <!--<TextView
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="match_parent"
                             android:text="@string/reward"
                             android:gravity="center_vertical|right"
-                            style="@style/LigthText"/>
+                            style="@style/LigthText"/>-->
                         <TextView
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="match_parent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:paddingLeft="5dp"
                             tools:text="2,578 (80%)"
                             android:text="0"
                             android:id="@+id/tvValueRewardTerminal"
-                            android:gravity="center_vertical|left"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:singleLine="true"
                             style="@style/LigthText"/>
-                </LinearLayout>
+                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout

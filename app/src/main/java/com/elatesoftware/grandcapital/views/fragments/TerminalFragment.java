@@ -230,6 +230,7 @@ public class TerminalFragment extends Fragment {
         mViewInfoHelper = new ViewInfoHelper(rlChart);
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
+        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " 0.0(0%)");
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
             if (etValueAmount.isFocused()) {
@@ -1289,7 +1290,7 @@ public class TerminalFragment extends Fragment {
             if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && EarlyClosureAnswer.getInstance() != null &&
                     InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
                 GrandCapitalApplication.isTypeOptionAmerican = intent.getBooleanExtra(EarlyClosureService.IS_AMERICAN, false);
-                tvValueRewardTerminal.setText(ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
+                tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " " + ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
             }
         }
     }

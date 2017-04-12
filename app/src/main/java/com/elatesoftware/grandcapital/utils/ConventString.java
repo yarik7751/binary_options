@@ -22,20 +22,31 @@ public class ConventString {
         if(isBol) {
             str = str.replace("$", "");
             v.setText(str);
+            v.setSelection(v.getText().toString().length());
         } else {
             if(!str.contains("$")) {
-                v.setText("$" + str);
+                if(TextUtils.isEmpty(str)) {
+                    str = "0";
+                }
+                Double value = Double.parseDouble(str);
+                v.setText("$" + value);
             }
         }
     }
+
     public static void setMaskTime(EditText v, boolean isBol) {
         String str = v.getText().toString();
         if(isBol) {
             str = str.replace(" MIN", "");
             v.setText(str);
+            v.setSelection(v.getText().toString().length());
         } else {
             if(!str.contains(" MIN")) {
-                v.setText(str + " MIN");
+                if(TextUtils.isEmpty(str)) {
+                    str = "0";
+                }
+                int value = Integer.parseInt(str);
+                v.setText(value + " MIN");
             }
         }
     }
@@ -63,7 +74,7 @@ public class ConventString {
     public static void changeAmountValue(EditText v, boolean isAdd) {
         String str = v.getText().toString();
         str = str.replace("$", "");
-        int amout = Integer.parseInt(str);
+        double amout = Double.parseDouble(str);
         if(isAdd) {
             amout++;
         } else {
@@ -77,7 +88,7 @@ public class ConventString {
                 .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
                 .setAction(Const.ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS)
                 .setLabel(isAdd ? "+" : "-")
-                .setValue(amout)
+                .setValue((long) amout)
                 .build()
         );
     }
