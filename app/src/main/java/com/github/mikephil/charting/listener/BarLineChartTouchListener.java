@@ -8,6 +8,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 
+import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.data.BarLineScatterCandleBubbleData;
@@ -72,19 +73,20 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
      * the minimum distance between the pointers that will trigger a zoom gesture
      */
     private float mMinScalePointerDistance;
+    private float lastScaleX = -1;
 
     /**
      * Constructor with initialization parameters.
      *
      * @param chart               instance of the chart
-     * @param touchMatrix         the touch-matrix of the chart
+     * @param matrix        the touch-matrix of the chart
      * @param dragTriggerDistance the minimum movement distance that will be interpreted as a "drag" gesture in dp (3dp equals
      *                            to about 9 pixels on a 5.5" FHD screen)
      */
     public BarLineChartTouchListener(BarLineChartBase<? extends BarLineScatterCandleBubbleData<? extends
-            IBarLineScatterCandleBubbleDataSet<? extends Entry>>> chart, Matrix touchMatrix, float dragTriggerDistance) {
+            IBarLineScatterCandleBubbleDataSet<? extends Entry>>> chart, Matrix matrix, float dragTriggerDistance) {
         super(chart);
-        this.mMatrix = touchMatrix;
+        this.mMatrix = matrix;
 
         this.mDragTriggerDist = Utils.convertDpToPixel(dragTriggerDistance);
 
@@ -361,15 +363,21 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
                             h.canZoomInMoreY();
 
                     float scaleX = (mChart.isScaleXEnabled()) ? scale : 1f;
+                    boolean isGestureXMin = true;
+                    if(lastScaleX > 0) {
+                        isGestureXMin = lastScaleX > scaleX;
+                    }
                     float scaleY = (mChart.isScaleYEnabled()) ? scale : 1f;
 
-                    if (canZoomMoreY || canZoomMoreX) {
+                    if ((canZoomMoreY || canZoomMoreX)) {
+                        if(h.getScaleX() < h.getMaxScaleX() || isGestureXMin) {
+                            mMatrix.set(mSavedMatrix);
+                            mMatrix.postScale(scaleX, scaleY, t.x, t.y);
 
-                        mMatrix.set(mSavedMatrix);
-                        mMatrix.postScale(scaleX, scaleY, t.x, t.y);
-
-                        if (l != null)
-                            l.onChartScale(event, scaleX, scaleY);
+                            if (l != null)
+                                l.onChartScale(event, scaleX, scaleY);
+                            lastScaleX = scaleX;
+                        }
                     }
 
                 } else if (mTouchMode == X_ZOOM && mChart.isScaleXEnabled()) {
@@ -391,6 +399,7 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
 
                         if (l != null)
                             l.onChartScale(event, scaleX, 1f);
+                        lastScaleX = scaleX;
                     }
 
                 } else if (mTouchMode == Y_ZOOM && mChart.isScaleYEnabled()) {

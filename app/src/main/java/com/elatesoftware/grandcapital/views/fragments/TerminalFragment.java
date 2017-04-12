@@ -91,6 +91,7 @@ public class TerminalFragment extends Fragment {
 
     public final static String TAG = "TerminalFragment_Logs";
     private static int TIME_ANIMATION_DRAW_POINT = 100;
+    public static float MAX_X_SCALE = 9f;
 
     private static String sSymbolCurrent = "";
     public static double mCurrentValueY = 0;
@@ -497,6 +498,7 @@ public class TerminalFragment extends Fragment {
         mChart.setAnimationCacheEnabled(true);
         mChart.buildDrawingCache(true);
         mChart.setDrawingCacheEnabled(true);
+        mChart.getViewPortHandler().setMaximumScaleX(MAX_X_SCALE);
 
         setLineDataChart();
 
@@ -555,6 +557,7 @@ public class TerminalFragment extends Fragment {
 
             @Override
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+                Log.d(TAG, "scaleX: " + mChart.getViewPortHandler().getScaleX());
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
@@ -606,9 +609,8 @@ public class TerminalFragment extends Fragment {
                     distance2 = ConventDimens.callDistance(x1, x2, y1, y2);
                     if(Math.abs(distance1 - distance2) >= 5) {
                         if (distance1 < distance2) {
-                            if(mChart.getViewPortHandler().getScaleX() >= 10f) {
+                            if(mChart.getViewPortHandler().getScaleX() >= MAX_X_SCALE) {
                                 mChart.setScaleXEnabled(false);
-                                //mChart.getViewPortHandler().setZoom(10f, mChart.getViewPortHandler().getScaleY());
                             }
                         } else if (distance1 > distance2) {
                             mChart.setScaleXEnabled(true);
@@ -1006,7 +1008,7 @@ public class TerminalFragment extends Fragment {
                                     imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
                                 }
                                 if(isFirstZoom) {
-                                    mChart.zoom(10f, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
+                                    mChart.zoom(MAX_X_SCALE - 1, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
                                     isFirstZoom = false;
                                 }
                                 if (isFirstDrawPoint) {
