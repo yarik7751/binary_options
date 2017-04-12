@@ -48,7 +48,7 @@ public class PointAnimation {
             bitmapCache.add(bitmap);
         }
         rocketAnimation.setAnimationEndListner(() -> {
-            recycleAnimation(rocketAnimation);
+            recycleAnimation();
             initRocketAnimationBack();
             imgPointCurrent.setImageDrawable(rocketAnimationBack);
             rocketAnimationBack.start();
@@ -64,14 +64,14 @@ public class PointAnimation {
             bitmapCache.add(bitmap);
         }
         rocketAnimationBack.setAnimationEndListner(() -> {
-            recycleAnimation(rocketAnimationBack);
+            recycleAnimation();
             initRocketAnimation();
             imgPointCurrent.setImageDrawable(rocketAnimation);
             rocketAnimation.start();
         });
     }
 
-    private void recycleAnimation(CustomAnimationDrawable animation) {
+    private void recycleAnimation() {
         for(Bitmap bitmap : bitmapCache) {
             bitmap.recycle();
         }
