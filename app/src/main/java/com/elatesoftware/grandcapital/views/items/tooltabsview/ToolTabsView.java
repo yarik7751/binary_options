@@ -68,6 +68,10 @@ public class ToolTabsView extends LinearLayout {
         setAttr(attrs);
     }
 
+    public ToolTabsViewAdapter getAdapter() {
+        return adapter;
+    }
+
     public void setAdapter(ToolTabsViewAdapter _adapter) {
         adapter = _adapter;
         isDataSet = false;

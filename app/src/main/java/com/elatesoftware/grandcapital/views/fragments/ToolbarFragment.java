@@ -158,7 +158,10 @@ public class ToolbarFragment extends Fragment {
                 break;
         }
 
-        ((RelativeLayout.LayoutParams) mPageTitle.getLayoutParams()).rightMargin = AndroidUtils.dp(180 - mTabLayout.getHideTabsCount() * 170 / 5);
+        int tabsCount = mTabLayout.getAdapter().getItemsCount();
+        boolean isHide = mTabLayout.getVisibility() == View.INVISIBLE || mTabLayout.getVisibility() == View.GONE;
+
+        ((RelativeLayout.LayoutParams) mPageTitle.getLayoutParams()).rightMargin = AndroidUtils.dp(180 - (isHide ? tabsCount : mTabLayout.getHideTabsCount()) * 170 / tabsCount);
     }
 
     public void deselectAll() {
