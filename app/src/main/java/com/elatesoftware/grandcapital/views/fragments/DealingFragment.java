@@ -100,7 +100,7 @@ public class DealingFragment extends Fragment {
         getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
 
         mDeleteDealingBroadcastReceiver = new GetResponseDeleteDealingBroadcastReceiver();
-        IntentFilter intentFilterDeleteDealing = new IntentFilter(DeleteDealingService.ACTION_SERVICE_DELETE_FEALING);
+        IntentFilter intentFilterDeleteDealing = new IntentFilter(DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
         intentFilterDeleteDealing.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mDeleteDealingBroadcastReceiver, intentFilterDeleteDealing);
     }
@@ -122,7 +122,7 @@ public class DealingFragment extends Fragment {
 
     private void requestDeleteDealing(OrderAnswer order) {
         Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
-        intentService.putExtra(Const.ACTION, DeleteDealingService.ACTION_SERVICE_DELETE_FEALING);
+        intentService.putExtra(Const.ACTION, DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
         getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
     }
 

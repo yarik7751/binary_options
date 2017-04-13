@@ -32,6 +32,9 @@ public class Const {
     public final static int INTERVAL_ITEM = 100;
     public final static int MAX_TIME_MIN = 2880;
 
+    public final static String TREK_ANALITICS = "UA-96895164-2";
+    public final static String CHART_WIDGET_ID = "0a9ecd18-54cc-4ecc-9b36-fabce04aa3b8";
+
     public final static float OFFSET_CHART_Y =  getOffsetChartY();
 
     public final static String ANALYTICS_QUOTES_SCREEN = "QUOTES_SCREEN";

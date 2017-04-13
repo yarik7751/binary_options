@@ -191,7 +191,7 @@ public class BaseLimitLine extends LimitLine {
                         }
                     }
                     ((YDealingLine) line).setmIsActive(true);
-                    ActiveDealingLine.drawActiveDealingLine(line, (new Gson().fromJson(((YDealingLine) line).getLabel(), OrderAnswer.class)));
+                    ActiveDealingLine.drawActiveDealingLine(line, (new Gson().fromJson(line.getLabel(), OrderAnswer.class)));
                 }
             }
         }else{

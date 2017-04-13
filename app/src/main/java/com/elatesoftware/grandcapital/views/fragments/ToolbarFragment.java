@@ -26,8 +26,8 @@ public class ToolbarFragment extends Fragment {
     private TextView mPageTitle;
     private ImageView imgBurger;
 
-    private static final float TRANSPARENT_TAB_ICON_VALUE = 0.5f;
-    private static final float NOT_TRANSPARENT_TAB_ICON_VALUE = 1f;
+    //private static final float TRANSPARENT_TAB_ICON_VALUE = 0.5f;
+   // private static final float NOT_TRANSPARENT_TAB_ICON_VALUE = 1f;
 
     public static final int TOOLBAR_TERMINALE_FRAGMENT = 101;
     public static final int TOOLBAR_OTHER_FRAGMENT = 102;
@@ -50,8 +50,7 @@ public class ToolbarFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setUpViews();
-        View res = inflater.inflate(R.layout.fragment_toolbar, container, false);
-        return res;
+        return inflater.inflate(R.layout.fragment_toolbar, container, false);
     }
 
     @Override
@@ -194,6 +193,6 @@ public class ToolbarFragment extends Fragment {
 
     private void setUpViews() {
         mParentActivity = (BaseActivity) getActivity();
-        mResideMenu = mParentActivity.getResideMenu();
+        mResideMenu = BaseActivity.getResideMenu();
     }
 }

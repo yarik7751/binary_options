@@ -3,8 +3,6 @@ package com.elatesoftware.grandcapital.adapters.dealing;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.daimajia.swipe.SimpleSwipeListener;
-import com.daimajia.swipe.SwipeLayout;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 
 import java.text.NumberFormat;

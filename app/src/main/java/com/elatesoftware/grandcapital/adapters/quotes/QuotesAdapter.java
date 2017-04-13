@@ -32,7 +32,6 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
     public static final int SELECT_QUOTES = 2;
 
     private Context context;
-    private List<Instrument> instruments;
     private List<Instrument> selectedInstruments;
     private OnSharedPreferencesChange onSharedPreferencesChange;
 
@@ -41,13 +40,13 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
     public QuotesAdapter(Context context, List<Instrument> instruments, int variant, OnSharedPreferencesChange onSharedPreferencesChange) {
         Log.d(TAG, "AllQuotesAdapter constructor");
         order = ORDER_EVEN;
-        this.instruments = instruments;
+        List<Instrument> instruments1 = instruments;
         this.variant = variant;
         this.onSharedPreferencesChange = onSharedPreferencesChange;
         this.context = context;
-        if(this.instruments != null) {
+        if(instruments1 != null) {
             selectedInstruments = new ArrayList<>();
-            for (Instrument inst : this.instruments) {
+            for (Instrument inst : instruments1) {
                 String selectedInstData = CustomSharedPreferences.getSelectedQuotes(this.context);
                 if(inst.getColor() == 0) {
                     inst.setColor(this.context.getResources().getColor(R.color.menuAccountBalanceTextColor));
@@ -78,7 +77,7 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
         super.onBindViewHolder(holder, position);
         QuotesViewHolder quotesHolder = (QuotesViewHolder) holder;
         quotesHolder.tvCurrency.setText(selectedInstruments.get(position).getSymbol().toUpperCase());
-        quotesHolder.tvAsk.setText(selectedInstruments.get(position).getAsk() + "");
+        quotesHolder.tvAsk.setText(String.valueOf(selectedInstruments.get(position).getAsk()));
         quotesHolder.tvAsk.setTextColor(selectedInstruments.get(position).getColor());
         if(variant == SELECT_QUOTES) {
             quotesHolder.imgIsSelected.setImageResource(R.drawable.ic_star_white_24dp);
@@ -86,38 +85,35 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
             quotesHolder.imgIsSelected.setImageResource(R.drawable.ic_star_border_white_24dp);
         }
 
-        quotesHolder.imgIsSelected.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "AllQuotesAdapter imgIsSelected");
-                String selectedQuotes = CustomSharedPreferences.getSelectedQuotes(context);
-                if(variant == ALL_QUOTES) {
-                    if(!selectedQuotes.contains(selectedInstruments.get(position).getSymbol())) {
-                        selectedQuotes += selectedInstruments.get(position).getSymbol() + ";";
-                    }
-                    CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
-                    Log.d(TAG, "selectedQuotes: " + selectedQuotes);
-                    GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                            .setCategory(Const.ANALYTICS_QUOTES_SCREEN)
-                            .setAction(Const.ANALYTICS_BUTTON_FAVORITES)
-                            .setLabel(selectedInstruments.get(position).getSymbol())
-                            .build()
-                    );
-                } else if(variant == SELECT_QUOTES) {
-                    Log.d(TAG, "getSymbol(): " + selectedInstruments.get(position).getSymbol());
-                    Log.d(TAG, "selectedQuotes: " + selectedQuotes);
-                    selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol().toUpperCase() + ";", "");
-                    CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
-                    Log.d(TAG, "selectedQuotes (CHANGE): " + selectedQuotes);
-                    GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                            .setCategory(Const.ANALYTICS_QUOTES_SCREEN)
-                            .setAction(Const.ANALYTICS_BUTTON_DELETE_FAVORITES)
-                            .setLabel(selectedInstruments.get(position).getSymbol())
-                            .build()
-                    );
+        quotesHolder.imgIsSelected.setOnClickListener(v -> {
+            Log.d(TAG, "AllQuotesAdapter imgIsSelected");
+            String selectedQuotes = CustomSharedPreferences.getSelectedQuotes(context);
+            if(variant == ALL_QUOTES) {
+                if(!selectedQuotes.contains(selectedInstruments.get(position).getSymbol())) {
+                    selectedQuotes += selectedInstruments.get(position).getSymbol() + ";";
                 }
-                onSharedPreferencesChange.onChange();
+                CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
+                Log.d(TAG, "selectedQuotes: " + selectedQuotes);
+                GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                        .setCategory(Const.ANALYTICS_QUOTES_SCREEN)
+                        .setAction(Const.ANALYTICS_BUTTON_FAVORITES)
+                        .setLabel(selectedInstruments.get(position).getSymbol())
+                        .build()
+                );
+            } else if(variant == SELECT_QUOTES) {
+                Log.d(TAG, "getSymbol(): " + selectedInstruments.get(position).getSymbol());
+                Log.d(TAG, "selectedQuotes: " + selectedQuotes);
+                selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol().toUpperCase() + ";", "");
+                CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
+                Log.d(TAG, "selectedQuotes (CHANGE): " + selectedQuotes);
+                GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
+                        .setCategory(Const.ANALYTICS_QUOTES_SCREEN)
+                        .setAction(Const.ANALYTICS_BUTTON_DELETE_FAVORITES)
+                        .setLabel(selectedInstruments.get(position).getSymbol())
+                        .build()
+                );
             }
+            onSharedPreferencesChange.onChange();
         });
     }
 
@@ -127,15 +123,13 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
     }
 
     private class QuotesViewHolder extends RecyclerView.ViewHolder {
+         View itemView;
+         TextView tvCurrency, tvAsk;
+         ImageView imgIsSelected;
 
-        public View itemView;
-        public TextView tvCurrency, tvAsk;
-        public ImageView imgIsSelected;
-
-        public QuotesViewHolder(View itemView) {
+         QuotesViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
-
             tvCurrency = (TextView) itemView.findViewById(R.id.tv_currency);
             tvAsk = (TextView) itemView.findViewById(R.id.tv_ask);
             imgIsSelected = (ImageView) itemView.findViewById(R.id.img_is_selected);

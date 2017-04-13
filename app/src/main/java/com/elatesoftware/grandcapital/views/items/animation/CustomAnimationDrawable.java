@@ -3,16 +3,16 @@ package com.elatesoftware.grandcapital.views.items.animation;
 import android.graphics.drawable.AnimationDrawable;
 
 
-public class CustomAnimationDrawable extends AnimationDrawable {
+class CustomAnimationDrawable extends AnimationDrawable {
 
-    public interface AnimationEndListner {
+    interface AnimationEndListner {
         void animationEnd();
     }
 
     private AnimationEndListner animationEndListner;
     private boolean finished = false;
 
-    public void setAnimationEndListner(AnimationEndListner animationEndListner) {
+    void setAnimationEndListner(AnimationEndListner animationEndListner) {
         this.animationEndListner = animationEndListner;
     }
 

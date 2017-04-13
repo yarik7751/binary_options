@@ -1,11 +1,6 @@
 package com.elatesoftware.grandcapital.api.socket;
 
-/**
- * Created by Дарья Высокович on 06.04.2017.
- */
-
 import android.util.Log;
-
 import com.elatesoftware.grandcapital.api.GrandCapitalApi;
 import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
@@ -20,6 +15,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocketListener;
+
+/**
+ * Created by Дарья Высокович on 06.04.2017.
+ */
+
 
 public final class WebSocketApi extends WebSocketListener {
 
@@ -98,9 +98,7 @@ public final class WebSocketApi extends WebSocketListener {
                             }
                         }
                         answerSave = answerCurrent;
-                        TerminalFragment.getInstance().getActivity().runOnUiThread(() -> {
-                            TerminalFragment.getInstance().answerSocket(answerCurrent);
-                        });
+                        TerminalFragment.getInstance().getActivity().runOnUiThread(() -> TerminalFragment.getInstance().answerSocket(answerCurrent));
                     }else{
                         answerSave = null;
                         answerCurrent = null;

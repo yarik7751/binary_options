@@ -15,11 +15,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.api.pojo.SocketAnswer;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
-import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
@@ -40,11 +38,11 @@ public class BaseActivity extends CustomFontsActivity {
 
     public static final String TAG = "BaseActivity_TAG";
     public static FragmentManager fragmentManager;
-    public static Context context;
+    public Context context;
     public static String sMainTagFragment = "";
     public static String sCurrentTagFragment = "";
 
-    public static ResideMenu mResideMenu;
+    private static ResideMenu mResideMenu;
     private ResideMenuItem mTerminal;
     private ResideMenuItem mSupport;
     private ResideMenuItemWithMark mDealing;
@@ -90,8 +88,6 @@ public class BaseActivity extends CustomFontsActivity {
                 getInfoUser();
                 startService(new Intent(this, CheckDealingService.class));
             }
-            int[] a = new int[60000000];
-
         }
     }
 
@@ -274,7 +270,7 @@ public class BaseActivity extends CustomFontsActivity {
         onSwitchFragment(fragment, fragment.getClass().getName(), true, true, R.id.content);
     }
 
-    public static TerminalFragment setTerminalFragment() {
+    public  TerminalFragment setTerminalFragment() {
         TerminalFragment fragment = TerminalFragment.getInstance();
         if(backToRootFragment) {
             clearFragmentBackStack();
@@ -339,10 +335,7 @@ public class BaseActivity extends CustomFontsActivity {
     }
 
     private boolean isAuth() {
-        if (User.getInstance() != null) {
-            return true;
-        }
-        return CustomSharedPreferences.isSaveUserInPreferences(getApplicationContext());
+        return User.getInstance() != null || CustomSharedPreferences.isSaveUserInPreferences(getApplicationContext());
     }
 
     private void getInfoUser(){
@@ -350,37 +343,37 @@ public class BaseActivity extends CustomFontsActivity {
         startService(intentMyIntentService);
     }
 
-    private static void setToolBarTerminalInfo() {
-        BaseActivity.getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_terminal));
-        BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
-            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
-            BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+    private void setToolBarTerminalInfo() {
+        getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_terminal));
+        getToolbar().mTabLayout.setOnLoadData(() -> {
+            getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+            getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
         try {
-            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
-            BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+            getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+            getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
     }
 
-    private static void setToolbarInfoByTag() {
+    private void setToolbarInfoByTag() {
         if(sMainTagFragment.equals(PromotionsFragment.class.getName())) {
-            BaseActivity.getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_promotions));
-            BaseActivity.getToolbar().hideTabs();
-            BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
+            getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_promotions));
+            getToolbar().hideTabs();
+            getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
         }
         if(sMainTagFragment.equals(HowItWorksFragment.class.getName())) {
-            BaseActivity.getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_how_it_works));
-            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
-            BaseActivity.getToolbar().deselectAll();
-            BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
+            getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_how_it_works));
+            getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+            getToolbar().deselectAll();
+            getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
         }
         if(sMainTagFragment.equals(DepositFragment.class.getName())) {
-            BaseActivity.getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_deposit));
-            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
-            BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
-            BaseActivity.getToolbar().deselectAll();
+            getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_deposit));
+            getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+            getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
+            getToolbar().deselectAll();
         }
         sMainTagFragment = "";
     }

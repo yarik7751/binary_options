@@ -11,16 +11,11 @@ import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 
 public class ActiveDealingLine extends BaseLimitLine {
 
-    private float mLimit = 0f;
-    private String mLabel = "";
     private Bitmap mBitmapLabelY = null;
-
     private static ActiveDealingLine currentLineDealing = null;
 
     private ActiveDealingLine(float limit, String label, Bitmap bitmapY) {
         super(limit, label);
-        mLimit = limit;
-        mLabel = label;
         mBitmapLabelY = bitmapY;
         super.setLineColor(Color.TRANSPARENT);
     }
@@ -47,26 +42,10 @@ public class ActiveDealingLine extends BaseLimitLine {
         }
     }
 
-    public static ActiveDealingLine getCurrentLineDealing() {
-        return currentLineDealing;
-    }
-
-    public float getmLimit() {
-        return mLimit;
-    }
-    public void setmLimit(float mLimit) {
-        this.mLimit = mLimit;
-    }
-    public String getmLabel() {
-        return mLabel;
-    }
-    public void setmLabel(String mLabel) {
-        this.mLabel = mLabel;
-    }
     public Bitmap getmBitmapLabelY() {
         return mBitmapLabelY;
     }
-    public void setmBitmapLabelY(Bitmap mBitmapLabelY) {
+    private void setmBitmapLabelY(Bitmap mBitmapLabelY) {
         this.mBitmapLabelY = mBitmapLabelY;
     }
 }

@@ -5,6 +5,5 @@ package com.elatesoftware.grandcapital.views.items.tooltabsview.adapter;
  */
 
 public interface OnChangePosition {
-
-    public void changePosition();
+     void changePosition();
 }

@@ -24,16 +24,14 @@ public class InOutAdapter extends GrandCapitalListAdapter {
 
     public static final String TAG = "InOutAdapter_LOGS";
 
-    static final int DOWN = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListDownOrderColor);
-    static final int UP = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListUpOrderColor);
+    private static final int DOWN = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListDownOrderColor);
+    private static final int UP = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListUpOrderColor);
 
-    ArrayList<InOutAnswer> deposits;
-    ArrayList<InOutAnswer> withdraws;
-    ArrayList<InOutAnswer> allTransactions;
+    private ArrayList<InOutAnswer> allTransactions;
 
     public InOutAdapter(ArrayList<InOutAnswer> deposits, ArrayList<InOutAnswer> withdraws) {
-        this.deposits = deposits;
-        this.withdraws = withdraws;
+        ArrayList<InOutAnswer> deposits1 = deposits;
+        ArrayList<InOutAnswer> withdraws1 = withdraws;
 
         allTransactions = new ArrayList<>();
 
@@ -41,12 +39,10 @@ public class InOutAdapter extends GrandCapitalListAdapter {
             ans.setTransaction(InOutService.DEPOSIT);
             allTransactions.add(ans);
         }
-
         for(InOutAnswer ans : withdraws) {
             ans.setTransaction(InOutService.WITHDRAW);
             allTransactions.add(ans);
         }
-
         Collections.sort(allTransactions);
 
         Log.d(TAG, "allTransactions.size(): " + allTransactions.size());
@@ -82,16 +78,12 @@ public class InOutAdapter extends GrandCapitalListAdapter {
     @Override
     public int getItemCount() {
         return allTransactions != null ? allTransactions.size() : 0;
-        //return 4;
     }
 
-    public class InOutHolder extends RecyclerView.ViewHolder {
-
+    private class InOutHolder extends RecyclerView.ViewHolder {
         TextView tvAmount, tvPaymentSystem, tvPublicComment, tvDate;
-
-        public InOutHolder(View itemView) {
+        InOutHolder(View itemView) {
             super(itemView);
-
             tvAmount = (TextView) itemView.findViewById(R.id.tv_amount);
             tvPaymentSystem = (TextView) itemView.findViewById(R.id.tv_payment_system);
             tvPublicComment = (TextView) itemView.findViewById(R.id.tv_public_comment);

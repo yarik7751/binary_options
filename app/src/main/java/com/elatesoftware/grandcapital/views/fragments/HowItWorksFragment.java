@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ public class HowItWorksFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private LinearLayout llProgress;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     private GetResponseQuestionsBroadcastReceiver mQuestionsBroadcastReceiver;
 
@@ -57,7 +55,7 @@ public class HowItWorksFragment extends Fragment {
         llProgress = (LinearLayout) getView().findViewById(R.id.fragment_dealing_progress_bar);
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.fragment_how_it_works_questions_list);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this.getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         Intent pageIntent = new Intent(getActivity(), QuestionsService.class);

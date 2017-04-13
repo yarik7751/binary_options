@@ -6,14 +6,12 @@ import com.elatesoftware.grandcapital.R;
 
 public class SignUpActivity extends CustomFontsActivity {
 
-    private TextView mSignInLink;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        mSignInLink = (TextView) findViewById(R.id.signup_signin_link);
+        TextView mSignInLink = (TextView) findViewById(R.id.signup_signin_link);
         mSignInLink.setOnClickListener(v -> {
             onBackPressed();
         });

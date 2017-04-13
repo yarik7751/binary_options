@@ -48,15 +48,12 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
 
         FragmentPromotionsViewHolder promotionsViewHolder = (FragmentPromotionsViewHolder) holder;
         promotionsViewHolder.tvName.setText(binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
-        promotionsViewHolder.imgLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
-                WebFragment webFragment = WebFragment.getInstance(binaryOptionAnswer.getElements().get(position).getPic());
-                BaseActivity.addNextFragment(webFragment);
-                /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(binaryOptionAnswer.getElements().get(position).getPic()));
-                context.startActivity(browserIntent);*/
-            }
+        promotionsViewHolder.imgLink.setOnClickListener(v -> {
+            BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
+            WebFragment webFragment = WebFragment.getInstance(binaryOptionAnswer.getElements().get(position).getPic());
+            BaseActivity.addNextFragment(webFragment);
+            /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(binaryOptionAnswer.getElements().get(position).getPic()));
+            context.startActivity(browserIntent);*/
         });
         promotionsViewHolder.itemView.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -83,11 +80,11 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
     }
 
     private class FragmentPromotionsViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvName;
-        public ImageView imgLink;
-        public View itemView;
+         TextView tvName;
+         ImageView imgLink;
+         View itemView;
 
-        public FragmentPromotionsViewHolder(View itemView) {
+         FragmentPromotionsViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
             tvName = (TextView) itemView.findViewById(R.id.tv_name);

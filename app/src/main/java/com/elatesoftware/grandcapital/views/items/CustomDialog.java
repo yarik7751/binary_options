@@ -35,9 +35,7 @@ public class CustomDialog {
         tvInfoMsg.setText(message);
         tvToolbarDialog.setText(title);
 
-        tvOk.setOnClickListener(v -> {
-            dialog.cancel();
-        });
+        tvOk.setOnClickListener(v -> dialog.cancel());
         dialog.show();
     }
     public static void showDialog(Activity activity, SslErrorHandler handler, String title, String message){
@@ -54,9 +52,7 @@ public class CustomDialog {
         tvInfoMsg.setText(message);
         tvToolbarDialog.setText(title);
 
-        tvOk.setOnClickListener(v -> {
-            handler.proceed();
-        });
+        tvOk.setOnClickListener(v -> handler.proceed());
         tvCancel.setOnClickListener(v -> {
             handler.cancel();
             dialog.cancel();
@@ -91,9 +87,7 @@ public class CustomDialog {
             BaseActivity.removeTerminal();
             activity.finish();
         });
-        tvCancel.setOnClickListener(v -> {
-            dialog.cancel();
-        });
+        tvCancel.setOnClickListener(v -> dialog.cancel());
         dialog.show();
     }
 
@@ -117,7 +111,7 @@ public class CustomDialog {
         return dialog;
     }
 
-    public static Dialog showDialogOpenAccount(Activity activity, View.OnClickListener listnerOpenAccount) {
+    private static Dialog showDialogOpenAccount(Activity activity, View.OnClickListener listnerOpenAccount) {
         Dialog dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);

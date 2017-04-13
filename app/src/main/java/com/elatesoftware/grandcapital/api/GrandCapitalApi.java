@@ -170,9 +170,9 @@ public class GrandCapitalApi {
                     CustomSharedPreferences.updateInfoUser(GrandCapitalApplication.getAppContext());
                     if(InfoAnswer.getInstance() != null) {
                         if(InfoAnswer.getInstance().getServerName().contains("demo") && CustomSharedPreferences.getIntervalAdvertising(GrandCapitalApplication.getAppContext()) <= 0) {
-                            CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, 0);
+                            CustomSharedPreferences.setIntervalAdvertising(GrandCapitalApplication.getAppContext(), 0);
                         } else if(!InfoAnswer.getInstance().getServerName().contains("demo")) {
-                            CustomSharedPreferences.setIntervalAdvertising(BaseActivity.context, -1);
+                            CustomSharedPreferences.setIntervalAdvertising(GrandCapitalApplication.getAppContext(), -1);
                         }
                         Log.d(GrandCapitalApplication.TAG_SOCKET, "IntervalAdvertising: " + CustomSharedPreferences.getIntervalAdvertising(GrandCapitalApplication.getAppContext()));
                     }
@@ -363,9 +363,6 @@ public class GrandCapitalApi {
             e.printStackTrace();
         }
         if(response != null) {
-            if(response.code() == CODE_SUCCESS_DELETE_DEALING) {
-
-            }
             result = String.valueOf(response.code());
         }
         return result;

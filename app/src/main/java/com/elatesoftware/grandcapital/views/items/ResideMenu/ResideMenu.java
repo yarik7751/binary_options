@@ -63,7 +63,6 @@ public class ResideMenu extends FrameLayout {
     private boolean mUse3D;
     private static final int ROTATE_Y_ANGLE = 10;
 
-    //yarik
     private boolean isScrolling;
 
     private TextView userName;

@@ -28,16 +28,11 @@ import com.elatesoftware.grandcapital.services.ChatService;
 import com.elatesoftware.grandcapital.services.SignInService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.orm.query.Select;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import at.markushi.ui.CircleButton;
@@ -45,7 +40,6 @@ import at.markushi.ui.CircleButton;
 public class SupportFragment extends Fragment {
 
     public static final String TAG = "SupportFragment_LOG";
-    public static final String WIDGET_ID = "0a9ecd18-54cc-4ecc-9b36-fabce04aa3b8";
     private static final int INTERVAL = 5000;
 
     private ScrollView svMessages;
@@ -89,13 +83,7 @@ public class SupportFragment extends Fragment {
         llMessages = (LinearLayout) view.findViewById(R.id.ll_messages);
         llMain = (LinearLayout) view.findViewById(R.id.ll_main);
 
-        llMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {}
-        });
-
         cbSendMessage.setOnClickListener(v -> {
-            Log.d(TAG, "cbSendMessage click");
             edMessage.setText(edMessage.getText().toString().trim());
             if(!TextUtils.isEmpty(edMessage.getText().toString())) {
                 message = edMessage.getText().toString();
@@ -104,7 +92,7 @@ public class SupportFragment extends Fragment {
                     llMessages.removeAllViews();
                     HistoryMessage.deleteAll(HistoryMessage.class);
                     intent.putExtra(ChatService.ACTION, ChatService.CREATE_CHAT);
-                    intent.putExtra(ChatService.WIDGET_ID, WIDGET_ID);
+                    intent.putExtra(ChatService.WIDGET_ID, Const.CHART_WIDGET_ID);
                     intent.putExtra(ChatService.VISITOR_MESSAGE, message);
                     isChatCreated = true;
                 } else {

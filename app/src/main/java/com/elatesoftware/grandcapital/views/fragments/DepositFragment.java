@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class DepositFragment  extends Fragment {
     private RecyclerView rvIoOut;
     private Button btnDeposit;
     private TextView tvWithdraw;
-    private LinearLayout llProgress, llWithdraw;
+    private LinearLayout llWithdraw;
 
     private ArrayList<InOutAnswer> deposits;
     private ArrayList<InOutAnswer> withdraws;
@@ -83,11 +82,6 @@ public class DepositFragment  extends Fragment {
                     .build()
             );
         });
-
-        tvWithdraw.setOnClickListener(v -> {
-
-        });
-
         llWithdraw.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
             WebFragment webFragment = WebFragment.getInstance(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_WITHDRAW);
@@ -166,7 +160,6 @@ public class DepositFragment  extends Fragment {
                     case InOutService.WITHDRAW:
                         withdraws = InOutAnswer.getInstance();
                         rvIoOut.setAdapter(new InOutAdapter(deposits, withdraws));
-                        llProgress.setVisibility(View.INVISIBLE);
                         break;
                     default:
                         break;

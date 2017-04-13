@@ -5,9 +5,9 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.utils.Const;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.orm.SugarApp;
 import com.orm.SugarContext;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -33,7 +33,7 @@ public class GrandCapitalApplication extends Application{
         SugarContext.init(getApplicationContext());
         sAnalytics = GoogleAnalytics.getInstance(getApplicationContext());
         sAnalytics.setLocalDispatchPeriod(1800);
-        sTracker = sAnalytics.newTracker("UA-96895164-2");
+        sTracker = sAnalytics.newTracker(Const.TREK_ANALITICS);
         sTracker.enableExceptionReporting(true);
         sTracker.enableAdvertisingIdCollection(true);
         sTracker.enableAutoActivityTracking(true);

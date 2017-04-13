@@ -1,16 +1,11 @@
 package com.elatesoftware.grandcapital.utils;
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.view.LayoutInflater;
+
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
-import com.elatesoftware.grandcapital.R;
 
 /**
  * Created by Дарья Высокович on 20.03.2017.

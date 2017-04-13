@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.elatesoftware.grandcapital.api.GrandCapitalApi;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
-
 
 /**
  * Created by Ярослав Левшунов on 28.02.2017.
@@ -18,7 +16,7 @@ public class ChatService extends IntentService {
     public final static String ACTION = "ACTION";
 
     public final static String CREATE_CHAT = "CREATE_CHAT";
-    public final static String WIDGET_ID = "WIDGET_ID";
+    public final static String WIDGET_ID = "CHART_WIDGET_ID";
     public final static String VISITOR_MESSAGE = "VISITOR_MESSAGE";
 
     public final static String POLL_CHAT = "POLL_CHAT";

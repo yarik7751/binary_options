@@ -20,9 +20,6 @@ class FragmentDealingOrdersAdapter extends GrandCapitalListAdapter {
     static final int DOWN_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListDownOrderColor);
     static final int UP_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListUpOrderColor);
 
-    /*static final Drawable DOWN_DRAWABLE = GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.down);
-    static final Drawable UP_DRAWABLE = GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.up);*/
-
     static final Drawable DOWN_DRAWABLE = GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.quotes_down);
     static final Drawable UP_DRAWABLE = GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.quotes_up);
 

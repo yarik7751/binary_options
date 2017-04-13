@@ -5,6 +5,5 @@ package com.elatesoftware.grandcapital.adapters.quotes;
  */
 
 public interface OnSharedPreferencesChange {
-
-    public void onChange();
+    void onChange();
 }

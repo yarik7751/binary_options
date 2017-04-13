@@ -45,12 +45,12 @@ public class CustomSharedPreferences {
         User.setInstance(null);
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_USER, null);
-        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_CHAT_HISTORY, null);
-        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_SELECTED_QUOTES, null);
-        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_CLOSE_DEALINGS, null);
-        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_INTERVAL_ADVERTISING, null);
-        editor.putString(CustomSharedPreferences.SHARED_PREFERENCES_AGREE_CLOSE_DEALING, null);
+        editor.putString(SHARED_PREFERENCES_USER, null);
+        editor.putString(SHARED_PREFERENCES_CHAT_HISTORY, null);
+        editor.putString(SHARED_PREFERENCES_SELECTED_QUOTES, null);
+        editor.putString(SHARED_PREFERENCES_CLOSE_DEALINGS, null);
+        editor.putString(SHARED_PREFERENCES_INTERVAL_ADVERTISING, null);
+        editor.putString(SHARED_PREFERENCES_AGREE_CLOSE_DEALING, null);
         editor.apply();
     }
 

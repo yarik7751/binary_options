@@ -182,7 +182,7 @@ public class TerminalFragment extends Fragment {
         View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onCreateView Terminal");
         BaseActivity.backToRootFragment = false;
-        ((BaseActivity) getActivity()).mResideMenu.setScrolling(false);
+        BaseActivity.getResideMenu().setScrolling(false);
 
         isFirstDrawPoint = true;
         drawableMarkerDealing = getResources().getDrawable(R.drawable.marker_close_dealing);
@@ -228,6 +228,7 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
         mViewInfoHelper = new ViewInfoHelper(rlChart);
+
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
         tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " 0.0(0%)");
@@ -273,19 +274,10 @@ public class TerminalFragment extends Fragment {
             public void afterTextChanged(Editable s) {}
         });
 
-        tvMinusAmount.setOnClickListener(v -> {
-            ConventString.changeAmountValue(etValueAmount, false);
-        });
-        tvPlusAmount.setOnClickListener(v -> {
-            ConventString.changeAmountValue(etValueAmount, true);
-        });
-
-        tvPlusTime.setOnClickListener(v -> {
-            ConventString.changeTimeValue(etValueTime, true);
-        });
-        tvMinusTime.setOnClickListener(v -> {
-            ConventString.changeTimeValue(etValueTime, false);
-        });
+        tvMinusAmount.setOnClickListener(v -> ConventString.changeAmountValue(etValueAmount, false));
+        tvPlusAmount.setOnClickListener(v -> ConventString.changeAmountValue(etValueAmount, true));
+        tvPlusTime.setOnClickListener(v -> ConventString.changeTimeValue(etValueTime, true));
+        tvMinusTime.setOnClickListener(v -> ConventString.changeTimeValue(etValueTime, false));
 
         tvLeftActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
@@ -315,9 +307,7 @@ public class TerminalFragment extends Fragment {
                 sSymbolCurrent = Const.SYMBOL;
             }
         });
-        tvDeposit.setOnClickListener(v -> {
-            BaseActivity.changeMainFragment(new DepositFragment());
-        });
+        tvDeposit.setOnClickListener(v -> BaseActivity.changeMainFragment(new DepositFragment()));
 
         llLowerTerminal.setOnClickListener(v -> {
             llLowerTerminal.setEnabled(false);
@@ -341,7 +331,7 @@ public class TerminalFragment extends Fragment {
         startTimerRedrawLimitLines();
         startProgress();
         isOpen = true;
-        BaseActivity.mResideMenu.setScrolling(false);
+        BaseActivity.getResideMenu().setScrolling(false);
         registerBroadcasts();
         clearChart();
         updateBalance(0);
@@ -370,7 +360,7 @@ public class TerminalFragment extends Fragment {
         clearChart();
         super.onPause();
         unregisterBroadcasts();
-        BaseActivity.mResideMenu.setScrolling(true);
+        BaseActivity.getResideMenu().setScrolling(true);
     }
     @Override
     public void onDestroy() {
@@ -419,7 +409,7 @@ public class TerminalFragment extends Fragment {
         getActivity().registerReceiver(mEarlyClosureBroadcastReceiver, intentFilterOrdersEarlyClosure);
 
         mDeleteDealingBroadcastReceiver = new GetResponseDeleteDealingBroadcastReceiver();
-        IntentFilter intentFilterDeleteDealing = new IntentFilter(DeleteDealingService.ACTION_SERVICE_DELETE_FEALING);
+        IntentFilter intentFilterDeleteDealing = new IntentFilter(DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
         intentFilterDeleteDealing.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mDeleteDealingBroadcastReceiver, intentFilterDeleteDealing);
     }
@@ -796,11 +786,13 @@ public class TerminalFragment extends Fragment {
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
             intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
             getActivity().startService(intentService);
+
             GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
                     .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
-                    .setAction(lowerOrHeight == Const.CMD_HEIGHT ? Const.ANALYTICS_BUTTON_UP : Const.ANALYTICS_BUTTON_DOWN)
+                    .setAction(lowerOrHeight.equals(Const.CMD_HEIGHT) ? Const.ANALYTICS_BUTTON_UP : Const.ANALYTICS_BUTTON_DOWN)
                     .build()
             );
+
         } else {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
             stopProgress();
@@ -927,8 +919,8 @@ public class TerminalFragment extends Fragment {
                                     if (entryLast != null && currEntry != null) {
                                         float x = simplyEntry.getX();
                                         float y = simplyEntry.getY();
-                                        simplyEntry.setX(x += divX);
-                                        simplyEntry.setY(y += divY);
+                                        simplyEntry.setX(x + divX);
+                                        simplyEntry.setY(y + divY);
                                         if (numberTemporaryPoint == 0) {
                                             data.getDataSetByIndex(0).addEntry(simplyEntry);
                                             SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
@@ -998,33 +990,31 @@ public class TerminalFragment extends Fragment {
                             Float.valueOf(String.valueOf(mCurrentValueY)), null, null);
                     //mChart.getViewPortHandler().zoom(5f, mChart.getViewPortHandler().getScaleY());
                     currEntry = entry;
-                    getActivity().runOnUiThread(() -> {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (imgPointCurrent != null && currEntry != null) {
-                                    redrawItemsChart(currEntry);
-                                    MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
-                                    imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
-                                    imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
-                                }
-                                if(isFirstZoom) {
-                                    mChart.zoom(MAX_X_SCALE - 1, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
-                                    isFirstZoom = false;
-                                }
-                                if (isFirstDrawPoint) {
-                                    imgPointCurrent.setVisibility(View.VISIBLE);
-                                    isFirstDrawPoint = false;
-                                }
-                                if(isFirstLoopPoint) {
-                                    new Handler().postDelayed(this, 50);
-                                } else {
-                                    Log.d(TAG, "setPoint position END");
-                                }
-                                stopProgress();
+                    getActivity().runOnUiThread(() -> new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (imgPointCurrent != null && currEntry != null) {
+                                redrawItemsChart(currEntry);
+                                MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
+                                imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                                imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
                             }
-                        }, 50);
-                    });
+                            if(isFirstZoom) {
+                                mChart.zoom(MAX_X_SCALE - 1, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
+                                isFirstZoom = false;
+                            }
+                            if (isFirstDrawPoint && imgPointCurrent != null) {
+                                imgPointCurrent.setVisibility(View.VISIBLE);
+                                isFirstDrawPoint = false;
+                            }
+                            if(isFirstLoopPoint) {
+                                new Handler().postDelayed(this, 50);
+                            } else {
+                                Log.d(TAG, "setPoint position END");
+                            }
+                            stopProgress();
+                        }
+                    }, 50));
                 }
             }
             if(WebSocketApi.getmSymbolCurrent() == null || !WebSocketApi.getmSymbolCurrent().equals(symbol)){
@@ -1155,7 +1145,7 @@ public class TerminalFragment extends Fragment {
         llTopPanel.startAnimation(animation);
         isDirection = !isDirection;
     }
-    private void showViewCloseDealing(OrderAnswer order){
+    public void showViewCloseDealing(OrderAnswer order){
         if(CustomSharedPreferences.getAgreeCloseDealing(getContext())){
             dialogAgreeDeleteDealing = CustomDialog.showDialogCloseDealing(getActivity(), v12 -> {
                 requestDeleteDealing(order);

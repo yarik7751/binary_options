@@ -8,12 +8,6 @@ public class ToolTabsViewAdapter {
     private int[] icons;
     private String[] titles;
 
-    public ToolTabsViewAdapter(Context context, int[] icons, String[] titles) {
-        this.context = context;
-        this.icons = icons;
-        this.titles = titles;
-    }
-
     public ToolTabsViewAdapter(Context context, int[] icons) {
         this.context = context;
         this.icons = icons;

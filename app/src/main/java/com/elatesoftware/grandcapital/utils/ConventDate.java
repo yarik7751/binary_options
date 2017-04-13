@@ -22,38 +22,17 @@ public class ConventDate {
     private static final String CLOSE_DEALING = "1970-01-01T00:00:00";
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
     private static final String DATE_FORMAT_CLOSK = "HH:mm";
-    //private static final DateFormat SDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    //private static final DateFormat SDF_HH_MM = new SimpleDateFormat("HH:mm");
     private final static double DIFFERENCE_FOR_SOCKET = 1;
     private final static int DIFFERENCE_FOR_POINTS = 4000;
     private static final String TIME_ZONE = "GMT+00:00:00";
 
     private static final long BIG_DATE_FOR_EQUALS = getBigTimeForEquals();
 
-    private static long getBigDateChart() {
-        DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-        sdf.setTimeZone(TimeZone.getDefault());
-        String currDate = sdf.format(new Date());
-        Date resultDate = null;
-        try {
-            resultDate = sdf.parse(currDate);
-            resultDate.setHours(resultDate.getHours() + 2);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        if (resultDate != null) {
-            return resultDate.getTime();
-        } else {
-            return -1;
-        }
-    }
-
     public static float genericTimeForChart(long currentTimePoint){
         return (float)((currentTimePoint - BIG_DATE_FOR_EQUALS) / 10000.);
     }
     public static long genericTimeForChartLabels(float currentTimePoint){
-        long res = (BIG_DATE_FOR_EQUALS + (long) (currentTimePoint * 10000.));
-        return res;
+        return  (BIG_DATE_FOR_EQUALS + (long) (currentTimePoint * 10000.));
     }
     private static long getBigTimeForEquals(){
         Date date = new Date();
@@ -63,7 +42,6 @@ public class ConventDate {
 
     public static String getConventDate(String date) {
         DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-        //dateFormat.setTimeZone(TimeZone.getTimeZone("EST"));//
         sdf.setTimeZone(TimeZone.getDefault());
         Date resultDate = null;
         try {
@@ -109,7 +87,7 @@ public class ConventDate {
         return Math.abs(stringToUnix(date1) - stringToUnix(date2)) / 1000;
     }
 
-    public static long getDifferenceDateSign(String date) {
+    private static long getDifferenceDateSign(String date) {
         DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         sdf.setTimeZone(TimeZone.getDefault());
         String currDate = sdf.format(new Date(System.currentTimeMillis()));
@@ -119,11 +97,7 @@ public class ConventDate {
         DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         sdf.setTimeZone(TimeZone.getDefault());
         String currDate = sdf.format(new Date());
-        if((stringToUnix(date) - stringToUnix(currDate))/1000 >= 0){
-            return true;
-        }else {
-            return false;
-        }
+        return (stringToUnix(date) - stringToUnix(currDate)) / 1000 >= 0;
     }
     public static String getDifferenceDateToString(long difSec) {
         if(difSec < 60) {
@@ -182,12 +156,8 @@ public class ConventDate {
              sdf.setTimeZone(TimeZone.getTimeZone(TIME_ZONE));
              Date currentDate = new Date(currentTime);
              Date newDate = new Date(newTime);
-            if((currentDate.getSeconds() == newDate.getSeconds()) ||
-                    (((newDate.getSeconds() - currentDate.getSeconds()))) < 2){
-                return true;
-            }else{
-                return false;
-            }
+            return (currentDate.getSeconds() == newDate.getSeconds()) ||
+                    (((newDate.getSeconds() - currentDate.getSeconds()))) < 2;
         }
     }
     public static boolean equalsTimeSocket(long currentTime, long newTime) {
@@ -196,30 +166,16 @@ public class ConventDate {
         }else{
             Date currentDate = new Date(currentTime);
             Date newDate = new Date(newTime);
-            if(newDate.getSeconds() - currentDate.getSeconds() < DIFFERENCE_FOR_SOCKET){
-                return true;
-            }else{
-                return false;
-            }
+            return newDate.getSeconds() - currentDate.getSeconds() < DIFFERENCE_FOR_SOCKET;
         }
     }
     public static boolean equalsTimeDealing(String date) {
-        long tempLong = ConventDate.getDifferenceDateSign(date);
-        //Log.d(TAG, "tempLong: " + tempLong);
-        if (tempLong <= 0){
-            return true;
-        }else{
-            return false;
-        }
+        return ConventDate.getDifferenceDateSign(date) <= 0;
     }
     public static boolean equalsTimePoints(String time1, String time2){
         long timeLong1 = ConventDate.getConvertDateInMilliseconds(time1);
         long timeLong2 = ConventDate.getConvertDateInMilliseconds(time2);
-        if ((timeLong1 - timeLong2 <= DIFFERENCE_FOR_POINTS && timeLong1 - timeLong2 >= 0) || (timeLong2 - timeLong1 <= DIFFERENCE_FOR_POINTS && timeLong2 - timeLong1 >= 0)){
-            return true;
-        }else{
-            return false;
-        }
+        return (timeLong1 - timeLong2 <= DIFFERENCE_FOR_POINTS && timeLong1 - timeLong2 >= 0) || (timeLong2 - timeLong1 <= DIFFERENCE_FOR_POINTS && timeLong2 - timeLong1 >= 0);
     }
     public static boolean isCloseDealing(String time){
         return time.equals(CLOSE_DEALING);
@@ -247,7 +203,6 @@ public class ConventDate {
         DateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         Date date = new Date();
         sdf.setTimeZone(TimeZone.getDefault());
-        //date.setHours(date.getHours() + 2);
         date.setMinutes(date.getMinutes() + expiration);
         return sdf.format(date);
     }
@@ -277,7 +232,6 @@ public class ConventDate {
             date += (day <= 9 ? "0" + day : day) + " " + month + ", ";
         }
         date += (hour <= 9 ? "0" + hour : hour) + ":" + (min <= 9 ? "0" + min : min);
-
         return date;
     }
 }

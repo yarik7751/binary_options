@@ -20,15 +20,13 @@ import java.util.List;
 
 public class PointAnimation {
 
-    private Context context;
-    ImageView imgPointCurrent;
+    private ImageView imgPointCurrent;
     private Bitmap bitmapIconCurrentPoint;
     private CustomAnimationDrawable rocketAnimation, rocketAnimationBack;
     private List<Bitmap> bitmapCache;
 
-    public PointAnimation(Context _context, ImageView _imgPointCurrent) {
-        context = _context;
-        imgPointCurrent = _imgPointCurrent;
+    public PointAnimation(Context context, ImageView imgPoint) {
+        imgPointCurrent = imgPoint;
         bitmapCache = new LinkedList<>();
         bitmapIconCurrentPoint = BitmapFactory.decodeResource(context.getResources(), R.drawable.front_elipsa);
         initRocketAnimation();

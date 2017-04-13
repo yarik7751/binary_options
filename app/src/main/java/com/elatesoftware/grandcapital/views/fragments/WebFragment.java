@@ -15,7 +15,6 @@ import android.webkit.WebViewClient;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.views.activities.WebActivity;
 
 /**
  * Created by Ярослав Левшунов on 16.03.2017.
