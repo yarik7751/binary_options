@@ -343,7 +343,6 @@ public class TerminalFragment extends Fragment {
         }
         requestGetAllOrders();
     }
-
     @Override
     public void onPause() {
         if (threadSymbolHistory != null) {
@@ -424,6 +423,13 @@ public class TerminalFragment extends Fragment {
         getActivity().unregisterReceiver(mDeleteDealingBroadcastReceiver);
     }
 
+    private void setXVisibilityPoint() {
+        if (currEntry.getX() >= mChart.getHighestVisibleX()) {
+            imgPointCurrent.setVisibility(View.INVISIBLE);
+        } else {
+            imgPointCurrent.setVisibility(View.VISIBLE);
+        }
+    }
     private void setPoints(MotionEvent event) {
         x1 = event.getX(0);
         y1 = event.getY(0);
@@ -548,7 +554,7 @@ public class TerminalFragment extends Fragment {
             @Override
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
                 Log.d(TAG, "scaleX: " + mChart.getViewPortHandler().getScaleX());
-                if (imgPointCurrent != null || currEntry != null) {
+                if (imgPointCurrent != null && currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
                         setXVisibilityPoint();
@@ -560,7 +566,7 @@ public class TerminalFragment extends Fragment {
             }
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
-                if (imgPointCurrent != null || currEntry != null) {
+                if (imgPointCurrent != null && currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
                         if(mChart.getViewPortHandler().getScaleX() > 1.3277f) {
@@ -604,15 +610,6 @@ public class TerminalFragment extends Fragment {
             return false;
         });
     }
-
-    private void setXVisibilityPoint() {
-        if (currEntry.getX() >= mChart.getHighestVisibleX()) {
-            imgPointCurrent.setVisibility(View.INVISIBLE);
-        } else {
-            imgPointCurrent.setVisibility(View.VISIBLE);
-        }
-    }
-
     private void setLineDataChart(){
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
