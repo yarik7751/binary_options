@@ -445,6 +445,12 @@ public class TerminalFragment extends Fragment {
         imgPointCurrent.setVisibility(View.INVISIBLE);
         pointAnimation.start();
     }
+    private void updateBalance(double volume){
+        if(volume != 0){
+            User.getInstance().updateBalance(volume);
+        }
+        ConventString.setBalance(tvBalance);
+    }
 
     private void startProgress(){
         llProgressBar.setVisibility(View.VISIBLE);
@@ -697,12 +703,6 @@ public class TerminalFragment extends Fragment {
         listCurrentClosingDealings.clear();
         requestSymbolHistory(ConventString.getActive(tvValueActive));
         requestGetAllOrders();
-    }
-    private void updateBalance(double volume){
-        if(volume != 0){
-            User.getInstance().updateBalance(volume);
-        }
-        ConventString.setBalance(tvBalance);
     }
 
     private void startTimerRedrawLimitLines(){

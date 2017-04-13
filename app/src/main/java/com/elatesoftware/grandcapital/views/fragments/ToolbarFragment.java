@@ -157,10 +157,7 @@ public class ToolbarFragment extends Fragment {
                 break;
         }
 
-        int tabsCount = mTabLayout.getAdapter().getItemsCount();
-        boolean isHide = mTabLayout.getVisibility() == View.INVISIBLE || mTabLayout.getVisibility() == View.GONE;
-
-        ((RelativeLayout.LayoutParams) mPageTitle.getLayoutParams()).rightMargin = AndroidUtils.dp(180 - (isHide ? tabsCount : mTabLayout.getHideTabsCount()) * 170 / tabsCount);
+        ((RelativeLayout.LayoutParams) mPageTitle.getLayoutParams()).rightMargin = AndroidUtils.dp(180 - mTabLayout.getHideTabsCount() * 170 / 5);
     }
 
     public void deselectAll() {
@@ -193,6 +190,6 @@ public class ToolbarFragment extends Fragment {
 
     private void setUpViews() {
         mParentActivity = (BaseActivity) getActivity();
-        mResideMenu = BaseActivity.getResideMenu();
+        mResideMenu = mParentActivity.getResideMenu();
     }
 }

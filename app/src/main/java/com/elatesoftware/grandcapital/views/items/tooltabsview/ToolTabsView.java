@@ -29,13 +29,12 @@ public class ToolTabsView extends LinearLayout {
     public static final String TAG = "ToolTabsView_TAG";
 
     private Context context;
-    private int selectColor;
-    private int widthView;
+    private int lineColor, selectColor, heightView, widthView;
+    private int lineWidth = -1, lineMargin = 1;
     private ToolTabsViewAdapter adapter;
     private boolean isDataSet = false, isDeselectAll = false;
 
-    private LinearLayout llTabs;
-    private LinearLayout llLine;
+    private LinearLayout llTabs, llLine, llMain;
     private View vIndicator, lastView = null;
     private LayoutParams itemParams;
 
@@ -69,10 +68,6 @@ public class ToolTabsView extends LinearLayout {
         setAttr(attrs);
     }
 
-    public ToolTabsViewAdapter getAdapter() {
-        return adapter;
-    }
-
     public void setAdapter(ToolTabsViewAdapter _adapter) {
         adapter = _adapter;
         isDataSet = false;
@@ -90,14 +85,17 @@ public class ToolTabsView extends LinearLayout {
                 LayoutParams.MATCH_PARENT
         );
         isDeselectAll = _isDeselectAll;
+        //setData();
     }
 
     public void hideTab(int position) {
+        Log.d(TAG, "hideTab");
         llTabs.getChildAt(position).setVisibility(GONE);
         setNumbers();
     }
 
     public void showTab(int position) {
+        Log.d(TAG, "showTab");
         View v = llTabs.getChildAt(position);
         if(v != null){
             if(v.getVisibility() == GONE) {
@@ -108,6 +106,7 @@ public class ToolTabsView extends LinearLayout {
     }
 
     public void showAllTabs() {
+        Log.d(TAG, "showAllTabs");
         for(int i = 0; i < llTabs.getChildCount(); i++) {
             View v = llTabs.getChildAt(i);
             v.setVisibility(VISIBLE);
@@ -169,16 +168,19 @@ public class ToolTabsView extends LinearLayout {
 
     private void init(Context _context) {
         context = _context;
+
         LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(R.layout.tool_tabs_view, this, true);
         llTabs = (LinearLayout) v.findViewById(R.id.ll_tabs);
+        llLine = (LinearLayout) v.findViewById(R.id.ll_line);
+        llMain = (LinearLayout) v.findViewById(R.id.ll_main);
         vIndicator = v.findViewById(R.id.indicator);
         vIndicator.getLayoutParams().width = 0;
     }
 
     private void setAttr(AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ToolTabsView);
-        int lineColor = typedArray.getColor(R.styleable.ToolTabsView_line_color, Color.TRANSPARENT);
+        lineColor = typedArray.getColor(R.styleable.ToolTabsView_line_color, Color.TRANSPARENT);
         selectColor = typedArray.getColor(R.styleable.ToolTabsView_select_color, Color.TRANSPARENT);
         vIndicator.setBackgroundColor(lineColor);
     }
@@ -197,6 +199,7 @@ public class ToolTabsView extends LinearLayout {
                     tv.setText(titles[i]);
                 }
                 v.setTag(R.string.logical_number, i);
+                Log.d(TAG, "setData widthItem: " + widthView / adapter.getItemsCount());
                 itemParams.width = widthView / adapter.getItemsCount();
                 llTabs.addView(v, itemParams);
                 v.setOnTouchListener((view, motionEvent) -> {
@@ -204,12 +207,15 @@ public class ToolTabsView extends LinearLayout {
                     int logicNum = (int) view.getTag(R.string.logical_number);
                     switch (motionEvent.getAction()) {
                         case MotionEvent.ACTION_DOWN:
+                            Log.d(TAG, "ACTION_DOWN");
                             deselectAllTabs();
                             view.setBackgroundColor(selectColor);
                             vIndicator.setVisibility(VISIBLE);
                             //setTint(lastView, false);
                             setTint(view, true);
                             lastView = view;
+                            Log.d(TAG, "num: " + num);
+                            Log.d(TAG, "logicNum: " + logicNum);
                             moveIndicatior(num, true);
                             if (onChooseTab != null) {
                                 onChooseTab.onChoose(view, logicNum);
@@ -217,6 +223,7 @@ public class ToolTabsView extends LinearLayout {
                             return true;
 
                         case MotionEvent.ACTION_UP:
+                            Log.d(TAG, "ACTION_UP");
                             view.setBackgroundColor(Color.TRANSPARENT);
                             return true;
                     }
@@ -312,13 +319,20 @@ public class ToolTabsView extends LinearLayout {
     private void getNumbersTabsToLog() {
         for(int i = 0; i < llTabs.getChildCount(); i++) {
             View v = llTabs.getChildAt(i);
+            Log.d(TAG, "view Ni: " + i);
+            Log.d(TAG, "logical number: " + v.getTag(R.string.logical_number));
+            Log.d(TAG, "number: " + v.getTag(R.string.number));
         }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int heightView = MeasureSpec.getSize(heightMeasureSpec);
+        Log.d(TAG, "widthMeasureSpec :" + widthMeasureSpec);
+        Log.d(TAG, "heightMeasureSpec :" + heightMeasureSpec);
+        Log.d(TAG, "width :" + MeasureSpec.getSize(widthMeasureSpec));
+        Log.d(TAG, "height :" + MeasureSpec.getSize(heightMeasureSpec));
+        heightView = MeasureSpec.getSize(heightMeasureSpec);
         widthView = MeasureSpec.getSize(widthMeasureSpec);
         llLine.getLayoutParams().height = (int) (heightView * 0.05);
         vIndicator.getLayoutParams().width = adapter == null ? 0 : widthView / adapter.getItemsCount();
