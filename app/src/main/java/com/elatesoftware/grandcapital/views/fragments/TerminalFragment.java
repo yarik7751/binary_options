@@ -525,8 +525,7 @@ public class TerminalFragment extends Fragment {
 
             }
             @Override
-            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
-            }
+            public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {}
             @Override
             public void onChartLongPressed(MotionEvent me) {
 
@@ -552,11 +551,7 @@ public class TerminalFragment extends Fragment {
                 if (imgPointCurrent != null || currEntry != null) {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
-                        if(currEntry.getX() >= mChart.getHighestVisibleX()) {
-                            imgPointCurrent.setVisibility(View.INVISIBLE);
-                        } else {
-                            imgPointCurrent.setVisibility(View.VISIBLE);
-                        }
+                        setXVisibilityPoint();
                         imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
                     }
@@ -569,11 +564,7 @@ public class TerminalFragment extends Fragment {
                     MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
                     if(point != null) {
                         if(mChart.getViewPortHandler().getScaleX() > 1.3277f) {
-                            if (currEntry.getX() >= mChart.getHighestVisibleX()) {
-                                imgPointCurrent.setVisibility(View.INVISIBLE);
-                            } else {
-                                imgPointCurrent.setVisibility(View.VISIBLE);
-                            }
+                            setXVisibilityPoint();
                         }
                         if(mChart.getViewPortHandler().getScaleX() > 4.3f) {
                             imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
@@ -613,6 +604,15 @@ public class TerminalFragment extends Fragment {
             return false;
         });
     }
+
+    private void setXVisibilityPoint() {
+        if (currEntry.getX() >= mChart.getHighestVisibleX()) {
+            imgPointCurrent.setVisibility(View.INVISIBLE);
+        } else {
+            imgPointCurrent.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void setLineDataChart(){
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
@@ -1038,6 +1038,7 @@ public class TerminalFragment extends Fragment {
                 y = mChart.getHeight() * 0.1f;
             }
             imgPointCurrent.setY(y - imgPointCurrent.getHeight() / 2);
+            setXVisibilityPoint();
         }
     }
     public void redrawItemsChart(Entry entry){
