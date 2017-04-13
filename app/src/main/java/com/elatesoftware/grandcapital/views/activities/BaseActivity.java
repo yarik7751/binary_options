@@ -20,6 +20,7 @@ import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
 import com.elatesoftware.grandcapital.views.fragments.HowItWorksFragment;
@@ -236,6 +237,7 @@ public class BaseActivity extends CustomFontsActivity {
                     if(TerminalFragment.isOpen && terminalFragment != null) {
                         terminalFragment.showSignalsPanel();
                     }
+                    GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_WIDGET_SIGNALS, null, null);
                     break;
                 case TERMINAL_POSITION:
                     Log.d(TAG, "TERMINAL_POSITION");

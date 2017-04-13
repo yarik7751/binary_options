@@ -54,6 +54,7 @@ import com.elatesoftware.grandcapital.utils.ConventDimens;
 import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.animation.PointAnimation;
@@ -690,11 +691,11 @@ public class TerminalFragment extends Fragment {
         isFirstLoopPoint = true;
         tvValueActive.setText(sSymbolCurrent);
         Log.d(TAG, "sSymbolCurrent: " + sSymbolCurrent);
-        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
-                .setAction(Const.ANALYTICS_BUTTON_CHANGE_ACTIVE)
-                .setLabel(sSymbolCurrent)
-                .build()
+        GoogleAnalyticsUtil.sendEvent(
+                Const.ANALYTICS_TERMINAL_SCREEN,
+                Const.ANALYTICS_BUTTON_CHANGE_ACTIVE,
+                sSymbolCurrent,
+                null
         );
         SymbolHistoryAnswer.nullInstance();
         SocketAnswer.nullInstance();
@@ -783,11 +784,11 @@ public class TerminalFragment extends Fragment {
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
             intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
             getActivity().startService(intentService);
-
-            GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                    .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
-                    .setAction(lowerOrHeight.equals(Const.CMD_HEIGHT) ? Const.ANALYTICS_BUTTON_UP : Const.ANALYTICS_BUTTON_DOWN)
-                    .build()
+            GoogleAnalyticsUtil.sendEvent(
+                    Const.ANALYTICS_TERMINAL_SCREEN,
+                    lowerOrHeight.equals(Const.CMD_HEIGHT) ? Const.ANALYTICS_BUTTON_UP : Const.ANALYTICS_BUTTON_DOWN,
+                    null,
+                    null
             );
 
         } else {
@@ -1298,10 +1299,11 @@ public class TerminalFragment extends Fragment {
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         BaseLimitLine.deleteDealingLimitLine(ticket);
                         typePoint = POINT_CLOSE_DEALING;
-                        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                                .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
-                                .setAction(Const.ANALYTICS_BUTTON_CLOSE_DEALINGS)
-                                .build()
+                        GoogleAnalyticsUtil.sendEvent(
+                                Const.ANALYTICS_TERMINAL_SCREEN,
+                                Const.ANALYTICS_BUTTON_CLOSE_DEALINGS,
+                                null,
+                                null
                         );
                     }
                 }

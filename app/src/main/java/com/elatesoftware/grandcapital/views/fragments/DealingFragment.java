@@ -24,6 +24,7 @@ import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
@@ -163,10 +164,12 @@ public class DealingFragment extends Fragment {
     }
 
     private void analytics(int tabPosition) {
-        HitBuilders.EventBuilder builder = new HitBuilders.EventBuilder();
-        builder.setCategory(Const.ANALYTICS_DEALINGS_SCREEN);
-        builder.setAction(tabPosition == 0 ? Const.ANALYTICS_TAB_OPEN_DEALINGS : Const.ANALYTICS_TAB_CLOSE_DEALINGS);
-        GrandCapitalApplication.getDefaultTracker().send(builder.build());
+        GoogleAnalyticsUtil.sendEvent(
+                Const.ANALYTICS_DEALINGS_SCREEN,
+                tabPosition == 0 ? Const.ANALYTICS_TAB_OPEN_DEALINGS : Const.ANALYTICS_TAB_CLOSE_DEALINGS,
+                null,
+                null
+        );
         Log.d(TAG, "currentTabPosition: " + currentTabPosition);
     }
 

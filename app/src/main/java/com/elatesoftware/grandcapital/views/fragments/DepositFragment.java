@@ -23,6 +23,7 @@ import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.InOutService;
 import com.elatesoftware.grandcapital.utils.Const;
+import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.google.android.gms.analytics.HitBuilders;
@@ -76,20 +77,22 @@ public class DepositFragment  extends Fragment {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
             WebFragment webFragment = WebFragment.getInstance(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT);
             BaseActivity.addNextFragment(webFragment);
-            GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                    .setCategory(Const.ANALYTICS_IN_OUT_SCREEN)
-                    .setAction(Const.ANALYTICS_BUTTON_DEPOSIT)
-                    .build()
+            GoogleAnalyticsUtil.sendEvent(
+                    Const.ANALYTICS_IN_OUT_SCREEN,
+                    Const.ANALYTICS_BUTTON_DEPOSIT,
+                    null,
+                    null
             );
         });
         llWithdraw.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
             WebFragment webFragment = WebFragment.getInstance(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_WITHDRAW);
             BaseActivity.addNextFragment(webFragment);
-            GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                    .setCategory(Const.ANALYTICS_IN_OUT_SCREEN)
-                    .setAction(Const.ANALYTICS_BUTTON_WITHDRAW)
-                    .build()
+            GoogleAnalyticsUtil.sendEvent(
+                    Const.ANALYTICS_IN_OUT_SCREEN,
+                    Const.ANALYTICS_BUTTON_WITHDRAW,
+                    null,
+                    null
             );
         });
 

@@ -16,6 +16,7 @@ import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.Const;
+import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuestionFragment;
@@ -60,12 +61,7 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
             bundle.putString(QuestionFragment.HEADER_TEXT, binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
             bundle.putString(QuestionFragment.CONTENT_TEXT, binaryOptionAnswer.getElements().get(position).getLongDescription());
 
-            GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                    .setCategory(Const.ANALYTICS_PROMOTIONS_SCREEN)
-                    .setAction(Const.ANALYTICS_LIST_PROMOTION)
-                    .setLabel(binaryOptionAnswer.getElements().get(position).getShortDescription())
-                    .build()
-            );
+            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_PROMOTIONS_SCREEN, Const.ANALYTICS_LIST_PROMOTION, binaryOptionAnswer.getElements().get(position).getShortDescription(), null);
 
             BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
             QuestionFragment questionFragment = new QuestionFragment();

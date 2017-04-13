@@ -44,6 +44,8 @@ public class Const {
     public final static String ANALYTICS_SUPPORT_SCREEN = "SUPPORT_SCREEN";
     public final static String ANALYTICS_BUTTON_SEND_MESSAGE = "BUTTON_SEND_MESSAGE";
 
+    public final static String TRACKING_ID = "UA-96895164-2";
+
     public final static String ANALYTICS_TERMINAL_SCREEN = "TERMINAL_SCREEN";
     public final static String ANALYTICS_BUTTON_CHANGE_ACTIVE = "BUTTON_CHANGE_ACTIVE";
     public final static String ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS = "BUTTON_CHANGE_AMOUNT_INVESTMENTS";

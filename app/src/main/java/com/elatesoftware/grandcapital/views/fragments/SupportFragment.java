@@ -28,6 +28,8 @@ import com.elatesoftware.grandcapital.services.ChatService;
 import com.elatesoftware.grandcapital.services.SignInService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.google.android.gms.analytics.HitBuilders;
@@ -82,6 +84,11 @@ public class SupportFragment extends Fragment {
         edMessage = (EditText) view.findViewById(R.id.ed_message);
         llMessages = (LinearLayout) view.findViewById(R.id.ll_messages);
         llMain = (LinearLayout) view.findViewById(R.id.ll_main);
+
+        llMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {}
+        });
 
         cbSendMessage.setOnClickListener(v -> {
             edMessage.setText(edMessage.getText().toString().trim());
@@ -174,11 +181,11 @@ public class SupportFragment extends Fragment {
                         Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
                         caseId = ChatCreateAnswer.getInstance().getCaseId();
                         handler.postDelayed(runnablePollChat, INTERVAL);
-                        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                                .setCategory(Const.ANALYTICS_SUPPORT_SCREEN)
-                                .setAction(Const.ANALYTICS_BUTTON_SEND_MESSAGE)
-                                .setLabel(message)
-                                .build()
+                        GoogleAnalyticsUtil.sendEvent(
+                                Const.ANALYTICS_SUPPORT_SCREEN,
+                                Const.ANALYTICS_BUTTON_SEND_MESSAGE,
+                                message,
+                                null
                         );
                     } else {
                         Log.d(TAG, "CREATE_CHAT error " + response);
@@ -209,11 +216,11 @@ public class SupportFragment extends Fragment {
                 case ChatService.SEND_MESSAGE_CHAT:
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SendMessageAnswer.getInstance() != null) {
                         Log.d(TAG, SendMessageAnswer.getInstance() + "");
-                        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                                .setCategory(Const.ANALYTICS_SUPPORT_SCREEN)
-                                .setAction(Const.ANALYTICS_BUTTON_SEND_MESSAGE)
-                                .setLabel(message)
-                                .build()
+                        GoogleAnalyticsUtil.sendEvent(
+                                Const.ANALYTICS_SUPPORT_SCREEN,
+                                Const.ANALYTICS_BUTTON_SEND_MESSAGE,
+                                message,
+                                null
                         );
                     } else {
                         Log.d(TAG, "SEND_MESSAGE_CHAT error " + response);

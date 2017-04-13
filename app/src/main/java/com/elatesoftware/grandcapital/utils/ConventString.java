@@ -63,12 +63,12 @@ public class ConventString {
             }
         }
         v.setText(time + " MIN");
-        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
-                .setAction(Const.ANALYTICS_BUTTON_CHANGE_TIME)
-                .setLabel(isAdd ? "+" : "-")
-                .setValue(time)
-                .build()
+
+        GoogleAnalyticsUtil.sendEvent(
+                Const.ANALYTICS_TERMINAL_SCREEN,
+                Const.ANALYTICS_BUTTON_CHANGE_TIME,
+                isAdd ? "+" : "-",
+                (long) time
         );
     }
     public static void changeAmountValue(EditText v, boolean isAdd) {
@@ -84,12 +84,12 @@ public class ConventString {
             }
         }
         v.setText("$" + amout);
-        GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                .setCategory(Const.ANALYTICS_TERMINAL_SCREEN)
-                .setAction(Const.ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS)
-                .setLabel(isAdd ? "+" : "-")
-                .setValue((long) amout)
-                .build()
+
+        GoogleAnalyticsUtil.sendEvent(
+                Const.ANALYTICS_TERMINAL_SCREEN,
+                Const.ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS,
+                isAdd ? "+" : "-",
+                (long) amout
         );
     }
     public static double getAmountValue(EditText v) {

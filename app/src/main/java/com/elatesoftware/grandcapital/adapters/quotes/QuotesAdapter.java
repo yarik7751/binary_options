@@ -15,6 +15,7 @@ import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
@@ -85,35 +86,41 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
             quotesHolder.imgIsSelected.setImageResource(R.drawable.ic_star_border_white_24dp);
         }
 
-        quotesHolder.imgIsSelected.setOnClickListener(v -> {
-            Log.d(TAG, "AllQuotesAdapter imgIsSelected");
-            String selectedQuotes = CustomSharedPreferences.getSelectedQuotes(context);
-            if(variant == ALL_QUOTES) {
-                if(!selectedQuotes.contains(selectedInstruments.get(position).getSymbol())) {
-                    selectedQuotes += selectedInstruments.get(position).getSymbol() + ";";
+        quotesHolder.imgIsSelected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "AllQuotesAdapter imgIsSelected");
+                String selectedQuotes = CustomSharedPreferences.getSelectedQuotes(context);
+                if(variant == ALL_QUOTES) {
+                    if(!selectedQuotes.contains(selectedInstruments.get(position).getSymbol())) {
+                        selectedQuotes += selectedInstruments.get(position).getSymbol() + ";";
+                    }
+                    CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
+                    Log.d(TAG, "selectedQuotes: " + selectedQuotes);
+
+                    GoogleAnalyticsUtil.sendEvent(
+                            Const.ANALYTICS_QUOTES_SCREEN,
+                            Const.ANALYTICS_BUTTON_FAVORITES,
+                            selectedInstruments.get(position).getSymbol(),
+                            null
+                    );
+
+                } else if(variant == SELECT_QUOTES) {
+                    Log.d(TAG, "getSymbol(): " + selectedInstruments.get(position).getSymbol());
+                    Log.d(TAG, "selectedQuotes: " + selectedQuotes);
+                    selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol().toUpperCase() + ";", "");
+                    CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
+                    Log.d(TAG, "selectedQuotes (CHANGE): " + selectedQuotes);
+
+                    GoogleAnalyticsUtil.sendEvent(
+                            Const.ANALYTICS_QUOTES_SCREEN,
+                            Const.ANALYTICS_BUTTON_DELETE_FAVORITES,
+                            selectedInstruments.get(position).getSymbol(),
+                            null
+                    );
                 }
-                CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
-                Log.d(TAG, "selectedQuotes: " + selectedQuotes);
-                GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                        .setCategory(Const.ANALYTICS_QUOTES_SCREEN)
-                        .setAction(Const.ANALYTICS_BUTTON_FAVORITES)
-                        .setLabel(selectedInstruments.get(position).getSymbol())
-                        .build()
-                );
-            } else if(variant == SELECT_QUOTES) {
-                Log.d(TAG, "getSymbol(): " + selectedInstruments.get(position).getSymbol());
-                Log.d(TAG, "selectedQuotes: " + selectedQuotes);
-                selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol().toUpperCase() + ";", "");
-                CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
-                Log.d(TAG, "selectedQuotes (CHANGE): " + selectedQuotes);
-                GrandCapitalApplication.getDefaultTracker().send(new HitBuilders.EventBuilder()
-                        .setCategory(Const.ANALYTICS_QUOTES_SCREEN)
-                        .setAction(Const.ANALYTICS_BUTTON_DELETE_FAVORITES)
-                        .setLabel(selectedInstruments.get(position).getSymbol())
-                        .build()
-                );
+                onSharedPreferencesChange.onChange();
             }
-            onSharedPreferencesChange.onChange();
         });
     }
 
