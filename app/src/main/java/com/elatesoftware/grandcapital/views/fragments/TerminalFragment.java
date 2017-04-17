@@ -76,7 +76,6 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.EntryXComparator;
-import com.google.android.gms.analytics.HitBuilders;
 import com.google.gson.Gson;
 import com.github.mikephil.charting.utils.MPPointF;
 
@@ -569,7 +568,7 @@ public class TerminalFragment extends Fragment {
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
                     }
                 }
-                BaseLimitLine.redrawScrollXYLinesDealings(mChart.getHighestVisibleX());
+                BaseLimitLine.scrollXYLinesDealings(mChart.getHighestVisibleX());
             }
             @Override
             public void onChartTranslate(MotionEvent me, float dX, float dY) {
@@ -587,7 +586,7 @@ public class TerminalFragment extends Fragment {
                         imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2 - dY);
                     }
                 }
-                BaseLimitLine.redrawScrollXYLinesDealings(mChart.getHighestVisibleX());
+                BaseLimitLine.scrollXYLinesDealings(mChart.getHighestVisibleX());
             }
         });
         mChart.setOnTouchListener((v, event) -> {
@@ -712,39 +711,23 @@ public class TerminalFragment extends Fragment {
             public void run() {
                 getActivity().runOnUiThread(() -> {
                      if(isFinishedDrawPoint && listSocketAnswerQueue != null && listSocketAnswerQueue.size() != 0) {
-                         if(listSocketAnswerQueue.size() > 1){
-                             isFinishedDrawPoint = false;
-                             listSocketAnswerQueue = SocketAnswer.sortList(listSocketAnswerQueue, mChart.getLineData().getDataSetByIndex(0).getXMax());
-                             for (int i = 0; i < listSocketAnswerQueue.size()-1; i++) {
-                                 SymbolHistoryAnswer.addSocketAnswerInSymbol(listSocketAnswerQueue.get(i));
-                                 addEntry(SymbolHistoryAnswer.getInstance().get(SymbolHistoryAnswer.getInstance().size() -1));
-                             }
-                             isFinishedDrawPoint = true;
+                         SocketAnswer socketAnswer;
+                         if(listSocketAnswerQueue.size() == 1){
+                             socketAnswer = listSocketAnswerQueue.get(0);
+                         }else{
+                             Collections.sort(listSocketAnswerQueue, (o1, o2) -> o1.getTime().compareTo(o2.getTime()));
+                             socketAnswer = listSocketAnswerQueue.get(listSocketAnswerQueue.size()-1);
                          }
-                         SocketAnswer socketAnswer = listSocketAnswerQueue.get(listSocketAnswerQueue.size()-1);
                          listSocketAnswerQueue.clear();
                          if(socketAnswer != null){
                              addEntry(socketAnswer);
                          }
+                     }else{
+                         redrawXLimitLines();
+                         redrawYLimitLines();
+                         mChart.invalidate();
                      }
                  });
-                /*getActivity().runOnUiThread(() -> {
-                    if(isFinishedDrawPoint && listSocketAnswerQueue != null && listSocketAnswerQueue.size() != 0) {
-                        if(listSocketAnswerQueue.size() > 1){
-                            SocketAnswer.sortList(listSocketAnswerQueue);
-                            TIME_ANIMATION_DRAW_POINT = 10;
-                            for (int i = 0; i < listSocketAnswerQueue.size(); i++) {
-                                SocketAnswer.sortList(listSocketAnswerQueue);
-                                addEntry(listSocketAnswerQueue.get(i));
-                            }
-                            listSocketAnswerQueue.clear();
-                            TIME_ANIMATION_DRAW_POINT = 100;
-                        }else{
-                            addEntry(listSocketAnswerQueue.get(0));
-                        }
-                    }*/
-                    //redrawItemsChart();
-                //});
             }
         }, 1000, 1000);
     }
@@ -1053,7 +1036,7 @@ public class TerminalFragment extends Fragment {
                 if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime()) || Long.parseLong(line.getmTimer()) <= 0.5){
                     xAxis.removeLimitLine(line);
                     if(line.ismIsActive()){
-                        BaseLimitLine.makeActiveSelectedDealing(null);
+                        BaseLimitLine.activationSelectedDealing(null);
                     }
                     typePoint = POINT_CLOSE_DEALING;
                 }else{
@@ -1076,7 +1059,7 @@ public class TerminalFragment extends Fragment {
                 if(!ConventDate.validationDateTimer(order.getOptionsData().getExpirationTime()) || Long.parseLong(line.getmTimer()) < 0.5){
                     rightYAxis.removeLimitLine(line);
                     if(line.ismIsActive()){
-                        BaseLimitLine.makeActiveSelectedDealing(null);
+                        BaseLimitLine.activationSelectedDealing(null);
                     }
                     typePoint = POINT_CLOSE_DEALING;
                 }else{

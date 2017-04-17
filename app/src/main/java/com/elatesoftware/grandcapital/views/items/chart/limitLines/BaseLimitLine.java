@@ -100,7 +100,7 @@ public class BaseLimitLine extends LimitLine {
         }
     }
 
-    public static void redrawScrollXYLinesDealings(float xMax){
+    public static void scrollXYLinesDealings(float xMax){
         List<XDealingLine> listX = BaseLimitLine.getXLimitLines();
         List<YDealingLine> listY = BaseLimitLine.getYLimitLines();
         if(listX != null && listX.size() != 0){
@@ -137,7 +137,7 @@ public class BaseLimitLine extends LimitLine {
             }
         }
     }
-    public static void makeActiveSelectedDealing(BaseLimitLine line){
+    public static void activationSelectedDealing(BaseLimitLine line){
         if(line != null){
             if (line instanceof XDealingLine && ((XDealingLine) line).ismIsActive()){
                 line.enableDashedLine(10f, 10f, 0f);
@@ -273,7 +273,7 @@ public class BaseLimitLine extends LimitLine {
                     || (line instanceof YDealingLine && ConventDimens.isClickOnXYDealingAmerican(point.x, xMax, tappedY, point.y, line.getMaxWeightCanvasLabel())))) {
                 return order;
             }else{
-                BaseLimitLine.makeActiveSelectedDealing(line);
+                BaseLimitLine.activationSelectedDealing(line);
                 return null;
             }
         }
@@ -298,7 +298,7 @@ public class BaseLimitLine extends LimitLine {
                     }
                 }
             }
-            BaseLimitLine.makeActiveSelectedDealing(null);
+            BaseLimitLine.activationSelectedDealing(null);
         }
     }
     public static void drawDealingLimitLine(OrderAnswer order, boolean isAmerican, double mCurrentValueY) {
@@ -319,7 +319,7 @@ public class BaseLimitLine extends LimitLine {
                     if(line.ismIsActive()){
                         ActiveDealingLine.deleteDealingLine();
                         if(getXLimitLines() != null && getXLimitLines().size() != 0){
-                            BaseLimitLine.makeActiveSelectedDealing(null);
+                            BaseLimitLine.activationSelectedDealing(null);
                         }
                     }
                     break;
@@ -334,7 +334,7 @@ public class BaseLimitLine extends LimitLine {
                     if(line.ismIsActive()){
                         ActiveDealingLine.deleteDealingLine();
                         if(getYLimitLines() != null && getYLimitLines().size() != 0){
-                            BaseLimitLine.makeActiveSelectedDealing(null);
+                            BaseLimitLine.activationSelectedDealing(null);
                         }
                     }
                     break;
