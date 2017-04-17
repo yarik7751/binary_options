@@ -3,6 +3,7 @@ package com.elatesoftware.grandcapital.utils;
 import android.app.Activity;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -16,6 +17,8 @@ import com.google.android.gms.analytics.HitBuilders;
  */
 
 public class ConventString {
+
+    public static final String TAG = "ConventString_Log";
 
     public static void setMaskAmount(EditText v, boolean isBol) {
         String str = v.getText().toString();
@@ -145,9 +148,12 @@ public class ConventString {
 
     public static String getRoundNumber(double number) {
         String format = String.format("%.5f", number);
-        if(format.length() > 2) {
-            while (format.charAt(format.length() - 1) == '0' || format.charAt(format.length() - 1) == '.') {
-                format = format.substring(0, format.length() - 2);
+        format = format.replace(",", ".");
+        while (format.charAt(format.length() - 1) == '0' || format.charAt(format.length() - 1) == '.') {
+            boolean isBreak = format.charAt(format.length() - 1) == '.';
+            format = format.substring(0, format.length() - 1);
+            if(isBreak) {
+                break;
             }
         }
         return format;
