@@ -322,7 +322,7 @@ public class BaseLimitLine extends LimitLine {
                             BaseLimitLine.activationSelectedDealing(null);
                         }
                     }
-                    break;
+                    return;
                 }
             }
         }
@@ -337,7 +337,7 @@ public class BaseLimitLine extends LimitLine {
                             BaseLimitLine.activationSelectedDealing(null);
                         }
                     }
-                    break;
+                    return;
                 }
             }
         }

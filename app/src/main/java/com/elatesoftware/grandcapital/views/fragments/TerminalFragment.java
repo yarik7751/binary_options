@@ -1193,7 +1193,7 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setOptionsData(optionsData);
                 currentDealing.setOpenTime(ConventDate.getCurrentDate());
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
-                requestGetAllOrders();
+                new Handler().postAtTime(() -> requestGetAllOrders(), 1500);
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));
@@ -1282,12 +1282,7 @@ public class TerminalFragment extends Fragment {
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         BaseLimitLine.deleteDealingLimitLine(ticket);
                         typePoint = POINT_CLOSE_DEALING;
-                        GoogleAnalyticsUtil.sendEvent(
-                                Const.ANALYTICS_TERMINAL_SCREEN,
-                                Const.ANALYTICS_BUTTON_CLOSE_DEALINGS,
-                                null,
-                                null
-                        );
+                        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CLOSE_DEALINGS, null, null);
                     }
                 }
             }
