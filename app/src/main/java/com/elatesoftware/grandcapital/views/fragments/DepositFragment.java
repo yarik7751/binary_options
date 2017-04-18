@@ -77,23 +77,13 @@ public class DepositFragment  extends Fragment {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
             WebFragment webFragment = WebFragment.getInstance(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT);
             BaseActivity.addNextFragment(webFragment);
-            GoogleAnalyticsUtil.sendEvent(
-                    Const.ANALYTICS_IN_OUT_SCREEN,
-                    Const.ANALYTICS_BUTTON_DEPOSIT,
-                    null,
-                    null
-            );
+            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_DEPOSIT, null, null);
         });
         llWithdraw.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
             WebFragment webFragment = WebFragment.getInstance(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_WITHDRAW);
             BaseActivity.addNextFragment(webFragment);
-            GoogleAnalyticsUtil.sendEvent(
-                    Const.ANALYTICS_IN_OUT_SCREEN,
-                    Const.ANALYTICS_BUTTON_WITHDRAW,
-                    null,
-                    null
-            );
+            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_WITHDRAW, null, null);
         });
 
         rvIoOut.setLayoutManager(new LinearLayoutManager(getContext()));

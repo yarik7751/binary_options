@@ -181,12 +181,7 @@ public class SupportFragment extends Fragment {
                         Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
                         caseId = ChatCreateAnswer.getInstance().getCaseId();
                         handler.postDelayed(runnablePollChat, INTERVAL);
-                        GoogleAnalyticsUtil.sendEvent(
-                                Const.ANALYTICS_SUPPORT_SCREEN,
-                                Const.ANALYTICS_BUTTON_SEND_MESSAGE,
-                                message,
-                                null
-                        );
+                        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {
                         Log.d(TAG, "CREATE_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),
@@ -216,12 +211,7 @@ public class SupportFragment extends Fragment {
                 case ChatService.SEND_MESSAGE_CHAT:
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SendMessageAnswer.getInstance() != null) {
                         Log.d(TAG, SendMessageAnswer.getInstance() + "");
-                        GoogleAnalyticsUtil.sendEvent(
-                                Const.ANALYTICS_SUPPORT_SCREEN,
-                                Const.ANALYTICS_BUTTON_SEND_MESSAGE,
-                                message,
-                                null
-                        );
+                        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {
                         Log.d(TAG, "SEND_MESSAGE_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),

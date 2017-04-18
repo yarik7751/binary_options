@@ -767,13 +767,7 @@ public class TerminalFragment extends Fragment {
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
             intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
             getActivity().startService(intentService);
-            GoogleAnalyticsUtil.sendEvent(
-                    Const.ANALYTICS_TERMINAL_SCREEN,
-                    lowerOrHeight.equals(Const.CMD_HEIGHT) ? Const.ANALYTICS_BUTTON_UP : Const.ANALYTICS_BUTTON_DOWN,
-                    null,
-                    null
-            );
-
+            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, lowerOrHeight.equals(Const.CMD_HEIGHT) ? Const.ANALYTICS_BUTTON_UP : Const.ANALYTICS_BUTTON_DOWN, null, null);
         } else {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
             stopProgress();
@@ -1282,12 +1276,7 @@ public class TerminalFragment extends Fragment {
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         BaseLimitLine.deleteDealingLimitLine(ticket);
                         typePoint = POINT_CLOSE_DEALING;
-                        GoogleAnalyticsUtil.sendEvent(
-                                Const.ANALYTICS_TERMINAL_SCREEN,
-                                Const.ANALYTICS_BUTTON_CLOSE_DEALINGS,
-                                null,
-                                null
-                        );
+                        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CLOSE_DEALINGS, null, null);
                     }
                 }
             }

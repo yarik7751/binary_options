@@ -66,13 +66,7 @@ public class ConventString {
             }
         }
         v.setText(time + " MIN");
-
-        GoogleAnalyticsUtil.sendEvent(
-                Const.ANALYTICS_TERMINAL_SCREEN,
-                Const.ANALYTICS_BUTTON_CHANGE_TIME,
-                isAdd ? "+" : "-",
-                (long) time
-        );
+        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CHANGE_TIME, isAdd ? "+" : "-", (long) time);
     }
     public static void changeAmountValue(EditText v, boolean isAdd) {
         String str = v.getText().toString();
@@ -87,13 +81,7 @@ public class ConventString {
             }
         }
         v.setText("$" + amout);
-
-        GoogleAnalyticsUtil.sendEvent(
-                Const.ANALYTICS_TERMINAL_SCREEN,
-                Const.ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS,
-                isAdd ? "+" : "-",
-                (long) amout
-        );
+        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS, isAdd ? "+" : "-", (long) amout);
     }
     public static double getAmountValue(EditText v) {
         String valueStr = v.getText().toString();
@@ -160,8 +148,7 @@ public class ConventString {
     }
 
     public static String getContentQuestions(String str){
-        return Html.fromHtml(str).toString()
-                .replace((char) 160, (char) 32).replace((char) 65532, (char) 32).trim().replaceAll("[\\n]{2,}", "\n");
+        return Html.fromHtml(str).toString().replace((char) 160, (char) 32).replace((char) 65532, (char) 32).trim().replaceAll("[\\n]{2,}", "\n");
     }
 
     public static String getStringEarlyClosure(EditText view, int percent){
