@@ -792,6 +792,7 @@ public class TerminalFragment extends Fragment {
         if(order.getTicket() != null && order.getTicket() != 0 ){
             Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
             getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
+            llProgressBar.setVisibility(View.VISIBLE);
         }else{
             requestGetTicketOrder(order);
         }
@@ -1193,6 +1194,7 @@ public class TerminalFragment extends Fragment {
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));
+                stopProgress();
             } else {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.request_error_request));
                 stopProgress();
@@ -1267,6 +1269,7 @@ public class TerminalFragment extends Fragment {
             if (response == null || !response.equals(Const.CODE_SUCCESS_DELETE_DEALING)) {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.request_error_title), getResources().getString(R.string.request_error_request));
             }else{
+                llProgressBar.setVisibility(View.GONE);
                 int ticket = intent.getIntExtra(DeleteDealingService.TICKET, 0);
                 if(ticket != 0){
                     OrderAnswer order = CheckDealingService.deleteOrder(ticket);
