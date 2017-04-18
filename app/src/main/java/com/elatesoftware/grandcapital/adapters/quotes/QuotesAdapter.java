@@ -98,12 +98,7 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
                     CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
                     Log.d(TAG, "selectedQuotes: " + selectedQuotes);
 
-                    GoogleAnalyticsUtil.sendEvent(
-                            Const.ANALYTICS_QUOTES_SCREEN,
-                            Const.ANALYTICS_BUTTON_FAVORITES,
-                            selectedInstruments.get(position).getSymbol(),
-                            null
-                    );
+                    GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_QUOTES_SCREEN, Const.ANALYTICS_BUTTON_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
 
                 } else if(variant == SELECT_QUOTES) {
                     Log.d(TAG, "getSymbol(): " + selectedInstruments.get(position).getSymbol());
@@ -112,12 +107,7 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
                     CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
                     Log.d(TAG, "selectedQuotes (CHANGE): " + selectedQuotes);
 
-                    GoogleAnalyticsUtil.sendEvent(
-                            Const.ANALYTICS_QUOTES_SCREEN,
-                            Const.ANALYTICS_BUTTON_DELETE_FAVORITES,
-                            selectedInstruments.get(position).getSymbol(),
-                            null
-                    );
+                    GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_QUOTES_SCREEN, Const.ANALYTICS_BUTTON_DELETE_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
                 }
                 onSharedPreferencesChange.onChange();
             }

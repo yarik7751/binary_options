@@ -798,6 +798,7 @@ public class TerminalFragment extends Fragment {
         if(order.getTicket() != null && order.getTicket() != 0 ){
             Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
             getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
+            llProgressBar.setVisibility(View.VISIBLE);
         }else{
             requestGetTicketOrder(order);
         }
@@ -1193,10 +1194,13 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setOptionsData(optionsData);
                 currentDealing.setOpenTime(ConventDate.getCurrentDate());
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
-                new Handler().postAtTime(() -> requestGetAllOrders(), 1500);
+                typePoint = POINT_OPEN_DEALING;
+                new Handler().postDelayed(() -> requestGetAllOrders(), 5000);
+                updateBalance(-1 * Double.valueOf(currentDealing.getVolume()));
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));
+                stopProgress();
             } else {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.request_error_request));
                 stopProgress();
@@ -1221,12 +1225,11 @@ public class TerminalFragment extends Fragment {
                         List<OrderAnswer> listAllClosedDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
                         CheckDealingService.setListOrderAnswer(listAllOpenDealings);
                         parseClosingDealings(listAllClosedDealings);
-                        if(currentDealing != null && listOpenDealings != null && listOpenDealings.size() != 0){
-                            currentDealing.setTicket(listOpenDealings.get(listOpenDealings.size()-1).getTicket());
-                            updateBalance(-1 * Double.valueOf(currentDealing.getVolume()));
-                            typePoint = POINT_OPEN_DEALING;
-                        }else if (listOpenDealings != null && listAllOpenDealings.size() != 0 && (BaseLimitLine.getYLimitLines() == null || BaseLimitLine.getXLimitLines() == null)) {
+
+                        if (listOpenDealings != null && listOpenDealings.size() != 0 && BaseLimitLine.getYLimitLines() == null && BaseLimitLine.getXLimitLines() == null) {
                             BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
+                        }else if (listOpenDealings != null && listOpenDealings.size() != 0){
+                            BaseLimitLine.addTicketsInLines(listOpenDealings);
                         }
                         OrderAnswer.setInstance(null);
                         break;
@@ -1235,7 +1238,6 @@ public class TerminalFragment extends Fragment {
                         OrderAnswer.setInstance(null);
                         break;
                     case OrdersService.GET_ALL_ORDERS_DEALING:
-
                         break;
                     default:
                         break;
@@ -1273,6 +1275,7 @@ public class TerminalFragment extends Fragment {
             if (response == null || !response.equals(Const.CODE_SUCCESS_DELETE_DEALING)) {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.request_error_title), getResources().getString(R.string.request_error_request));
             }else{
+                llProgressBar.setVisibility(View.GONE);
                 int ticket = intent.getIntExtra(DeleteDealingService.TICKET, 0);
                 if(ticket != 0){
                     OrderAnswer order = CheckDealingService.deleteOrder(ticket);

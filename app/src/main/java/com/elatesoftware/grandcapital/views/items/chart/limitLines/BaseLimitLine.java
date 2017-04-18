@@ -17,8 +17,11 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.utils.MPPointD;
 import com.google.gson.Gson;
+import com.orm.util.Collection;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -239,26 +242,20 @@ public class BaseLimitLine extends LimitLine {
                 float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
                 if(line instanceof XDealingLine && ConventDimens.isClickOnXDealingNoAmerican(line.getLimit(), pointClick.x, tappedY, pointClick.y, line.getMaxWeightCanvasLabel())){
                     listSelectedLines.add(line);
-                }else if(ConventDimens.isClickOnYDealingNoAmerican(pointClick.x, xMax, tappedY, pointClick.y, line.getMaxWeightCanvasLabel())){
+                }else if(line instanceof YDealingLine && ConventDimens.isClickOnYDealingNoAmerican(pointClick.x, xMax, tappedY, pointClick.y, line.getMaxWeightCanvasLabel())){
                     listSelectedLines.add(line);
                 }
             }
             if(listSelectedLines.size() != 0){
                 if(listSelectedLines.size() == 1){
                     return listSelectedLines.get(0);
-                }else{
-                    DealingLine activeDealingLine = null;
-                    for(DealingLine l : listSelectedLines){
-                        if(l.ismIsActive()){
-                            activeDealingLine = l;
-                            break;
+                }else {
+                    for (DealingLine l : listSelectedLines){
+                        if (l.ismIsActive()) {
+                            return l;
                         }
                     }
-                    if(activeDealingLine != null){
-                        return activeDealingLine;
-                    }else{
-                        return listSelectedLines.get(0);
-                    }
+                    return listSelectedLines.get(0);
                 }
             }
         }
@@ -269,7 +266,8 @@ public class BaseLimitLine extends LimitLine {
         OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
         if (order != null && order.getOpenPrice() != null) {
             float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-            if (line.ismIsAmerican() && ((line instanceof XDealingLine && ConventDimens.isClickOnXYDealingAmerican(point.x, line.getLimit(), point.y, tappedY, line.getMaxWeightCanvasLabel()))
+            if (line.ismIsAmerican()
+                    && ((line instanceof XDealingLine && ConventDimens.isClickOnXYDealingAmerican(point.x, line.getLimit(), point.y, tappedY, line.getMaxWeightCanvasLabel()))
                     || (line instanceof YDealingLine && ConventDimens.isClickOnXYDealingAmerican(point.x, xMax, tappedY, point.y, line.getMaxWeightCanvasLabel())))) {
                 return order;
             }else{
@@ -287,7 +285,9 @@ public class BaseLimitLine extends LimitLine {
             for(YDealingLine line : getYLimitLines()){
                 rightYAxis.removeLimitLine(line);
             }
+            ActiveDealingLine.deleteDealingLine();
         }
+
         if(list != null && list.size() != 0){
             for(OrderAnswer orderAnswer : list){
                 if(ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {
@@ -322,7 +322,7 @@ public class BaseLimitLine extends LimitLine {
                             BaseLimitLine.activationSelectedDealing(null);
                         }
                     }
-                    return;
+                   return;
                 }
             }
         }
@@ -339,6 +339,30 @@ public class BaseLimitLine extends LimitLine {
                     }
                     return;
                 }
+            }
+        }
+    }
+    public static void addTicketsInLines(List<OrderAnswer> listOrders){
+        List<XDealingLine> listLimitX = BaseLimitLine.getXLimitLines();
+        List<YDealingLine> listLimitY = BaseLimitLine.getYLimitLines();
+        List<DealingLine> listLines = new ArrayList<>();
+        if(listLimitX != null && listLimitX.size() != 0){
+            listLines.addAll(listLimitX);
+        }
+        if(listLimitY != null && listLimitY.size() != 0){
+            listLines.addAll(listLimitY);
+        }
+        if(listLines.size() != 0){
+            Collections.sort(listLines,(p1, p2) -> (new Gson().fromJson(p1.getLabel(), OrderAnswer.class).getOpenTime().compareTo(
+                                                   (new Gson().fromJson(p2.getLabel(), OrderAnswer.class).getOpenTime()))));
+            Collections.sort(listOrders,(o1, o2) -> o1.getOpenTime().compareTo(o2.getOpenTime()));
+            if(listOrders.size() != listLines.size()){
+                listLines = listLines.subList(0, listOrders.size()-1);
+            }
+            for(int i= 0; i< listLines.size(); i++){
+                OrderAnswer orderAnswer = new Gson().fromJson(listLines.get(i).getLabel(), OrderAnswer.class);
+                orderAnswer.setTicket(listOrders.get(i).getTicket());
+                listLines.get(i).setLabel(new Gson().toJson(orderAnswer));
             }
         }
     }

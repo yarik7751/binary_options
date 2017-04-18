@@ -88,7 +88,7 @@ public final class WebSocketApi extends WebSocketListener {
             public void run() {
                 if(mSymbolCurrent != null &&  mMessageCurrent != null && TerminalFragment.getInstance().getActivity() != null && TerminalFragment.getInstance() != null){
                     answerCurrent = SocketAnswer.getSetInstance(mMessageCurrent);
-                    if(answerCurrent != null && mSymbolCurrent.equals(answerCurrent.getSymbol())){
+                    if(answerCurrent != null && mSymbolCurrent != null &&  mSymbolCurrent.equals(answerCurrent.getSymbol())){
                         if(answerSave != null && mSymbolCurrent.equals(answerSave.getSymbol())){
                             if(answerCurrent.getTime() >= answerSave.getTime() && ConventDate.equalsTimeSocket(answerSave.getTime(), answerCurrent.getTime())){
                                     answerCurrent.setTime(ConventDate.getTimePlusOneSecond(answerCurrent.getTime()) / 1000);

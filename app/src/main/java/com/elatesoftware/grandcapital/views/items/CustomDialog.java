@@ -80,12 +80,7 @@ public class CustomDialog {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             activity.startActivity(intent);
             CustomSharedPreferences.setIntervalAdvertising(activity.getApplicationContext(), -1);
-            GoogleAnalyticsUtil.sendEvent(
-                    Const.ANALYTICS_EVENT_EXIT,
-                    null,
-                    null,
-                    null
-            );
+            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_EVENT_EXIT, null, null, null);
             dialog.cancel();
             BaseActivity.removeTerminal();
             activity.finish();
