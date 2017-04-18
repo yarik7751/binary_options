@@ -1187,7 +1187,9 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setOptionsData(optionsData);
                 currentDealing.setOpenTime(ConventDate.getCurrentDate());
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
-                requestGetAllOrders();
+                typePoint = POINT_OPEN_DEALING;
+                new Handler().postDelayed(() -> requestGetAllOrders(), 5000);
+                updateBalance(-1 * Double.valueOf(currentDealing.getVolume()));
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));
@@ -1215,12 +1217,11 @@ public class TerminalFragment extends Fragment {
                         List<OrderAnswer> listAllClosedDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
                         CheckDealingService.setListOrderAnswer(listAllOpenDealings);
                         parseClosingDealings(listAllClosedDealings);
-                        if(currentDealing != null && listOpenDealings != null && listOpenDealings.size() != 0){
-                            currentDealing.setTicket(listOpenDealings.get(listOpenDealings.size()-1).getTicket());
-                            updateBalance(-1 * Double.valueOf(currentDealing.getVolume()));
-                            typePoint = POINT_OPEN_DEALING;
-                        }else if (listOpenDealings != null && listAllOpenDealings.size() != 0 && (BaseLimitLine.getYLimitLines() == null || BaseLimitLine.getXLimitLines() == null)) {
+
+                        if (listOpenDealings != null && listOpenDealings.size() != 0 && BaseLimitLine.getYLimitLines() == null && BaseLimitLine.getXLimitLines() == null) {
                             BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
+                        }else if (listOpenDealings != null && listOpenDealings.size() != 0){
+                            BaseLimitLine.addTicketsInLines(listOpenDealings);
                         }
                         OrderAnswer.setInstance(null);
                         break;
@@ -1229,7 +1230,6 @@ public class TerminalFragment extends Fragment {
                         OrderAnswer.setInstance(null);
                         break;
                     case OrdersService.GET_ALL_ORDERS_DEALING:
-
                         break;
                     default:
                         break;
