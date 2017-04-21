@@ -329,7 +329,7 @@ public class TerminalFragment extends Fragment {
         handler = new Handler();
         mTimerRedraw = new Timer();
         startTimerRedrawLimitLines();
-        startProgress();
+        llProgressBar.setVisibility(View.VISIBLE);
         isOpen = true;
         BaseActivity.getResideMenu().setScrolling(false);
         registerBroadcasts();
@@ -450,6 +450,12 @@ public class TerminalFragment extends Fragment {
             User.getInstance().updateBalance(volume);
         }
         ConventString.setBalance(tvBalance);
+    }
+
+    public void setEnabled(boolean enabled) {
+        llLowerTerminal.setEnabled(enabled);
+        llHigherTerminal.setEnabled(enabled);
+        mChart.setEnabled(enabled);
     }
 
     private void startProgress(){

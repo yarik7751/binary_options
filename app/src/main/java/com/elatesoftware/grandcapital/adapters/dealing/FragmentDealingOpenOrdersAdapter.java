@@ -3,6 +3,7 @@ package com.elatesoftware.grandcapital.adapters.dealing;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import com.daimajia.swipe.SwipeLayout;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 
 import java.text.NumberFormat;
@@ -15,8 +16,8 @@ import com.elatesoftware.grandcapital.utils.ConventString;
 
 public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapter {
 
-    //private View.OnClickListener onClickDeleteDealing;
     private OnCloseDealing onCloseDealing;
+    private SwipeLayout slLast;
 
     public FragmentDealingOpenOrdersAdapter(List<OrderAnswer> orderList, OnCloseDealing _onCloseDealing) {
         super(orderList);
@@ -51,6 +52,7 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
         if(!GrandCapitalApplication.isTypeOptionAmerican) {
             orderHolder.slDealing.setSwipeEnabled(false);
         }
+
         orderHolder.imgCloseDealing.setTag(orderList.get(position));
         orderHolder.imgCloseDealing.setOnClickListener(v -> {
             orderHolder.slDealing.close();
