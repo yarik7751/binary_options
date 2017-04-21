@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -46,7 +47,7 @@ public class SupportFragment extends Fragment {
 
     private ScrollView svMessages;
     private EditText edMessage;
-    private LinearLayout llMessages, llMain;
+    private LinearLayout llMessages;
 
     private String caseId = null;
     private String message;
@@ -69,7 +70,8 @@ public class SupportFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_support, container, false);
+        View v = inflater.inflate(R.layout.fragment_support, null);
+        return v;
     }
 
     @Override
@@ -78,17 +80,25 @@ public class SupportFragment extends Fragment {
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_support));
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
         BaseActivity.getToolbar().deselectAll();
+        TerminalFragment.getInstance().setEnabled(false);
 
         svMessages = (ScrollView) view.findViewById(R.id.sv_messages);
         CircleButton cbSendMessage = (CircleButton) view.findViewById(R.id.cb_send_message);
         edMessage = (EditText) view.findViewById(R.id.ed_message);
         llMessages = (LinearLayout) view.findViewById(R.id.ll_messages);
-        llMain = (LinearLayout) view.findViewById(R.id.ll_main);
 
-        llMain.setOnClickListener(new View.OnClickListener() {
+        /*llMain.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {}
-        });
+            public void onClick(View v) {
+                llMain.setBackgroundResource(R.drawable.bg);
+            }
+        });*/
+        /*edMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                llMain.setBackgroundResource(R.drawable.bg);
+            }
+        });*/
 
         cbSendMessage.setOnClickListener(v -> {
             edMessage.setText(edMessage.getText().toString().trim());
@@ -109,7 +119,6 @@ public class SupportFragment extends Fragment {
                     intent.putExtra(ChatService.MESSAGE_BODY, message);
                 }
                 getActivity().startService(intent);
-                addYourMessageInView(message, System.currentTimeMillis(), true);
                 edMessage.setText("");
             }
         });
@@ -129,6 +138,7 @@ public class SupportFragment extends Fragment {
     public void onStop() {
         handler.removeCallbacks(runnablePollChat);
         getActivity().unregisterReceiver(mChatBroadcastReceiver);
+        TerminalFragment.getInstance().setEnabled(true);
         super.onStop();
     }
 
@@ -178,6 +188,7 @@ public class SupportFragment extends Fragment {
             switch(action){
                 case ChatService.CREATE_CHAT:
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && ChatCreateAnswer.getInstance() != null){
+                        addYourMessageInView(message, System.currentTimeMillis(), true);
                         Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
                         caseId = ChatCreateAnswer.getInstance().getCaseId();
                         handler.postDelayed(runnablePollChat, INTERVAL);
@@ -210,6 +221,7 @@ public class SupportFragment extends Fragment {
                     break;
                 case ChatService.SEND_MESSAGE_CHAT:
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SendMessageAnswer.getInstance() != null) {
+                        addYourMessageInView(message, System.currentTimeMillis(), true);
                         Log.d(TAG, SendMessageAnswer.getInstance() + "");
                         GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {

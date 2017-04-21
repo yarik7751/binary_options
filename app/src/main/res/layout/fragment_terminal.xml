@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/fl_main"
-    android:background="@drawable/bg_graphic">
+    android:background="@drawable/bg_graphic"
+    android:clickable="false">
 
     <LinearLayout
         android:id="@+id/progress_bar"
@@ -361,4 +362,11 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <!--<View
+        android:id="@+id/vCurtain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg"
+        android:visibility="gone"/>-->
 </FrameLayout>
