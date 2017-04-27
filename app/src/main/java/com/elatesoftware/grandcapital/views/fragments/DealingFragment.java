@@ -30,7 +30,6 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
 import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingOpenOrdersAdapter;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
-import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,6 +184,7 @@ public class DealingFragment extends Fragment {
         if (currentOrders.size() == 0) {
             mListLayout.setVisibility(View.GONE);
             mNoOrdersLayout.setVisibility(View.VISIBLE);
+            mProgressLayout.setVisibility(View.GONE);
         } else {
             mListLayout.setVisibility(View.VISIBLE);
             mNoOrdersLayout.setVisibility(View.GONE);
@@ -255,13 +255,15 @@ public class DealingFragment extends Fragment {
                     } else {
                         mAdapterOpen = null;
                         if(mAdapterClose == null) {
-                            mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
-                            mRecyclerView.setAdapter(mAdapterClose);
+
                         }
+                        mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
+                        mRecyclerView.setAdapter(mAdapterClose);
+                        //mProgressLayout.setVisibility(View.GONE);
                     }
+                    setListHeader(currentTabPosition);
+                    mProgressLayout.setVisibility(View.GONE);
                 }
-                mProgressLayout.setVisibility(View.GONE);
-                setListHeader(currentTabPosition);
             } else {
                 if (isAdded()) {
                     mProgressLayout.setVisibility(View.GONE);

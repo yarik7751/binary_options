@@ -139,6 +139,7 @@ public class TerminalFragment extends Fragment {
     private TextView tvErrorSignal;
     private RelativeLayout rlErrorSignal;
     private TextView tvValueRewardTerminal;
+    private View vCurtain ;
 
     private Drawable drawableMarkerDealing;
     private ImageView imgPointCurrent;
@@ -180,6 +181,12 @@ public class TerminalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
+        parentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "parentView CLICK");
+            }
+        });
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onCreateView Terminal");
         BaseActivity.backToRootFragment = false;
         BaseActivity.getResideMenu().setScrolling(false);
@@ -329,7 +336,7 @@ public class TerminalFragment extends Fragment {
         handler = new Handler();
         mTimerRedraw = new Timer();
         startTimerRedrawLimitLines();
-        startProgress();
+        llProgressBar.setVisibility(View.VISIBLE);
         isOpen = true;
         BaseActivity.getResideMenu().setScrolling(false);
         registerBroadcasts();
@@ -450,6 +457,20 @@ public class TerminalFragment extends Fragment {
             User.getInstance().updateBalance(volume);
         }
         ConventString.setBalance(tvBalance);
+    }
+
+    public void setEnabled(boolean enabled) {
+        llLowerTerminal.setEnabled(enabled);
+        llHigherTerminal.setEnabled(enabled);
+        mChart.setEnabled(enabled);
+        if(vCurtain  == null) {
+            vCurtain  = LayoutInflater.from(getContext()).inflate(R.layout.fragment_support, null);
+        }
+        if(enabled && vCurtain .getParent() != null) {
+            flMain.removeView(vCurtain );
+        } else if(!enabled && vCurtain .getParent() == null) {
+            flMain.addView(vCurtain );
+        }
     }
 
     private void startProgress(){

@@ -2,6 +2,7 @@ package com.elatesoftware.grandcapital.adapters.dealing;
 
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,8 @@ import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import java.util.List;
 
 class FragmentDealingOrdersAdapter extends GrandCapitalListAdapter {
+
+    public static final String TAG = "FragmentDealingOrdersAdapter_Logs";
 
     protected List<OrderAnswer> orderList;
 
@@ -36,6 +39,7 @@ class FragmentDealingOrdersAdapter extends GrandCapitalListAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
+
     }
 
     @Override
