@@ -38,6 +38,7 @@ import okhttp3.CookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -48,10 +49,12 @@ public class GrandCapitalApi {
     public static final String TAG = "GrandCapitalApi_Log";
 
     private static IGrandCapitalApi grandCapitalApiService = null;
+    private static IGrandCapitalApi grandCapitalApiSimpleService = null;
+    private static IGrandCapitalApi grandCapitalApiServiceChat = null;
 
     private static final String BASE_URL = "https://grandcapital.ru";
     public static final String SOCKET_URL = "wss://ws.grandcapital.net/";
-    private static final String BASE_URL_CHART = "https://www.snapengage.com";
+    private static final String BASE_URL_CHAT = "https://www.snapengage.com";
     static final String API_KEY_CHART = "0a79a7fafe494bdca35793a2e68cd847";
 
     private final static int CODE_SUCCESS = 200;
@@ -94,22 +97,21 @@ public class GrandCapitalApi {
         return grandCapitalApiService;
     }
     private static IGrandCapitalApi getApiServiceChart() {
-        if (grandCapitalApiService == null) {
-            CookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(GrandCapitalApplication.getAppContext()));
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .cookieJar(cookieJar)
-                    .connectTimeout(5, TimeUnit.MINUTES)
-                    .writeTimeout(5, TimeUnit.MINUTES)
-                    .readTimeout(5, TimeUnit.MINUTES)
-                    .build();
+        if (grandCapitalApiServiceChat == null) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+            httpClient.addInterceptor(interceptor);
+
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL_CHART)
+                    .baseUrl(BASE_URL_CHAT)
                     .addConverterFactory(GsonConverterFactory.create())
-                    .client(okHttpClient)
+                    .client(httpClient.build())
                     .build();
-            grandCapitalApiService = retrofit.create(IGrandCapitalApi.class);
+            grandCapitalApiServiceChat = retrofit.create(IGrandCapitalApi.class);
         }
-        return grandCapitalApiService;
+        return grandCapitalApiServiceChat;
     }
 
     public static String authorizationRequest(String login, String password){

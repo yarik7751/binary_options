@@ -270,15 +270,24 @@ public class TerminalFragment extends Fragment {
         });
         etValueTime.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.d(TAG, "beforeTextChanged");
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG, "onTextChanged");
+                if(s.toString().length() > 4) {
+                    etValueTime.setText(s.toString().substring(0, 4));
+                    etValueTime.setSelection(etValueTime.getText().toString().length());
+                }
                 requestEarlyClosure();
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+                Log.d(TAG, "afterTextChanged");
+            }
         });
 
         tvMinusAmount.setOnClickListener(v -> ConventString.changeAmountValue(etValueAmount, false));
