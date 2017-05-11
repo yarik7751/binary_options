@@ -265,6 +265,7 @@ public class DealingFragment extends Fragment {
                     mProgressLayout.setVisibility(View.GONE);
                 }
             } else {
+                Log.d(TAG, "answer: " + response);
                 if (isAdded()) {
                     mProgressLayout.setVisibility(View.GONE);
                     CustomDialog.showDialogInfo(getActivity(),

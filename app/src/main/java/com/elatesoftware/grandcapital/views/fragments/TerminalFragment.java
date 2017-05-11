@@ -110,6 +110,7 @@ public class TerminalFragment extends Fragment {
     private boolean isFirstDrawPoint = true;
     private boolean isFirstZoom = true;
     private boolean isFirstLoopPoint = true;
+    private boolean isTimeIterator, isOpenKeyboard = false;
     private static boolean isFinishedDrawPoint = true;
 
     public LineChart mChart;
@@ -241,6 +242,8 @@ public class TerminalFragment extends Fragment {
         tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " 0.0(0%)");
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
+            isTimeIterator = true;
+            isOpenKeyboard = isOpen1;
             if (etValueAmount.isFocused()) {
                 ConventString.setMaskAmount(etValueAmount, isOpen1);
             }
@@ -270,21 +273,45 @@ public class TerminalFragment extends Fragment {
         });
         etValueTime.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.d(TAG, "beforeTextChanged");
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG, "onTextChanged");
+                if(s.toString().length() > 4 && !isTimeIterator) {
+                    etValueTime.setText(s.toString().substring(0, 4));
+                    etValueTime.setSelection(etValueTime.getText().toString().length());
+                }
                 requestEarlyClosure();
             }
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+                isTimeIterator = false;
+                Log.d(TAG, "afterTextChanged");
+            }
         });
 
-        tvMinusAmount.setOnClickListener(v -> ConventString.changeAmountValue(etValueAmount, false));
-        tvPlusAmount.setOnClickListener(v -> ConventString.changeAmountValue(etValueAmount, true));
-        tvPlusTime.setOnClickListener(v -> ConventString.changeTimeValue(etValueTime, true));
-        tvMinusTime.setOnClickListener(v -> ConventString.changeTimeValue(etValueTime, false));
+        tvMinusAmount.setOnClickListener(v -> {
+            ConventString.changeAmountValue(etValueAmount, false);
+        });
+        tvPlusAmount.setOnClickListener(v -> {
+            ConventString.changeAmountValue(etValueAmount, true);
+        });
+        tvPlusTime.setOnClickListener(v ->{
+                isTimeIterator = true;
+            //if(!isOpenKeyboard) {
+                ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard);
+            //}
+        });
+        tvMinusTime.setOnClickListener(v -> {
+            isTimeIterator = true;
+            //if(!isOpenKeyboard) {
+                ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard);
+            //}
+        });
 
         tvLeftActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {

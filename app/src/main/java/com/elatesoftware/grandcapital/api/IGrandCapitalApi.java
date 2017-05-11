@@ -82,19 +82,27 @@ interface IGrandCapitalApi {
                                      @Path("ticket") Integer ticket);
 
     @FormUrlEncoded
-    @Headers("X-Api-Key:" + GrandCapitalApi.API_KEY_CHART)
+    @Headers({
+            "X-Api-Key: " + GrandCapitalApi.API_KEY_CHART
+    })
     @POST("/api/v1/chat")
     Call<ChatCreateAnswer> createNewChat(
             @Field("widgetId") String widgetId,
             @Field("visitorMessage") String visitorMessage
     );
 
-    @Headers("X-Api-Key:" +  GrandCapitalApi.API_KEY_CHART)
+    @Headers({
+            "X-Api-Key: " + GrandCapitalApi.API_KEY_CHART,
+            "User-Agent: runscope/0.1"
+    })
     @GET("/api/v1/chat/poll/{caseId}")
     Call<PollChatAnswer> pollChat(@Path("caseId") String caseId);
 
     @FormUrlEncoded
-    @Headers("X-Api-Key:" +  GrandCapitalApi.API_KEY_CHART)
+    @Headers({
+            "X-Api-Key: " + GrandCapitalApi.API_KEY_CHART,
+            "User-Agent: runscope/0.1"
+    })
     @PUT("/api/v1/chat")
     Call<SendMessageAnswer> sendMessageChat(
             @Field("caseId") String caseId,

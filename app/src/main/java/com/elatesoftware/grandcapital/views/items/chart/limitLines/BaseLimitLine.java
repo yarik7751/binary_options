@@ -2,6 +2,7 @@ package com.elatesoftware.grandcapital.views.items.chart.limitLines;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import com.elatesoftware.grandcapital.R;
@@ -29,6 +30,8 @@ import java.util.List;
  */
 
 public class BaseLimitLine extends LimitLine {
+
+    public static final String TAG = "BaseLimitLine_Log";
 
     static Bitmap bitmapIconRedYLabel;
     static Bitmap bitmapIconGreenYLabel;
@@ -225,7 +228,7 @@ public class BaseLimitLine extends LimitLine {
         }
         return null;
     }
-    private static DealingLine selectOnClickLine(MPPointD pointClick, float xMax){
+    private static DealingLine selectOnClickLine(MPPointD pointClick, float xMax) {
         List<XDealingLine> listLimitX = BaseLimitLine.getXLimitLines();
         List<YDealingLine> listLimitY = BaseLimitLine.getYLimitLines();
         List<DealingLine> listLimits = new ArrayList<>();
@@ -246,6 +249,7 @@ public class BaseLimitLine extends LimitLine {
                     listSelectedLines.add(line);
                 }
             }
+            Log.d(TAG, "listSelectedLines.size: " + listSelectedLines.size());
             if(listSelectedLines.size() != 0){
                 if(listSelectedLines.size() == 1){
                     return listSelectedLines.get(0);
