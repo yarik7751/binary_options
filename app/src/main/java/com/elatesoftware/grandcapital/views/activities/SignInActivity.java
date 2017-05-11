@@ -80,10 +80,12 @@ public class SignInActivity extends CustomFontsActivity {
         });
         etPassword.setOnFocusChangeListener((v, hasFocus) -> tilPassword.setError(null));
         tvForgotPassword.setOnClickListener(v -> {
-            llProgress.setVisibility(View.VISIBLE);
-            Intent intent = new Intent(SignInActivity.this, WebActivity.class);
-            startActivity(intent);
-            llProgress.setVisibility(View.GONE);
+//            llProgress.setVisibility(View.VISIBLE);
+//            Intent intent = new Intent(SignInActivity.this, WebActivity.class);
+//            startActivity(intent);
+//            llProgress.setVisibility(View.GONE);
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.link_company)));
+            startActivity(browserIntent);
         });
     }
 
@@ -95,8 +97,7 @@ public class SignInActivity extends CustomFontsActivity {
             if (checkInput(login, password)) {
                 llProgress.setVisibility(View.VISIBLE);
                 Intent intentMyIntentService = new Intent(this, SignInService.class);
-                startService(intentMyIntentService.putExtra(SignInService.LOGIN, login)
-                                                  .putExtra(SignInService.PASSWORD, password));
+                startService(intentMyIntentService.putExtra(SignInService.LOGIN, login).putExtra(SignInService.PASSWORD, password));
             } else {
                 llProgress.setVisibility(View.GONE);
                 btnSignIn.setEnabled(true);
@@ -116,7 +117,8 @@ public class SignInActivity extends CustomFontsActivity {
             llProgress.setVisibility(View.GONE);
             if (response != null) {
                 if (response.equals(Const.RESPONSE_CODE_ERROR)) {
-                    tilPassword.setError(getString(R.string.error_wront_password));
+                    CustomDialog.showDialogInfo(SignInActivity.this, getString(R.string.error),
+                            getString(R.string.no_correct_values));
                 } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                     final String login = etLogin.getText().toString();
                     if(AuthorizationAnswer.getInstance() != null){

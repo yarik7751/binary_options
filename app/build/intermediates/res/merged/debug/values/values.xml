@@ -786,7 +786,7 @@
     <string name="signin_page_forgot_password_link_text">Forgot password?</string>
     <string name="signin_page_login_field_text">Login</string>
     <string name="signin_page_password_field_text">Password</string>
-    <string name="signin_page_signup_link_text">Don\'t have an Account? Sign up!</string>
+    <string name="signin_page_signup_link_text">Don\'t have an Account? Sign up</string>
     <string name="signup_page_email_field">Email</string>
     <string name="signup_page_log_in_field">Log in</string>
     <string name="signup_page_name_field">First name</string>

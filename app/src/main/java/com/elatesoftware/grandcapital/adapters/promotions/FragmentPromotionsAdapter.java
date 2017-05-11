@@ -15,6 +15,7 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -46,13 +47,14 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
-
         FragmentPromotionsViewHolder promotionsViewHolder = (FragmentPromotionsViewHolder) holder;
         promotionsViewHolder.tvName.setText(binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
         promotionsViewHolder.imgLink.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
-            WebFragment webFragment = WebFragment.getInstance(binaryOptionAnswer.getElements().get(position).getPic());
-            BaseActivity.addNextFragment(webFragment);
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(binaryOptionAnswer.getElements().get(position).getPic()));
+            context.startActivity(browserIntent);
+//            WebFragment webFragment = WebFragment.getInstance(binaryOptionAnswer.getElements().get(position).getPic());
+//            BaseActivity.addNextFragment(webFragment);
             /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(binaryOptionAnswer.getElements().get(position).getPic()));
             context.startActivity(browserIntent);*/
         });

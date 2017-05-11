@@ -248,7 +248,6 @@ public class SupportFragment extends Fragment {
     }
 
     private void loadChatHistory() {
-
         List<HistoryMessage> history = HistoryMessage.listAll(HistoryMessage.class);
         Log.d(TAG, "dbHistoryList: " + history);
         Log.d(TAG, "dbHistoryList.size(): " + history.size());

@@ -35,7 +35,7 @@
 
     <!--Signin activity-->
     <string name="signin_page_button_text">SE CONNECTER</string>
-    <string name="signin_page_signup_link_text">Vous n\'avez pas de Compte? Inscrivez-vous!</string>
+    <string name="signin_page_signup_link_text">Vous n\'avez pas de Compte? Inscrivez-vous</string>
     <string name="signin_page_forgot_password_link_text">Mot de passe oublié?</string>
     <string name="signin_page_password_field_text">Mot de passe</string>
     <string name="signin_page_login_field_text">Identification</string>

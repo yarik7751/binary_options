@@ -364,14 +364,12 @@ public class BaseActivity extends CustomFontsActivity {
             getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_promotions));
             getToolbar().hideTabs();
             getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
-        }
-        if(sMainTagFragment.equals(HowItWorksFragment.class.getName())) {
+        }else if(sMainTagFragment.equals(HowItWorksFragment.class.getName())) {
             getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_how_it_works));
             getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
             getToolbar().deselectAll();
             getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
-        }
-        if(sMainTagFragment.equals(DepositFragment.class.getName())) {
+        }else if(sMainTagFragment.equals(DepositFragment.class.getName())) {
             getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_deposit));
             getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
             getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);

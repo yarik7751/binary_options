@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
+    android:focusableInTouchMode="true"
     tools:context=".views.activities.SignInActivity"
     android:background="@drawable/bg">
 
