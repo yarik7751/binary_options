@@ -15,14 +15,13 @@
 
         <ImageButton
             android:id="@+id/menu_burger"
-            android:layout_width="40dp"
-            android:layout_height="32dp"
+            android:layout_width="20dp"
+            android:layout_height="12dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="9dp"
-            android:padding="10dp"
             android:scaleType="fitXY"
             android:background="@null"
-            android:src="@drawable/menu_icon" />
+            android:src="@drawable/menu" />
 
         <TextView
             android:id="@+id/page_title"

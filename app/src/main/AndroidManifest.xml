@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
+    <!--android:hardwareAccelerated="false"-->
     <application
         android:name=".app.GrandCapitalApplication"
         android:allowBackup="true"
@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:largeHeap="true"
-        android:hardwareAccelerated="false"
+
         android:theme="@style/AppTheme">
 
         <meta-data
