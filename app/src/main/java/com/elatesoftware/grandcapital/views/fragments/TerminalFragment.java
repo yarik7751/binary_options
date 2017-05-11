@@ -110,7 +110,7 @@ public class TerminalFragment extends Fragment {
     private boolean isFirstDrawPoint = true;
     private boolean isFirstZoom = true;
     private boolean isFirstLoopPoint = true;
-    private boolean isTimeIterator = false;
+    private boolean isTimeIterator, isOpenKeyboard = false;
     private static boolean isFinishedDrawPoint = true;
 
     public LineChart mChart;
@@ -243,6 +243,7 @@ public class TerminalFragment extends Fragment {
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
             isTimeIterator = true;
+            isOpenKeyboard = isOpen1;
             if (etValueAmount.isFocused()) {
                 ConventString.setMaskAmount(etValueAmount, isOpen1);
             }
@@ -300,12 +301,16 @@ public class TerminalFragment extends Fragment {
             ConventString.changeAmountValue(etValueAmount, true);
         });
         tvPlusTime.setOnClickListener(v ->{
-            isTimeIterator = true;
-            ConventString.changeTimeValue(etValueTime, true);
+                isTimeIterator = true;
+            //if(!isOpenKeyboard) {
+                ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard);
+            //}
         });
         tvMinusTime.setOnClickListener(v -> {
             isTimeIterator = true;
-            ConventString.changeTimeValue(etValueTime, false);
+            //if(!isOpenKeyboard) {
+                ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard);
+            //}
         });
 
         tvLeftActive.setOnClickListener(v -> {

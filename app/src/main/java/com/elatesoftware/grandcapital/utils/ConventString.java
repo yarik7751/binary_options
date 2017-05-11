@@ -53,7 +53,7 @@ public class ConventString {
             }
         }
     }
-    public static void changeTimeValue(EditText v, boolean isAdd) {
+    public static void changeTimeValue(EditText v, boolean isAdd, boolean isOpenKeyboard) {
         String str = v.getText().toString();
         str = str.replace(" MIN", "");
         int time = Integer.parseInt(str);
@@ -65,7 +65,7 @@ public class ConventString {
                 time = 0;
             }
         }
-        v.setText(time + " MIN");
+        v.setText(time + (isOpenKeyboard ? "" : " MIN"));
         GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CHANGE_TIME, isAdd ? "+" : "-", (long) time);
     }
     public static void changeAmountValue(EditText v, boolean isAdd) {
