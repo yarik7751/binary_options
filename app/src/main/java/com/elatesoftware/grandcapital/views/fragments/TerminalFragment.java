@@ -223,7 +223,6 @@ public class TerminalFragment extends Fragment {
         tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
         tvValueRewardTerminal = (TextView) parentView.findViewById(R.id.tvValueRewardTerminal);
-
         return parentView;
     }
     @Override
@@ -351,7 +350,6 @@ public class TerminalFragment extends Fragment {
             llHigherTerminal.setEnabled(false);
             requestMakeDealing(Const.CMD_HEIGHT);
         });
-
         initializationCurrentPoint();
         initializationChart();
         setSizeHeight();
@@ -485,7 +483,6 @@ public class TerminalFragment extends Fragment {
         }
         ConventString.setBalance(tvBalance);
     }
-
     public void setEnabled(boolean enabled) {
         llLowerTerminal.setEnabled(enabled);
         llHigherTerminal.setEnabled(enabled);
@@ -499,7 +496,6 @@ public class TerminalFragment extends Fragment {
             flMain.addView(vCurtain );
         }
     }
-
     private void startProgress(){
         llProgressBar.setVisibility(View.VISIBLE);
         setEnabledBtnTerminal(false);
@@ -578,6 +574,8 @@ public class TerminalFragment extends Fragment {
         rightYAxis.setValueFormatter((value, axis) -> String.format("%.5f", value).replace(',', '.'));
         rightYAxis.setStartAtZero(false);
         rightYAxis.setDrawLimitLinesBehindData(true);
+
+        BaseLimitLine.initialization();
 
         mChart.setOnChartGestureListener(new OnChartGestureListener() {
             @Override
@@ -1275,11 +1273,26 @@ public class TerminalFragment extends Fragment {
                         CheckDealingService.setListOrderAnswer(listAllOpenDealings);
                         parseClosingDealings(listAllClosedDealings);
 
-                        if (listOpenDealings != null && listOpenDealings.size() != 0 && BaseLimitLine.getYLimitLines() == null && BaseLimitLine.getXLimitLines() == null) {
-                            BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
-                        }else if (listOpenDealings != null && listOpenDealings.size() != 0){
-                            BaseLimitLine.addTicketsInLines(listOpenDealings);
+                        if(listOpenDealings != null && listOpenDealings.size() != 0){
+                            int i = 0;
+                            if(BaseLimitLine.getYLimitLines() != null){
+                                i = BaseLimitLine.getYLimitLines().size();
+                            }
+                            if(BaseLimitLine.getXLimitLines() != null){
+                                i = BaseLimitLine.getXLimitLines().size();
+                            }
+                            if(i < listOpenDealings.size()){
+                                BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
+                                if (currEntry != null) {
+                                    SocketLine.drawSocketLine(currEntry);
+                                }
+                            }else{
+                                BaseLimitLine.addTicketsInLines(listOpenDealings);
+                            }
                         }
+                        /*if (listOpenDealings != null && listOpenDealings.size() != 0 && BaseLimitLine.getYLimitLines() == null && BaseLimitLine.getXLimitLines() == null) {
+                            BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
+                        }else*/
                         OrderAnswer.setInstance(null);
                         break;
                     case OrdersService.GET_TICKET_ORDER:

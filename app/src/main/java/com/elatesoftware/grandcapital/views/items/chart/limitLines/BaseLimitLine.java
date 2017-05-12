@@ -50,15 +50,11 @@ public class BaseLimitLine extends LimitLine {
 
     private int maxWeightCanvasLabel;
 
-    static {
-        initialization();
-    }
-
     BaseLimitLine (float limit, String label) {
         super(limit, label);
     }
 
-    private static void initialization(){
+    public static void initialization(){
         if(TerminalFragment.getInstance() != null){
             mChart = TerminalFragment.getInstance().mChart;
             rightYAxis = TerminalFragment.getInstance().rightYAxis;
