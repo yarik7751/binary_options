@@ -129,34 +129,34 @@ public class ToolbarFragment extends Fragment {
         showTabs();
         switch (type) {
             case TOOLBAR_TERMINALE_FRAGMENT:
-                mTabLayout.showTab(0);
-                mTabLayout.showTab(1);
-                mTabLayout.showTab(2);
-                mTabLayout.hideTab(3);
-                mTabLayout.showTab(4);
+                mTabLayout.showTab(BaseActivity.SIGNAL_POSITION);
+                mTabLayout.showTab(BaseActivity.TERMINAL_POSITION);
+                mTabLayout.showTab(BaseActivity.DEALING_POSITION);
+                mTabLayout.hideTab(BaseActivity.REFRESH_POSITION);
+                mTabLayout.showTab(BaseActivity.QUOTES_POSITION);
                 break;
             case TOOLBAR_OTHER_FRAGMENT:
-                mTabLayout.hideTab(0);
-                mTabLayout.showTab(1);
-                mTabLayout.showTab(2);
-                mTabLayout.hideTab(3);
-                mTabLayout.showTab(4);
+                mTabLayout.hideTab(BaseActivity.SIGNAL_POSITION);
+                mTabLayout.showTab(BaseActivity.TERMINAL_POSITION);
+                mTabLayout.showTab(BaseActivity.DEALING_POSITION);
+                mTabLayout.hideTab(BaseActivity.REFRESH_POSITION);
+                mTabLayout.showTab(BaseActivity.QUOTES_POSITION);
                 break;
             case TOOLBAR_EMPTY_FRAGMENT:
                 //mTabLayout.setVisibility(View.INVISIBLE);
                 //hideTabs();
-                mTabLayout.hideTab(0);
-                mTabLayout.hideTab(1);
-                mTabLayout.hideTab(2);
-                mTabLayout.hideTab(3);
-                mTabLayout.hideTab(4);
+                mTabLayout.hideTab(BaseActivity.SIGNAL_POSITION);
+                mTabLayout.hideTab(BaseActivity.TERMINAL_POSITION);
+                mTabLayout.hideTab(BaseActivity.DEALING_POSITION);
+                mTabLayout.hideTab(BaseActivity.REFRESH_POSITION);
+                mTabLayout.hideTab(BaseActivity.QUOTES_POSITION);
                 break;
             case TOOLBAR_REFRESH_FRAGMENT:
-                mTabLayout.hideTab(0);
-                mTabLayout.showTab(1);
-                mTabLayout.showTab(2);
-                mTabLayout.showTab(3);
-                mTabLayout.showTab(4);
+                mTabLayout.hideTab(BaseActivity.SIGNAL_POSITION);
+                mTabLayout.showTab(BaseActivity.TERMINAL_POSITION);
+                mTabLayout.showTab(BaseActivity.DEALING_POSITION);
+                mTabLayout.showTab(BaseActivity.REFRESH_POSITION);
+                mTabLayout.showTab(BaseActivity.QUOTES_POSITION);
                 break;
             default:
                 break;

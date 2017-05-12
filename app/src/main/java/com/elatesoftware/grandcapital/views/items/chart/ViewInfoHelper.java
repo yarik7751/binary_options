@@ -60,7 +60,7 @@ public class ViewInfoHelper {
     private void showViewCloseDealing(OrderAnswer answer) {
         if (answer != null) {
             ((TextView) mCloseDealingView.findViewById(R.id.tvActiveValue)).setText(String.valueOf(answer.getSymbol()));
-            ((TextView) mCloseDealingView.findViewById(R.id.tvPriceValue)).setText(ConventString.getRoundNumber(answer.getClosePrice()));
+            ((TextView) mCloseDealingView.findViewById(R.id.tvPriceValue)).setText(ConventString.getRoundNumber(5, answer.getClosePrice()));
             ((TextView) mCloseDealingView.findViewById(R.id.tvProfitValue)).setText(String.valueOf(answer.getProfitStr()));
             View vOpenDealings = rlChart.findViewWithTag(TAG_OPEN_DEALING);
             if(vOpenDealings != null) {

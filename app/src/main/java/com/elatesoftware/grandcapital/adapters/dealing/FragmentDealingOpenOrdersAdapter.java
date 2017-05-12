@@ -31,8 +31,8 @@ public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapt
 
         FragmentDealingViewHolder orderHolder = (FragmentDealingViewHolder) holder;
         orderHolder.mFirstColumn.setText(orderList.get(position).getSymbol());
-        orderHolder.mSecondColumn.setText(ConventString.getRoundNumber(orderList.get(position).getOpenPrice()));
-        orderHolder.mThirdColumn.setText(ConventString.getRoundNumber(orderList.get(position).getClosePrice()));
+        orderHolder.mSecondColumn.setText(ConventString.getRoundNumber(5, orderList.get(position).getOpenPrice()));
+        orderHolder.mThirdColumn.setText(ConventString.getRoundNumber(5, orderList.get(position).getClosePrice()));
 
         double amount = ((double) orderList.get(position).getVolume()) / 100;
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
