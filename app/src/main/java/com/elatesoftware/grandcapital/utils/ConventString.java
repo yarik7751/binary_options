@@ -68,7 +68,16 @@ public class ConventString {
         v.setText(time + (isOpenKeyboard ? "" : " MIN"));
         GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CHANGE_TIME, isAdd ? "+" : "-", (long) time);
     }
-    public static void changeAmountValue(EditText v, boolean isAdd) {
+
+    public static void setTimeValue(EditText v, int value, boolean isOpenKeyboard) {
+        v.setText(value + (isOpenKeyboard ? "" : " MIN"));
+    }
+
+    public static void setAmountValue(EditText v, double value, boolean isOpenKeyboard) {
+        v.setText((isOpenKeyboard ? "" : "$") + value);
+    }
+
+    public static void changeAmountValue(EditText v, boolean isAdd, boolean isOpenKeyboard) {
         String str = v.getText().toString();
         str = str.replace("$", "");
         double amout = Double.parseDouble(str);
@@ -80,7 +89,7 @@ public class ConventString {
                 amout = 0;
             }
         }
-        v.setText("$" + amout);
+        v.setText((isOpenKeyboard ? "" : "$") + amout);
         GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS, isAdd ? "+" : "-", (long) amout);
     }
     public static double getAmountValue(EditText v) {
@@ -89,7 +98,13 @@ public class ConventString {
             valueStr = "0";
         }
         valueStr = valueStr.replaceAll("[^0-9.]", "");
-        return Double.valueOf(valueStr);
+        double result = 0d;
+        try {
+            result = Double.valueOf(valueStr);
+            return result;
+        } catch (Exception e) {
+            return result;
+        }
     }
 
     public static int getTimeValue(EditText v) {
@@ -134,8 +149,8 @@ public class ConventString {
         }
     }
 
-    public static String getRoundNumber(double number) {
-        String format = String.format("%.5f", number);
+    public static String getRoundNumber(int signs, double number) {
+        String format = String.format("%." + signs + "f", number);
         format = format.replace(",", ".");
         while (format.charAt(format.length() - 1) == '0' || format.charAt(format.length() - 1) == '.') {
             boolean isBreak = format.charAt(format.length() - 1) == '.';
@@ -153,6 +168,6 @@ public class ConventString {
 
     public static String getStringEarlyClosure(EditText view, int percent){
         double earlyClosure = ConventString.getAmountValue(view) * percent / 100.000;
-        return earlyClosure + "(" + (earlyClosure == 0 ? 0 : percent) + "%)";
+        return getRoundNumber(4, earlyClosure) + "(" + (earlyClosure == 0 ? 0 : percent) + "%)";
     }
 }

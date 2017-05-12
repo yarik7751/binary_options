@@ -254,6 +254,9 @@ public class TerminalFragment extends Fragment {
         });
         etValueTime.setOnFocusChangeListener((v, hasFocus) -> {
             if(etValueTime != null) {
+                if(hasFocus == false) {
+                    isTimeIterator = true;
+                }
                 ConventString.setMaskTime(etValueTime, hasFocus);
             }
         });
@@ -290,21 +293,21 @@ public class TerminalFragment extends Fragment {
         });
 
         tvMinusAmount.setOnClickListener(v -> {
-            ConventString.changeAmountValue(etValueAmount, false);
+            ConventString.changeAmountValue(etValueAmount, false, isOpenKeyboard && etValueAmount.isFocused());
         });
         tvPlusAmount.setOnClickListener(v -> {
-            ConventString.changeAmountValue(etValueAmount, true);
+            ConventString.changeAmountValue(etValueAmount, true, isOpenKeyboard && etValueAmount.isFocused());
         });
         tvPlusTime.setOnClickListener(v ->{
                 isTimeIterator = true;
             //if(!isOpenKeyboard) {
-                ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard);
+                ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard && etValueTime.isFocused());
             //}
         });
         tvMinusTime.setOnClickListener(v -> {
             isTimeIterator = true;
             //if(!isOpenKeyboard) {
-                ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard);
+                ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard && etValueTime.isFocused());
             //}
         });
 
@@ -1216,8 +1219,12 @@ public class TerminalFragment extends Fragment {
                     currentDealing = new OrderAnswer();
                 }
                 isTimeIterator = true;
-                etValueAmount.setText(getResources().getString(R.string.zero_dollars));
-                etValueTime.setText(getResources().getString(R.string.zero_min));
+
+                ConventString.setAmountValue(etValueAmount, 0, etValueAmount.isFocused());
+                ConventString.setTimeValue(etValueTime, 0, etValueTime.isFocused());
+                /*etValueAmount.setText(getResources().getString(R.string.zero_dollars));
+                etValueTime.setText(getResources().getString(R.string.zero_min));*/
+
                 currentDealing.setOpenPrice(mCurrentValueY);
                 currentDealing.setSymbol(intent.getStringExtra(MakeDealingService.SYMBOL));
                 currentDealing.setCmd(Integer.valueOf(intent.getStringExtra(MakeDealingService.CMD)));
