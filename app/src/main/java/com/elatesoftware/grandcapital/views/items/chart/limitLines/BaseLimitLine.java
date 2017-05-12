@@ -18,11 +18,9 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.utils.MPPointD;
 import com.google.gson.Gson;
-import com.orm.util.Collection;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -93,6 +91,9 @@ public class BaseLimitLine extends LimitLine {
         }
     }
     public static List<YDealingLine> getYLimitLines(){
+        if(rightYAxis.getLimitLines() != null && rightYAxis.getLimitLines().size() == 1 && rightYAxis.getLimitLines().get(0) instanceof SocketLine){
+            return null;
+        }
         List<YDealingLine> list = new ArrayList<>();
         if(rightYAxis.getLimitLines() != null && rightYAxis.getLimitLines().size() != 0){
             for(LimitLine l: rightYAxis.getLimitLines()){
@@ -361,7 +362,11 @@ public class BaseLimitLine extends LimitLine {
                                                    (new Gson().fromJson(p2.getLabel(), OrderAnswer.class).getOpenTime()))));
             Collections.sort(listOrders,(o1, o2) -> o1.getOpenTime().compareTo(o2.getOpenTime()));
             if(listOrders.size() != listLines.size()){
-                listLines = listLines.subList(0, listOrders.size()-1);
+                if(listOrders.size() == 1){
+                   // listLines = listLines.get(0);
+                }else{
+                    listLines = listLines.subList(0, listOrders.size()-1);
+                }
             }
             for(int i= 0; i< listLines.size(); i++){
                 OrderAnswer orderAnswer = new Gson().fromJson(listLines.get(i).getLabel(), OrderAnswer.class);
@@ -377,5 +382,4 @@ public class BaseLimitLine extends LimitLine {
     public void setMaxWeightCanvasLabel(int maxWeightCanvasLabel) {
         this.maxWeightCanvasLabel = maxWeightCanvasLabel;
     }
-
 }

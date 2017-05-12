@@ -58,12 +58,13 @@ public class SignInActivity extends CustomFontsActivity {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_SIGN_UP));
             startActivity(browserIntent);
         });
-        btnSignIn.setOnClickListener(view -> signIn());
+        btnSignIn.setOnClickListener(view -> {{
+            etLogin.setText("10031740");
+            etPassword.setText("2nFaxHcy");
+            signIn();
+        }});
         tilLogin.setErrorEnabled(true);
         tilPassword.setErrorEnabled(true);
-
-        /*etLogin.setText("10031740");
-        etPassword.setText("2nFaxHcy");*/
 
         etLogin.setOnFocusChangeListener((v, hasFocus) -> tilLogin.setError(null));
         etPassword.setOnEditorActionListener((v, actionId, event) -> {
@@ -80,10 +81,6 @@ public class SignInActivity extends CustomFontsActivity {
         });
         etPassword.setOnFocusChangeListener((v, hasFocus) -> tilPassword.setError(null));
         tvForgotPassword.setOnClickListener(v -> {
-//            llProgress.setVisibility(View.VISIBLE);
-//            Intent intent = new Intent(SignInActivity.this, WebActivity.class);
-//            startActivity(intent);
-//            llProgress.setVisibility(View.GONE);
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.link_company)));
             startActivity(browserIntent);
         });
@@ -105,8 +102,7 @@ public class SignInActivity extends CustomFontsActivity {
         } else {
             llProgress.setVisibility(View.GONE);
             btnSignIn.setEnabled(true);
-            CustomDialog.showDialogInfo(this, getString(R.string.no_internet_connection_title),
-                                             getString(R.string.no_internet_connection_text));
+            CustomDialog.showDialogInfo(this, getString(R.string.no_internet_connection_title), getString(R.string.no_internet_connection_text));
         }
     }
 

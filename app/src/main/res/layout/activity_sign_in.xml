@@ -41,13 +41,13 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/emailEditTextLayout"
                 android:textColorHint="@color/editTextHint">
-
+                <!--android:text="@string/userLoginAmerican"-->
                 <EditText
                     android:id="@+id/login"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/signin_page_login_field_text"
-                    android:text="@string/userLoginAmerican"
+
                     android:imeActionId="@+id/login"
                     android:imeOptions="actionUnspecified"
                     android:maxLines="1"
@@ -61,7 +61,7 @@
                 android:id="@+id/passwordEditTextLayout"
                 app:passwordToggleEnabled="false"
                 android:textColorHint="@color/editTextHint">
-
+                <!--android:text="@string/userPasswordAmerican"-->
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
@@ -70,7 +70,7 @@
                     android:imeActionId="@+id/password"
                     android:imeActionLabel="@string/signin_page_button_text"
                     android:imeOptions="actionGo"
-                    android:text="@string/userPasswordAmerican"
+
                     android:inputType="textPassword"
                     app:hintEnabled="false"
                     android:maxLines="1"

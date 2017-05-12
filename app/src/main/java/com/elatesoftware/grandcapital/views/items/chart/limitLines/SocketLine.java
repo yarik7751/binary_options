@@ -2,7 +2,6 @@ package com.elatesoftware.grandcapital.views.items.chart.limitLines;
 
 import android.graphics.Color;
 
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 
 /**
@@ -31,7 +30,6 @@ public class SocketLine extends BaseLimitLine {
     public static void deleteSocketLine(){
         if (lineSocket != null) {
             rightYAxis.removeLimitLine(lineSocket);
-            lineSocket = null;
         }
     }
 

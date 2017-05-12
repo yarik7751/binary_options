@@ -8,7 +8,6 @@ import com.elatesoftware.grandcapital.api.pojo.EarlyClosureAnswer;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.utils.Const;
-import com.elatesoftware.grandcapital.utils.ConventString;
 
 /**
  * Created by Ярослав Левшунов on 23.03.2017.
@@ -52,7 +51,7 @@ public class EarlyClosureService extends IntentService {
         if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && EarlyClosureAnswer.getInstance() != null &&
                 InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
             for (Instrument instrument : EarlyClosureAnswer.getInstance().getInstruments()) {
-                if (instrument.getSymbol().contains(symbol)) {
+                if (symbol != null && !symbol.equals("") && instrument.getSymbol().contains(symbol)) {
                     String typeOption = InfoAnswer.getInstance().getGroup().getOptionsStyle();
                     int percent = 100;
                     if (typeOption.contains(Const.TYPE_OPTION_AMERICAN)) {
