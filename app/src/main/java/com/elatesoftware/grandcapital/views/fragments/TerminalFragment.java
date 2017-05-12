@@ -1232,6 +1232,7 @@ public class TerminalFragment extends Fragment {
                 if (currentDealing == null) {
                     currentDealing = new OrderAnswer();
                 }
+                isTimeIterator = true;
                 etValueAmount.setText(getResources().getString(R.string.zero_dollars));
                 etValueTime.setText(getResources().getString(R.string.zero_min));
                 currentDealing.setOpenPrice(mCurrentValueY);
