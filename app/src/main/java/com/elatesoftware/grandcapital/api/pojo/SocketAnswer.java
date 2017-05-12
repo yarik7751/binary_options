@@ -4,11 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 /**
  * Created by Дарья Высокович on 28.02.2017.
  */
@@ -72,22 +67,6 @@ public class SocketAnswer {
         answersInstance = new Gson().fromJson(message, SocketAnswer.class);
         return answersInstance;
     }
-    public static List<SocketAnswer> sortList(List<SocketAnswer> list, float xMax){
-        List<SocketAnswer> listTemp = new ArrayList<>();
-        if(list != null && list.size() != 0){
-            for(SocketAnswer l: list){
-                if(l.getTime() > xMax){
-                    listTemp.add(l);
-                }
-            }
-            if(listTemp.size() != 0){
-                Collections.sort(listTemp, (o1, o2) -> o1.getTime().compareTo(o2.getTime()));
-            }
-        }
-        return listTemp;
-    }
-
-
     public String getSymbol() {
         return symbol;
     }

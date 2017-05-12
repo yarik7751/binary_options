@@ -1,12 +1,7 @@
 package com.elatesoftware.grandcapital.api.pojo;
 
-import android.util.Log;
-
-import javax.annotation.Generated;
-
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
-import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -15,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
+import javax.annotation.Generated;
 
 @Generated("org.jsonschema2pojo")
 public class OrderAnswer {
@@ -101,7 +98,12 @@ public class OrderAnswer {
     public static void setInstance(List<OrderAnswer> order) {
         ordersInstance = order;
     }
-
+    public static void nullInstance() {
+        if(ordersInstance != null){
+            ordersInstance.clear();
+        }
+        ordersInstance = null;
+    }
     public Double getClosePrice() {
         return closePrice;
     }

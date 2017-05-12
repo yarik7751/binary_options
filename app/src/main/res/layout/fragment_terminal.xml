@@ -100,6 +100,7 @@
                     android:layout_height="0dp"
                     android:orientation="horizontal"
                     android:layout_weight="1"
+                    android:focusableInTouchMode="true"
                     android:layout_marginRight="15dp"
                     android:layout_marginLeft="15dp">
 

@@ -130,8 +130,8 @@
     <string name="signal_b">MUA</string>
     <string name="signal_sb">MUA MẠNH</string>
 
-    <string name="zero_min">0 MIN</string>
-    <string name="zero_dollars">$0</string>
+    <string name="zero_min">1 MIN</string>
+    <string name="zero_dollars">$10</string>
 
     <!--нет перевода-->
     <string name="attention">Chú ý!</string>

@@ -132,8 +132,8 @@
     <string name="signal_b">买入</string>
     <string name="signal_sb">强力买入</string>
 
-    <string name="zero_min">0 分钟</string>
-    <string name="zero_dollars">$0</string>
+    <string name="zero_min">1 分钟</string>
+    <string name="zero_dollars">$10</string>
 
     <!--нет перевода-->
     <string name="attention">注意！</string>

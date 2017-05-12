@@ -288,7 +288,6 @@ public class BaseLimitLine extends LimitLine {
             }
             ActiveDealingLine.deleteDealingLine();
         }
-
         if(list != null && list.size() != 0){
             for(OrderAnswer orderAnswer : list){
                 if(ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {

@@ -95,7 +95,6 @@ public class TerminalFragment extends Fragment {
 
     private static String sSymbolCurrent = "";
     public static double mCurrentValueY = 0;
-    private Thread threadSymbolHistory;
     private Timer mTimerRedraw;
     private OrderAnswer currentDealing = new OrderAnswer();
 
@@ -182,12 +181,7 @@ public class TerminalFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
-        parentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "parentView CLICK");
-            }
-        });
+        parentView.setOnClickListener(v -> Log.d(TAG, "parentView CLICK"));
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onCreateView Terminal");
         BaseActivity.backToRootFragment = false;
         BaseActivity.getResideMenu().setScrolling(false);
@@ -238,6 +232,9 @@ public class TerminalFragment extends Fragment {
 
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
+        etValueAmount.setText(getResources().getString(R.string.zero_dollars));
+        etValueTime.setText(getResources().getString(R.string.zero_min));
+
         tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " 0.0(0%)");
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
@@ -285,7 +282,6 @@ public class TerminalFragment extends Fragment {
                 }
                 requestEarlyClosure();
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 isTimeIterator = false;
@@ -377,9 +373,6 @@ public class TerminalFragment extends Fragment {
     }
     @Override
     public void onPause() {
-        if (threadSymbolHistory != null) {
-            threadSymbolHistory.interrupt();
-        }
         stopTimerRedrawLimitLines();
         isFinishedDrawPoint = false;
         isAddInChart = false;
@@ -723,9 +716,6 @@ public class TerminalFragment extends Fragment {
         startProgress();
         llDeposit.setBackgroundColor(getResources().getColor(R.color.dialog_bg));
         imgPointCurrent.setVisibility(View.INVISIBLE);
-        if (threadSymbolHistory != null) {
-            threadSymbolHistory.interrupt();
-        }
         if(mWebSocket != null){
             mWebSocket.closeSocket();
         }
@@ -742,8 +732,11 @@ public class TerminalFragment extends Fragment {
                 sSymbolCurrent,
                 null
         );
+
         SymbolHistoryAnswer.nullInstance();
         SocketAnswer.nullInstance();
+        OrderAnswer.nullInstance();
+
         clearChart();
         listSocketAnswerQueue.clear();
         listCurrentClosingDealings.clear();
@@ -992,66 +985,58 @@ public class TerminalFragment extends Fragment {
         }
     }
     private synchronized void drawDataSymbolHistory(final String symbol) {
-        if (threadSymbolHistory != null) {
-            threadSymbolHistory.interrupt();
-        }
-        threadSymbolHistory = new Thread(() -> {
-            if (SymbolHistoryAnswer.getInstance() == null || SymbolHistoryAnswer.getInstance().size() == 0) {
-                isAddInChart = true;
-                return;
-            }
-            final List<SymbolHistoryAnswer> listSymbol = SymbolHistoryAnswer.getInstance();
-            if (listSymbol != null && listSymbol.size() != 0) {
-                Log.d(GrandCapitalApplication.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
-                getActivity().runOnUiThread(() -> {
-                    if (listSymbol.size() != 0) {
-                        for (int i = 0; i < listSymbol.size(); i++) {
-                            addEntry(listSymbol.get(i));
-                            Log.d(GrandCapitalApplication.TAG_SOCKET, listSymbol.get(i).getTime() + "");
-                        }
-                        mChart.invalidate();
-                    }
-                });
-                if (mChart.getLineData() != null && listSymbol.size() != 0) {
-                    mCurrentValueY = Double.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen()));
-                    Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()),
-                            Float.valueOf(String.valueOf(mCurrentValueY)), null, null);
-                    //mChart.getViewPortHandler().zoom(5f, mChart.getViewPortHandler().getScaleY());
-                    currEntry = entry;
-                    getActivity().runOnUiThread(() -> new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (imgPointCurrent != null && currEntry != null) {
-                                redrawItemsChart(currEntry);
-                                MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
-                                imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
-                                imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
-                            }
-                            if(isFirstZoom) {
-                                mChart.zoom(MAX_X_SCALE - 1, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
-                                isFirstZoom = false;
-                            }
-                            if (isFirstDrawPoint && imgPointCurrent != null) {
-                                imgPointCurrent.setVisibility(View.VISIBLE);
-                                isFirstDrawPoint = false;
-                            }
-                            if(isFirstLoopPoint) {
-                                new Handler().postDelayed(this, 50);
-                            } else {
-                                Log.d(TAG, "setPoint position END");
-                            }
-                            stopProgress();
-                        }
-                    }, 50));
-                }
-            }
-            if(WebSocketApi.getmSymbolCurrent() == null || !WebSocketApi.getmSymbolCurrent().equals(symbol)){
-                mWebSocket = new WebSocketApi(symbol);
-            }
+        if (SymbolHistoryAnswer.getInstance() == null || SymbolHistoryAnswer.getInstance().size() == 0) {
             isAddInChart = true;
-            isFinishedDrawPoint = true;
-        });
-        threadSymbolHistory.start();
+            return;
+        }
+        final List<SymbolHistoryAnswer> listSymbol = SymbolHistoryAnswer.getInstance();
+        if (listSymbol != null && listSymbol.size() != 0) {
+            Log.d(GrandCapitalApplication.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
+            getActivity().runOnUiThread(() -> {
+                if (listSymbol.size() != 0) {
+                    for (int i = 0; i < listSymbol.size(); i++) {
+                        addEntry(listSymbol.get(i));
+                        //Log.d(GrandCapitalApplication.TAG_SOCKET, listSymbol.get(i).getTime() + "");
+                    }
+                    mChart.invalidate();
+                }
+            });
+            if (mChart.getLineData() != null && listSymbol.size() != 0) {
+                mCurrentValueY = Double.valueOf(String.valueOf(listSymbol.get(listSymbol.size() - 1).getOpen()));
+                Entry entry = new Entry(ConventDate.genericTimeForChart(listSymbol.get(listSymbol.size() - 1).getTime()), Float.valueOf(String.valueOf(mCurrentValueY)), null, null);
+                currEntry = entry;
+                getActivity().runOnUiThread(() -> new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (imgPointCurrent != null && currEntry != null) {
+                            redrawItemsChart(currEntry);
+                            MPPointF point = mChart.getPosition(currEntry, YAxis.AxisDependency.RIGHT);
+                            imgPointCurrent.setX(point.getX() - imgPointCurrent.getWidth() / 2);
+                            imgPointCurrent.setY(point.getY() - imgPointCurrent.getHeight() / 2);
+                        }
+                        if(isFirstZoom) {
+                            mChart.zoom(MAX_X_SCALE - 1, 0f, entry.getX(), 0f, YAxis.AxisDependency.RIGHT);
+                            isFirstZoom = false;
+                        }
+                        if (isFirstDrawPoint && imgPointCurrent != null) {
+                            imgPointCurrent.setVisibility(View.VISIBLE);
+                            isFirstDrawPoint = false;
+                        }
+                        if(isFirstLoopPoint) {
+                            new Handler().postDelayed(this, 50);
+                        } else {
+                            Log.d(TAG, "setPoint position END");
+                        }
+                        stopProgress();
+                    }
+                }, 50));
+            }
+        }
+        if(WebSocketApi.getmSymbolCurrent() == null || !WebSocketApi.getmSymbolCurrent().equals(symbol)){
+            mWebSocket = new WebSocketApi(symbol);
+        }
+        isAddInChart = true;
+        isFinishedDrawPoint = true;
     }
 
     private void drawCurrentPoint(Entry entry) {
@@ -1214,7 +1199,7 @@ public class TerminalFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             if (intent.getStringExtra(SymbolHistoryService.RESPONSE) != null && intent.getStringExtra(SymbolHistoryService.RESPONSE).equals(Const.RESPONSE_CODE_SUCCESS) &&
                 SymbolHistoryAnswer.getInstance() != null){
-                    drawDataSymbolHistory( ConventString.getActive(tvValueActive));
+                    drawDataSymbolHistory(ConventString.getActive(tvValueActive));
             } else {
                 isAddInChart = true;
                 mWebSocket = new WebSocketApi(sSymbolCurrent);
@@ -1270,6 +1255,7 @@ public class TerminalFragment extends Fragment {
                         List<OrderAnswer> listAllOpenDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.OPEN_TAB_POSITION);
                         List<OrderAnswer> listOpenDealings = OrderAnswer.filterOrdersCurrentActive(listAllOpenDealings, DealingFragment.OPEN_TAB_POSITION, ConventString.getActive(tvValueActive));
                         List<OrderAnswer> listAllClosedDealings = OrderAnswer.filterOrders(OrderAnswer.getInstance(), DealingFragment.CLOSE_TAB_POSITION);
+
                         CheckDealingService.setListOrderAnswer(listAllOpenDealings);
                         parseClosingDealings(listAllClosedDealings);
 
@@ -1290,9 +1276,6 @@ public class TerminalFragment extends Fragment {
                                 BaseLimitLine.addTicketsInLines(listOpenDealings);
                             }
                         }
-                        /*if (listOpenDealings != null && listOpenDealings.size() != 0 && BaseLimitLine.getYLimitLines() == null && BaseLimitLine.getXLimitLines() == null) {
-                            BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
-                        }else*/
                         OrderAnswer.setInstance(null);
                         break;
                     case OrdersService.GET_TICKET_ORDER:
