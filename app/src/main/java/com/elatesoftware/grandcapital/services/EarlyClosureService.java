@@ -49,15 +49,15 @@ public class EarlyClosureService extends IntentService {
 
     private int parseResponse(String response, String symbol, int timeValue) {
         if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && EarlyClosureAnswer.getInstance() != null &&
-                InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
+                InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null && EarlyClosureAnswer.getInstance().getInstruments() != null) {
             for (Instrument instrument : EarlyClosureAnswer.getInstance().getInstruments()) {
-                if (symbol != null && !symbol.equals("") && instrument.getSymbol().contains(symbol)) {
+                if (symbol != null && !symbol.equals("") && instrument.getSymbol() != null && instrument.getSymbol().contains(symbol)) {
                     String typeOption = InfoAnswer.getInstance().getGroup().getOptionsStyle();
                     int percent = 100;
-                    if (typeOption.contains(Const.TYPE_OPTION_AMERICAN)) {
+                    if (typeOption != null && typeOption.contains(Const.TYPE_OPTION_AMERICAN)) {
                         isAmerican = true;
                         percent = instrument.getWinFull();
-                    } else if (typeOption.contains(Const.TYPE_OPTION_EUROPEAN)) {
+                    } else if (typeOption != null && typeOption.contains(Const.TYPE_OPTION_EUROPEAN)) {
                         isAmerican = false;
                         if (timeValue < 5) {
                             percent = instrument.getWinLt5();
