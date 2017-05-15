@@ -7,9 +7,9 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.design.widget.TextInputLayout;
-
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,11 +21,13 @@ import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.AuthorizationAnswer;
+import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.models.User;
+import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.SignInService;
 import com.elatesoftware.grandcapital.utils.Const;
-import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
 public class SignInActivity extends CustomFontsActivity {
 
@@ -38,6 +40,7 @@ public class SignInActivity extends CustomFontsActivity {
     private TextInputLayout tilLogin;
     private TextInputLayout tilPassword;
     private GetResponseSignInBroadcastReceiver mSignInBroadcastReceiver;
+    private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +62,8 @@ public class SignInActivity extends CustomFontsActivity {
             startActivity(browserIntent);
         });
         btnSignIn.setOnClickListener(view -> {{
-            //etLogin.setText("10031740");
-            //etPassword.setText("2nFaxHcy");
+            etLogin.setText("10025808");
+            etPassword.setText("6elFJkuL");
             signIn();
         }});
         tilLogin.setErrorEnabled(true);
@@ -113,22 +116,17 @@ public class SignInActivity extends CustomFontsActivity {
             llProgress.setVisibility(View.GONE);
             if (response != null) {
                 if (response.equals(Const.RESPONSE_CODE_ERROR)) {
-                    CustomDialog.showDialogInfo(SignInActivity.this, getString(R.string.error),
-                            getString(R.string.no_correct_values));
+                    CustomDialog.showDialogInfo(SignInActivity.this, getString(R.string.error), getString(R.string.no_correct_values));
                 } else if(response.equals(Const.RESPONSE_CODE_SUCCESS)){
                     final String login = etLogin.getText().toString();
                     if(AuthorizationAnswer.getInstance() != null){
-                        User currentUser = new User(login, AuthorizationAnswer.getInstance().getServerName(),
-                                                           AuthorizationAnswer.getInstance().getToken());
-                        CustomSharedPreferences.saveUser(getApplicationContext(), currentUser);
-                        CustomSharedPreferences.setIntervalAdvertising(SignInActivity.this, -1);
-                        showTerminalActivity();
+                        User.setInstance(new User(login, AuthorizationAnswer.getInstance().getServerName(), AuthorizationAnswer.getInstance().getToken()));
+                        requestInfoUser();
                     }
                 }
             } else {
                 llProgress.setVisibility(View.GONE);
-                CustomDialog.showDialogInfo(SignInActivity.this, getString(R.string.request_error_title),
-                                                                 getString(R.string.request_error_text));
+                CustomDialog.showDialogInfo(SignInActivity.this, getString(R.string.request_error_title), getString(R.string.request_error_text));
             }
             btnSignIn.setEnabled(true);
         }
@@ -136,11 +134,11 @@ public class SignInActivity extends CustomFontsActivity {
 
     private boolean checkInput(String login, String password) {
         boolean answer = true;
-        if (login.isEmpty()) {
+        if (login == null || login.isEmpty()) {
             tilLogin.setError(getString(R.string.error_incorrent_login_input));
             answer = false;
         }
-        if (password.isEmpty()) {
+        if (password == null || password.isEmpty()) {
             tilPassword.setError(getString(R.string.error_incorrent_password_input));
             answer = false;
         }
@@ -164,7 +162,10 @@ public class SignInActivity extends CustomFontsActivity {
         startActivity(intent);
         finish();
     }
-
+    private void requestInfoUser(){
+        Intent intentMyIntentService = new Intent(this, InfoUserService.class);
+        startService(intentMyIntentService);
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -172,18 +173,42 @@ public class SignInActivity extends CustomFontsActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
+        mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
+        IntentFilter intentFilter1 = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
+        intentFilter1.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(mInfoBroadcastReceiver, intentFilter1);
         mSignInBroadcastReceiver = new GetResponseSignInBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(SignInService.ACTION_SERVICE_SIGN_IN);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mSignInBroadcastReceiver, intentFilter);
     }
-
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         unregisterReceiver(mSignInBroadcastReceiver);
+        unregisterReceiver(mInfoBroadcastReceiver);
+    }
+
+    public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null){
+                if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS)) {
+                    Log.d("TAG", intent.getStringExtra(InfoUserService.RESPONSE_INFO));
+                    if (InfoAnswer.getInstance() != null
+                            && InfoAnswer.getInstance().getGroup() != null
+                            && ((InfoAnswer.getInstance().getGroup().getOptionsStyle().equals("american") || (InfoAnswer.getInstance().getGroup().getOptionsStyle().equals("european"))))) {
+                          CustomSharedPreferences.saveUser(getApplicationContext(), User.getInstance());
+                          CustomSharedPreferences.setIntervalAdvertising(SignInActivity.this, -1);
+                          showTerminalActivity();
+                    }else{
+                        CustomDialog.showDialogInfo(SignInActivity.this, getString(R.string.error), getString(R.string.no_correct_values));
+                    }
+                }
+            }
+        }
     }
 }
 

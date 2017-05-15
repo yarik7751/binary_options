@@ -202,6 +202,7 @@ public class GrandCapitalApi {
         }
         return result;
     }
+
     public static String getSignals(){
         Call<List<SignalAnswer>> call = getSimpleService().getSignals();
         Response<List<SignalAnswer>> response = null;
