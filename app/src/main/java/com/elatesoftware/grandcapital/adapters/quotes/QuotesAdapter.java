@@ -14,6 +14,7 @@ import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.Const;
+import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.google.android.gms.analytics.HitBuilders;
@@ -78,7 +79,7 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
         super.onBindViewHolder(holder, position);
         QuotesViewHolder quotesHolder = (QuotesViewHolder) holder;
         quotesHolder.tvCurrency.setText(selectedInstruments.get(position).getSymbol().toUpperCase());
-        quotesHolder.tvAsk.setText(String.valueOf(selectedInstruments.get(position).getAsk()));
+        quotesHolder.tvAsk.setText(ConventString.getRoundNumber(5, selectedInstruments.get(position).getAsk()));
         quotesHolder.tvAsk.setTextColor(selectedInstruments.get(position).getColor());
         if(variant == SELECT_QUOTES) {
             quotesHolder.imgIsSelected.setImageResource(R.drawable.ic_star_white_24dp);

@@ -244,11 +244,15 @@ public class ToolTabsView extends LinearLayout {
     }
 
     private void setTint(View v, boolean isSelected) {
-        ImageView img = (ImageView) v.findViewById(R.id.img);
-        if(isSelected) {
-            img.setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.MULTIPLY);
-        } else {
-            img.setColorFilter(Color.parseColor("#55ffffff"), PorterDuff.Mode.MULTIPLY);
+        if(v != null) {
+            ImageView img = (ImageView) v.findViewById(R.id.img);
+            if(img != null) {
+                if (isSelected) {
+                    img.setColorFilter(Color.parseColor("#ffffff"), PorterDuff.Mode.MULTIPLY);
+                } else {
+                    img.setColorFilter(Color.parseColor("#55ffffff"), PorterDuff.Mode.MULTIPLY);
+                }
+            }
         }
     }
 

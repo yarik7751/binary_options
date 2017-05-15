@@ -142,19 +142,25 @@ public class QuotesFragment extends Fragment {
     }
 
     private void comparisonQuotes(List<Instrument> newInstruments) {
-        for(int i = 0; i < lastInstruments.size(); i++) {
-            if(newInstruments.get(i).getSymbol().equals(Const.SYMBOL)) {
-                Log.d(TAG, "EURUSD: " + newInstruments.get(i).getAsk());
+        if(newInstruments != null) {
+            for (int i = 0; i < lastInstruments.size(); i++) {
+                if(newInstruments.get(i) != null) {
+                    if (newInstruments.get(i).getSymbol().equals(Const.SYMBOL)) {
+                        Log.d(TAG, "EURUSD: " + newInstruments.get(i).getAsk());
+                    }
+                    if (lastInstruments.get(i).getAsk() < newInstruments.get(i).getAsk()) {
+                        newInstruments.get(i).setColor(UP_TEXT_COLOR);
+                    } else if (lastInstruments.get(i).getAsk() > newInstruments.get(i).getAsk()) {
+                        newInstruments.get(i).setColor(DOWN_TEXT_COLOR);
+                    } else {
+                        newInstruments.get(i).setColor(lastInstruments.get(i).getColor());
+                    }
+                } else {
+                    return;
+                }
             }
-            if(lastInstruments.get(i).getAsk() < newInstruments.get(i).getAsk()) {
-                newInstruments.get(i).setColor(UP_TEXT_COLOR);
-            } else if(lastInstruments.get(i).getAsk() > newInstruments.get(i).getAsk()) {
-                newInstruments.get(i).setColor(DOWN_TEXT_COLOR);
-            } else {
-                newInstruments.get(i).setColor(lastInstruments.get(i).getColor());
-            }
+            lastInstruments = newInstruments;
+            setData(lastInstruments);
         }
-        lastInstruments = newInstruments;
-        setData(lastInstruments);
     }
 }

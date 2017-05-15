@@ -49,6 +49,7 @@
                     android:imeActionId="@+id/login"
                     android:imeOptions="actionUnspecified"
                     android:maxLines="1"
+                    android:text="@string/userLoginAmerican"
                     style="@style/EditText"
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
@@ -69,6 +70,7 @@
                     android:imeOptions="actionGo"
                     android:inputType="textPassword"
                     app:hintEnabled="false"
+                    android:text="@string/userPasswordAmerican"
                     android:maxLines="1"
                     style="@style/EditText" />
 
