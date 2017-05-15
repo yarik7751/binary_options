@@ -966,7 +966,7 @@ public class TerminalFragment extends Fragment {
                             }, TIME_ANIMATION_DRAW_POINT);
                         }
                 }
-            }else if (data != null && currEntry != null) {
+            } else if (data != null && currEntry != null) {
                     data.getDataSetByIndex(0).addEntry(currEntry);
                     data.notifyDataChanged();
                     mChart.invalidate();
@@ -999,7 +999,6 @@ public class TerminalFragment extends Fragment {
                 if (listSymbol.size() != 0) {
                     for (int i = 0; i < listSymbol.size(); i++) {
                         addEntry(listSymbol.get(i));
-                        //Log.d(GrandCapitalApplication.TAG_SOCKET, listSymbol.get(i).getTime() + "");
                     }
                     mChart.invalidate();
                 }
@@ -1027,8 +1026,6 @@ public class TerminalFragment extends Fragment {
                         }
                         if(isFirstLoopPoint) {
                             new Handler().postDelayed(this, 50);
-                        } else {
-                            Log.d(TAG, "setPoint position END");
                         }
                         stopProgress();
                     }
@@ -1040,6 +1037,7 @@ public class TerminalFragment extends Fragment {
         }
         isAddInChart = true;
         isFinishedDrawPoint = true;
+        stopProgress();
     }
 
     private void drawCurrentPoint(Entry entry) {
@@ -1186,7 +1184,12 @@ public class TerminalFragment extends Fragment {
                 InfoAnswer.getInstance().getInstruments() != null && InfoAnswer.getInstance().getInstruments().size() > 0) {
                 listActives.clear();
                 for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
-                    listActives.add(instrument.getSymbol());
+                    if(instrument.getSymbol().length() == 6            // TODO COMMIT BUGS
+                        && !instrument.getSymbol().contains("JPY")
+                        && !instrument.getSymbol().equals("NZDUSD")
+                        && !instrument.getSymbol().equals("SILVER")){
+                        listActives.add(instrument.getSymbol());
+                    }
                 }
                 if (listActives != null && listActives.size() > 0 && listActives.contains(Const.SYMBOL) && !ConventString.getActive(tvValueActive).equals(Const.SYMBOL)) {
                     sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));
@@ -1222,8 +1225,6 @@ public class TerminalFragment extends Fragment {
 
                 ConventString.setAmountValue(etValueAmount, 0, etValueAmount.isFocused());
                 ConventString.setTimeValue(etValueTime, 0, etValueTime.isFocused());
-                /*etValueAmount.setText(getResources().getString(R.string.zero_dollars));
-                etValueTime.setText(getResources().getString(R.string.zero_min));*/
 
                 currentDealing.setOpenPrice(mCurrentValueY);
                 currentDealing.setSymbol(intent.getStringExtra(MakeDealingService.SYMBOL));
