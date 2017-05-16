@@ -100,6 +100,9 @@ public class GrandCapitalApi {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+            httpClient.connectTimeout(5, TimeUnit.MINUTES);
+            httpClient.writeTimeout(5, TimeUnit.MINUTES);
+            httpClient.readTimeout(5, TimeUnit.MINUTES);
 
             httpClient.addInterceptor(interceptor);
 
