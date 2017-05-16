@@ -241,7 +241,7 @@ public class TerminalFragment extends Fragment {
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
         tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $ 0.0(0%)");
-        ConventString.formatReward(tvValueRewardTerminal);
+        ConventString.formatReward(getContext(), tvValueRewardTerminal);
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
             isTimeIterator = true;
@@ -1321,7 +1321,7 @@ public class TerminalFragment extends Fragment {
                     InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
                 GrandCapitalApplication.isTypeOptionAmerican = intent.getBooleanExtra(EarlyClosureService.IS_AMERICAN, false);
                 tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $ " + ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
-                ConventString.formatReward(tvValueRewardTerminal);
+                ConventString.formatReward(getContext(), tvValueRewardTerminal);
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.text.Html;
 import android.text.Spannable;
@@ -8,6 +9,8 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -176,16 +179,17 @@ public class ConventString {
         return getRoundNumber(4, earlyClosure) + "(" + (earlyClosure == 0 ? 0 : percent) + "%)";
     }
 
-    public static void formatReward(TextView tv) {
+    public static void formatReward(Context context, TextView tv) {
         String str = tv.getText().toString();
         int startPosition = str.indexOf("$");
 
-        /*Log.d(TAG, "str: " + str);
+        Log.d(TAG, "str: " + str);
         Log.d(TAG, "str.length(): " + str.length());
-        Log.d(TAG, "$: " + startPosition);*/
+        Log.d(TAG, "$: " + startPosition);
 
-        Spannable text = new SpannableString(tv.getText().toString());
-        text.setSpan(new StyleSpan(Typeface.BOLD), startPosition, str.length() - 1,  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        tv.setText(text);
+        SpannableString text = new SpannableString(str);
+        text.setSpan(new StyleSpan(Typeface.BOLD), startPosition, str.length() - 1,  Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //text.setSpan(new UnderlineSpan(), startPosition, str.length() - 1,  Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        tv.setText(text, TextView.BufferType.SPANNABLE);
     }
 }
