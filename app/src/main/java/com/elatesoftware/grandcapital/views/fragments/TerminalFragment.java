@@ -6,13 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -235,7 +240,8 @@ public class TerminalFragment extends Fragment {
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
-        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " 0.0(0%)");
+        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $ 0.0(0%)");
+        ConventString.formatReward(tvValueRewardTerminal);
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
             isTimeIterator = true;
@@ -1314,7 +1320,8 @@ public class TerminalFragment extends Fragment {
             if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && EarlyClosureAnswer.getInstance() != null &&
                     InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
                 GrandCapitalApplication.isTypeOptionAmerican = intent.getBooleanExtra(EarlyClosureService.IS_AMERICAN, false);
-                tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " " + ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
+                tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $ " + ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
+                ConventString.formatReward(tvValueRewardTerminal);
             }
         }
     }

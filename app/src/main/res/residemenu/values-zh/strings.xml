@@ -26,7 +26,7 @@
     <string name="caution">警告！</string>
 
     <string name="logout">确定登出？</string>
-    <string name="reward">利润: $</string>
+    <string name="reward">利润: </string>
     <string name="open_account">开立账户</string>
     <string name="later">之后</string>
     <string name="open_account_message">您已经做了几个单了，可以开始赚取真实盈利了！</string>

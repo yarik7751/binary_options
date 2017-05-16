@@ -774,7 +774,7 @@
     <string name="request_error_request">The request failed. Please try again</string>
     <string name="request_error_text">Something went wrong and we could not complete your request. Please try again</string>
     <string name="request_error_title">The request failed</string>
-    <string name="reward">Profit: $</string>
+    <string name="reward">Profit: </string>
     <string name="search_menu_title">Search</string>
     <string name="seconds_remaining">seconds remaining.</string>
     <string name="selected_quotes">Starred</string>

@@ -24,7 +24,7 @@
     <string name="ok">OK</string>
     <string name="caution">Thận trọng!</string>
     <string name="logout">Bạn có muốn đăng xuất?</string>
-    <string name="reward">Lợi nhuận: $</string>
+    <string name="reward">Lợi nhuận: </string>
     <string name="open_account">Mở tài khoản</string>
     <string name="later">Sau</string>
     <string name="open_account_message">Bạn đã đặt một số lệnh giao dịch.\nHãy bắt đầu kiếm tiền thật nào!</string>

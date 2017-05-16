@@ -24,7 +24,7 @@
     <string name="ok">OK</string>
     <string name="caution">Caution!</string>
     <string name="logout">Do you want to log out?</string>
-    <string name="reward">Potential profit: $</string>
+    <string name="reward">Potential profit: </string>
     <string name="open_account">Open account</string>
     <string name="later">Later</string>
     <string name="open_account_message">You have placed several trades.\nStart earning real money!</string>

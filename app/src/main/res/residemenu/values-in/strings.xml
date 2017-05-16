@@ -24,7 +24,7 @@
     <string name="ok">OK</string>
     <string name="caution">Peringatan!</string>
     <string name="logout">Anda ingin keluar?</string>
-    <string name="reward">Keuntungan: $</string>
+    <string name="reward">Keuntungan: </string>
     <string name="open_account">Buka Akun</string>
     <string name="later">Nanti</string>
     <string name="open_account_message">Anda telah menempatkan beberapa perdagangan.\nMulai menghasilkan uang!</string>
