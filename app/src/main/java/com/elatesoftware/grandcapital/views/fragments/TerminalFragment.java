@@ -6,18 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextWatcher;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -64,8 +59,8 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.items.animation.PointAnimation;
 import com.elatesoftware.grandcapital.views.items.chart.ViewInfoHelper;
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.ActiveDealingLine;
+import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.DealingLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.SocketLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.XDealingLine;
@@ -81,8 +76,8 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.EntryXComparator;
-import com.google.gson.Gson;
 import com.github.mikephil.charting.utils.MPPointF;
+import com.google.gson.Gson;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
@@ -240,8 +235,8 @@ public class TerminalFragment extends Fragment {
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
-        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $ 0.0(0%)");
-        ConventString.formatReward(getContext(), tvValueRewardTerminal);
+        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $0.0(0%)");
+        ConventString.formatReward(tvValueRewardTerminal);
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
             isTimeIterator = true;
@@ -1320,8 +1315,8 @@ public class TerminalFragment extends Fragment {
             if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && EarlyClosureAnswer.getInstance() != null &&
                     InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getGroup() != null) {
                 GrandCapitalApplication.isTypeOptionAmerican = intent.getBooleanExtra(EarlyClosureService.IS_AMERICAN, false);
-                tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $ " + ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
-                ConventString.formatReward(getContext(), tvValueRewardTerminal);
+                tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $" + ConventString.getStringEarlyClosure(etValueAmount, intent.getIntExtra(EarlyClosureService.PERCENT, 0)));
+                ConventString.formatReward(tvValueRewardTerminal);
             }
         }
     }

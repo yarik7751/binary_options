@@ -290,7 +290,7 @@
                             android:paddingLeft="5dp"
                             tools:text="2,578 (80%)"
                             android:text="0"
-                            android:textSize="12sp"
+                            android:textSize="10sp"
                             android:id="@+id/tvValueRewardTerminal"
                             android:layout_centerHorizontal="true"
                             android:layout_centerVertical="true"
