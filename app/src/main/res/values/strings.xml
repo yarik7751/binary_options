@@ -27,7 +27,7 @@
     <string name="ok">OK</string>
     <string name="caution">Caution!</string>
     <string name="logout">Do you want to log out?</string>
-    <string name="reward">Profit: $</string>
+    <string name="reward">Potential profit: $</string>
     <string name="open_account">Open account</string>
     <string name="later">Later</string>
     <string name="open_account_message">You have placed several trades.\nStart earning real money!</string>
@@ -145,7 +145,7 @@
 
     <!--//нет перевода-->
 
-    <string name="balance">Balance:</string>
+    <string name="balance">Balance</string>
     <string name="link_company">https://grandcapital.ru</string>
     <string name="deposit">DEPOSIT</string>
     <string name="withdraw">WITHDRAW</string>

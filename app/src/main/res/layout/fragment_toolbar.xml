@@ -18,7 +18,8 @@
             android:layout_width="20dp"
             android:layout_height="12dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="9dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:scaleType="fitXY"
             android:background="@null"
             android:src="@drawable/menu" />
@@ -34,7 +35,7 @@
             android:layout_marginLeft="10dp"
             android:layout_toEndOf="@+id/menu_burger"
             android:layout_toRightOf="@+id/menu_burger"
-            tools:text="yguydfuygudyyguyfdgyuyguyudfygudfygufug"
+            tools:text="Trade"
             android:textSize="16sp" />
 
         <com.elatesoftware.grandcapital.views.items.tooltabsview.ToolTabsView

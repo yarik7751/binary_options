@@ -139,7 +139,7 @@
     <string name="attention">注意！</string>
     <!--//нет перевода-->
 
-    <string name="balance">余额:</string>
+    <string name="balance">余额</string>
     <string name="link_company">https://grandcapital.ru</string>
     <string name="deposit">入金</string>
     <string name="withdraw">出金</string>

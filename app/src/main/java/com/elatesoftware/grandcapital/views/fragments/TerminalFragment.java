@@ -1223,9 +1223,6 @@ public class TerminalFragment extends Fragment {
                 }
                 isTimeIterator = true;
 
-                ConventString.setAmountValue(etValueAmount, 0, etValueAmount.isFocused());
-                ConventString.setTimeValue(etValueTime, 0, etValueTime.isFocused());
-
                 currentDealing.setOpenPrice(mCurrentValueY);
                 currentDealing.setSymbol(intent.getStringExtra(MakeDealingService.SYMBOL));
                 currentDealing.setCmd(Integer.valueOf(intent.getStringExtra(MakeDealingService.CMD)));

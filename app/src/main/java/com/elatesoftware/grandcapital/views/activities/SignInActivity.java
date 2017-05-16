@@ -9,7 +9,6 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -196,9 +195,9 @@ public class SignInActivity extends CustomFontsActivity {
         public void onReceive(Context context, Intent intent) {
             if(intent.getStringExtra(InfoUserService.RESPONSE_INFO) != null && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY) != null){
                 if(intent.getStringExtra(InfoUserService.RESPONSE_INFO).equals(Const.RESPONSE_CODE_SUCCESS) && intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY).equals(Const.RESPONSE_CODE_SUCCESS)) {
-                    Log.d("TAG", intent.getStringExtra(InfoUserService.RESPONSE_INFO));
                     if (InfoAnswer.getInstance() != null
                             && InfoAnswer.getInstance().getGroup() != null
+                            && InfoAnswer.getInstance().getGroup().getOptionsStyle() != null
                             && ((InfoAnswer.getInstance().getGroup().getOptionsStyle().equals("american") || (InfoAnswer.getInstance().getGroup().getOptionsStyle().equals("european"))))) {
                           CustomSharedPreferences.saveUser(getApplicationContext(), User.getInstance());
                           CustomSharedPreferences.setIntervalAdvertising(SignInActivity.this, -1);

@@ -68,7 +68,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:text="@string/balance"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         style="@style/LigthText"
                         android:layout_marginRight="10dp"/>
 
@@ -80,7 +80,7 @@
                         android:text="@string/zero_dollars"
                         android:textSize="18sp"
                         android:gravity="center"
-                        android:textStyle="bold"
+                        style="@style/MenuItem"
                         android:textColor="@color/colorAccent"
                         android:layout_gravity="center"
                         android:layout_marginRight="10dp"/>
@@ -90,6 +90,7 @@
                         android:layout_height="match_parent"
                         android:id="@+id/tvDepositTerminal"
                         android:text="@string/deposit"
+                        style="@style/MenuItem"
                         android:textColor="@color/color_text_deposit"
                         android:textStyle="bold"
                         android:gravity="center"/>
@@ -119,6 +120,7 @@
                             style="@style/LigthText"
                             android:layout_weight="1"
                             android:text="@string/active"
+                            android:textSize="10sp"
                             android:id="@+id/tvTabActiveTerminal"/>
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -132,7 +134,7 @@
                                 android:gravity="center"
                                 android:background="@drawable/ic_keyboard_arrow_left_white_18dp"
                                 android:id="@+id/tvLeftTabActiveTerminal"
-                                style="@style/LigthText"/>
+                                style="@style/MenuItem"/>
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -142,7 +144,7 @@
                                 tools:text="EURUSD"
                                 android:textStyle="bold"
                                 android:id="@+id/tvValueTabActiveTerminal"
-                                style="@style/LigthText"/>
+                                style="@style/MenuItem"/>
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -150,7 +152,7 @@
                                 android:gravity="center"
                                 android:background="@drawable/ic_keyboard_arrow_right_white_18dp"
                                 android:id="@+id/tvRightTabActiveTerminal"
-                                style="@style/LigthText"/>
+                                style="@style/MenuItem"/>
                         </LinearLayout>
 
                     </LinearLayout>
@@ -169,6 +171,7 @@
                             android:text="@string/amount"
                             android:layout_weight="1"
                             android:gravity="center"
+                            android:textSize="10sp"
                             android:id="@+id/tvTabAmountTerminal"/>
 
                         <LinearLayout
@@ -185,7 +188,7 @@
                                 android:background="@drawable/ic_minus"
                                 android:textSize="25sp"
                                 android:id="@+id/tvMinusTabAmountTerminal"
-                                style="@style/LigthText"/>
+                                style="@style/MenuItem"/>
                             <EditText
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -200,7 +203,7 @@
                                 android:textStyle="bold"
                                 android:id="@+id/tvValueTabAmountTerminal"
                                 android:inputType="numberDecimal"
-                                style="@style/LigthText"/>
+                                style="@style/MenuItem"/>
 
                             <TextView
                                 android:layout_width="0dp"
@@ -209,7 +212,7 @@
                                 android:gravity="center"
                                 android:background="@drawable/ic_plus"
                                 android:id="@+id/tvPlusTabAmountTerminal"
-                                style="@style/LigthText"/>
+                                style="@style/MenuItem"/>
                         </LinearLayout>
 
                     </LinearLayout>
@@ -226,6 +229,7 @@
                             style="@style/LigthText"
                             android:layout_weight="1"
                             android:text="@string/time"
+                            android:textSize="10sp"
                             android:gravity="center"
                             android:id="@+id/tvTabTimeTerminal"/>
                         <LinearLayout
@@ -241,7 +245,7 @@
                                 android:background="@drawable/ic_minus"
                                 android:textSize="20sp"
                                 android:id="@+id/tvMinusTabTimeTerminal"
-                                style="@style/LigthText"/>
+                                style="@style/MenuItem"/>
                             <EditText
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -255,7 +259,7 @@
                                 android:inputType="number"
                                 android:textStyle="bold"
                                 android:id="@+id/tvValueTabTimeTerminal"
-                                style="@style/LigthText"/>
+                                style="@style/MenuItem"/>
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -263,7 +267,7 @@
                                 android:gravity="center"
                                 android:background="@drawable/ic_plus"
                                 android:id="@+id/tvPlusTabTimeTerminal"
-                                style="@style/LigthText"/>
+                                style="@style/MenuItem"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -279,17 +283,19 @@
                             android:text="@string/reward"
                             android:gravity="center_vertical|right"
                             style="@style/LigthText"/>-->
+
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="5dp"
                             tools:text="2,578 (80%)"
                             android:text="0"
+                            android:textSize="12sp"
                             android:id="@+id/tvValueRewardTerminal"
                             android:layout_centerHorizontal="true"
                             android:layout_centerVertical="true"
                             android:singleLine="true"
-                            style="@style/LigthText"/>
+                            style="@style/MenuItem"/>
                 </RelativeLayout>
             </LinearLayout>
 
@@ -324,7 +330,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        style="@style/LigthText"
+                        style="@style/MenuItem"
                         android:textStyle="bold"
                         android:textSize="20sp"
                         android:gravity="center"
@@ -354,7 +360,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        style="@style/LigthText"
+                        style="@style/MenuItem"
                         android:textStyle="bold"
                         android:textSize="20sp"
                         android:gravity="center"
@@ -363,11 +369,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <!--<View
-        android:id="@+id/vCurtain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg"
-        android:visibility="gone"/>-->
 </FrameLayout>
