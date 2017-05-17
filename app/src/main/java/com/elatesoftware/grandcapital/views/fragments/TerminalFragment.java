@@ -270,8 +270,8 @@ public class TerminalFragment extends Fragment {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.toString().length() > 4 && !isValueIterator) {
-                    etValueAmount.setText(s.toString().substring(0, 4));
+                if(s.toString().length() > 7 && !isValueIterator) {
+                    etValueAmount.setText(s.toString().substring(0, 7));
                     etValueAmount.setSelection(etValueAmount.getText().toString().length());
                 }
                 requestEarlyClosure();
