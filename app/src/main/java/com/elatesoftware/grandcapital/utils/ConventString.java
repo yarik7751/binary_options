@@ -33,7 +33,7 @@ public class ConventString {
                 if(TextUtils.isEmpty(str)) {
                     str = "0";
                 }
-                Double value = Double.parseDouble(str);
+                int value = Integer.parseInt(str);
                 v.setText("$" + value);
             }
         }
@@ -82,7 +82,7 @@ public class ConventString {
     public static void changeAmountValue(EditText v, boolean isAdd, boolean isOpenKeyboard) {
         String str = v.getText().toString();
         str = str.replace("$", "");
-        double amout = Double.parseDouble(str);
+        int amout = Integer.parseInt(str);
         if(isAdd) {
             amout++;
         } else {

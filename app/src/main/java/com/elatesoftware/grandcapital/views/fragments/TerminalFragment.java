@@ -109,7 +109,7 @@ public class TerminalFragment extends Fragment {
     private boolean isFirstDrawPoint = true;
     private boolean isFirstZoom = true;
     private boolean isFirstLoopPoint = true;
-    private boolean isTimeIterator, isOpenKeyboard = false;
+    private boolean isTimeIterator, isValueIterator, isOpenKeyboard = false;
     private static boolean isFinishedDrawPoint = true;
 
     public LineChart mChart;
@@ -239,6 +239,7 @@ public class TerminalFragment extends Fragment {
         ConventString.formatReward(tvValueRewardTerminal);
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
+            isValueIterator = true;
             isTimeIterator = true;
             isOpenKeyboard = isOpen1;
             if (etValueAmount.isFocused()) {
@@ -250,12 +251,15 @@ public class TerminalFragment extends Fragment {
         });
         etValueAmount.setOnFocusChangeListener((v, hasFocus) -> {
             if(etValueAmount != null) {
+                if(!hasFocus) {
+                    isValueIterator = true;
+                }
                 ConventString.setMaskAmount(etValueAmount, hasFocus);
             }
         });
         etValueTime.setOnFocusChangeListener((v, hasFocus) -> {
             if(etValueTime != null) {
-                if(hasFocus == false) {
+                if(!hasFocus) {
                     isTimeIterator = true;
                 }
                 ConventString.setMaskTime(etValueTime, hasFocus);
@@ -266,10 +270,16 @@ public class TerminalFragment extends Fragment {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.toString().length() > 4 && !isValueIterator) {
+                    etValueAmount.setText(s.toString().substring(0, 4));
+                    etValueAmount.setSelection(etValueAmount.getText().toString().length());
+                }
                 requestEarlyClosure();
             }
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+                isValueIterator = false;
+            }
         });
         etValueTime.addTextChangedListener(new TextWatcher() {
             @Override
@@ -294,9 +304,11 @@ public class TerminalFragment extends Fragment {
         });
 
         tvMinusAmount.setOnClickListener(v -> {
+            isValueIterator = true;
             ConventString.changeAmountValue(etValueAmount, false, isOpenKeyboard && etValueAmount.isFocused());
         });
         tvPlusAmount.setOnClickListener(v -> {
+            isValueIterator = true;
             ConventString.changeAmountValue(etValueAmount, true, isOpenKeyboard && etValueAmount.isFocused());
         });
         tvPlusTime.setOnClickListener(v ->{
@@ -1223,6 +1235,7 @@ public class TerminalFragment extends Fragment {
                     currentDealing = new OrderAnswer();
                 }
                 isTimeIterator = true;
+                isValueIterator = true;
 
                 currentDealing.setOpenPrice(mCurrentValueY);
                 currentDealing.setSymbol(intent.getStringExtra(MakeDealingService.SYMBOL));
