@@ -11,13 +11,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.activities.SignInActivity;
-import com.google.android.gms.analytics.HitBuilders;
 
 public class CustomDialog {
 
@@ -75,7 +73,6 @@ public class CustomDialog {
         tvToolbarDialog.setText(activity.getResources().getString(R.string.caution));
 
         tvOk.setOnClickListener(v -> {
-            CustomSharedPreferences.deleteInfoUser(activity.getApplicationContext());
             Intent intent = new Intent(activity.getApplicationContext(), SignInActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             activity.startActivity(intent);
@@ -84,6 +81,7 @@ public class CustomDialog {
             dialog.cancel();
             BaseActivity.removeTerminal();
             activity.finish();
+            CustomSharedPreferences.deleteInfoUser(activity.getApplicationContext());
         });
         tvCancel.setOnClickListener(v -> dialog.cancel());
         dialog.show();

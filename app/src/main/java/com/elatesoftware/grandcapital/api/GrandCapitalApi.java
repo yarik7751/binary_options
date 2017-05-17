@@ -187,21 +187,23 @@ public class GrandCapitalApi {
         return result;
     }
     public static String getSummary() {
-       Call<SummaryAnswer> call = getApiService().getSummary(User.getInstance().getLogin());
-       Response<SummaryAnswer> response = null;
         String result = null;
-        try {
-            response = call.execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if(response != null){
-            if(response.code() == CODE_SUCCESS) {
-                SummaryAnswer.setInstance(response.body());
-                Double balance = SummaryAnswer.getInstance().getBalance();
-                User.getInstance().setBalance(balance);
+        if(User.getInstance() != null && User.getInstance().getLogin() != null){
+            Call<SummaryAnswer> call = getApiService().getSummary(User.getInstance().getLogin());
+            Response<SummaryAnswer> response = null;
+            try {
+                response = call.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            result = String.valueOf(response.code());
+            if(response != null){
+                if(response.code() == CODE_SUCCESS) {
+                    SummaryAnswer.setInstance(response.body());
+                    Double balance = SummaryAnswer.getInstance().getBalance();
+                    User.getInstance().setBalance(balance);
+                }
+                result = String.valueOf(response.code());
+            }
         }
         return result;
     }

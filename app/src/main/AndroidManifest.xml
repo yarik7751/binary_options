@@ -18,11 +18,11 @@
         android:supportsRtl="true"
         android:largeHeap="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".views.activities.PreViewActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

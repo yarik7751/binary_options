@@ -119,7 +119,7 @@ public class ResideMenu extends FrameLayout {
         userName.setText(User.getInstance().getUserName());
     }
     public void refreshBalanceUser(){
-        balance.setText(getResources().getString(R.string.balance) + "$" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
+        balance.setText(getResources().getString(R.string.balance) + " $" + String.format("%.2f", User.getInstance().getBalance()).replace('.', ','));
     }
 
     @Override
