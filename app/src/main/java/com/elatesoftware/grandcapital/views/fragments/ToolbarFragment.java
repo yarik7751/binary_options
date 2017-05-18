@@ -25,6 +25,7 @@ public class ToolbarFragment extends Fragment {
     public ToolTabsView mTabLayout;
     private TextView mPageTitle;
     private ImageView imgBurger;
+    private RelativeLayout rlBurger;
 
     //private static final float TRANSPARENT_TAB_ICON_VALUE = 0.5f;
    // private static final float NOT_TRANSPARENT_TAB_ICON_VALUE = 1f;
@@ -56,7 +57,8 @@ public class ToolbarFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         imgBurger = (ImageView) mParentActivity.findViewById(R.id.menu_burger);
-        imgBurger.setOnClickListener(v -> {
+        rlBurger = (RelativeLayout) mParentActivity.findViewById(R.id.rl_burger);
+        rlBurger.setOnClickListener(v -> {
             AndroidUtils.hideKeyboard(getActivity());
             if (burgerType == BURGER_OPEN_MENU) {
                 mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT);

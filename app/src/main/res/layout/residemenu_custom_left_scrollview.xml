@@ -2,18 +2,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="#000000">
 
-    <ImageButton
+    <RelativeLayout
+        android:id="@+id/rl_close"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_width="@dimen/menu_cross_size"
-        android:layout_height="@dimen/menu_cross_size"
-        android:background="@drawable/cross_on_menu"
-        android:layout_margin="@dimen/menu_cross_margin"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:id="@+id/close_button"/>
+        android:padding="8dp">
+
+        <ImageButton
+            android:layout_width="@dimen/menu_cross_size"
+            android:layout_height="@dimen/menu_cross_size"
+            android:background="@drawable/cross_on_menu"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:id="@+id/close_button"/>
+    </RelativeLayout>
 
     <ScrollView
         android:id="@+id/sv_left_menu"
