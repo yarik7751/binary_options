@@ -83,19 +83,6 @@ public class SupportFragment extends Fragment {
         edMessage = (EditText) view.findViewById(R.id.ed_message);
         llMessages = (LinearLayout) view.findViewById(R.id.ll_messages);
 
-        /*llMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                llMain.setBackgroundResource(R.drawable.bg);
-            }
-        });*/
-        /*edMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                llMain.setBackgroundResource(R.drawable.bg);
-            }
-        });*/
-
         cbSendMessage.setOnClickListener(v -> {
             edMessage.setText(edMessage.getText().toString().trim());
             if(!TextUtils.isEmpty(edMessage.getText().toString())) {

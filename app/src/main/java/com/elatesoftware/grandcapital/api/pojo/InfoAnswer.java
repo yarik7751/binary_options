@@ -4,6 +4,7 @@ package com.elatesoftware.grandcapital.api.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class InfoAnswer {
@@ -94,7 +95,17 @@ public class InfoAnswer {
     }
 
     public List<Instrument> getInstruments() {
-        return instruments;
+        List<Instrument> list = new ArrayList<>();
+        if(instruments != null)
+        for (Instrument instrument : instruments) {
+            if(instrument.getSymbol().length() == 6            // TODO COMMIT BUGS
+                    && !instrument.getSymbol().contains("JPY")
+                    && !instrument.getSymbol().equals("NZDUSD")
+                    && !instrument.getSymbol().equals("SILVER")){
+                list.add(instrument);
+            }
+        }
+        return list;
     }
 
     public void setInstruments(List<Instrument> instruments) {

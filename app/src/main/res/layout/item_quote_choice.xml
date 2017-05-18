@@ -7,12 +7,13 @@
     tools:background="#000000">
 
     <FrameLayout
+        android:id="@+id/fl_quote"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp">
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp">
 
         <LinearLayout
             android:orientation="vertical"
@@ -26,10 +27,10 @@
                 android:id="@+id/tv_currency"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:text="DGFHJ"
+                tools:text="DGFHJ"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"/>
+                android:textSize="15sp"/>
 
             <!--<TextView
                 android:id="@+id/tv_currency_description"
@@ -53,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_marginRight="16dp"
-                android:text="75.564564"
+                tools:text="75.564564"
                 android:textStyle="bold"
                 android:textColor="@color/dealingListTitlesColor"
                 android:textSize="14sp"/>
@@ -64,8 +65,7 @@
                 android:layout_height="36dp"
                 android:padding="6dp"
                 android:clickable="true"
-                android:focusable="true"
-                android:src="@drawable/ic_star_border_white_24dp"/>
+                android:focusable="true" />
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>

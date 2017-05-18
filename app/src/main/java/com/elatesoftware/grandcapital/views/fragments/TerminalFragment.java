@@ -235,9 +235,6 @@ public class TerminalFragment extends Fragment {
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
-        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $0.0(0%)");
-        ConventString.formatReward(tvValueRewardTerminal);
-
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
             isValueIterator = true;
             isTimeIterator = true;
@@ -312,18 +309,25 @@ public class TerminalFragment extends Fragment {
             ConventString.changeAmountValue(etValueAmount, true, isOpenKeyboard && etValueAmount.isFocused());
         });
         tvPlusTime.setOnClickListener(v ->{
-                isTimeIterator = true;
-            //if(!isOpenKeyboard) {
-                ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard && etValueTime.isFocused());
-            //}
+            isTimeIterator = true;
+            ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard && etValueTime.isFocused());
+
         });
         tvMinusTime.setOnClickListener(v -> {
             isTimeIterator = true;
-            //if(!isOpenKeyboard) {
-                ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard && etValueTime.isFocused());
-            //}
+            ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard && etValueTime.isFocused());
         });
+        tvValueActive.setOnClickListener(v -> {
+           /* Bundle bundle = new Bundle();
+            bundle.putString(QuotesChoiceFragment.SYMBOL, ConventString.getActive(tvValueActive));
 
+            QuotesChoiceFragment choiceFragment = QuotesChoiceFragment.getInstance();
+            choiceFragment.setArguments(bundle);
+
+            BaseActivity.backToRootFragment = true;
+            BaseActivity.fragmentManager.popBackStack();
+            BaseActivity.onSwitchFragment(choiceFragment, choiceFragment.getClass().getName(), true, true, R.id.content);*/
+        });
         tvLeftActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
@@ -385,6 +389,7 @@ public class TerminalFragment extends Fragment {
         } else {
             changeActive();
         }
+        requestEarlyClosure();
         requestGetAllOrders();
     }
     @Override
@@ -1197,12 +1202,7 @@ public class TerminalFragment extends Fragment {
                 InfoAnswer.getInstance().getInstruments() != null && InfoAnswer.getInstance().getInstruments().size() > 0) {
                 listActives.clear();
                 for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
-                    if(instrument.getSymbol().length() == 6            // TODO COMMIT BUGS
-                        && !instrument.getSymbol().contains("JPY")
-                        && !instrument.getSymbol().equals("NZDUSD")
-                        && !instrument.getSymbol().equals("SILVER")){
-                        listActives.add(instrument.getSymbol());
-                    }
+                    listActives.add(instrument.getSymbol());
                 }
                 if (listActives != null && listActives.size() > 0 && listActives.contains(Const.SYMBOL) && !ConventString.getActive(tvValueActive).equals(Const.SYMBOL)) {
                     sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));
