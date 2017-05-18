@@ -57,9 +57,9 @@ public class ConventImage {
     public static FrameLayout.LayoutParams getFrameParams(boolean isDirection){
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
-                AndroidUtils.dp(60)
+                AndroidUtils.dp(80)
         );
-        params.topMargin = AndroidUtils.dp(isDirection ? -60 : 0);
+        params.topMargin = AndroidUtils.dp(isDirection ? -80 : 0);
         return params;
     }
 }

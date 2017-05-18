@@ -80,6 +80,7 @@ public class DealingFragment extends Fragment {
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_dealing));
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
         BaseActivity.getToolbar().switchTab(BaseActivity.DEALING_POSITION);
+        ((BaseActivity) getActivity()).hideShadow();
 
         mListLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_list);
         mNoOrdersLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_no_elements_layout);
@@ -108,6 +109,7 @@ public class DealingFragment extends Fragment {
     @Override
     public void onPause() {
         Log.d(TAG, "onPause()");
+        ((BaseActivity) getActivity()).showShadow();
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
         getActivity().unregisterReceiver(mDeleteDealingBroadcastReceiver);
         sIsOpen = false;

@@ -170,7 +170,7 @@ public class ConventString {
 
     public static String getStringEarlyClosure(EditText view, int percent){
         double earlyClosure = ConventString.getAmountValue(view) * percent / 100.000;
-        return getRoundNumber(4, earlyClosure) + "(" + (earlyClosure == 0 ? 0 : percent) + "%)";
+        return getRoundNumber(4, earlyClosure) + " (" + (earlyClosure == 0 ? 0 : percent) + "%)";
     }
 
     public static void formatReward(TextView tv) {

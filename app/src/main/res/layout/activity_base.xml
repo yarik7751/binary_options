@@ -13,9 +13,21 @@
         android:layout_width="match_parent"
         android:layout_gravity="center_vertical"
         android:id="@+id/toolbar"/>
-    <FrameLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:id="@+id/content"/>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:id="@+id/content"/>
+
+        <LinearLayout
+            android:id="@+id/ll_shadow"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@drawable/bg_shadow_270"></LinearLayout>
+    </FrameLayout>
 </LinearLayout>

@@ -27,6 +27,7 @@
     <dimen name="Menu_account_balance_text_size">10sp</dimen>
     <dimen name="dealing_list_text_size">13sp</dimen>
     <dimen name="dealing_fragment_no_orders_message_size">13sp</dimen>
+    <dimen name="edit_text_height_terminal">20dp</dimen>
 
     <item name="offset_y_chart" type="dimen" format="float">130.</item>
 </resources>

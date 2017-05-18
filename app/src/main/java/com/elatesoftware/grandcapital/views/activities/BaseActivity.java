@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
@@ -52,6 +53,7 @@ public class BaseActivity extends CustomFontsActivity {
     private ResideMenuItem mPromotions;
     //private ResideMenuItem mAccounts;
     //private ResideMenuItem mSettings;
+    private LinearLayout llShadow;
     private ResideMenuItem mLogout;
     private View mDeposit;
     private TerminalFragment terminalFragment;
@@ -72,6 +74,8 @@ public class BaseActivity extends CustomFontsActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+
+        llShadow = (LinearLayout) findViewById(R.id.ll_shadow);
 
         if (!isAuth()) {
             Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
@@ -128,6 +132,14 @@ public class BaseActivity extends CustomFontsActivity {
         } else {
             goHome();
         }
+    }
+
+    public void hideShadow() {
+        llShadow.setVisibility(View.GONE);
+    }
+
+    public void showShadow() {
+        llShadow.setVisibility(View.VISIBLE);
     }
 
     private void setupMenu() {

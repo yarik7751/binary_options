@@ -20,7 +20,19 @@
             style="?android:attr/progressBarStyleLarge"/>
     </LinearLayout>
 
-    <include layout="@layout/item_window_signal" />
+    <LinearLayout
+        android:id="@+id/ll_signal"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-80dp">
+
+        <include layout="@layout/item_window_signal" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@drawable/bg_shadow_270"/>
+    </LinearLayout>
 
     <ScrollView
         android:fillViewport="true"
@@ -54,47 +66,58 @@
                 android:orientation="vertical"
                 android:background="@color/dialog_bg">
 
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:orientation="horizontal"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:gravity="center"
                     android:layout_weight="1">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/balance"
-                        android:textSize="10sp"
-                        style="@style/LigthText"
-                        android:layout_marginRight="10dp"/>
+                        android:orientation="horizontal"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:id="@+id/tvBalanceTerminal"
-                        tools:text="$45,621"
-                        android:text="@string/zero_dollars"
-                        android:textSize="18sp"
-                        android:gravity="center"
-                        style="@style/MenuItem"
-                        android:textColor="@color/colorAccent"
-                        android:layout_gravity="center"
-                        android:layout_marginRight="10dp"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|right"
+                            android:text="@string/balance"
+                            android:textSize="10sp"
+                            style="@style/LigthText"
+                            android:layout_marginRight="10dp"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:id="@+id/tvDepositTerminal"
-                        android:text="@string/deposit"
-                        style="@style/MenuItem"
-                        android:textColor="@color/color_text_deposit"
-                        android:textStyle="bold"
-                        android:gravity="center"/>
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:id="@+id/tvBalanceTerminal"
+                            tools:text="$45,621"
+                            android:text="@string/zero_dollars"
+                            android:textSize="18sp"
+                            android:gravity="center"
+                            style="@style/MenuItem"
+                            android:textColor="@color/colorAccent"
+                            android:layout_gravity="center"
+                            android:layout_marginRight="10dp"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:id="@+id/tvDepositTerminal"
+                            android:text="@string/deposit"
+                            style="@style/MenuItem"
+                            android:textColor="@color/color_text_deposit"
+                            android:textStyle="bold"
+                            android:gravity="center_vertical|left"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:background="@drawable/bg_shadow_270"></LinearLayout>
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -111,22 +134,21 @@
                         android:orientation="vertical"
                         android:layout_weight="1"
                         android:layout_marginRight="10dp"
+                        android:gravity="center"
                         android:background="@color/color_view_terminal">
 
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:gravity="center"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal|bottom"
                             style="@style/LigthText"
-                            android:layout_weight="1"
                             android:text="@string/active"
                             android:textSize="10sp"
                             android:id="@+id/tvTabActiveTerminal"/>
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:orientation="horizontal"
-                            android:layout_weight="1">
+                            android:layout_height="@dimen/edit_text_height_terminal"
+                            android:orientation="horizontal">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -161,23 +183,22 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:layout_marginRight="10dp"
                         android:background="@color/color_view_terminal">
 
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             style="@style/LigthText"
                             android:text="@string/amount"
-                            android:layout_weight="1"
-                            android:gravity="center"
+                            android:gravity="center_horizontal|bottom"
                             android:textSize="10sp"
                             android:id="@+id/tvTabAmountTerminal"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="@dimen/edit_text_height_terminal"
                             android:orientation="horizontal">
 
                             <TextView
@@ -221,21 +242,21 @@
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:layout_weight="1"
+                        android:gravity="center"
                         android:background="@color/color_view_terminal">
 
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             style="@style/LigthText"
-                            android:layout_weight="1"
                             android:text="@string/time"
                             android:textSize="10sp"
-                            android:gravity="center"
+                            android:gravity="center_horizontal|bottom"
                             android:id="@+id/tvTabTimeTerminal"/>
+
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="@dimen/edit_text_height_terminal"
                             android:orientation="horizontal">
                             <TextView
                                 android:layout_width="0dp"
@@ -246,6 +267,7 @@
                                 android:textSize="20sp"
                                 android:id="@+id/tvMinusTabTimeTerminal"
                                 style="@style/MenuItem"/>
+
                             <EditText
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
@@ -260,6 +282,7 @@
                                 android:textStyle="bold"
                                 android:id="@+id/tvValueTabTimeTerminal"
                                 style="@style/MenuItem"/>
+
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"

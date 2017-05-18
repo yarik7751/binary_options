@@ -22,8 +22,9 @@
 
     <LinearLayout
         android:id="@+id/tabsLayout"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="@color/toolbarColor">
 
@@ -31,8 +32,7 @@
             android:id="@+id/dealingTabs"
             style="@style/AppTabLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
+            android:layout_height="50dp"
             asd:tabIndicatorColor="@color/accentButtonGradientStartColor"
             asd:tabTextAppearance="@style/AppTabTextAppearance">
 
@@ -46,72 +46,82 @@
                 android:layout_height="0dp"
                 android:text="@string/dealing_page_tab_name_close" />
         </android.support.design.widget.TabLayout>
-
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/fragment_dealing_list"
-        android:layout_below="@+id/tabsLayout"
-        android:orientation="vertical"
-        android:paddingTop="8dp">
+        android:layout_below="@+id/tabsLayout">
 
         <LinearLayout
-            android:id="@+id/titleListOpen"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:paddingBottom="4dp"
-            android:weightSum="11">
+            android:layout_height="match_parent"
+            android:id="@+id/fragment_dealing_list"
+            android:orientation="vertical"
+            android:paddingTop="8dp">
 
-            <TextView
-                android:id="@+id/tv_dealing_header_col1_active"
-                style="@style/DealingTitleStyle"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/titleListOpen"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                tools:text="@string/dealing_page_open_active" />
+                android:layout_marginLeft="16dp"
+                android:paddingBottom="4dp"
+                android:weightSum="11">
 
-            <TextView
-                android:id="@+id/tv_dealing_header_col2_open"
-                style="@style/DealingTitleStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                tools:text="@string/dealing_page_open_open" />
+                <TextView
+                    android:id="@+id/tv_dealing_header_col1_active"
+                    style="@style/DealingTitleStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    tools:text="@string/dealing_page_open_active" />
 
-            <TextView
-                android:id="@+id/fragment_dealing_header_column_3"
-                style="@style/DealingTitleStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                tools:text="@string/dealing_page_open_market" />
+                <TextView
+                    android:id="@+id/tv_dealing_header_col2_open"
+                    style="@style/DealingTitleStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    tools:text="@string/dealing_page_open_open" />
 
-            <TextView
-                android:id="@+id/fragment_dealing_header_column_4"
-                style="@style/DealingTitleStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                tools:text="@string/dealing_page_open_amount" />
+                <TextView
+                    android:id="@+id/fragment_dealing_header_column_3"
+                    style="@style/DealingTitleStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    tools:text="@string/dealing_page_open_market" />
 
-            <TextView
-                android:id="@+id/fragment_dealing_header_column_5"
-                style="@style/DealingTitleStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                tools:text="@string/dealing_page_open_time" />
+                <TextView
+                    android:id="@+id/fragment_dealing_header_column_4"
+                    style="@style/DealingTitleStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    tools:text="@string/dealing_page_open_amount" />
 
+                <TextView
+                    android:id="@+id/fragment_dealing_header_column_5"
+                    style="@style/DealingTitleStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    tools:text="@string/dealing_page_open_time" />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ordersListOpen"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/ordersListOpen"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            android:layout_height="20dp"
+            android:layout_gravity="top"
+            android:background="@drawable/bg_shadow_270"/>
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"

@@ -131,6 +131,7 @@ public class TerminalFragment extends Fragment {
     private RelativeLayout rlChart;
     private FrameLayout flMain;
     private LinearLayout llTopPanel;
+    private LinearLayout llSignal;
     private TextView tvCurrentActive;
     private TextView tvCurrentActiveAmount;
     private TextView tvSignalMinutes1;
@@ -217,6 +218,7 @@ public class TerminalFragment extends Fragment {
         tvErrorSignal = (TextView) parentView.findViewById(R.id.tvErrorSignal);
         rlErrorSignal = (RelativeLayout) parentView.findViewById(R.id.rlErrorSignal);
         tvValueRewardTerminal = (TextView) parentView.findViewById(R.id.tvValueRewardTerminal);
+        llSignal = (LinearLayout) parentView.findViewById(R.id.ll_signal);
         return parentView;
     }
     @Override
@@ -235,7 +237,7 @@ public class TerminalFragment extends Fragment {
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
-        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $0.0(0%)");
+        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $0.0 (0%)");
         ConventString.formatReward(tvValueRewardTerminal);
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
@@ -1145,7 +1147,7 @@ public class TerminalFragment extends Fragment {
         if(!isDirection) {
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         }
-        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 60 : -60));
+        TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 80 : -80));
         animation.setDuration(Const.INTERVAL_ANIM_PANEL);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -1154,9 +1156,9 @@ public class TerminalFragment extends Fragment {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                llTopPanel.clearAnimation();
-                flMain.removeView(llTopPanel);
-                flMain.addView(llTopPanel, ConventImage.getFrameParams(isDirection));
+                llSignal.clearAnimation();
+                flMain.removeView(llSignal);
+                flMain.addView(llSignal, ConventImage.getFrameParams(isDirection));
                 if (!isDirection) {
                     new Handler().postDelayed(() -> {
                         if (!isDirection) {
@@ -1170,7 +1172,7 @@ public class TerminalFragment extends Fragment {
             public void onAnimationRepeat(Animation animation) {
             }
         });
-        llTopPanel.startAnimation(animation);
+        llSignal.startAnimation(animation);
         isDirection = !isDirection;
     }
     public void showViewCloseDealing(OrderAnswer order){
