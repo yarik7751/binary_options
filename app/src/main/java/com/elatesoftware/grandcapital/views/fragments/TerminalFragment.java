@@ -309,24 +309,23 @@ public class TerminalFragment extends Fragment {
             ConventString.changeAmountValue(etValueAmount, true, isOpenKeyboard && etValueAmount.isFocused());
         });
         tvPlusTime.setOnClickListener(v ->{
-            isTimeIterator = true;
-            ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard && etValueTime.isFocused());
-
+                isTimeIterator = true;
+                ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard && etValueTime.isFocused());
         });
         tvMinusTime.setOnClickListener(v -> {
             isTimeIterator = true;
-            ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard && etValueTime.isFocused());
+                ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard && etValueTime.isFocused());
         });
         tvValueActive.setOnClickListener(v -> {
-           /* Bundle bundle = new Bundle();
-            bundle.putString(QuotesChoiceFragment.SYMBOL, ConventString.getActive(tvValueActive));
-
-            QuotesChoiceFragment choiceFragment = QuotesChoiceFragment.getInstance();
-            choiceFragment.setArguments(bundle);
-
-            BaseActivity.backToRootFragment = true;
-            BaseActivity.fragmentManager.popBackStack();
-            BaseActivity.onSwitchFragment(choiceFragment, choiceFragment.getClass().getName(), true, true, R.id.content);*/
+//            Bundle bundle = new Bundle();
+//            bundle.putString(QuotesChoiceFragment.SYMBOL, ConventString.getActive(tvValueActive));
+//
+//            QuotesChoiceFragment choiceFragment = QuotesChoiceFragment.getInstance();
+//            choiceFragment.setArguments(bundle);
+//
+//            BaseActivity.backToRootFragment = true;
+//            BaseActivity.fragmentManager.popBackStack();
+//            BaseActivity.onSwitchFragment(choiceFragment, choiceFragment.getClass().getName(), true, true, R.id.content);
         });
         tvLeftActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {

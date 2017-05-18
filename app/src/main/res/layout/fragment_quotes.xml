@@ -17,8 +17,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                style="@style/LigthText"
-                android:textStyle="bold"
+                style="@style/BoldText"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_marginLeft="16dp"
@@ -41,8 +40,7 @@
                 android:layout_marginBottom="16dp"
                 android:text="@string/all_quotes"
                 android:textColor="@color/dealingListTitlesColor"
-                style="@style/LigthText"
-                android:textStyle="bold"
+                style="@style/BoldText"
                 android:textSize="14sp"/>
 
             <android.support.v7.widget.RecyclerView

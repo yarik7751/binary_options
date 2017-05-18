@@ -1,24 +1,49 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.adapters.quotes.QuotesChoiceAdapter;
+import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
+import com.elatesoftware.grandcapital.api.pojo.Instrument;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.services.InfoUserService;
+import com.elatesoftware.grandcapital.utils.Const;
+import com.elatesoftware.grandcapital.views.activities.BaseActivity;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Дарья Высокович on 18.05.2017.
  */
 
-public class QuotesChoiceFragment /*extends Fragment*/ {
-/*
-    public static final int INTERVAL = 3000;
+public class QuotesChoiceFragment extends Fragment {
+
+    public static final int INTERVAL = 6000;
     private static String symbol = "";
     public static final String SYMBOL = "symbol";
 
     static final int DOWN_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListDownOrderColor);
     static final int UP_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListUpOrderColor);
 
-    private RecyclerView rvSelectedQuotes, rvAllQuotes;
+    private RecyclerView rvQuotes;
+    private QuotesChoiceAdapter quotesAdapter;
     private List<Instrument> lastInstruments;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
-
-    private QuotesChoiceAdapter quotesSelectChoiceAdapter;
-    private QuotesChoiceAdapter quotesAllChoiceAdapter;
 
     private Handler handler = new Handler();
     private Runnable runnableQuotes = new Runnable() {
@@ -52,22 +77,14 @@ public class QuotesChoiceFragment /*extends Fragment*/ {
         BaseActivity.getToolbar().deselectAll();
         BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_BACK_PRESSED);
 
-        rvAllQuotes = (RecyclerView) view.findViewById(R.id.rv_all_quotes);
-        rvSelectedQuotes = (RecyclerView) view.findViewById(R.id.rv_selected_quotes);
-        rvAllQuotes.setLayoutManager(new LinearLayoutManager(getContext()) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
+        lastInstruments = new ArrayList<>();
+        rvQuotes = (RecyclerView) view.findViewById(R.id.rv_quotes);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        rvQuotes.setLayoutManager(mLayoutManager);
+        quotesAdapter = new QuotesChoiceAdapter(getActivity(), lastInstruments, symbol, (s, v) -> {
+
         });
-        rvSelectedQuotes.setLayoutManager(new LinearLayoutManager(getContext()) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        });
-        rvAllQuotes.setNestedScrollingEnabled(false);
-        rvSelectedQuotes.setNestedScrollingEnabled(false);
+        rvQuotes.setAdapter(quotesAdapter);
     }
 
     @Override
@@ -78,48 +95,22 @@ public class QuotesChoiceFragment /*extends Fragment*/ {
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mInfoBroadcastReceiver, intentFilter);
     }
-
     @Override
     public void onResume() {
         super.onResume();
         if(InfoAnswer.getInstance() != null  && InfoAnswer.getInstance().getInstruments() != null) {
             lastInstruments = InfoAnswer.getInstance().getInstruments();
-            setData(lastInstruments);
+            quotesAdapter.setSelectedInstruments(lastInstruments);
+            quotesAdapter.notifyDataSetChanged();
             handler.postDelayed(runnableQuotes, INTERVAL);
         }
         Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
         getActivity().startService(intentMyIntentService);
     }
-
     @Override
     public void onStop() {
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
         super.onStop();
-    }
-
-    private void setData(List<Instrument> quotes) {
-        quotesSelectChoiceAdapter = new QuotesChoiceAdapter(getActivity(), quotes, QuotesAdapter.SELECT_QUOTES, symbol, (inst, view) -> {
-
-        });
-        quotesAllChoiceAdapter = new QuotesChoiceAdapter(getActivity(), quotes, QuotesAdapter.ALL_QUOTES, symbol, (inst, view) -> {
-
-        });
-        rvAllQuotes.setAdapter(quotesAllChoiceAdapter);
-        rvSelectedQuotes.setAdapter(quotesSelectChoiceAdapter);
-    }
-
-    public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String responseInfo = intent.getStringExtra(InfoUserService.RESPONSE_INFO);
-            String responseSummary = intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY);
-            if(responseInfo != null && responseSummary != null && responseInfo.equals(Const.RESPONSE_CODE_SUCCESS) && responseSummary.equals(Const.RESPONSE_CODE_SUCCESS)){
-                if(InfoAnswer.getInstance() != null) {
-                    List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
-                    comparisonQuotes(newInstruments);
-                }
-            }
-        }
     }
 
     private void comparisonQuotes(List<Instrument> newInstruments) {
@@ -138,7 +129,21 @@ public class QuotesChoiceFragment /*extends Fragment*/ {
                 }
             }
             lastInstruments = newInstruments;
-            setData(newInstruments);
+            quotesAdapter.setSelectedInstruments(lastInstruments);
+            quotesAdapter.notifyDataSetChanged();
         }
-    }*/
+    }
+    public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String responseInfo = intent.getStringExtra(InfoUserService.RESPONSE_INFO);
+            String responseSummary = intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY);
+            if(responseInfo != null && responseSummary != null && responseInfo.equals(Const.RESPONSE_CODE_SUCCESS) && responseSummary.equals(Const.RESPONSE_CODE_SUCCESS)){
+                if(InfoAnswer.getInstance() != null) {
+                    List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
+                    comparisonQuotes(newInstruments);
+                }
+            }
+        }
+    }
 }
