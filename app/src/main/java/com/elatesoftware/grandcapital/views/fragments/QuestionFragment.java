@@ -46,7 +46,7 @@ public class QuestionFragment extends Fragment {
         BaseActivity.getToolbar().setPageTitle(mHeader);
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_EMPTY_FRAGMENT);
         BaseActivity.getToolbar().deselectAll();
-        BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_BACK_PRESSED);
+        BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_BACK_PRESSED_ACTIVITY);
 
         TextView contentText  = (TextView) view.findViewById(R.id.fragment_question_content);
         contentText.setText(mContent);

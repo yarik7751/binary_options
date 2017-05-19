@@ -20,6 +20,7 @@ import com.elatesoftware.grandcapital.adapters.quotes.QuotesChoiceAdapter;
 import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.models.QuoteType;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -44,6 +45,7 @@ public class QuotesChoiceFragment extends Fragment {
     private QuotesChoiceAdapter quotesAdapter;
     private List<Instrument> lastInstruments;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
+    public static QuoteType currentQuoteType;
 
     private Handler handler = new Handler();
     private Runnable runnableQuotes = new Runnable() {
@@ -82,7 +84,7 @@ public class QuotesChoiceFragment extends Fragment {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         rvQuotes.setLayoutManager(mLayoutManager);
         quotesAdapter = new QuotesChoiceAdapter(getActivity(), lastInstruments, symbol, (s, v) -> {
-
+            currentQuoteType = s;
         });
         rvQuotes.setAdapter(quotesAdapter);
     }
@@ -102,14 +104,13 @@ public class QuotesChoiceFragment extends Fragment {
             lastInstruments = InfoAnswer.getInstance().getInstruments();
             quotesAdapter.setSelectedInstruments(lastInstruments);
             quotesAdapter.notifyDataSetChanged();
-            handler.postDelayed(runnableQuotes, INTERVAL);
         }
-        Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
-        getActivity().startService(intentMyIntentService);
+        handler.postDelayed(runnableQuotes, INTERVAL);
     }
     @Override
     public void onStop() {
         getActivity().unregisterReceiver(mInfoBroadcastReceiver);
+        handler.removeCallbacks(runnableQuotes);
         super.onStop();
     }
 

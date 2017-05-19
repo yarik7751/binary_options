@@ -120,6 +120,7 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
                     selectedPosition = listQuotes.indexOf(quoteType);
                     quotesHolder.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));
                     ((QuotesStarViewHolder) holder).bind(quoteType, listenerItem);
+                    notifyDataSetChanged();
                 });
                 if(position == selectedPosition){
                     quotesHolder.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));
@@ -137,6 +138,7 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
                     selectedPosition = listQuotes.indexOf(quoteType);
                     quotesHolder1.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));
                     ((QuotesNoStarViewHolder) holder).bind(quoteType, listenerItem);
+                    notifyDataSetChanged();
                 });
                 if(position == selectedPosition){
                     quotesHolder1.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));

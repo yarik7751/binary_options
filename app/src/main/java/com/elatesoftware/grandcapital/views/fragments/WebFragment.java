@@ -62,7 +62,7 @@ public class WebFragment extends Fragment {
 
         BaseActivity.getToolbar().setPageTitle(getContext().getResources().getString(R.string.app_name));
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_EMPTY_FRAGMENT);
-        BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_BACK_PRESSED);
+        BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_BACK_PRESSED_ACTIVITY);
 
         wvWeb = (WebView) view.findViewById(R.id.wv_web);
         wvWeb.setWebViewClient(new MyWebViewClient());

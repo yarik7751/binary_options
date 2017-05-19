@@ -87,9 +87,7 @@ public class HowItWorksFragment extends Fragment {
             if(response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)) {
                 mRecyclerView.setAdapter(new FragmentHowItWorksListAdapter(QuestionsAnswer.getInstance()));
             } else {
-                CustomDialog.showDialogInfo(getActivity(),
-                        getString(R.string.request_error_title),
-                        getString(R.string.request_error_text));
+                CustomDialog.showDialogInfo(getActivity(), getString(R.string.request_error_title), getString(R.string.request_error_text));
             }
         }
     }
