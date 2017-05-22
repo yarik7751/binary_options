@@ -692,6 +692,7 @@
     <string name="cancel_dont_show">Cancel and don’t show the message again</string>
     <string name="caution">Caution!</string>
     <string name="character_counter_pattern" translatable="false">%1$d / %2$d</string>
+    <string name="choose_an_active">Choosen an active</string>
     <string name="clode_dealing_title">Are you sure that you want to close the trade?</string>
     <string name="close">Close</string>
     <string msgid="2523291102206661146" name="common_google_play_services_enable_button">Enable</string>
