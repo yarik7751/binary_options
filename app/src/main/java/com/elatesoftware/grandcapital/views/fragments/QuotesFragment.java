@@ -47,7 +47,7 @@ public class QuotesFragment extends Fragment {
     private Runnable runnableQuotes = new Runnable() {
         @Override
         public void run() {
-            Intent intentMyIntentService = new Intent(getContext(), InfoUserService.class);
+            Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
             getActivity().startService(intentMyIntentService);
             handler.postDelayed(runnableQuotes, INTERVAL);
         }
@@ -142,7 +142,7 @@ public class QuotesFragment extends Fragment {
     }
 
     private void comparisonQuotes(List<Instrument> newInstruments) {
-        if(newInstruments != null) {
+        if(newInstruments != null  && lastInstruments != null) {
             for (int i = 0; i < lastInstruments.size(); i++) {
                 if(newInstruments.get(i) != null) {
                     if (newInstruments.get(i).getSymbol().equals(Const.SYMBOL)) {

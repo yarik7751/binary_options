@@ -36,7 +36,8 @@ public class ToolbarFragment extends Fragment {
     public static final int TOOLBAR_REFRESH_FRAGMENT = 104;
 
     public static final int BURGER_OPEN_MENU = 201;
-    public static final int BURGER_BACK_PRESSED = 202;
+    public static final int BURGER_BACK_PRESSED_ACTIVITY = 202;
+    public static final int BURGER_BACK_PRESSED = 203;
     private int burgerType = BURGER_OPEN_MENU;
 
     private static ToolbarFragment fragment = null;
@@ -63,9 +64,27 @@ public class ToolbarFragment extends Fragment {
             if (burgerType == BURGER_OPEN_MENU) {
                 mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
             }
-            if (burgerType == BURGER_BACK_PRESSED) {
+            if (burgerType == BURGER_BACK_PRESSED_ACTIVITY) {
                 getActivity().onBackPressed();
             }
+            /*if (burgerType == BURGER_BACK_PRESSED) {
+                if(QuotesChoiceFragment.currentQuoteType != null && QuotesChoiceFragment.currentQuoteType.getInstrumentQuote() != null){
+                    TerminalFragment.getInstance().choiceActive(QuotesChoiceFragment.currentQuoteType.getInstrumentQuote().getSymbol());
+                }
+                BaseActivity.fragmentManager.popBackStack();
+                BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
+                BaseActivity.getToolbar().setPageTitle(getActivity().getResources().getString(R.string.toolbar_name_terminal));
+                BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
+                    BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+                    BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+                });
+                try {
+                    BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+                    BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+                } catch (Exception ignored) {
+                    ignored.printStackTrace();
+                }
+            }*/
         });
         mPageTitle = (TextView) getView().findViewById(R.id.page_title);
         setupToolbar();
@@ -93,6 +112,9 @@ public class ToolbarFragment extends Fragment {
         burgerType = _burgerType;
         if (burgerType == BURGER_OPEN_MENU) {
             imgBurger.setImageResource(R.drawable.menu_icon);
+        }
+        if (burgerType == BURGER_BACK_PRESSED_ACTIVITY) {
+            imgBurger.setImageResource(R.drawable.ic_back);
         }
         if (burgerType == BURGER_BACK_PRESSED) {
             imgBurger.setImageResource(R.drawable.ic_back);

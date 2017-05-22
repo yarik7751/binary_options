@@ -19,7 +19,7 @@ import java.util.List;
 public class OrdersService extends IntentService {
 
     public final static String RESPONSE= "response";
-    public static final String ACTION_SERVICE_ORDERS= "com.elatesoftware.grandcapital.services.OrdersService";
+    public static final String ACTION_SERVICE_ORDERS = "com.elatesoftware.grandcapital.services.OrdersService";
     private final static String NAME_STREAM = "Orders";
     public final static String FUNCTION = "function";
     public final static String ORDER = "order";

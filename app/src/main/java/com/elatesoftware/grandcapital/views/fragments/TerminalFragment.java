@@ -315,17 +315,19 @@ public class TerminalFragment extends Fragment {
         });
         tvPlusTime.setOnClickListener(v ->{
                 isTimeIterator = true;
-            //if(!isOpenKeyboard) {
                 ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard && etValueTime.isFocused());
-            //}
         });
         tvMinusTime.setOnClickListener(v -> {
             isTimeIterator = true;
-            //if(!isOpenKeyboard) {
                 ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard && etValueTime.isFocused());
-            //}
         });
-
+        tvValueActive.setOnClickListener(v -> {
+            /*Bundle bundle = new Bundle();
+            bundle.putString(QuotesChoiceFragment.SYMBOL, ConventString.getActive(tvValueActive));
+            Fragment choiceFragment = new QuotesChoiceFragment();
+            choiceFragment.setArguments(bundle);
+            getActivity().getSupportFragmentManager().beginTransaction().add(R.id.content, choiceFragment,choiceFragment.getClass().getName()).addToBackStack("choice").commit();*/
+        });
         tvLeftActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
@@ -387,6 +389,7 @@ public class TerminalFragment extends Fragment {
         } else {
             changeActive();
         }
+        requestEarlyClosure();
         requestGetAllOrders();
     }
     @Override
@@ -761,6 +764,17 @@ public class TerminalFragment extends Fragment {
         requestSymbolHistory(ConventString.getActive(tvValueActive));
         requestGetAllOrders();
     }
+    /*public void choiceActive(String symbol){
+        if (!symbol.isEmpty() && listActives.size() > 0) {
+            int index = listActives.indexOf(symbol);
+            tvValueActive.setText(listActives.get(index));
+            sSymbolCurrent = symbol;
+            changeActive();
+            parseResponseSignals(symbol);
+        } else {
+            sSymbolCurrent = Const.SYMBOL;
+        }
+    }*/
 
     private void startTimerRedrawLimitLines(){
         mTimerRedraw.scheduleAtFixedRate(new TimerTask() {
@@ -1199,12 +1213,7 @@ public class TerminalFragment extends Fragment {
                 InfoAnswer.getInstance().getInstruments() != null && InfoAnswer.getInstance().getInstruments().size() > 0) {
                 listActives.clear();
                 for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
-                    if(instrument.getSymbol().length() == 6            // TODO COMMIT BUGS
-                        && !instrument.getSymbol().contains("JPY")
-                        && !instrument.getSymbol().equals("NZDUSD")
-                        && !instrument.getSymbol().equals("SILVER")){
-                        listActives.add(instrument.getSymbol());
-                    }
+                    listActives.add(instrument.getSymbol());
                 }
                 if (listActives != null && listActives.size() > 0 && listActives.contains(Const.SYMBOL) && !ConventString.getActive(tvValueActive).equals(Const.SYMBOL)) {
                     sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));

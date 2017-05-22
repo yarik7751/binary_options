@@ -12,12 +12,10 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
-import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +53,6 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
                 }
                 if(variant == ALL_QUOTES) {
                     if (!selectedInstData.contains(inst.getSymbol().toUpperCase() + ";")) {
-                        //Log.d(TAG, "selectedInstData: " + selectedInstData);
-                        //Log.d(TAG, inst.getSymbol());
                         selectedInstruments.add(inst);
                     }
                 } else if(variant == SELECT_QUOTES) {
@@ -70,7 +66,7 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
 
     @Override
     public QuotesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_quotes, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_quote, parent, false);
         return new QuotesViewHolder(v);
     }
 
@@ -87,31 +83,28 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
             quotesHolder.imgIsSelected.setImageResource(R.drawable.ic_star_border_white_24dp);
         }
 
-        quotesHolder.imgIsSelected.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "AllQuotesAdapter imgIsSelected");
-                String selectedQuotes = CustomSharedPreferences.getSelectedQuotes(context);
-                if(variant == ALL_QUOTES) {
-                    if(!selectedQuotes.contains(selectedInstruments.get(position).getSymbol())) {
-                        selectedQuotes += selectedInstruments.get(position).getSymbol() + ";";
-                    }
-                    CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
-                    Log.d(TAG, "selectedQuotes: " + selectedQuotes);
-
-                    GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_QUOTES_SCREEN, Const.ANALYTICS_BUTTON_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
-
-                } else if(variant == SELECT_QUOTES) {
-                    Log.d(TAG, "getSymbol(): " + selectedInstruments.get(position).getSymbol());
-                    Log.d(TAG, "selectedQuotes: " + selectedQuotes);
-                    selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol().toUpperCase() + ";", "");
-                    CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
-                    Log.d(TAG, "selectedQuotes (CHANGE): " + selectedQuotes);
-
-                    GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_QUOTES_SCREEN, Const.ANALYTICS_BUTTON_DELETE_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
+        quotesHolder.imgIsSelected.setOnClickListener(v -> {
+            Log.d(TAG, "AllQuotesAdapter imgIsSelected");
+            String selectedQuotes = CustomSharedPreferences.getSelectedQuotes(context);
+            if(variant == ALL_QUOTES) {
+                if(!selectedQuotes.contains(selectedInstruments.get(position).getSymbol())) {
+                    selectedQuotes += selectedInstruments.get(position).getSymbol() + ";";
                 }
-                onSharedPreferencesChange.onChange();
+                CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
+                Log.d(TAG, "selectedQuotes: " + selectedQuotes);
+
+                GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_QUOTES_SCREEN, Const.ANALYTICS_BUTTON_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
+
+            } else if(variant == SELECT_QUOTES) {
+                Log.d(TAG, "getSymbol(): " + selectedInstruments.get(position).getSymbol());
+                Log.d(TAG, "selectedQuotes: " + selectedQuotes);
+                selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol().toUpperCase() + ";", "");
+                CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
+                Log.d(TAG, "selectedQuotes (CHANGE): " + selectedQuotes);
+
+                GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_QUOTES_SCREEN, Const.ANALYTICS_BUTTON_DELETE_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
             }
+            onSharedPreferencesChange.onChange();
         });
     }
 
