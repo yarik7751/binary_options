@@ -17,7 +17,7 @@ public class PollChatAnswer {
 
     @SerializedName("agentTyping")
     @Expose
-    private String agentTyping;
+    private boolean agentTyping;
 
     @SerializedName("messageList")
     @Expose
@@ -31,22 +31,36 @@ public class PollChatAnswer {
         return pollChatAnswer;
     }
 
+    public boolean isAgentTyping() {
+        return agentTyping;
+    }
+
+    public void setAgentTyping(boolean agentTyping) {
+        this.agentTyping = agentTyping;
+    }
+
     public String getCaseId() {
         return caseId;
     }
 
-    public String getAgentTyping() {
-        return agentTyping;
+    public void setCaseId(String caseId) {
+        this.caseId = caseId;
     }
 
     public ArrayList<Message> getMessageList() {
-        ArrayList<Message> ans = new ArrayList<>();
-        for(Message msg : messageList) {
-            if(msg.getType().equals("agent")) {
-                ans.add(msg);
-            }
-        }
-        return ans;
+        return messageList;
+    }
+
+    public void setMessageList(ArrayList<Message> messageList) {
+        this.messageList = messageList;
+    }
+
+    public static PollChatAnswer getPollChatAnswer() {
+        return pollChatAnswer;
+    }
+
+    public static void setPollChatAnswer(PollChatAnswer pollChatAnswer) {
+        PollChatAnswer.pollChatAnswer = pollChatAnswer;
     }
 
     @Override

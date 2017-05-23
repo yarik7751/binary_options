@@ -92,16 +92,14 @@ interface IGrandCapitalApi {
     );
 
     @Headers({
-            "X-Api-Key: " + GrandCapitalApi.API_KEY_CHART,
-            "User-Agent: runscope/0.1"
+            "X-Api-Key: " + GrandCapitalApi.API_KEY_CHART
     })
     @GET("/api/v1/chat/poll/{caseId}")
     Call<PollChatAnswer> pollChat(@Path("caseId") String caseId);
 
     @FormUrlEncoded
     @Headers({
-            "X-Api-Key: " + GrandCapitalApi.API_KEY_CHART,
-            "User-Agent: runscope/0.1"
+            "X-Api-Key: " + GrandCapitalApi.API_KEY_CHART
     })
     @PUT("/api/v1/chat")
     Call<SendMessageAnswer> sendMessageChat(
