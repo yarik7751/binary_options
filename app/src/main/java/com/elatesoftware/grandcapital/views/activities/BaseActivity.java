@@ -264,7 +264,6 @@ public class BaseActivity extends CustomFontsActivity {
                     break;
                 case REFRESH_POSITION:
                     Log.d(TAG, "REFRESH_POSITION");
-                    //??????
                     break;
                 case QUOTES_POSITION:
                     Log.d(TAG, "QUOTES_POSITION");

@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.quotes.QuotesChoiceAdapter;
@@ -34,9 +35,10 @@ import java.util.List;
 
 public class QuotesChoiceFragment extends Fragment {
 
-    public static final int INTERVAL = 6000;
+    public static final int INTERVAL = 2000;
     private static String symbol = "";
     public static final String SYMBOL = "symbol";
+    private LinearLayout progressBar;
 
     static final int DOWN_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListDownOrderColor);
     static final int UP_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListUpOrderColor);
@@ -48,13 +50,9 @@ public class QuotesChoiceFragment extends Fragment {
     public static QuoteType currentQuoteType;
 
     private Handler handler = new Handler();
-    private Runnable runnableQuotes = new Runnable() {
-        @Override
-        public void run() {
-            Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
-            getActivity().startService(intentMyIntentService);
-            handler.postDelayed(runnableQuotes, INTERVAL);
-        }
+    private Runnable runnableQuotes = () -> {
+        Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
+        getActivity().startService(intentMyIntentService);
     };
 
     private static QuotesChoiceFragment fragment = null;
@@ -78,6 +76,7 @@ public class QuotesChoiceFragment extends Fragment {
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_EMPTY_FRAGMENT);
         BaseActivity.getToolbar().deselectAll();
         BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_BACK_PRESSED);
+        progressBar = (LinearLayout) view.findViewById(R.id.layout_progress_bar);
 
         lastInstruments = new ArrayList<>();
         rvQuotes = (RecyclerView) view.findViewById(R.id.rv_quotes);
@@ -85,6 +84,7 @@ public class QuotesChoiceFragment extends Fragment {
         rvQuotes.setLayoutManager(mLayoutManager);
         quotesAdapter = new QuotesChoiceAdapter(getActivity(), lastInstruments, symbol, (s, v) -> {
             currentQuoteType = s;
+            //TerminalFragment.getInstance().choiceActive(currentQuoteType.getInstrumentQuote().getSymbol());
         });
         rvQuotes.setAdapter(quotesAdapter);
     }
@@ -100,12 +100,14 @@ public class QuotesChoiceFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        progressBar.setVisibility(View.VISIBLE);
         if(InfoAnswer.getInstance() != null  && InfoAnswer.getInstance().getInstruments() != null) {
             lastInstruments = InfoAnswer.getInstance().getInstruments();
-            quotesAdapter.setSelectedInstruments(lastInstruments);
+            quotesAdapter.setListQuotes(lastInstruments);
             quotesAdapter.notifyDataSetChanged();
         }
         handler.postDelayed(runnableQuotes, INTERVAL);
+        handler.postDelayed(runnableQuotes, INTERVAL + 2000);
     }
     @Override
     public void onStop() {
@@ -129,8 +131,9 @@ public class QuotesChoiceFragment extends Fragment {
                     return;
                 }
             }
-            lastInstruments = newInstruments;
-            quotesAdapter.setSelectedInstruments(lastInstruments);
+            lastInstruments.clear();
+            lastInstruments.addAll(newInstruments);
+            quotesAdapter.setListQuotes(lastInstruments);
             quotesAdapter.notifyDataSetChanged();
         }
     }
@@ -143,6 +146,7 @@ public class QuotesChoiceFragment extends Fragment {
                 if(InfoAnswer.getInstance() != null) {
                     List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
                     comparisonQuotes(newInstruments);
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         }

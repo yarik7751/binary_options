@@ -52,7 +52,7 @@ public class HowItWorksFragment extends Fragment {
         BaseActivity.getToolbar().deselectAll();
         BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
 
-        llProgress = (LinearLayout) getView().findViewById(R.id.fragment_dealing_progress_bar);
+        llProgress = (LinearLayout) getView().findViewById(R.id.layout_progress_bar);
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.fragment_how_it_works_questions_list);
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());

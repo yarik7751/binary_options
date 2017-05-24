@@ -764,7 +764,7 @@ public class TerminalFragment extends Fragment {
         requestSymbolHistory(ConventString.getActive(tvValueActive));
         requestGetAllOrders();
     }
-    /*public void choiceActive(String symbol){
+    public void choiceActive(String symbol){
         if (!symbol.isEmpty() && listActives.size() > 0) {
             int index = listActives.indexOf(symbol);
             tvValueActive.setText(listActives.get(index));
@@ -774,7 +774,7 @@ public class TerminalFragment extends Fragment {
         } else {
             sSymbolCurrent = Const.SYMBOL;
         }
-    }*/
+    }
 
     private void startTimerRedrawLimitLines(){
         mTimerRedraw.scheduleAtFixedRate(new TimerTask() {

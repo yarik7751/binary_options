@@ -49,7 +49,6 @@
                     android:imeActionId="@+id/login"
                     android:imeOptions="actionUnspecified"
                     android:maxLines="1"
-                    android:text="@string/userLoginAmerican"
                     style="@style/EditText"
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
@@ -60,6 +59,7 @@
                 android:id="@+id/passwordEditTextLayout"
                 app:passwordToggleEnabled="false"
                 android:textColorHint="@color/editTextHint">
+
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
@@ -69,7 +69,6 @@
                     android:imeActionLabel="@string/signin_page_button_text"
                     android:imeOptions="actionGo"
                     android:inputType="textPassword"
-                    android:text="@string/userPasswordAmerican"
                     app:hintEnabled="false"
                     android:maxLines="1"
                     style="@style/EditText" />

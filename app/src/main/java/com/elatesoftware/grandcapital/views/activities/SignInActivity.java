@@ -45,7 +45,7 @@ public class SignInActivity extends CustomFontsActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
-        llProgress = (LinearLayout) findViewById(R.id.fragment_dealing_progress_bar);
+        llProgress = (LinearLayout) findViewById(R.id.layout_progress_bar);
         etLogin = (EditText) findViewById(R.id.login);
         etPassword = (EditText) findViewById(R.id.password);
         tvSignUp = (TextView) findViewById(R.id.signup_link);
@@ -61,8 +61,8 @@ public class SignInActivity extends CustomFontsActivity {
             startActivity(browserIntent);
         });
         btnSignIn.setOnClickListener(view -> {{
-           // etLogin.setText("10025808");
-            //etPassword.setText("6elFJkuL");
+            etLogin.setText("10025808");
+            etPassword.setText("6elFJkuL");
             signIn();
         }});
         tilLogin.setErrorEnabled(true);

@@ -84,7 +84,7 @@ public class DealingFragment extends Fragment {
 
         mListLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_list);
         mNoOrdersLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_no_elements_layout);
-        mProgressLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_progress_bar);
+        mProgressLayout = (LinearLayout) view.findViewById(R.id.layout_progress_bar);
 
         initTabs();
         initListHeaders();

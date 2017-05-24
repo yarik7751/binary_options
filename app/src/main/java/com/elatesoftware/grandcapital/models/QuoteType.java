@@ -10,6 +10,7 @@ public class QuoteType {
 
     private Instrument instrumentQuote;
     private int typeQuote;
+    private boolean selected = false;
 
     public QuoteType() {
     }
@@ -33,5 +34,13 @@ public class QuoteType {
 
     public void setInstrumentQuote(Instrument instrumentQuote) {
         this.instrumentQuote = instrumentQuote;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

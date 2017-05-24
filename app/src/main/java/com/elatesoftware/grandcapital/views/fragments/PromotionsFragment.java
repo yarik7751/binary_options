@@ -57,7 +57,7 @@ public class PromotionsFragment extends Fragment {
         //promotionsTabs = (TabLayout) view.findViewById(R.id.promotionsTabs);
         rvPromotions = (RecyclerView) view.findViewById(R.id.promotionsListOpen);
         rvPromotions.setLayoutManager(new LinearLayoutManager(getContext()));
-        llProgress = (LinearLayout) view.findViewById(R.id.fragment_dealing_progress_bar);
+        llProgress = (LinearLayout) view.findViewById(R.id.layout_progress_bar);
 
         loadBinaryOptionData();
         /*promotionsTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

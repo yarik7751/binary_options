@@ -27,13 +27,13 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
 
     public static final String TAG = "QuotesAdapter_TAG";
 
-    private static int selectedPosition = 0;
+    private static String selectedQuote;
     private String selectedInstData;
     private Context context;
 
-    private List<QuoteType> listQuotes;
-    private List<QuoteType> listSelectQuotes;
-    private List<QuoteType> listNoSelectQuotes;
+    private List<QuoteType> listQuotes = new ArrayList<>();
+    private List<QuoteType> listSelectQuotes = new ArrayList<>();
+    private List<QuoteType> listNoSelectQuotes = new ArrayList<>();
 
     private static final int VIEW_TYPE_QUOTE_STAR = 0;
     private static final int VIEW_TYPE_QUOTE_NO_STAR = 1;
@@ -50,35 +50,31 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
         this.context = context;
         selectedInstData = CustomSharedPreferences.getSelectedQuotes(this.context);
         this.listenerItem = listenerItem;
-        if(instr != null) {
-            listQuotes = new ArrayList<>();
-            listSelectQuotes = new ArrayList<>();
-            listNoSelectQuotes = new ArrayList<>();
-            for (Instrument inst : instr) {
-                if(inst.getColor() == 0) {
-                    inst.setColor(this.context.getResources().getColor(R.color.menuAccountBalanceTextColor));
-                }
-                if(selectedInstData.contains(inst.getSymbol().toUpperCase() + ";")){
-                    listSelectQuotes.add(new QuoteType(inst, VIEW_TYPE_QUOTE_STAR));
-                }else{
-                    listNoSelectQuotes.add(new QuoteType(inst, VIEW_TYPE_QUOTE_NO_STAR));
-                }
+        listNoSelectQuotes.clear();
+        listSelectQuotes.clear();
+        for(Instrument i : instr){
+            if(i.getColor() == 0) {
+                i.setColor(this.context.getResources().getColor(R.color.menuAccountBalanceTextColor));
             }
-            if(listQuotes != null){
-                listQuotes.add(new QuoteType(null, VIEW_TYPE_STAR));
-                if(listSelectQuotes != null){
-                    listQuotes.addAll(listSelectQuotes);
-                }
-                listQuotes.add(new QuoteType(null, VIEW_TYPE_NO_STAR));
-                if(listNoSelectQuotes != null){
-                    listQuotes.addAll(listNoSelectQuotes);
-                }
-                listNoSelectQuotes.clear();
-                listSelectQuotes.clear();
-                for(QuoteType quoteType: listQuotes){
-                    if(quoteType.getInstrumentQuote() != null && quoteType.getInstrumentQuote().getSymbol().equals(symbol)){
-                        selectedPosition = listQuotes.indexOf(quoteType);
-                    }
+            if(selectedInstData.contains(i.getSymbol().toUpperCase() + ";")){
+                listSelectQuotes.add(new QuoteType(i, VIEW_TYPE_QUOTE_STAR));
+            }else{
+                listNoSelectQuotes.add(new QuoteType(i, VIEW_TYPE_QUOTE_NO_STAR));
+            }
+        }
+        if(listQuotes != null){
+            listQuotes.add(new QuoteType(null, VIEW_TYPE_STAR));
+            if(listSelectQuotes != null){
+                listQuotes.addAll(listSelectQuotes);
+            }
+            listQuotes.add(new QuoteType(null, VIEW_TYPE_NO_STAR));
+            if(listNoSelectQuotes != null){
+                listQuotes.addAll(listNoSelectQuotes);
+            }
+            selectedQuote = symbol;
+            for(int i = 0; i < listQuotes.size(); i++){
+                if(listQuotes.get(i).getInstrumentQuote() != null && listQuotes.get(i).getInstrumentQuote().getSymbol().equals(selectedQuote)){
+                    listQuotes.get(i).setSelected(true);
                 }
             }
         }
@@ -86,8 +82,7 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        QuoteType quoteType = getQuoteType(position);
-        return quoteType.getTypeQuote();
+        return listQuotes.get(position).getTypeQuote();
     }
 
     @Override
@@ -106,7 +101,6 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
     }
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        super.onBindViewHolder(holder, position);
         QuoteBaseViewHolder baseViewHolder = (QuoteBaseViewHolder) holder;
         final QuoteType quoteType = getQuoteType(position);
         switch (baseViewHolder.getItemViewType()) {
@@ -116,17 +110,23 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
                 quotesHolder.tvAsk.setText(ConventString.getRoundNumber(5, quoteType.getInstrumentQuote().getAsk()));
                 quotesHolder.tvAsk.setTextColor(quoteType.getInstrumentQuote().getColor());
 
-                quotesHolder.flQuote.setOnClickListener(v -> {
-                    selectedPosition = listQuotes.indexOf(quoteType);
-                    quotesHolder.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));
-                    ((QuotesStarViewHolder) holder).bind(quoteType, listenerItem);
-                    notifyDataSetChanged();
-                });
-                if(position == selectedPosition){
+                if(quoteType.isSelected()){
                     quotesHolder.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));
                 }else{
                     quotesHolder.imgIsSelected.setImageDrawable(null);
                 }
+                quotesHolder.flQuote.setOnClickListener(v -> {
+                    for(QuoteType quote: listQuotes){
+                        if(quote.isSelected()){
+                            quote.setSelected(false);
+                            break;
+                        }
+                    }
+                    quoteType.setSelected(true);
+                    selectedQuote = quoteType.getInstrumentQuote().getSymbol();
+                    notifyDataSetChanged();
+                });
+                quotesHolder.bind(quoteType, listenerItem);
                 break;
             case VIEW_TYPE_QUOTE_NO_STAR:
                 QuotesNoStarViewHolder quotesHolder1 = (QuotesNoStarViewHolder) holder;
@@ -134,17 +134,23 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
                 quotesHolder1.tvAsk.setText(ConventString.getRoundNumber(5, quoteType.getInstrumentQuote().getAsk()));
                 quotesHolder1.tvAsk.setTextColor(quoteType.getInstrumentQuote().getColor());
 
-                quotesHolder1.flQuote.setOnClickListener(v -> {
-                    selectedPosition = listQuotes.indexOf(quoteType);
-                    quotesHolder1.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));
-                    ((QuotesNoStarViewHolder) holder).bind(quoteType, listenerItem);
-                    notifyDataSetChanged();
-                });
-                if(position == selectedPosition){
+                if(quoteType.isSelected()){
                     quotesHolder1.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));
                 }else{
                     quotesHolder1.imgIsSelected.setImageDrawable(null);
                 }
+                quotesHolder1.flQuote.setOnClickListener(v -> {
+                    for(QuoteType quote: listQuotes){
+                        if(quote.isSelected()){
+                            quote.setSelected(false);
+                            break;
+                        }
+                    }
+                    quoteType.setSelected(true);
+                    selectedQuote = quoteType.getInstrumentQuote().getSymbol();
+                    notifyDataSetChanged();
+                });
+                quotesHolder1.bind(quoteType, listenerItem);
                 break;
             case VIEW_TYPE_STAR:
                 break;
@@ -154,39 +160,33 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
                 break;
         }
     }
-
-    public void setSelectedInstruments(List<Instrument> list) {
-        if(listQuotes == null){
-            listQuotes = new ArrayList<>();
-        }
+    public void setListQuotes(List<Instrument> list) {
         listQuotes.clear();
-        listNoSelectQuotes.clear();
         listSelectQuotes.clear();
-        if(list != null) {
-            listQuotes = new ArrayList<>();
-            listSelectQuotes = new ArrayList<>();
-            listNoSelectQuotes = new ArrayList<>();
-            for (Instrument inst : list) {
-                if(inst.getColor() == 0) {
-                    inst.setColor(this.context.getResources().getColor(R.color.menuAccountBalanceTextColor));
-                }
-                if(selectedInstData.contains(inst.getSymbol().toUpperCase() + ";")){
-                    listSelectQuotes.add(new QuoteType(inst, VIEW_TYPE_QUOTE_STAR));
-                }else{
-                    listNoSelectQuotes.add(new QuoteType(inst, VIEW_TYPE_QUOTE_NO_STAR));
-                }
+        listNoSelectQuotes.clear();
+        for(Instrument i : list){
+            if(i.getColor() == 0) {
+                i.setColor(this.context.getResources().getColor(R.color.menuAccountBalanceTextColor));
             }
-            if(listQuotes != null){
-                listQuotes.add(new QuoteType(null, VIEW_TYPE_STAR));
-                if(listSelectQuotes != null){
-                    listQuotes.addAll(listSelectQuotes);
+            if(selectedInstData.contains(i.getSymbol().toUpperCase() + ";")){
+                listSelectQuotes.add(new QuoteType(i, VIEW_TYPE_QUOTE_STAR));
+            }else{
+                listNoSelectQuotes.add(new QuoteType(i, VIEW_TYPE_QUOTE_NO_STAR));
+            }
+        }
+        if(listQuotes != null){
+            listQuotes.add(new QuoteType(null, VIEW_TYPE_STAR));
+            if(listSelectQuotes != null){
+                listQuotes.addAll(listSelectQuotes);
+            }
+            listQuotes.add(new QuoteType(null, VIEW_TYPE_NO_STAR));
+            if(listNoSelectQuotes != null){
+                listQuotes.addAll(listNoSelectQuotes);
+            }
+            for(int i = 0; i < listQuotes.size(); i++){
+                if(listQuotes.get(i).getInstrumentQuote() != null && listQuotes.get(i).getInstrumentQuote().getSymbol().equals(selectedQuote)){
+                    listQuotes.get(i).setSelected(true);
                 }
-                listQuotes.add(new QuoteType(null, VIEW_TYPE_NO_STAR));
-                if(listNoSelectQuotes != null){
-                    listQuotes.addAll(listNoSelectQuotes);
-                }
-                listNoSelectQuotes.clear();
-                listSelectQuotes.clear();
             }
         }
     }
