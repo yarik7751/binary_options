@@ -67,10 +67,7 @@ public class ToolbarFragment extends Fragment {
             if (burgerType == BURGER_BACK_PRESSED_ACTIVITY) {
                 getActivity().onBackPressed();
             }
-            /*if (burgerType == BURGER_BACK_PRESSED) {
-                if(QuotesChoiceFragment.currentQuoteType != null && QuotesChoiceFragment.currentQuoteType.getInstrumentQuote() != null){
-                    TerminalFragment.getInstance().choiceActive(QuotesChoiceFragment.currentQuoteType.getInstrumentQuote().getSymbol());
-                }
+            if (burgerType == BURGER_BACK_PRESSED) {
                 BaseActivity.fragmentManager.popBackStack();
                 BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
                 BaseActivity.getToolbar().setPageTitle(getActivity().getResources().getString(R.string.toolbar_name_terminal));
@@ -84,7 +81,7 @@ public class ToolbarFragment extends Fragment {
                 } catch (Exception ignored) {
                     ignored.printStackTrace();
                 }
-            }*/
+            }
         });
         mPageTitle = (TextView) getView().findViewById(R.id.page_title);
         setupToolbar();

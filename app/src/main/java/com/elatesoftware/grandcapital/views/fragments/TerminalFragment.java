@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -40,6 +41,7 @@ import com.elatesoftware.grandcapital.api.socket.WebSocketApi;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
+import com.elatesoftware.grandcapital.services.ChoiceActiveService;
 import com.elatesoftware.grandcapital.services.DeleteDealingService;
 import com.elatesoftware.grandcapital.services.EarlyClosureService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
@@ -93,7 +95,7 @@ public class TerminalFragment extends Fragment {
     private static int TIME_ANIMATION_DRAW_POINT = 100;
     public static float MAX_X_SCALE = 9f;
 
-    private static String sSymbolCurrent = "";
+    public static String sSymbolCurrent = "";
     public static double mCurrentValueY = 0;
     private Timer mTimerRedraw;
     private OrderAnswer currentDealing = new OrderAnswer();
@@ -162,6 +164,7 @@ public class TerminalFragment extends Fragment {
     public  List<OrderAnswer> listCurrentClosingDealings = new ArrayList<>();
     private List<SocketAnswer> listSocketAnswerQueue = new ArrayList<>();
 
+    private GetResponseChoiceActive mChoiceActiveBroadcastReceiver;
     private GetResponseSymbolHistoryBroadcastReceiver mSymbolHistoryBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
     private GetResponseOpenDealingBroadcastReceiver mMakeDealingBroadcastReceiver;
@@ -322,11 +325,18 @@ public class TerminalFragment extends Fragment {
                 ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard && etValueTime.isFocused());
         });
         tvValueActive.setOnClickListener(v -> {
-            /*Bundle bundle = new Bundle();
+            Bundle bundle = new Bundle();
             bundle.putString(QuotesChoiceFragment.SYMBOL, ConventString.getActive(tvValueActive));
             Fragment choiceFragment = new QuotesChoiceFragment();
             choiceFragment.setArguments(bundle);
-            getActivity().getSupportFragmentManager().beginTransaction().add(R.id.content, choiceFragment,choiceFragment.getClass().getName()).addToBackStack("choice").commit();*/
+            getActivity().getSupportFragmentManager()
+                         .beginTransaction()
+                         .add(R.id.content, choiceFragment,choiceFragment.getClass().getName())
+                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                         .addToBackStack("choice")
+                         .commit();
+            BaseActivity.backToRootFragment = true;
+            BaseActivity.sMainTagFragment = QuotesChoiceFragment.class.getName();
         });
         tvLeftActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
@@ -457,6 +467,11 @@ public class TerminalFragment extends Fragment {
         IntentFilter intentFilterDeleteDealing = new IntentFilter(DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
         intentFilterDeleteDealing.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mDeleteDealingBroadcastReceiver, intentFilterDeleteDealing);
+
+        mChoiceActiveBroadcastReceiver =  new GetResponseChoiceActive();
+        IntentFilter intentFilterChoiceActive = new IntentFilter(ChoiceActiveService.ACTION_SERVICE_CHOICE_ACTIVE);
+        intentFilterChoiceActive.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mChoiceActiveBroadcastReceiver, intentFilterChoiceActive);
     }
     private void unregisterBroadcasts() {
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
@@ -467,6 +482,7 @@ public class TerminalFragment extends Fragment {
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
         getActivity().unregisterReceiver(mEarlyClosureBroadcastReceiver);
         getActivity().unregisterReceiver(mDeleteDealingBroadcastReceiver);
+        getActivity().unregisterReceiver(mChoiceActiveBroadcastReceiver);
     }
 
     private void setXVisibilityPoint() {
@@ -765,12 +781,14 @@ public class TerminalFragment extends Fragment {
         requestGetAllOrders();
     }
     public void choiceActive(String symbol){
-        if (!symbol.isEmpty() && listActives.size() > 0) {
+        if (!symbol.isEmpty() && !symbol.equals("") && listActives.size() > 0) {
             int index = listActives.indexOf(symbol);
-            tvValueActive.setText(listActives.get(index));
-            sSymbolCurrent = symbol;
-            changeActive();
-            parseResponseSignals(symbol);
+            if(listActives.size() > index){
+                sSymbolCurrent = symbol;
+                tvValueActive.setText(listActives.get(index));
+                changeActive();
+                parseResponseSignals(ConventString.getActive(tvValueActive));
+            }
         } else {
             sSymbolCurrent = Const.SYMBOL;
         }
@@ -1215,10 +1233,6 @@ public class TerminalFragment extends Fragment {
                 for (Instrument instrument : InfoAnswer.getInstance().getInstruments()) {
                     listActives.add(instrument.getSymbol());
                 }
-                if (listActives != null && listActives.size() > 0 && listActives.contains(Const.SYMBOL) && !ConventString.getActive(tvValueActive).equals(Const.SYMBOL)) {
-                    sSymbolCurrent = listActives.get(listActives.indexOf(Const.SYMBOL));
-                    changeActive();
-                }
                 updateBalance(0);
             }
             requestSignals();
@@ -1365,6 +1379,13 @@ public class TerminalFragment extends Fragment {
                     }
                 }
             }
+        }
+    }
+    public class GetResponseChoiceActive extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String response = intent.getStringExtra(ChoiceActiveService.RESPONSE);
+            choiceActive(response);
         }
     }
 }

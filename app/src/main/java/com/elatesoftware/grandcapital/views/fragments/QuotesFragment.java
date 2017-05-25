@@ -44,14 +44,16 @@ public class QuotesFragment extends Fragment {
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
     private Handler handler = new Handler();
+
     private Runnable runnableQuotes = new Runnable() {
         @Override
         public void run() {
-            Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
-            getActivity().startService(intentMyIntentService);
+            Intent intentService = new Intent(getActivity(), InfoUserService.class);
+            getActivity().startService(intentService);
             handler.postDelayed(runnableQuotes, INTERVAL);
         }
     };
+
     private OnSharedPreferencesChange onSharedPreferencesChange = new OnSharedPreferencesChange() {
         @Override
         public void onChange() {

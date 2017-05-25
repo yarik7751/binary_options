@@ -22,6 +22,7 @@ import com.elatesoftware.grandcapital.api.pojo.InfoAnswer;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.QuoteType;
+import com.elatesoftware.grandcapital.services.ChoiceActiveService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -35,7 +36,7 @@ import java.util.List;
 
 public class QuotesChoiceFragment extends Fragment {
 
-    public static final int INTERVAL = 2000;
+    public static final int INTERVAL = 3000;
     private static String symbol = "";
     public static final String SYMBOL = "symbol";
     private LinearLayout progressBar;
@@ -50,9 +51,13 @@ public class QuotesChoiceFragment extends Fragment {
     public static QuoteType currentQuoteType;
 
     private Handler handler = new Handler();
-    private Runnable runnableQuotes = () -> {
-        Intent intentMyIntentService = new Intent(getActivity(), InfoUserService.class);
-        getActivity().startService(intentMyIntentService);
+    private Runnable runnableQuotes = new Runnable() {
+        @Override
+        public void run() {
+            Intent intentService = new Intent(getActivity(), InfoUserService.class);
+            getActivity().startService(intentService);
+            handler.postDelayed(runnableQuotes, INTERVAL);
+        }
     };
 
     private static QuotesChoiceFragment fragment = null;
@@ -84,7 +89,10 @@ public class QuotesChoiceFragment extends Fragment {
         rvQuotes.setLayoutManager(mLayoutManager);
         quotesAdapter = new QuotesChoiceAdapter(getActivity(), lastInstruments, symbol, (s, v) -> {
             currentQuoteType = s;
-            //TerminalFragment.getInstance().choiceActive(currentQuoteType.getInstrumentQuote().getSymbol());
+            Intent intent = new Intent(getContext(), ChoiceActiveService.class);
+            intent.putExtra(ChoiceActiveService.SYMBOL, s.getInstrumentQuote().getSymbol());
+            getContext().startService(intent);
+
         });
         rvQuotes.setAdapter(quotesAdapter);
     }
@@ -106,8 +114,7 @@ public class QuotesChoiceFragment extends Fragment {
             quotesAdapter.setListQuotes(lastInstruments);
             quotesAdapter.notifyDataSetChanged();
         }
-        handler.postDelayed(runnableQuotes, INTERVAL);
-        handler.postDelayed(runnableQuotes, INTERVAL + 2000);
+        handler.postDelayed(runnableQuotes,INTERVAL);
     }
     @Override
     public void onStop() {
@@ -147,6 +154,7 @@ public class QuotesChoiceFragment extends Fragment {
                     List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
                     comparisonQuotes(newInstruments);
                     progressBar.setVisibility(View.GONE);
+                    rvQuotes.setVisibility(View.VISIBLE);
                 }
             }
         }

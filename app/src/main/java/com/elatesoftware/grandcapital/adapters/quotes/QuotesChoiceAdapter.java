@@ -115,17 +115,6 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
                 }else{
                     quotesHolder.imgIsSelected.setImageDrawable(null);
                 }
-                quotesHolder.flQuote.setOnClickListener(v -> {
-                    for(QuoteType quote: listQuotes){
-                        if(quote.isSelected()){
-                            quote.setSelected(false);
-                            break;
-                        }
-                    }
-                    quoteType.setSelected(true);
-                    selectedQuote = quoteType.getInstrumentQuote().getSymbol();
-                    notifyDataSetChanged();
-                });
                 quotesHolder.bind(quoteType, listenerItem);
                 break;
             case VIEW_TYPE_QUOTE_NO_STAR:
@@ -139,17 +128,6 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
                 }else{
                     quotesHolder1.imgIsSelected.setImageDrawable(null);
                 }
-                quotesHolder1.flQuote.setOnClickListener(v -> {
-                    for(QuoteType quote: listQuotes){
-                        if(quote.isSelected()){
-                            quote.setSelected(false);
-                            break;
-                        }
-                    }
-                    quoteType.setSelected(true);
-                    selectedQuote = quoteType.getInstrumentQuote().getSymbol();
-                    notifyDataSetChanged();
-                });
                 quotesHolder1.bind(quoteType, listenerItem);
                 break;
             case VIEW_TYPE_STAR:
@@ -218,8 +196,19 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
             imgIsSelected = (ImageView) itemView.findViewById(R.id.img_is_selected);
             flQuote = (FrameLayout) itemView.findViewById(R.id.fl_quote);
         }
-        public void bind(final QuoteType s, final OnItemClickListener listener) {
-            itemView.setOnClickListener(v -> listener.onItemClick(s, itemView));
+        public void bind(final QuoteType quoteType, final OnItemClickListener listener) {
+            itemView.setOnClickListener(v -> {
+                for(QuoteType quote: listQuotes){
+                    if(quote.isSelected()){
+                        quote.setSelected(false);
+                        break;
+                    }
+                }
+                quoteType.setSelected(true);
+                selectedQuote = quoteType.getInstrumentQuote().getSymbol();
+                notifyDataSetChanged();
+                listener.onItemClick(quoteType, itemView);
+            });
         }
     }
     private class QuotesNoStarViewHolder extends QuoteBaseViewHolder {
@@ -236,8 +225,19 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
             imgIsSelected = (ImageView) itemView.findViewById(R.id.img_is_selected);
             flQuote = (FrameLayout) itemView.findViewById(R.id.fl_quote);
         }
-        public void bind(final QuoteType s, final OnItemClickListener listener) {
-            itemView.setOnClickListener(v -> listener.onItemClick(s, itemView));
+        public void bind(final QuoteType quoteType, final OnItemClickListener listener) {
+            itemView.setOnClickListener(v -> {
+                for(QuoteType quote: listQuotes){
+                    if(quote.isSelected()){
+                        quote.setSelected(false);
+                        break;
+                    }
+                }
+                quoteType.setSelected(true);
+                selectedQuote = quoteType.getInstrumentQuote().getSymbol();
+                notifyDataSetChanged();
+                listener.onItemClick(quoteType, itemView);
+            });
         }
     }
     private class StarViewHolder extends QuoteBaseViewHolder {

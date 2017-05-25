@@ -26,6 +26,7 @@ import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
 import com.elatesoftware.grandcapital.views.fragments.HowItWorksFragment;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
+import com.elatesoftware.grandcapital.views.fragments.QuotesChoiceFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuotesFragment;
 import com.elatesoftware.grandcapital.views.fragments.SupportFragment;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
@@ -76,7 +77,6 @@ public class BaseActivity extends CustomFontsActivity {
         setContentView(R.layout.activity_base);
 
         llShadow = (LinearLayout) findViewById(R.id.ll_shadow);
-
         if (!isAuth()) {
             Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
             startActivity(intent);
@@ -327,9 +327,9 @@ public class BaseActivity extends CustomFontsActivity {
 
     private static void changeToolbarFragment(Fragment targetFragment) {
         fragmentManager.beginTransaction()
-                .replace(R.id.toolbar, targetFragment, "fragment")
-                .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+            .replace(R.id.toolbar, targetFragment, "fragment")
+            .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            .commit();
 
     }
 
@@ -385,6 +385,19 @@ public class BaseActivity extends CustomFontsActivity {
             getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
             getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
             getToolbar().deselectAll();
+        }else if (sMainTagFragment.equals(QuotesChoiceFragment.class.getName())) {
+            BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
+            BaseActivity.getToolbar().setPageTitle(getApplicationContext().getResources().getString(R.string.toolbar_name_terminal));
+            BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
+                BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+                BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+            });
+            try {
+                BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+                BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
         }
         sMainTagFragment = "";
     }
