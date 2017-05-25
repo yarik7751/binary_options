@@ -90,40 +90,6 @@ public class SupportFragment extends Fragment {
         rvMessages = (RecyclerView) view.findViewById(R.id.rv_messages);
         rvMessages.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        /*MessageChat mc1 = new MessageChat("dfghdfgfgfgdf", 1495466925000l, false);
-        MessageChat mc2 = new MessageChat("dfghdfgfgfgdfdfghdfgfgfgdfdfghdfgfgfgdfdfghdfgfgfgdfdfghdfgfgfgdfdfghdfgfgfgdfdfghdfgfgfgdf", 1495466925000l, false);
-        MessageChat mc3 = new MessageChat("dfghdfgfgfgdf", 1495466925000l, false);
-        MessageChat mc4 = new MessageChat("dfghdfgfgfgdf", 1495466925000l, true);
-        MessageChat mc5 = new MessageChat("dfghdfgfgfgdf", 1495466925000l, true);
-        MessageChat mc6 = new MessageChat("dfghdfgfgfgdf", 1495466925000l, true);
-        MessageChat mc7 = new MessageChat("dfghdfgfgfgdf", 1495466925000l, false);
-        MessageChat mcTyping = new MessageChat("dfghdfgfgfgdf", 1495466925000l, false);
-        mcTyping.setTyping(true);
-        List<MessageChat> messages = new ArrayList<>();
-        messages.add(mc1);
-        adapter = new AdapterForSupportChat(messages, getContext());
-        rvMessages.setAdapter(adapter);
-        adapter.addMessage(mc2);
-        adapter.addMessage(mc3);
-        adapter.addMessage(mcTyping);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                adapter.addMessage(mc4);
-                adapter.addMessage(mc5);
-                adapter.addMessage(mc6);
-            }
-        }, 2000);
-*/       /* messages.add(mc2);
-        messages.add(mc3);
-        messages.add(mc4);
-        messages.add(mc5);
-        messages.add(mc6);
-        messages.add(mc7);*/
-
-        /*svMessages = (ScrollView) view.findViewById(R.id.sv_messages);
-        llMessages = (LinearLayout) view.findViewById(R.id.ll_messages);*/
-
         cbSendMessage.setOnClickListener(v -> {
             if(!isMessageLoading) {
                 isMessageLoading = true;
@@ -133,7 +99,6 @@ public class SupportFragment extends Fragment {
                     addYourMessageInView(message, System.currentTimeMillis(), true);
                     Intent intent = new Intent(getContext(), ChatService.class);
                     if (!isChatCreated) {
-                        //llMessages.removeAllViews();
                         try {
                             MessageChat.deleteAll(MessageChat.class);
                         } catch (SQLiteException e) {
@@ -193,19 +158,6 @@ public class SupportFragment extends Fragment {
             adapter.addMessage(messageChat);
         }
         rvMessages.scrollToPosition(adapter.getItemCount() - 1);
-        /*View v = LayoutInflater.from(getContext()).inflate(R.layout.item_your_message, null);
-        ((TextView) v.findViewById(R.id.tv_message)).setText(message);
-        ((TextView) v.findViewById(R.id.tv_time)).setText(ConventDate.getChatDateByUnix(getContext(), unix));
-        if(llMessages.getChildCount() > 0 && !isTheirMessageView(llMessages.getChildAt(llMessages.getChildCount() - 1))) {
-            v.findViewById(R.id.img_logo).setVisibility(View.INVISIBLE);
-        }
-        v.setTag(R.string.is_their_message, false);
-        llMessages.addView(v);
-        svMessages.post(() -> svMessages.fullScroll(ScrollView.FOCUS_DOWN));
-        if(addInHistory) {
-            HistoryMessage historyMessage = new HistoryMessage(false, message, System.currentTimeMillis());
-            historyMessage.save();
-        }*/
     }
 
     private void addTheirMessageInView(String message, long unix, boolean addInHistory) {
@@ -215,19 +167,6 @@ public class SupportFragment extends Fragment {
         MessageChat messageChat = new MessageChat(message, unix, true);
         adapter.addMessage(messageChat);
         rvMessages.scrollToPosition(adapter.getItemCount() - 1);
-        /*View v = LayoutInflater.from(getContext()).inflate(R.layout.item_their_message, null);
-        ((TextView) v.findViewById(R.id.tv_message)).setText(message);
-        ((TextView) v.findViewById(R.id.tv_time)).setText(ConventDate.getChatDateByUnix(getContext(), unix));
-        if(isTheirMessageView(llMessages.getChildAt(llMessages.getChildCount() - 1))) {
-            v.findViewById(R.id.img_logo).setVisibility(View.INVISIBLE);
-        }
-        v.setTag(R.string.is_their_message, true);
-        llMessages.addView(v);
-        svMessages.post(() -> svMessages.fullScroll(ScrollView.FOCUS_DOWN));
-        if(addInHistory) {
-            HistoryMessage historyMessage = new HistoryMessage(true, message, System.currentTimeMillis());
-            historyMessage.save();
-        }*/
     }
 
     private void addTyping() {
@@ -244,7 +183,6 @@ public class SupportFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //Log.d(TAG, "onReceive");
             String response = intent.getStringExtra(SignInService.RESPONSE);
             String action = intent.getStringExtra(ChatService.ACTION);
             switch(action){
@@ -252,7 +190,6 @@ public class SupportFragment extends Fragment {
                     isMessageLoading = false;
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && ChatCreateAnswer.getInstance() != null){
                         adapter.loadedMessages();
-                        //addYourMessageInView(message, System.currentTimeMillis(), true);
                         Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
                         caseId = ChatCreateAnswer.getInstance().getCaseId();
                         handler.postDelayed(runnablePollChat, INTERVAL);
@@ -295,7 +232,6 @@ public class SupportFragment extends Fragment {
                     isMessageLoading = false;
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SendMessageAnswer.getInstance() != null) {
                         adapter.loadedMessages();
-                        //addYourMessageInView(message, System.currentTimeMillis(), true);
                         Log.d(TAG, SendMessageAnswer.getInstance() + "");
                         GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {
