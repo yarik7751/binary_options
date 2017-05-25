@@ -127,13 +127,20 @@ public class QuotesChoiceFragment extends Fragment {
         if(newInstruments != null && lastInstruments != null) {
             for (int i = 0; i < lastInstruments.size(); i++) {
                 if(newInstruments.get(i) != null) {
-                    if (lastInstruments.get(i).getAsk() < newInstruments.get(i).getAsk()) {
-                        newInstruments.get(i).setColor(UP_TEXT_COLOR);
-                    } else if (lastInstruments.get(i).getAsk() > newInstruments.get(i).getAsk()) {
-                        newInstruments.get(i).setColor(DOWN_TEXT_COLOR);
-                    } else {
-                        newInstruments.get(i).setColor(lastInstruments.get(i).getColor());
-                    }
+                    switch (lastInstruments.get(i).getAsk().compareTo(newInstruments.get(i).getAsk())){
+                        case 0:
+                            newInstruments.get(i).setColor(lastInstruments.get(i).getColor());
+                            break;
+                        case 1:
+                            newInstruments.get(i).setColor(DOWN_TEXT_COLOR);
+                            break;
+                        case -1:
+                            newInstruments.get(i).setColor(UP_TEXT_COLOR);
+                            break;
+                        default:
+                            newInstruments.get(i).setColor(lastInstruments.get(i).getColor());
+                            break;
+                     }
                 } else {
                     return;
                 }
@@ -151,8 +158,7 @@ public class QuotesChoiceFragment extends Fragment {
             String responseSummary = intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY);
             if(responseInfo != null && responseSummary != null && responseInfo.equals(Const.RESPONSE_CODE_SUCCESS) && responseSummary.equals(Const.RESPONSE_CODE_SUCCESS)){
                 if(InfoAnswer.getInstance() != null) {
-                    List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
-                    comparisonQuotes(newInstruments);
+                    comparisonQuotes(InfoAnswer.getInstance().getInstruments());
                     progressBar.setVisibility(View.GONE);
                     rvQuotes.setVisibility(View.VISIBLE);
                 }

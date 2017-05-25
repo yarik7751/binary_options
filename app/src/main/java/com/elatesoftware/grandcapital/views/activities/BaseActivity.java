@@ -75,7 +75,6 @@ public class BaseActivity extends CustomFontsActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-
         llShadow = (LinearLayout) findViewById(R.id.ll_shadow);
         if (!isAuth()) {
             Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
@@ -88,7 +87,7 @@ public class BaseActivity extends CustomFontsActivity {
             if (savedInstanceState == null) {
                 toolbar = new ToolbarFragment();
                 changeToolbarFragment(toolbar);
-                    //changeMainFragment(TerminalFragment.getInstance());
+                //changeMainFragment(TerminalFragment.getInstance());
                 terminalFragment = setTerminalFragment();
                 getInfoUser();
                 startService(new Intent(this, CheckDealingService.class));

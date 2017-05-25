@@ -23,10 +23,9 @@ import android.widget.ScrollView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.AdapterForSupportChat;
 import com.elatesoftware.grandcapital.api.pojo.pojo_chat.ChatCreateAnswer;
-import com.elatesoftware.grandcapital.api.pojo.pojo_chat.HistoryMessage;
+import com.elatesoftware.grandcapital.api.pojo.pojo_chat.MessageChat;
 import com.elatesoftware.grandcapital.api.pojo.pojo_chat.PollChatAnswer;
 import com.elatesoftware.grandcapital.api.pojo.pojo_chat.SendMessageAnswer;
-import com.elatesoftware.grandcapital.api.pojo.pojo_chat.MessageChat;
 import com.elatesoftware.grandcapital.services.ChatService;
 import com.elatesoftware.grandcapital.services.SignInService;
 import com.elatesoftware.grandcapital.utils.Const;
@@ -34,7 +33,6 @@ import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 

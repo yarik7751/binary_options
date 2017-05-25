@@ -147,15 +147,19 @@ public class QuotesFragment extends Fragment {
         if(newInstruments != null  && lastInstruments != null) {
             for (int i = 0; i < lastInstruments.size(); i++) {
                 if(newInstruments.get(i) != null) {
-                    if (newInstruments.get(i).getSymbol().equals(Const.SYMBOL)) {
-                        Log.d(TAG, "EURUSD: " + newInstruments.get(i).getAsk());
-                    }
-                    if (lastInstruments.get(i).getAsk() < newInstruments.get(i).getAsk()) {
-                        newInstruments.get(i).setColor(UP_TEXT_COLOR);
-                    } else if (lastInstruments.get(i).getAsk() > newInstruments.get(i).getAsk()) {
-                        newInstruments.get(i).setColor(DOWN_TEXT_COLOR);
-                    } else {
-                        newInstruments.get(i).setColor(lastInstruments.get(i).getColor());
+                    switch (lastInstruments.get(i).getAsk().compareTo(newInstruments.get(i).getAsk())){
+                        case 0:
+                            newInstruments.get(i).setColor(lastInstruments.get(i).getColor());
+                            break;
+                        case 1:
+                            newInstruments.get(i).setColor(DOWN_TEXT_COLOR);
+                            break;
+                        case -1:
+                            newInstruments.get(i).setColor(UP_TEXT_COLOR);
+                            break;
+                        default:
+                            newInstruments.get(i).setColor(lastInstruments.get(i).getColor());
+                            break;
                     }
                 } else {
                     return;

@@ -10,22 +10,6 @@
     tools:context=".views.fragments.SupportFragment"
     android:background="@drawable/bg">
 
-    <!--<ScrollView
-        android:id="@+id/sv_messages"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="10dp"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:id="@+id/ll_messages"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </LinearLayout>
-    </ScrollView>-->
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_messages"
         android:layout_width="match_parent"
