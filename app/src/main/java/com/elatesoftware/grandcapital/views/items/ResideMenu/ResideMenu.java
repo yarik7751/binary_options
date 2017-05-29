@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -107,7 +106,6 @@ public class ResideMenu extends FrameLayout {
 
         tvDepositMenu = (TextView)findViewById(R.id.tvDepositMenu);
 
-        ImageButton closeButton = (ImageButton)findViewById(R.id.close_button);
         findViewById(R.id.rl_close).setOnClickListener(v -> closeMenu());
         //closeButton.setOnClickListener(v -> closeMenu());
     }

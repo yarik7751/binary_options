@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -366,8 +367,13 @@ public class TerminalFragment extends Fragment {
                 sSymbolCurrent = Const.SYMBOL;
             }
         });
-        tvDeposit.setOnClickListener(v -> BaseActivity.changeMainFragment(new DepositFragment()));
-
+        tvDeposit.setOnClickListener(v -> {
+            //BaseActivity.changeMainFragment(new DepositFragment())
+            BaseActivity.sMainTagFragment = TerminalFragment.class.getName();
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
+            startActivity(browserIntent);
+            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_DEPOSIT, null, null);
+        });
         llLowerTerminal.setOnClickListener(v -> {
             llLowerTerminal.setEnabled(false);
             requestMakeDealing(Const.CMD_LOWER);

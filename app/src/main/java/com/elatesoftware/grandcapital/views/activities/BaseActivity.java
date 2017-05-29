@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -231,8 +232,11 @@ public class BaseActivity extends CustomFontsActivity {
                 changeMainFragment(new AccountsFragment());
             }*/ /*else if (view == mSettings) {
                 changeMainFragment(new SettingsFragment());
-            }*/ else if (view == mDeposit) {
-                changeMainFragment(new DepositFragment());
+            } */else if (view == mDeposit) {
+                //changeMainFragment(new DepositFragment());
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
+                startActivity(browserIntent);
+                GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_DEPOSIT, null, null);
             }
             mResideMenu.closeMenu();
         }
