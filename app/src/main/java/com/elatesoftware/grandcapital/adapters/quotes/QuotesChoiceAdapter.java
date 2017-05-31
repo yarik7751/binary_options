@@ -1,18 +1,21 @@
 package com.elatesoftware.grandcapital.adapters.quotes;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
 import com.elatesoftware.grandcapital.models.QuoteType;
+import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 
@@ -109,11 +112,16 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
                 quotesHolder.tvCurrency.setText(quoteType.getInstrumentQuote().getSymbol().toUpperCase());
                 quotesHolder.tvAsk.setText(ConventString.getRoundNumber(5, quoteType.getInstrumentQuote().getAsk()));
                 quotesHolder.tvAsk.setTextColor(quoteType.getInstrumentQuote().getColor());
-
+                //quotesHolder.tvDescription.setText(quoteType.getInstrumentQuote().getGroup());
                 if(quoteType.isSelected()){
                     quotesHolder.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));
                 }else{
                     quotesHolder.imgIsSelected.setImageDrawable(null);
+                }
+                if(position% 2 != 0){
+                    quotesHolder.llContainer.setBackgroundColor(ConventImage.getColorWithAlpha(context.getResources().getColor(R.color.menuAccountBalanceTextColor), 0.2f));
+                }else{
+                    quotesHolder.llContainer.setBackgroundColor(Color.TRANSPARENT);
                 }
                 quotesHolder.bind(quoteType, listenerItem);
                 break;
@@ -122,11 +130,17 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
                 quotesHolder1.tvCurrency.setText(quoteType.getInstrumentQuote().getSymbol().toUpperCase());
                 quotesHolder1.tvAsk.setText(ConventString.getRoundNumber(5, quoteType.getInstrumentQuote().getAsk()));
                 quotesHolder1.tvAsk.setTextColor(quoteType.getInstrumentQuote().getColor());
+               // quotesHolder1.tvDescription.setText(quoteType.getInstrumentQuote().getGroup());
 
                 if(quoteType.isSelected()){
                     quotesHolder1.imgIsSelected.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_done_white_24dp));
                 }else{
                     quotesHolder1.imgIsSelected.setImageDrawable(null);
+                }
+                if(position% 2 != 0){
+                    quotesHolder1.llContainer.setBackgroundColor(ConventImage.getColorWithAlpha(context.getResources().getColor(R.color.menuAccountBalanceTextColor), 0.2f));
+                }else{
+                    quotesHolder1.llContainer.setBackgroundColor(Color.TRANSPARENT);
                 }
                 quotesHolder1.bind(quoteType, listenerItem);
                 break;
@@ -184,9 +198,10 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
 
     private class QuotesStarViewHolder extends QuoteBaseViewHolder {
         View itemView;
-        TextView tvCurrency, tvAsk;
+        TextView tvCurrency, tvAsk/*, tvDescription*/;
         ImageView imgIsSelected;
         FrameLayout flQuote;
+        LinearLayout llContainer;
 
         QuotesStarViewHolder(View itemView) {
             super(itemView);
@@ -195,6 +210,8 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
             tvAsk = (TextView) itemView.findViewById(R.id.tv_ask);
             imgIsSelected = (ImageView) itemView.findViewById(R.id.img_is_selected);
             flQuote = (FrameLayout) itemView.findViewById(R.id.fl_quote);
+            llContainer = (LinearLayout) itemView.findViewById(R.id.container_item_quote);
+            //tvDescription = (TextView) itemView.findViewById(R.id.tv_currency_description);
         }
         public void bind(final QuoteType quoteType, final OnItemClickListener listener) {
             itemView.setOnClickListener(v -> {
@@ -213,9 +230,10 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
     }
     private class QuotesNoStarViewHolder extends QuoteBaseViewHolder {
         View itemView;
-        TextView tvCurrency, tvAsk;
+        TextView tvCurrency, tvAsk/*, tvDescription*/;
         ImageView imgIsSelected;
         FrameLayout flQuote;
+        LinearLayout llContainer;
 
         QuotesNoStarViewHolder(View itemView) {
             super(itemView);
@@ -224,6 +242,8 @@ public class QuotesChoiceAdapter extends GrandCapitalListAdapter {
             tvAsk = (TextView) itemView.findViewById(R.id.tv_ask);
             imgIsSelected = (ImageView) itemView.findViewById(R.id.img_is_selected);
             flQuote = (FrameLayout) itemView.findViewById(R.id.fl_quote);
+            llContainer = (LinearLayout) itemView.findViewById(R.id.container_item_quote);
+            //tvDescription = (TextView) itemView.findViewById(R.id.tv_currency_description);
         }
         public void bind(final QuoteType quoteType, final OnItemClickListener listener) {
             itemView.setOnClickListener(v -> {

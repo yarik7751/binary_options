@@ -2,7 +2,7 @@ package com.elatesoftware.grandcapital.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-
+import android.graphics.Color;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -61,5 +61,15 @@ public class ConventImage {
         );
         params.topMargin = AndroidUtils.dp(isDirection ? -80 : 0);
         return params;
+    }
+
+    public static int getColorWithAlpha(int color, float ratio) {
+        int newColor = 0;
+        int alpha = Math.round(Color.alpha(color) * ratio);
+        int r = Color.red(color);
+        int g = Color.green(color);
+        int b = Color.blue(color);
+        newColor = Color.argb(alpha, r, g, b);
+        return newColor;
     }
 }

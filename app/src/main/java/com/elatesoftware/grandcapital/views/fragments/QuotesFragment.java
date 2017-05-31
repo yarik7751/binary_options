@@ -83,7 +83,6 @@ public class QuotesFragment extends Fragment {
         BaseActivity.getToolbar().switchTab(5);
 
         rvAllQuotes = (RecyclerView) view.findViewById(R.id.rv_all_quotes);
-
         rvSelectedQuotes = (RecyclerView) view.findViewById(R.id.rv_selected_quotes);
         rvAllQuotes.setLayoutManager(new LinearLayoutManager(getContext()) {
             @Override

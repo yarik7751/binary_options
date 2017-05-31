@@ -10,7 +10,7 @@
     <string name="is_their_message">is_their_message</string>
 
     <string name="all_quotes">All quotes</string>
-    <string name="selected_quotes">Starred</string>
+    <string name="selected_quotes">Selected quotes</string>
 
     <!--Exceptions-->
     <string name="error_incorrent_password_input">Password</string>
