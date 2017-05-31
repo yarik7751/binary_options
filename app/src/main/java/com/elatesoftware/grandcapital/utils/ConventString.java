@@ -25,10 +25,12 @@ public class ConventString {
     public static void setMaskAmount(EditText v, boolean isBol) {
         String str = v.getText().toString();
         if(isBol) {
+            v.setCursorVisible(true);
             str = str.replace("$", "");
             v.setText(str);
             v.setSelection(v.getText().toString().length());
         } else {
+            v.setCursorVisible(false);
             if(!str.contains("$")) {
                 if(TextUtils.isEmpty(str)) {
                     str = "0";
@@ -42,10 +44,12 @@ public class ConventString {
     public static void setMaskTime(EditText v, boolean isBol) {
         String str = v.getText().toString();
         if(isBol) {
+            v.setCursorVisible(true);
             str = str.replace(" MIN", "");
             v.setText(str);
             v.setSelection(v.getText().toString().length());
         } else {
+            v.setCursorVisible(false);
             if(!str.contains(" MIN")) {
                 if(TextUtils.isEmpty(str)) {
                     str = "0";
