@@ -8,23 +8,24 @@
     tools:context=".views.fragments.DepositFragment"
     android:background="@drawable/bg">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
+    <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_weight="1">-->
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_inout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/rv_inout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
 
-        <include layout="@layout/incl_progress_bar" />
-    </FrameLayout>
+        <!--<include layout="@layout/incl_progress_bar" />-->
+    <!--</FrameLayout>-->
 
     <LinearLayout
         android:orientation="vertical"
+        android:gravity="bottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <Button
             android:id="@+id/btn_deposit"

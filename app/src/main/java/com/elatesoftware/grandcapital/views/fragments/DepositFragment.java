@@ -1,15 +1,10 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,16 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.adapters.in_out.InOutAdapter;
-import com.elatesoftware.grandcapital.api.pojo.InOutAnswer;
 import com.elatesoftware.grandcapital.models.User;
-import com.elatesoftware.grandcapital.services.InOutService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.views.items.CustomDialog;
-
-import java.util.ArrayList;
 
 /**
  * Created by Дарья Высокович on 21.02.2017.
@@ -37,15 +26,16 @@ public class DepositFragment  extends Fragment {
 
     public static final String TAG = "DepositFragment_LOG";
 
-    private RecyclerView rvIoOut;
+    /**private RecyclerView rvIoOut;*/
     private Button btnDeposit;
     private TextView tvWithdraw;
     private LinearLayout llWithdraw;
 
+    /**
     private ArrayList<InOutAnswer> deposits;
     private ArrayList<InOutAnswer> withdraws;
 
-    private GetMoneyTransactionBroadcastReceiver mMoneyTransactionBroadcastReceiver;
+   private GetMoneyTransactionBroadcastReceiver mMoneyTransactionBroadcastReceiver;*/
 
     private static DepositFragment fragment = null;
     public static DepositFragment getInstance() {
@@ -67,30 +57,26 @@ public class DepositFragment  extends Fragment {
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
         BaseActivity.getToolbar().deselectAll();
 
-        rvIoOut = (RecyclerView) view.findViewById(R.id.rv_inout);
+        /**rvIoOut = (RecyclerView) view.findViewById(R.id.rv_inout);*/
         btnDeposit = (Button) view.findViewById(R.id.btn_deposit);
         tvWithdraw = (TextView) view.findViewById(R.id.tv_withdraw);
         llWithdraw = (LinearLayout) view.findViewById(R.id.ll_withdraw);
 
         btnDeposit.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
-//            WebFragment webFragment = WebFragment.getInstance(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT);
-//            BaseActivity.addNextFragment(webFragment);
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
             startActivity(browserIntent);
             GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_DEPOSIT, null, null);
         });
         llWithdraw.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
-//            WebFragment webFragment = WebFragment.getInstance(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_WITHDRAW);
-//            BaseActivity.addNextFragment(webFragment);
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_WITHDRAW));
             startActivity(browserIntent);
             GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_WITHDRAW, null, null);
         });
 
-        rvIoOut.setLayoutManager(new LinearLayoutManager(getContext()));
-        testMethod();
+        /**rvIoOut.setLayoutManager(new LinearLayoutManager(getContext()));*/
+        /**testMethod();*/
         //rvIoOut.setAdapter(new InOutAdapter());
         //query(InOutService.DEPOSIT);
         //llProgress.setVisibility(View.VISIBLE);
@@ -99,18 +85,18 @@ public class DepositFragment  extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mMoneyTransactionBroadcastReceiver = new GetMoneyTransactionBroadcastReceiver();
+        /**mMoneyTransactionBroadcastReceiver = new GetMoneyTransactionBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(InOutService.ACTION_SERVICE_IN_OUT);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(mMoneyTransactionBroadcastReceiver, intentFilter);
+        getActivity().registerReceiver(mMoneyTransactionBroadcastReceiver, intentFilter);*/
     }
 
     @Override
     public void onStop() {
-        getActivity().unregisterReceiver(mMoneyTransactionBroadcastReceiver);
+        /**getActivity().unregisterReceiver(mMoneyTransactionBroadcastReceiver);*/
         super.onStop();
     }
-
+/**
     //тестовый метод
     private void testMethod() {
         InOutAnswer inOutAnswer1d = new InOutAnswer(new InOutAnswer.AmountMoney("$122000"), "VISA", "Ok", "03.05.2014");
@@ -166,5 +152,5 @@ public class DepositFragment  extends Fragment {
                         getString(R.string.request_error_text));
             }
         }
-    }
+    }*/
 }

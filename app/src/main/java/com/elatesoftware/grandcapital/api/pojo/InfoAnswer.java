@@ -96,15 +96,16 @@ public class InfoAnswer {
 
     public List<Instrument> getInstruments() {
         List<Instrument> list = new ArrayList<>();
-        if(instruments != null)
-        for (Instrument instrument : instruments) {
-            if(instrument.getSymbol().length() == 6            // TODO COMMIT BUGS
-                    && !instrument.getSymbol().contains("JPY")
-                    && !instrument.getSymbol().equals("NZDUSD")
-                    && !instrument.getSymbol().equals("SILVER")){
-                list.add(instrument);
+        /*if(instruments != null){
+            for (Instrument instrument : instruments) {
+                if(instrument.getSymbol().length() == 6            // TODO COMMIT FOR FIX BUGS
+                        && !instrument.getSymbol().contains("JPY")
+                        && !instrument.getSymbol().equals("NZDUSD")
+                        && !instrument.getSymbol().equals("SILVER")){
+                    list.add(instrument);
+                }
             }
-        }
+        }*/
         return list;
     }
 
