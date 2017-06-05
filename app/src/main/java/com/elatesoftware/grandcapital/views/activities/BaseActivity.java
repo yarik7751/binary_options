@@ -49,6 +49,7 @@ public class BaseActivity extends CustomFontsActivity {
     private static ResideMenu mResideMenu;
     private ResideMenuItem mTerminal;
     private ResideMenuItem mSupport;
+    private ResideMenuItem mDepositWithdraw;
     private ResideMenuItemWithMark mDealing;
     private ResideMenuItem mQuotes;
     private ResideMenuItem mHowItWorks;
@@ -163,6 +164,7 @@ public class BaseActivity extends CustomFontsActivity {
         mPromotions = new ResideMenuItem(this, getString(R.string.menu_item_promotions));
         //mAccounts = new ResideMenuItem(this, getString(R.string.menu_item_accounts));
         mSupport = new ResideMenuItem(this, getString(R.string.menu_item_support));
+        mDepositWithdraw = new ResideMenuItem(this, getString(R.string.deposit_withdraw));
         //mSettings = new ResideMenuItem(this, getString(R.string.menu_item_settings));
         mLogout = new ResideMenuItem(this, getString(R.string.menu_item_logout));
         mDeposit = mResideMenu.tvDepositMenu;
@@ -174,6 +176,7 @@ public class BaseActivity extends CustomFontsActivity {
         mPromotions.setOnClickListener(menuClickListener);
         //mAccounts.setOnClickListener(menuClickListener);
         mSupport.setOnClickListener(menuClickListener);
+        mDepositWithdraw.setOnClickListener(menuClickListener);
         //mSettings.setOnClickListener(menuClickListener);
         mLogout.setOnClickListener(menuClickListener);
         mDeposit.setOnClickListener(menuClickListener);
@@ -181,6 +184,7 @@ public class BaseActivity extends CustomFontsActivity {
         mResideMenu.addMenuItem(mTerminal, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mDealing, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mQuotes, ResideMenu.DIRECTION_LEFT);
+        mResideMenu.addMenuItem(mDepositWithdraw, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mHowItWorks, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mPromotions, ResideMenu.DIRECTION_LEFT);
         //mResideMenu.addMenuItem(mAccounts, ResideMenu.DIRECTION_LEFT);
@@ -228,7 +232,10 @@ public class BaseActivity extends CustomFontsActivity {
                 changeMainFragment(new HowItWorksFragment());
             } else if (view == mPromotions) {
                 changeMainFragment(new PromotionsFragment());
-            } /*else if (view == mAccounts) {
+            } else if (view == mDepositWithdraw) {
+                changeMainFragment(new DepositFragment());
+            }
+            /*else if (view == mAccounts) {
                 changeMainFragment(new AccountsFragment());
             }*/ /*else if (view == mSettings) {
                 changeMainFragment(new SettingsFragment());

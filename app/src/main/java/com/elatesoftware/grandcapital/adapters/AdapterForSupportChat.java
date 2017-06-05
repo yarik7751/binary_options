@@ -1,15 +1,19 @@
 package com.elatesoftware.grandcapital.adapters;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.pojo_chat.MessageChat;
+import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 
 import java.util.ArrayList;
@@ -58,19 +62,41 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
         final MessageChat message = getMessage(position);
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_USER_FIRST:
-            case VIEW_TYPE_USER:
+            case VIEW_TYPE_USER: {
                 baseHolder = (MessageUserViewHolder) holder;
                 baseHolder.bind(message, position);
                 ((MessageUserViewHolder) holder).tvDate.setText(ConventDate.getChatDateByUnix(mContext, message.getTime()));
-                ((MessageUserViewHolder) holder).tvMessage.setText(message.getText());
+                TextView tvMessage = ((MessageUserViewHolder) holder).tvMessage;
+                tvMessage.setText(message.getText());
+                tvMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int lineCount = tvMessage.getLineCount();
+                        if (lineCount > 1) {
+                            ((MessageUserViewHolder) holder).llMessage.setOrientation(LinearLayout.VERTICAL);
+                        }
+                    }
+                });
                 ((MessageUserViewHolder) holder).pbLoading.setVisibility(getMessage(position).isLoading() ? View.VISIBLE : View.GONE);
+            }
                 break;
             case VIEW_TYPE_SUPPORT_FIRST:
-            case VIEW_TYPE_SUPPORT:
+            case VIEW_TYPE_SUPPORT: {
                 baseHolder = (MessageSupportViewHolder) holder;
                 baseHolder.bind(message, position);
                 ((MessageSupportViewHolder) holder).tvDate.setText(ConventDate.getChatDateByUnix(mContext, message.getTime()));
-                ((MessageSupportViewHolder) holder).tvMessage.setText(message.getText());
+                TextView tvMessage = ((MessageSupportViewHolder) holder).tvMessage;
+                tvMessage.setText(message.getText());
+                tvMessage.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int lineCount = tvMessage.getLineCount();
+                        if (lineCount  > 1) {
+                            ((MessageSupportViewHolder) holder).llMessage.setOrientation(LinearLayout.VERTICAL);
+                        }
+                    }
+                });
+            }
                 break;
             case VIEW_TYPE_TYPING:
 
@@ -180,23 +206,32 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     static class MessageUserViewHolder extends  MessageBaseViewHolder{
 
         private TextView tvMessage, tvDate;
+        private RelativeLayout rlTime;
+        private LinearLayout llMessage;
         private ProgressBar pbLoading;
+
         public MessageUserViewHolder(View view) {
             super(view);
             tvMessage = (TextView) view.findViewById(R.id.tv_message);
             tvDate = (TextView) view.findViewById(R.id.tv_time);
             pbLoading = (ProgressBar) view.findViewById(R.id.pb_loading);
+            rlTime = (RelativeLayout) view.findViewById(R.id.rl_time);
+            llMessage = (LinearLayout) view.findViewById(R.id.ll_message);
         }
     }
 
     static class MessageSupportViewHolder extends MessageBaseViewHolder {
 
         private  TextView tvMessage, tvDate;
+        private RelativeLayout rlTime;
+        private LinearLayout llMessage;
 
         public MessageSupportViewHolder(View view) {
             super(view);
             tvMessage = (TextView) view.findViewById(R.id.tv_message);
             tvDate = (TextView) view.findViewById(R.id.tv_time);
+            rlTime = (RelativeLayout) view.findViewById(R.id.rl_time);
+            llMessage = (LinearLayout) view.findViewById(R.id.ll_message);
         }
     }
 
