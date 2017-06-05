@@ -1311,10 +1311,10 @@ public class TerminalFragment extends Fragment {
 
                         if(listOpenDealings != null && listOpenDealings.size() != 0){
                             int i = 0;
-                            if(BaseLimitLine.getYLimitLines() != null){
+                            if(BaseLimitLine.getYLimitLines() != null && BaseLimitLine.getYLimitLines() != null){
                                 i = BaseLimitLine.getYLimitLines().size();
                             }
-                            if(BaseLimitLine.getXLimitLines() != null){
+                            if(BaseLimitLine.getXLimitLines() != null && BaseLimitLine.getXLimitLines() != null){
                                 i = BaseLimitLine.getXLimitLines().size();
                             }
                             if(i < listOpenDealings.size()){

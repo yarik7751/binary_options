@@ -31,9 +31,7 @@ public class BubbleChartRenderer extends BarLineScatterCandleBubbleRenderer {
                                ViewPortHandler viewPortHandler) {
         super(animator, viewPortHandler);
         mChart = chart;
-
         mRenderPaint.setStyle(Style.FILL);
-
         mHighlightPaint.setStyle(Style.STROKE);
         mHighlightPaint.setStrokeWidth(Utils.convertDpToPixel(1.5f));
     }

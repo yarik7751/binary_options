@@ -1,7 +1,5 @@
 package com.github.mikephil.charting.utils;
 
-import com.github.mikephil.charting.data.Entry;
-
 import java.util.Comparator;
 
 /**
@@ -14,8 +12,12 @@ public class FloatComparator implements Comparator<Float> {
         float diff = float1 - float2;
         if (diff == 0f) return 0;
         else {
-            if (diff > 0f) return 1;
-            else return -1;
+            if (diff > 0f) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
         }
     }
 }
