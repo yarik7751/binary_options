@@ -96,7 +96,7 @@ public class InfoAnswer {
 
     public List<Instrument> getInstruments() {
         List<Instrument> list = new ArrayList<>();
-        /*if(instruments != null){
+        if(instruments != null){
             for (Instrument instrument : instruments) {
                 if(instrument.getSymbol().length() == 6            // TODO COMMIT FOR FIX BUGS
                         && !instrument.getSymbol().contains("JPY")
@@ -105,7 +105,7 @@ public class InfoAnswer {
                     list.add(instrument);
                 }
             }
-        }*/
+        }
         return list;
     }
 
