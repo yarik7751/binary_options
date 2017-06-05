@@ -241,7 +241,7 @@ public class TerminalFragment extends Fragment {
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
-        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $0.0 (0%)");
+        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " " + getResources().getString(R.string.string_for_reward));
         ConventString.formatReward(tvValueRewardTerminal);
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
