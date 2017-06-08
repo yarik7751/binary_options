@@ -28,7 +28,7 @@
                 android:layout_centerHorizontal="true"
                 android:scaleType="fitXY"
                 android:background="@null"
-                android:src="@drawable/menu" />
+                android:src="@drawable/ic_menu" />
         </RelativeLayout>
 
         <TextView
