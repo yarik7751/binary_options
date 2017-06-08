@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.views.activities;
 
+import android.animation.LayoutTransition;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,10 +8,12 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -53,6 +56,12 @@ public class SignInActivity extends CustomFontsActivity {
         tilLogin = (TextInputLayout) findViewById(R.id.emailEditTextLayout);
         tilPassword = (TextInputLayout) findViewById(R.id.passwordEditTextLayout);
         tvForgotPassword = (TextView) findViewById(R.id.forgot_password_link);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ViewGroup rootView = (ViewGroup) findViewById(R.id.email_login_form);
+            LayoutTransition layoutTransition = rootView.getLayoutTransition();
+            layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+        }
 
         tvSignUp.setOnClickListener(v -> {
             /*Intent i = new Intent(getApplicationContext(), SignUpActivity.class);

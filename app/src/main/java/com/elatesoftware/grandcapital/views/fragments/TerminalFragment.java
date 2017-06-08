@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
+import android.animation.LayoutTransition;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -240,6 +242,12 @@ public class TerminalFragment extends Fragment {
         etValueTime.clearFocus();
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ViewGroup rootView = (ViewGroup) view.findViewById(R.id.ll_controls);
+            LayoutTransition layoutTransition = rootView.getLayoutTransition();
+            layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+        }*/
 
         tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " " + getResources().getString(R.string.string_for_reward));
         ConventString.formatReward(tvValueRewardTerminal);
