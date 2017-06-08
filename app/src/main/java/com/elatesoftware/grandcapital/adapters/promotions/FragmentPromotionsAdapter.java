@@ -23,6 +23,12 @@ import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuestionFragment;
 import com.elatesoftware.grandcapital.views.fragments.WebFragment;
 import com.google.android.gms.analytics.HitBuilders;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Locale;
 
 /**
  * Created by Ярослав Левшунов on 24.02.2017.
@@ -48,7 +54,21 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         super.onBindViewHolder(holder, position);
         FragmentPromotionsViewHolder promotionsViewHolder = (FragmentPromotionsViewHolder) holder;
-        promotionsViewHolder.tvName.setText(binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
+
+        Gson gson = new Gson();
+        String name = binaryOptionAnswer.getElements().get(position).getShortDescriptionEn().toUpperCase();
+        String longDescription = binaryOptionAnswer.getElements().get(position).getLongDescription();
+        try {
+            String jsonStr = gson.toJson(binaryOptionAnswer.getElements().get(position), BinaryOptionAnswer.Element.class);
+            JSONObject elem = new JSONObject(jsonStr);
+            String language = Locale.getDefault().getLanguage();
+            name = elem.getString("short_description_" + language);
+            longDescription = elem.getString("long_description_" + language);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        name = name.toUpperCase();
+        promotionsViewHolder.tvName.setText(name);
         promotionsViewHolder.imgLink.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(binaryOptionAnswer.getElements().get(position).getPic()));
@@ -58,10 +78,11 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
             /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(binaryOptionAnswer.getElements().get(position).getPic()));
             context.startActivity(browserIntent);*/
         });
+        String finalLongDescription = longDescription;
         promotionsViewHolder.itemView.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString(QuestionFragment.HEADER_TEXT, binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
-            bundle.putString(QuestionFragment.CONTENT_TEXT, binaryOptionAnswer.getElements().get(position).getLongDescription());
+            bundle.putString(QuestionFragment.CONTENT_TEXT, finalLongDescription);
 
             GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_PROMOTIONS_SCREEN, Const.ANALYTICS_LIST_PROMOTION, binaryOptionAnswer.getElements().get(position).getShortDescription(), null);
 

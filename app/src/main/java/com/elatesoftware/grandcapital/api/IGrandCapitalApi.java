@@ -53,7 +53,7 @@ interface IGrandCapitalApi {
                                         @Query ("symbol") String symbol);
 
     @GET("/api/faq/questions?category=options")
-    Call<QuestionsAnswer> getQuestions(@Query("page") int page);
+    Call<QuestionsAnswer> getQuestions(@Query("page") int page, @Query ("lang") String lang);
 
     @GET("/api/bonus/bonus_description")
     Call<BinaryOptionAnswer> getBinaryOption();
