@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
+import android.animation.LayoutTransition;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -241,7 +243,13 @@ public class TerminalFragment extends Fragment {
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
-        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " $0.0 (0%)");
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ViewGroup rootView = (ViewGroup) view.findViewById(R.id.ll_controls);
+            LayoutTransition layoutTransition = rootView.getLayoutTransition();
+            layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+        }*/
+
+        tvValueRewardTerminal.setText(getResources().getString(R.string.reward) + " " + getResources().getString(R.string.string_for_reward));
         ConventString.formatReward(tvValueRewardTerminal);
 
         KeyboardVisibilityEvent.registerEventListener(getActivity(), isOpen1 -> {
@@ -1311,10 +1319,10 @@ public class TerminalFragment extends Fragment {
 
                         if(listOpenDealings != null && listOpenDealings.size() != 0){
                             int i = 0;
-                            if(BaseLimitLine.getYLimitLines() != null){
+                            if(BaseLimitLine.getYLimitLines() != null && BaseLimitLine.getYLimitLines() != null){
                                 i = BaseLimitLine.getYLimitLines().size();
                             }
-                            if(BaseLimitLine.getXLimitLines() != null){
+                            if(BaseLimitLine.getXLimitLines() != null && BaseLimitLine.getXLimitLines() != null){
                                 i = BaseLimitLine.getXLimitLines().size();
                             }
                             if(i < listOpenDealings.size()){

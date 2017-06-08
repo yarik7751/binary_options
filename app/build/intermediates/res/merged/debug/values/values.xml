@@ -798,6 +798,7 @@
     <string name="signup_page_registration_button_text">Registration</string>
     <string name="signup_page_surname_field">Last name</string>
     <string name="status_bar_notification_info_overflow">999+</string>
+    <string name="string_for_reward">$0.0 (0%)</string>
     <string name="time">Time</string>
     <string name="time_has_not_passed">Time has not passed</string>
     <string name="toolbar_name_accounts">Accounts</string>

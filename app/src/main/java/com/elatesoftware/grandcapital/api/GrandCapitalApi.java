@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.CookieJar;
@@ -291,7 +292,7 @@ public class GrandCapitalApi {
         return result;
     }
     public static String getQuestions(int page) {
-        Call<QuestionsAnswer> call = getApiService().getQuestions(page);
+        Call<QuestionsAnswer> call = getApiService().getQuestions(page, Locale.getDefault().getLanguage());
         Response<QuestionsAnswer> response = null;
         String result = null;
         try {

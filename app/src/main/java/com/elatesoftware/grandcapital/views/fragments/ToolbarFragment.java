@@ -1,5 +1,6 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -42,6 +43,31 @@ public class ToolbarFragment extends Fragment {
 
     private static ToolbarFragment fragment = null;
 
+    View.OnClickListener burgerClick = v -> {
+        AndroidUtils.hideKeyboard(getActivity());
+        if (burgerType == BURGER_OPEN_MENU) {
+            mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
+        }
+        if (burgerType == BURGER_BACK_PRESSED_ACTIVITY) {
+            getActivity().onBackPressed();
+        }
+        if (burgerType == BURGER_BACK_PRESSED) {
+            BaseActivity.fragmentManager.popBackStack();
+            BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
+            BaseActivity.getToolbar().setPageTitle(getActivity().getResources().getString(R.string.toolbar_name_terminal));
+            BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
+                BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+                BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+            });
+            try {
+                BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+                BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
+        }
+    };
+
     public static ToolbarFragment getInstance() {
         if (fragment == null) {
             fragment = new ToolbarFragment();
@@ -59,30 +85,8 @@ public class ToolbarFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         imgBurger = (ImageView) mParentActivity.findViewById(R.id.menu_burger);
         rlBurger = (RelativeLayout) mParentActivity.findViewById(R.id.rl_burger);
-        rlBurger.setOnClickListener(v -> {
-            AndroidUtils.hideKeyboard(getActivity());
-            if (burgerType == BURGER_OPEN_MENU) {
-                mResideMenu.openMenu(ResideMenu.DIRECTION_LEFT);
-            }
-            if (burgerType == BURGER_BACK_PRESSED_ACTIVITY) {
-                getActivity().onBackPressed();
-            }
-            if (burgerType == BURGER_BACK_PRESSED) {
-                BaseActivity.fragmentManager.popBackStack();
-                BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
-                BaseActivity.getToolbar().setPageTitle(getActivity().getResources().getString(R.string.toolbar_name_terminal));
-                BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
-                    BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
-                    BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
-                });
-                try {
-                    BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
-                    BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
-                } catch (Exception ignored) {
-                    ignored.printStackTrace();
-                }
-            }
-        });
+        rlBurger.setOnClickListener(burgerClick);
+        imgBurger.setOnClickListener(burgerClick);
         mPageTitle = (TextView) getView().findViewById(R.id.page_title);
         setupToolbar();
     }
@@ -108,7 +112,7 @@ public class ToolbarFragment extends Fragment {
     public void setBurgerType(int _burgerType) {
         burgerType = _burgerType;
         if (burgerType == BURGER_OPEN_MENU) {
-            imgBurger.setImageResource(R.drawable.menu_icon);
+            imgBurger.setImageResource(R.drawable.menu);
         }
         if (burgerType == BURGER_BACK_PRESSED_ACTIVITY) {
             imgBurger.setImageResource(R.drawable.ic_back);
