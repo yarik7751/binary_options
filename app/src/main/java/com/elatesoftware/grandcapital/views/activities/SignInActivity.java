@@ -70,8 +70,8 @@ public class SignInActivity extends CustomFontsActivity {
             startActivity(browserIntent);
         });
         btnSignIn.setOnClickListener(view -> {{
-            etLogin.setText("10025808");
-            etPassword.setText("6elFJkuL");
+            //etLogin.setText("10025808");
+            //etPassword.setText("6elFJkuL");
             signIn();
         }});
         tilLogin.setErrorEnabled(true);

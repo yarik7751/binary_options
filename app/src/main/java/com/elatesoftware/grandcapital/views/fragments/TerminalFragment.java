@@ -1,6 +1,5 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
-import android.animation.LayoutTransition;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,7 +8,6 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -51,6 +49,7 @@ import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.MakeDealingService;
 import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.services.SignalService;
+import com.elatesoftware.grandcapital.services.SummaryService;
 import com.elatesoftware.grandcapital.services.SymbolHistoryService;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.Const;
@@ -176,6 +175,7 @@ public class TerminalFragment extends Fragment {
     private GetResponseOrdersBroadcastReceiver mOrdersBroadcastReceiver;
     private GetResponseEarlyClosureBroadcastReceiver mEarlyClosureBroadcastReceiver;
     private GetResponseDeleteDealingBroadcastReceiver mDeleteDealingBroadcastReceiver;
+    private GetResponseBalanceBroadcastReceiver mBalanceBroadcastReceiver;
 
     private static TerminalFragment fragment = null;
     public static TerminalFragment getInstance() {
@@ -486,6 +486,11 @@ public class TerminalFragment extends Fragment {
         IntentFilter intentFilterChoiceActive = new IntentFilter(ChoiceActiveService.ACTION_SERVICE_CHOICE_ACTIVE);
         intentFilterChoiceActive.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mChoiceActiveBroadcastReceiver, intentFilterChoiceActive);
+
+        mBalanceBroadcastReceiver =  new GetResponseBalanceBroadcastReceiver();
+        IntentFilter intentFilterBalance = new IntentFilter(SummaryService.ACTION_SERVICE_SUMMARY);
+        intentFilterBalance.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mBalanceBroadcastReceiver, intentFilterBalance);
     }
     private void unregisterBroadcasts() {
         getActivity().unregisterReceiver(mSymbolHistoryBroadcastReceiver);
@@ -497,6 +502,7 @@ public class TerminalFragment extends Fragment {
         getActivity().unregisterReceiver(mEarlyClosureBroadcastReceiver);
         getActivity().unregisterReceiver(mDeleteDealingBroadcastReceiver);
         getActivity().unregisterReceiver(mChoiceActiveBroadcastReceiver);
+        getActivity().unregisterReceiver(mBalanceBroadcastReceiver);
     }
 
     private void setXVisibilityPoint() {
@@ -841,6 +847,10 @@ public class TerminalFragment extends Fragment {
         }
     }
 
+    private void requestBalanceUser() {
+        Intent intentBalanceService = new Intent(getActivity(), InfoUserService.class);
+        getActivity().startService(intentBalanceService);
+    }
     private void requestEarlyClosure() {
         Intent intent = new Intent(getActivity(), EarlyClosureService.class);
         intent.putExtra(EarlyClosureService.SYMBOL, tvValueActive.getText().toString());
@@ -1236,6 +1246,15 @@ public class TerminalFragment extends Fragment {
         }
     }
 
+    public class GetResponseBalanceBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getStringExtra(SummaryService.RESPONSE_SUMMARY) != null){
+                updateBalance(0);
+            }
+        }
+    }
+
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1376,16 +1395,17 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(DeleteDealingService.RESPONSE);
+            llProgressBar.setVisibility(View.GONE);
             if (response == null || !response.equals(Const.CODE_SUCCESS_DELETE_DEALING)) {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.request_error_title), getResources().getString(R.string.request_error_request));
             }else{
-                llProgressBar.setVisibility(View.GONE);
                 int ticket = intent.getIntExtra(DeleteDealingService.TICKET, 0);
                 if(ticket != 0){
                     OrderAnswer order = CheckDealingService.deleteOrder(ticket);
                     if(order != null){
                         redrawPointsDealings(ticket);
-                        updateBalance(order.getProfit());
+                        requestBalanceUser();
+                        //updateBalance(order.getProfit());
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         BaseLimitLine.deleteDealingLimitLine(ticket);
                         typePoint = POINT_CLOSE_DEALING;

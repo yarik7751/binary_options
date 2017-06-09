@@ -64,6 +64,7 @@
         <service android:name=".services.EarlyClosureService"/>
         <service android:name=".services.DeleteDealingService"/>
         <service android:name=".services.ChoiceActiveService"/>
+        <service android:name=".services.SummaryService"/>
 
         <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
             android:enabled="true">
