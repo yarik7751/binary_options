@@ -112,7 +112,7 @@ public class ToolbarFragment extends Fragment {
     public void setBurgerType(int _burgerType) {
         burgerType = _burgerType;
         if (burgerType == BURGER_OPEN_MENU) {
-            imgBurger.setImageResource(R.drawable.menu);
+            imgBurger.setImageResource(R.drawable.ic_menu);
         }
         if (burgerType == BURGER_BACK_PRESSED_ACTIVITY) {
             imgBurger.setImageResource(R.drawable.ic_back);

@@ -79,9 +79,10 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
             context.startActivity(browserIntent);*/
         });
         String finalLongDescription = longDescription;
+        String finalName = name;
         promotionsViewHolder.itemView.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            bundle.putString(QuestionFragment.HEADER_TEXT, binaryOptionAnswer.getElements().get(position).getShortDescription().toUpperCase());
+            bundle.putString(QuestionFragment.HEADER_TEXT, finalName);
             bundle.putString(QuestionFragment.CONTENT_TEXT, finalLongDescription);
 
             GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_PROMOTIONS_SCREEN, Const.ANALYTICS_LIST_PROMOTION, binaryOptionAnswer.getElements().get(position).getShortDescription(), null);
