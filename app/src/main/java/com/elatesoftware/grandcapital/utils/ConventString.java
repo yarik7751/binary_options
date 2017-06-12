@@ -186,4 +186,13 @@ public class ConventString {
         text.setSpan(new RelativeSizeSpan(1.1f), startPosition, str.length() - 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         tv.setText(text, TextView.BufferType.SPANNABLE);
     }
+
+    public static boolean isOurLanguage(String language) {
+        return
+                language.equals("en") ||
+                language.equals("fr") ||
+                language.equals("in") ||
+                language.equals("vi") ||
+                language.equals("zh");
+    }
 }

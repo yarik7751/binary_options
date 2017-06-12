@@ -17,6 +17,7 @@ import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.utils.Const;
+import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
@@ -62,8 +63,17 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
             String jsonStr = gson.toJson(binaryOptionAnswer.getElements().get(position), BinaryOptionAnswer.Element.class);
             JSONObject elem = new JSONObject(jsonStr);
             String language = Locale.getDefault().getLanguage();
-            name = elem.getString("short_description_" + language);
-            longDescription = elem.getString("long_description_" + language);
+            if(!ConventString.isOurLanguage(language)) {
+                language = "en";
+            }
+            String nameParam = "short_description_" + language;
+            String longDescriptionParam = "long_description_" + language;
+            if(language.equals("zh") || language.equals("cn")) {
+                nameParam = "short_description_zh_cn";
+                longDescription = "long_description_zh_cn";
+            }
+            name = elem.getString(nameParam);
+            longDescription = elem.getString(longDescriptionParam);
         } catch (JSONException e) {
             e.printStackTrace();
         }

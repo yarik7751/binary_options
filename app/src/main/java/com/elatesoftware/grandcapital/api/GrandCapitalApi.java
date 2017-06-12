@@ -18,6 +18,7 @@ import com.elatesoftware.grandcapital.api.pojo.pojo_chat.SendMessageAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.utils.ConventToJson;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
@@ -63,11 +64,14 @@ public class GrandCapitalApi {
     private static IGrandCapitalApi getApiService() {
         if (grandCapitalApiService == null) {
             CookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(GrandCapitalApplication.getAppContext()));
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .cookieJar(cookieJar)
                     .connectTimeout(5, TimeUnit.MINUTES)
                     .writeTimeout(5, TimeUnit.MINUTES)
                     .readTimeout(5, TimeUnit.MINUTES)
+                    .addInterceptor(interceptor)
                     .build();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -292,7 +296,11 @@ public class GrandCapitalApi {
         return result;
     }
     public static String getQuestions(int page) {
-        Call<QuestionsAnswer> call = getApiService().getQuestions(page, Locale.getDefault().getLanguage());
+        String language = Locale.getDefault().getLanguage();
+        if(!ConventString.isOurLanguage(language)) {
+            language = "en";
+        }
+        Call<QuestionsAnswer> call = getApiService().getQuestions(page, language);
         Response<QuestionsAnswer> response = null;
         String result = null;
         try {
