@@ -14,7 +14,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.elatesoftware.grandcapital.utils.Const;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
@@ -460,16 +459,17 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
             }
 
             if (mAxisRight.needsOffset()) {
-                //offsetRight += mAxisRight.getRequiredWidthSpace(mAxisRendererRight.getPaintAxisLabels());
-//************************************************************
-                mAxisRendererRight.getPaintAxisLabels().setStrokeWidth(0.5f);
+                offsetRight += mAxisRight.getRequiredWidthSpace(mAxisRendererRight.getPaintAxisLabels());
+/*****************************my custom code********************************/
+            /** it is not work because quotes coordination do not drawing*/
+               /* mAxisRendererRight.getPaintAxisLabels().setStrokeWidth(0.5f);
                 offsetRight += mAxisRight.getRequiredWidthSpace(mAxisRendererRight.getPaintAxisLabels());
                 float widht = Const.OFFSET_CHART_Y;
                     while(offsetRight > widht) {
                         mAxisRendererRight.getPaintAxisLabels().setStrokeWidth(mAxisRendererRight.getPaintAxisLabels().getStrokeWidth() - 1f);
                         offsetRight = mAxisRight.getRequiredWidthSpace(mAxisRendererRight.getPaintAxisLabels());
                     }
-                    offsetRight  = widht;
+                    offsetRight  = widht;*/
 //*************************************************************
             }
 

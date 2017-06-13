@@ -572,7 +572,6 @@ public class TerminalFragment extends Fragment {
     }
 
     private void initializationChart() {
-        mChart.setNoDataText("Loading Data...");
         mChart.setNoDataText(getResources().getString(R.string.request_error_title));
         mChart.setDragDecelerationFrictionCoef(0.3f);
         mChart.setDragDecelerationEnabled(true);
@@ -712,11 +711,7 @@ public class TerminalFragment extends Fragment {
             return false;
         });
     }
-    private void setLineDataChart(){
-        LineData data = new LineData();
-        data.setValueTextColor(Color.WHITE);
-        mChart.setData(data);
-    }
+
     private synchronized LineDataSet createSetDataChart() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         Collections.sort(set.getValues(), new EntryXComparator());
@@ -739,6 +734,11 @@ public class TerminalFragment extends Fragment {
         set.setHighlightEnabled(true);
         set.setDrawHighlightIndicators(false);
         return set;
+    }
+    private void setLineDataChart(){
+        LineData data = new LineData();
+        data.setValueTextColor(Color.WHITE);
+        mChart.setData(data);
     }
     private synchronized LineData getLineDataChart(){
         LineData data = mChart.getData();
@@ -1254,7 +1254,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -1405,7 +1404,6 @@ public class TerminalFragment extends Fragment {
                     if(order != null){
                         redrawPointsDealings(ticket);
                         requestBalanceUser();
-                        //updateBalance(order.getProfit());
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         BaseLimitLine.deleteDealingLimitLine(ticket);
                         typePoint = POINT_CLOSE_DEALING;
