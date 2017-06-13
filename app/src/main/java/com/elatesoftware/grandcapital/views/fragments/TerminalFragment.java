@@ -651,7 +651,6 @@ public class TerminalFragment extends Fragment {
             @Override
             public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
             }
-
             @Override
             public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
                 Log.d(TAG, "scaleX: " + mChart.getViewPortHandler().getScaleX());
@@ -886,7 +885,6 @@ public class TerminalFragment extends Fragment {
                     null,
                     null
             );
-
         } else {
             CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.no_correct_values));
             stopProgress();
@@ -944,8 +942,8 @@ public class TerminalFragment extends Fragment {
             for(OrderAnswer order : listCurrentClosingDealings){
                 for(OrderAnswer orderClosed : listAllClosedDealings){
                     if ((int)order.getTicket() == orderClosed.getTicket()) {
-                        updateBalance(orderClosed.getProfit());
                         mViewInfoHelper.updateSettingsCloseDealing(orderClosed, getActivity());
+                        updateBalance(0);
                         if(order.getSymbol().equals(ConventString.getActive(tvValueActive))) {
                             BaseLimitLine.deleteDealingLimitLine(orderClosed.getTicket());
                             redrawPointsDealings(orderClosed.getTicket());
@@ -1293,7 +1291,6 @@ public class TerminalFragment extends Fragment {
                 }
                 isTimeIterator = true;
                 isValueIterator = true;
-
                 currentDealing.setOpenPrice(mCurrentValueY);
                 currentDealing.setSymbol(intent.getStringExtra(MakeDealingService.SYMBOL));
                 currentDealing.setCmd(Integer.valueOf(intent.getStringExtra(MakeDealingService.CMD)));
@@ -1304,7 +1301,6 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
                 typePoint = POINT_OPEN_DEALING;
                 new Handler().postDelayed(() -> requestGetAllOrders(), 5000);
-                updateBalance(-1 * Double.valueOf(currentDealing.getVolume()));
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));
@@ -1319,7 +1315,10 @@ public class TerminalFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             listCurrentClosingDealings.add(new Gson().fromJson(intent.getStringExtra(CheckDealingService.RESPONSE), OrderAnswer.class));
-            new Handler().postDelayed(() -> requestGetAllOrders(), 4500);
+            new Handler().postDelayed(() ->{
+                requestGetAllOrders();
+                requestBalanceUser();
+            } , 4500);
         }
     }
     public class GetResponseOrdersBroadcastReceiver extends BroadcastReceiver {
