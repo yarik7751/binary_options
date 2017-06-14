@@ -14,10 +14,12 @@
         android:gravity="center_vertical">
 
         <RelativeLayout
+            style="?attr/actionButtonStyle"
             android:id="@+id/rl_burger"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_height="match_parent"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:layout_centerVertical="true">
 
             <ImageButton
@@ -38,7 +40,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="8dp"
             android:singleLine="true"
             android:layout_toEndOf="@+id/rl_burger"
             android:layout_toRightOf="@+id/rl_burger"
