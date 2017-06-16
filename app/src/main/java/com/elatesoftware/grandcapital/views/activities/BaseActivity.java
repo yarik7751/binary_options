@@ -164,7 +164,7 @@ public class BaseActivity extends CustomFontsActivity {
         mPromotions = new ResideMenuItem(this, getString(R.string.menu_item_promotions));
         //mAccounts = new ResideMenuItem(this, getString(R.string.menu_item_accounts));
         mSupport = new ResideMenuItem(this, getString(R.string.menu_item_support));
-        mDepositWithdraw = new ResideMenuItem(this, getString(R.string.deposit_withdraw));
+        mDepositWithdraw = new ResideMenuItem(this, getString(R.string.toolbar_name_deposit));
         //mSettings = new ResideMenuItem(this, getString(R.string.menu_item_settings));
         mLogout = new ResideMenuItem(this, getString(R.string.menu_item_logout));
         mDeposit = mResideMenu.tvDepositMenu;

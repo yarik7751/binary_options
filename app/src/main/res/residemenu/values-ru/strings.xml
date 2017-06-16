@@ -1,0 +1,176 @@
+<resources>
+    <string name="app_name">GrandCapital</string>
+    <string name="userLogin">10025808</string>
+    <string name="userPassword">6elFJkuL</string>
+    <string name="userLogin1">10026417</string>
+    <string name="userPassword1">UFZ0Spmi</string>
+
+    <string name="number">number</string>
+    <string name="logical_number">logical_number</string>
+    <string name="is_their_message">is_their_message</string>
+
+    <string name="all_quotes">Все котировки</string>
+    <string name="selected_quotes">Избранное</string>
+
+    <!--Exceptions-->
+    <string name="error_incorrent_password_input">Пароль</string>
+    <string name="error_wront_password">Неверный пароль</string>
+    <string name="error_incorrent_login_input">Логин</string>
+    <string name="connection_not_secure">Your connection is not private. Are you sure you want to continue?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="cancel">Отмена</string>
+    <string name="cancel_dont_show">Отменить и больше не показывать</string>
+    <string name="ok">OK</string>
+    <string name="caution">Caution!</string>
+    <string name="logout">Выйти?</string>
+    <string name="reward">Прибыль: </string>
+    <string name="open_account">Открыть счет</string>
+    <string name="later">Позже</string>
+    <string name="open_account_message">Вы совершили несколько сделок. \nНачните зарабатывать реальные деньги!</string>
+    <string name="open_account_title">Открыть реальный счет</string>
+
+    <string name="label_open_dealing_title">Сделка открыта</string>
+    <string name="label_close_dealing_title">Сделка закрыта</string>
+
+    <!--Signin activity-->
+    <string name="signin_page_button_text">Войти</string>
+    <string name="signin_page_signup_link_text">Нет аккаунта? Зарегистрируйтесь!</string>
+    <string name="signin_page_forgot_password_link_text">Забыли пароль?</string>
+    <string name="signin_page_password_field_text">Пароль</string>
+    <string name="signin_page_login_field_text">Логин</string>
+
+    <!--Signup activity-->
+    <string name="signup_page_name_field">Имя</string>
+    <string name="signup_page_surname_field">Фамилия</string>
+    <string name="signup_page_phonenumber_field">Номер телефона</string>
+    <string name="signup_page_email_field">Email</string>
+    <string name="signup_page_registration_button_text">Регистрация</string>
+    <string name="signup_page_log_in_field">Войти</string>
+
+    <!--All activities-->
+    <string name="no_internet_connection_title">Нет интернет-соединения</string>
+    <string name="no_internet_connection_text">Не удалось соединиться с сервером. Пожалуйста, проверьте соединение и попробуйте снова</string>
+    <string name="no_internet_connection_message_button">OK</string>
+
+    <!--Error request retrofit-->
+    <string name="request_error_title">Не удалось выполнить запрос</string>
+    <string name="request_error_request">Не удалось выполнить запрос</string>
+    <string name="request_error_text">Что-то пошло не так и нам не удалось выполнить ваш запрос. Пожалуйста, попробуйте снова</string>
+    <string name="request_error_message_button">OK</string>
+    <string name="grandcapital_icon_description">GrandCapital icon</string>
+    <string name="menu_account_name_fish">Richard Branson</string>
+    <string name="menu_account_balance_text_fish">Balance: $45,612</string>
+
+    <!--Menu items name-->
+    <string name="menu_item_terminal">Trade</string>
+    <string name="menu_item_dealing">История</string>
+    <string name="menu_item_quotes">Котировки</string>
+    <string name="menu_item_how_it_works">FAQ</string>
+    <string name="menu_item_promotions">Акции</string>
+    <string name="menu_item_accounts">Торговые счета</string>
+    <string name="menu_item_support">Помощь</string>
+    <string name="menu_item_settings">Настройки</string>
+    <string name="menu_item_logout">Выйти</string>
+
+    <string name="close">Закрыть</string>
+
+    <!--Toolbar name-->
+    <string name="toolbar_name_terminal">Терминал</string>
+    <string name="toolbar_name_dealing">Все сделки</string>
+    <string name="toolbar_name_quotes">Котировки</string>
+    <string name="toolbar_name_how_it_works">FAQ</string>
+    <string name="toolbar_name_promotions">Акции</string>
+    <string name="toolbar_name_accounts">Счета</string>
+    <string name="toolbar_name_support">Поддержка</string>
+    <string name="toolbar_name_settings">Настройки аккаунта</string>
+    <string name="toolbar_name_deposit">Ввод/Вывод средств</string>
+
+    <!--Dealing list headers open-->
+    <string name="dealing_page_tab_name_open">Открыть</string>
+    <string name="dealing_page_tab_name_close">Закрыть</string>
+    <string name="dealing_page_tab_name_binary_option">Бинарные опционы</string>
+    <string name="dealing_page_tab_name_forex">Форекс</string>
+
+    <!--Dealing list headers open-->
+    <string name="dealing_page_open_active">Актив</string>
+    <string name="dealing_page_open_open">Цена открытия</string>
+    <string name="dealing_page_open_market">Market</string>
+    <string name="dealing_page_open_amount">Инвестиции</string>
+    <string name="dealing_page_open_time">Время</string>
+
+    <!--Dealing list headers close-->
+    <string name="dealing_page_close_active">Актив</string>
+    <string name="dealing_page_close_open">Открыть</string>
+    <string name="dealing_page_close_win">Закрыть</string>
+    <string name="dealing_page_close_invest">Инвестиции</string>
+    <string name="dealing_page_close_income">Прибыль</string>
+
+    <string name="dealing_page_item_arrow_description">Up or down arrow</string>
+    <string name="dealing_page_request_error_title">Не удалось выполнить запрос</string>
+
+    <string-array name="how_it_works_page_questions">
+        <item>What are Binary Options?</item>
+        <item>Binary Options in MT4: placing a trade</item>
+        <item>Binary Options in MT4: Double Touch Options</item>
+    </string-array>
+
+    <string-array name="how_it_works_page_questions_content">
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+        <item>Binary Options is a type of trading which lets you gain high returns in a limited amount of time. The trading process is fairly simple: a trader should decide if the price of a chosen asset will go up or down in a selected amount of time. If the prediction is correct, the trader can gain up to 86% profit of the invested amount. If t fit of the invested amount. One of the main advantages of Binary Options is that your profit/loss is known before you even place a trade.\n\n  To learn more about your opportunities with trading Binary Options at Grand Capital, please visit this page.</item>
+    </string-array>
+
+    <!--Signals-->
+    <string name="minutes3Cell">15 минут</string>
+    <string name="minutes2Cell">5 минут</string>
+    <string name="_1_minute">1 минута</string>
+    <string name="signal_s">Продавать</string>
+    <string name="signal_ss">Активно продавать</string>
+    <string name="signal_b">Покупать</string>
+    <string name="signal_sb">Активно покупать</string>
+
+    <string name="zero_min">1 MIN</string>
+    <string name="zero_dollars">$10</string>
+
+    <!--нет перевода-->
+    <string name="attention">Attention!</string>
+    <!--//нет перевода-->
+
+    <string name="balance">Баланс</string>
+    <string name="link_company">https://grandcapital.ru</string>
+    <string name="deposit">Пополнить счет</string>
+    <string name="withdraw">Вывести средства</string>
+    <string name="active">"Актив "</string>
+    <string name="amount">Инвестиции</string>
+    <string name="time">Время</string>
+    <string name="lower">Вниз</string>
+    <string name="higher">Вверх</string>
+    <string name="yesterday">Вчера</string>
+    <string name="clode_dealing_title">Вы уверены, что хотите закрыть сделку?</string>
+    <string name="error">Ошибка!</string>
+    <string name="no_correct_values">Введенные данные неверны. Пожалуйста, проверьте данные и попробуйте снова</string>
+
+    <!--нет перевода-->
+    <string name="error_max_time">Maximum time interval — 2880 minutes</string>
+    <!--//нет перевода-->
+
+    <string name="error_find_signal">Для этого инструмента торговые сигналы отсутствуют</string>
+
+    <string name="of_price">Цена </string>
+    <string name="profit">Прибыль </string>
+    <string-array name="months">
+        <item>Январь</item>
+        <item>Февраль</item>
+        <item>Март</item>
+        <item>Апрель</item>
+        <item>Май</item>
+        <item>Июнь</item>
+        <item>Нюль</item>
+        <item>Август</item>
+        <item>Сентябрь</item>
+        <item>Октябрь</item>
+        <item>Ноябрь</item>
+        <item>Декабрь</item>
+    </string-array>
+</resources>
