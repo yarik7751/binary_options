@@ -26,7 +26,7 @@
 
     <ScrollView
         android:id="@+id/sv_left_menu"
-        android:layout_width="150dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:scrollbars="none"
@@ -38,15 +38,15 @@
 
         <LinearLayout
             android:id="@+id/layout_left_menu"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_gravity="center_horizontal"
+                android:layout_gravity="left"
                 android:paddingBottom="@dimen/menu_account_information_padding">
 
 
@@ -100,6 +100,8 @@
                     android:textColor="@color/color_text_deposit"
                     android:layout_gravity="center_horizontal"/>
             </LinearLayout>
+
+            <!--<include layout="@layout/item_reside_menu"/>-->
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

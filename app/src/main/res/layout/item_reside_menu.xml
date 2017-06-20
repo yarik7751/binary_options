@@ -13,8 +13,9 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
             android:textSize="14sp"
+            android:singleLine="true"
             android:layout_marginLeft="10dp"
             style="@style/MenuItem"
-            tools:text="Logout"
+            android:text="Logoutdfgdfkjgkdfhgdfjghdfjghjdfhgdhfjkgdfkjghkjgkj"
             android:id="@+id/tv_title"/>
 </LinearLayout>

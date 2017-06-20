@@ -63,7 +63,7 @@
     <string name="menu_account_balance_text_fish">Balance: $45,612</string>
 
     <!--Menu items name-->
-    <string name="menu_item_terminal">Trade</string>
+    <string name="menu_item_terminal">Терминал</string>
     <string name="menu_item_dealing">История</string>
     <string name="menu_item_quotes">Котировки</string>
     <string name="menu_item_how_it_works">FAQ</string>
@@ -166,7 +166,7 @@
         <item>Апрель</item>
         <item>Май</item>
         <item>Июнь</item>
-        <item>Нюль</item>
+        <item>Июль</item>
         <item>Август</item>
         <item>Сентябрь</item>
         <item>Октябрь</item>
