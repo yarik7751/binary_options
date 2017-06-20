@@ -87,8 +87,8 @@
     <string name="toolbar_name_deposit">Ввод/Вывод средств</string>
 
     <!--Dealing list headers open-->
-    <string name="dealing_page_tab_name_open">Открыть</string>
-    <string name="dealing_page_tab_name_close">Закрыть</string>
+    <string name="dealing_page_tab_name_open">Открытые</string>
+    <string name="dealing_page_tab_name_close">Закрытые</string>
     <string name="dealing_page_tab_name_binary_option">Бинарные опционы</string>
     <string name="dealing_page_tab_name_forex">Форекс</string>
 
