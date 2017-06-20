@@ -7,8 +7,13 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
 import com.elatesoftware.grandcapital.views.items.chart.limitLines.ActiveDealingLine;
@@ -279,45 +284,37 @@ public class YAxisRenderer extends AxisRenderer {
                         OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                         String strLabelY  = ConventDate.getDifferenceDateToString(Long.valueOf(lineDealing.getmTimer()));
 
-                        Bitmap iconLabelY = lineDealing.getmBitmapLabelY();
-                        Bitmap iconClose= BaseLimitLine.iconClose;
-
-                        Bitmap iconCMD;
-                        if(order.getCmd() == 1){
-                            iconCMD = BaseLimitLine.iconCMDDown;
+                        /** Y Label*/
+                        View linearLayoutYLabel;
+                        if(lineDealing.isRed()){
+                            linearLayoutYLabel = View.inflate(GrandCapitalApplication.getAppContext(), R.layout.incl_chart_label_y_red, null);
                         }else{
-                            iconCMD = BaseLimitLine.iconCMDUp;
+                            linearLayoutYLabel = View.inflate(GrandCapitalApplication.getAppContext(), R.layout.incl_chart_label_y_green, null);
                         }
-                        float height_markerIconCMD = Utils.convertDpToPixel(12);
-                        float width_markerIconCMD = Utils.convertDpToPixel(12);
-                        float paddingVertIconLabelY = Utils.convertDpToPixel(12);
-                        float paddingHorizIconLabelY = Utils.convertDpToPixel(14);
-                        float heightStrLabelY = Utils.calcTextHeight(textPaint, strLabelY);
-                        float widthStrLabelY  = Utils.calcTextWidth(textPaint, strLabelY);
-                        float height_markerIconLabelY = heightStrLabelY  + paddingVertIconLabelY;
-                        float width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY + width_markerIconCMD;
+                        ImageView imgCMD = (ImageView) linearLayoutYLabel.findViewById(R.id.img_dealing_cmd);
+                        if(order.getCmd() == 1){
+                            imgCMD.setImageDrawable(GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.down));
+                        }else{
+                            imgCMD.setImageDrawable(GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.up));
+                        }
+                        TextView tvTimeY = (TextView) linearLayoutYLabel.findViewById(R.id.tv_dealing_time);
+                        tvTimeY.setText(strLabelY);
+                        if(lineDealing.ismIsAmerican()){
+                            ImageView imgClose = (ImageView) linearLayoutYLabel.findViewById(R.id.img_dealing_close);
+                            imgClose.setVisibility(View.VISIBLE);
+                        }
+                        linearLayoutYLabel.setDrawingCacheEnabled(true);
+                        linearLayoutYLabel.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                        linearLayoutYLabel.layout(0, 0, linearLayoutYLabel.getMeasuredWidth(), linearLayoutYLabel.getMeasuredHeight());
 
-                        float posY = pts[1] + heightStrLabelY / 2;
-
-                        if (iconLabelY != null && iconCMD != null) {
-                            if(lineDealing.ismIsAmerican()){
-                                float height_markerIconClose = Utils.convertDpToPixel(12);
-                                float width_markerIconClose =  Utils.convertDpToPixel(12);
-                                iconClose = Bitmap.createScaledBitmap(iconClose, (int) width_markerIconClose, (int) height_markerIconClose, false);
-                                paddingHorizIconLabelY = Utils.convertDpToPixel(16);
-                                width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY*6/5 + width_markerIconCMD +  width_markerIconClose;
-                            }
-                            /**create bitmaps*/
-                            iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_markerIconLabelY, (int) height_markerIconLabelY, false);
-                            iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_markerIconCMD, (int) height_markerIconCMD, false);
-
+                        linearLayoutYLabel.buildDrawingCache(true);
+                        Bitmap iconLabelY = Bitmap.createBitmap(linearLayoutYLabel.getDrawingCache());
+                        linearLayoutYLabel.setDrawingCacheEnabled(false); // clear drawing cache
+                       /**********************************************************************/
+                        float posY = pts[1];
+                        if (iconLabelY != null) {
                             /**positionBitmap Y*/
-                            c.drawBitmap(iconLabelY, fixedPosition - width_markerIconLabelY/2 - paddingHorizIconLabelY/3, posY - height_markerIconLabelY + paddingVertIconLabelY/2, paint);
-                            c.drawBitmap(iconCMD, fixedPosition - width_markerIconLabelY/2, posY - height_markerIconLabelY/2, paint);
-                            c.drawText(strLabelY, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*5/4, posY - heightStrLabelY/7, textPaint);
-                            if(lineDealing.ismIsAmerican()){
-                                c.drawBitmap(iconClose, fixedPosition - width_markerIconLabelY/2 + width_markerIconCMD*3/2 + widthStrLabelY, posY - height_markerIconLabelY/2, paint);
-                            }
+                            c.drawBitmap(iconLabelY, fixedPosition - iconLabelY.getWidth() * 2/3, posY - iconLabelY.getHeight()/2, paint);
                             lineDealing.setMaxWeightCanvasLabel(c.getMaximumBitmapWidth());
                         }
                 }
@@ -326,17 +323,15 @@ public class YAxisRenderer extends AxisRenderer {
     }
 
     protected Path mRenderGridLinesPath = new Path();
+
     @Override
     public void renderGridLines(Canvas c) {
-
-        if (!mYAxis.isEnabled())
+        if (!mYAxis.isEnabled()) {
             return;
-
+        }
         if (mYAxis.isDrawGridLinesEnabled()) {
-
             int clipRestoreCount = c.save();
             c.clipRect(getGridClippingRect());
-
             float[] positions = getTransformedPositions();
 
             mGridPaint.setColor(mYAxis.getGridColor());
@@ -348,15 +343,12 @@ public class YAxisRenderer extends AxisRenderer {
 
             // draw the grid
             for (int i = 0; i < positions.length; i += 2) {
-
                 // draw a path because lines don't support dashing on lower android versions
                 c.drawPath(linePath(gridLinePath, i, positions), mGridPaint);
                 gridLinePath.reset();
             }
-
             c.restoreToCount(clipRestoreCount);
         }
-
         if (mYAxis.isDrawZeroLineEnabled()) {
             drawZeroLine(c);
         }

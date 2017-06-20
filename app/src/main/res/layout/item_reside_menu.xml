@@ -16,6 +16,6 @@
             android:singleLine="true"
             android:layout_marginLeft="10dp"
             style="@style/MenuItem"
-            android:text="Logoutdfgdfkjgkdfhgdfjghdfjghjdfhgdhfjkgdfkjghkjgkj"
+            tools:text="Logout"
             android:id="@+id/tv_title"/>
 </LinearLayout>

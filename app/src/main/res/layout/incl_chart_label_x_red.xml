@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:background="@drawable/red_vert"
+    android:gravity="center"
+    android:paddingRight="3dp"
+    android:paddingLeft="3dp"
+    android:paddingBottom="2dp"
+    android:paddingTop="6dp"
+    android:id="@+id/label_chart_lower"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_dealing_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="13:34"
+        android:layout_gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="8sp"/>
+
+</LinearLayout>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:background="@drawable/red"
+    android:gravity="center"
+    android:paddingLeft="3dp"
+    android:paddingRight="3dp"
+    android:paddingBottom="0dp"
+    android:paddingTop="0dp"
+    android:id="@+id/label_chart_lower"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/img_dealing_cmd"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_gravity="center_vertical"
+        tools:background="@drawable/down" />
+
+    <TextView
+        android:id="@+id/tv_dealing_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text=":34"
+        android:layout_marginLeft="3dp"
+        android:textColor="@android:color/white"
+        android:textSize="9sp"/>
+
+    <ImageView
+        android:id="@+id/img_dealing_close"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginLeft="3dp"
+        android:visibility="gone"
+        android:background="@drawable/close_button" />
+</LinearLayout>

@@ -3,14 +3,12 @@ package com.elatesoftware.grandcapital.views.items.chart.limitLines;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.view.LayoutInflater;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.utils.ConventDimens;
-import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.views.fragments.TerminalFragment;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.LimitLine;
@@ -31,17 +29,12 @@ public class BaseLimitLine extends LimitLine {
 
     public static final String TAG = "BaseLimitLine_Log";
 
-    static Bitmap bitmapIconRedYLabel;
-    static Bitmap bitmapIconGreenYLabel;
     static int colorRed;
     static int colorGreen;
-    static Bitmap bitmapIconGreenXLabel;
-    static Bitmap bitmapIconRedXLabel;
+
     static Bitmap bitmapIconCurrentDealingGreenYLabel;
     static Bitmap bitmapIconCurrentDealingRedYLabel;
-    public static Bitmap iconClose;
-    public static Bitmap iconCMDDown;
-    public static Bitmap iconCMDUp;
+
     public static Bitmap bitmapLabel;
 
     static XAxis xAxis;
@@ -62,15 +55,9 @@ public class BaseLimitLine extends LimitLine {
 
             colorGreen = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.chat_green);
             colorRed = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.color_red_chart);
-            bitmapIconGreenXLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.green_vert);
-            bitmapIconRedXLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.red_vert);
-            bitmapIconRedYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(GrandCapitalApplication.getAppContext()).inflate(R.layout.incl_chart_label_red, null));
-            bitmapIconGreenYLabel = ConventImage.loadBitmapFromView(LayoutInflater.from(GrandCapitalApplication.getAppContext()).inflate(R.layout.incl_chart_label_green, null));
+
             bitmapIconCurrentDealingGreenYLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.green_hor);
             bitmapIconCurrentDealingRedYLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.red_hor);
-            iconClose = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.close_button);
-            iconCMDDown = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.down);
-            iconCMDUp = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.up);
             bitmapLabel = BitmapFactory.decodeResource(GrandCapitalApplication.getAppContext().getResources(), R.drawable.whitevert);
         }
     }
@@ -111,7 +98,7 @@ public class BaseLimitLine extends LimitLine {
                 if(lineX.getLimit() >= xMax){
                     OrderAnswer order = new Gson().fromJson(lineX.getLabel(), OrderAnswer.class);
                     YDealingLine lineY = new YDealingLine(Float.valueOf(String.valueOf(order.getOpenPrice())),
-                            lineX.getLabel(), lineX.getmBitmapLabelY(),
+                            lineX.getLabel(),
                             String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())), lineX.ismIsAmerican(), lineX.ismIsActive());
                     if (lineX.ismIsActive()){
                         ActiveDealingLine.deleteDealingLine();
@@ -128,7 +115,7 @@ public class BaseLimitLine extends LimitLine {
                 if (ConventDate.genericTimeForChart(ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000) < xMax) {
                     XDealingLine lineX = new XDealingLine(ConventDate.genericTimeForChart(
                             ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000),
-                            new Gson().toJson(order), null, lineY.getmBitmapLabelY(), lineY.getmTimer(), lineY.ismIsAmerican(), lineY.ismIsActive());
+                            new Gson().toJson(order),lineY.getmTimer(), lineY.ismIsAmerican(), lineY.ismIsActive());
                     if(lineY.ismIsActive()){
                         lineX.enableDashedLine(0f, 0f, 0f);
                         ActiveDealingLine.deleteDealingLine();
@@ -240,9 +227,11 @@ public class BaseLimitLine extends LimitLine {
             for(DealingLine line : listLimits){
                 OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                 float tappedY = Float.valueOf(String.valueOf(order.getOpenPrice()));
-                if(line instanceof XDealingLine && ConventDimens.isClickOnXDealingNoAmerican(line.getLimit(), pointClick.x, tappedY, pointClick.y, line.getMaxWeightCanvasLabel())){
+                if(line instanceof XDealingLine &&
+                        ConventDimens.isClickOnXDealingNoAmerican(line.getLimit(), pointClick.x, tappedY, pointClick.y, line.getMaxWeightCanvasLabel())){
                     listSelectedLines.add(line);
-                }else if(line instanceof YDealingLine && ConventDimens.isClickOnYDealingNoAmerican(pointClick.x, xMax, tappedY, pointClick.y, line.getMaxWeightCanvasLabel())){
+                }else if(line instanceof YDealingLine &&
+                        ConventDimens.isClickOnYDealingNoAmerican(pointClick.x, xMax, tappedY, pointClick.y, line.getMaxWeightCanvasLabel())){
                     listSelectedLines.add(line);
                 }
             }
@@ -356,12 +345,8 @@ public class BaseLimitLine extends LimitLine {
             Collections.sort(listLines,(p1, p2) -> (new Gson().fromJson(p1.getLabel(), OrderAnswer.class).getOpenTime().compareTo(
                                                    (new Gson().fromJson(p2.getLabel(), OrderAnswer.class).getOpenTime()))));
             Collections.sort(listOrders,(o1, o2) -> o1.getOpenTime().compareTo(o2.getOpenTime()));
-            if(listOrders.size() != listLines.size()){
-                if(listOrders.size() == 1){
-                   // listLines = listLines.get(0);
-                }else{
+            if(listOrders.size() != listLines.size() && listOrders.size() > 1){
                     listLines = listLines.subList(0, listOrders.size()-1);
-                }
             }
             for(int i= 0; i< listLines.size(); i++){
                 OrderAnswer orderAnswer = new Gson().fromJson(listLines.get(i).getLabel(), OrderAnswer.class);

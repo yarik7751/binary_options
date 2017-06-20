@@ -1,7 +1,5 @@
 package com.elatesoftware.grandcapital.views.items.chart.limitLines;
 
-import android.graphics.Bitmap;
-
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 
@@ -11,18 +9,18 @@ import com.elatesoftware.grandcapital.utils.ConventDate;
 
 public class DealingLine extends BaseLimitLine {
 
-    private Bitmap mBitmapLabelY = null;
     private boolean mIsAmerican = false;
     private boolean mIsActive = false;
+    private boolean isRed = false;
+
     private float mLimit = 0f;
     private String mLabel = "";
     private String mTimer = "";
 
-    DealingLine(float limit, String label, Bitmap bitmapY, String timer, boolean isAmerican, boolean isActive) {
+    DealingLine(float limit, String label, String timer, boolean isAmerican, boolean isActive) {
         super(limit, label);
         mLimit = limit;
         mLabel = label;
-        mBitmapLabelY = bitmapY;
         mTimer = timer;
         mIsAmerican = isAmerican;
         mIsActive = isActive;
@@ -31,34 +29,32 @@ public class DealingLine extends BaseLimitLine {
     public static void updateColorDealingLine(XDealingLine line, OrderAnswer order, double mCurrentValueY){
         if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY ||
                 order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
-            line.setmBitmapLabelX(bitmapIconGreenXLabel);
             line.setLineColor(colorGreen);
-            line.setmBitmapLabelY(bitmapIconGreenYLabel);
+            line.setIsRed(false);
         }else{
-            line.setmBitmapLabelX(bitmapIconRedXLabel);
             line.setLineColor(colorRed);
-            line.setmBitmapLabelY(bitmapIconRedYLabel);
+            line.setIsRed(true);
         }
         line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
     }
 
     public static void updateColorDealingLine(YDealingLine line, OrderAnswer order, double mCurrentValueY){
         if(order.getCmd() == 0 && order.getOpenPrice() <= mCurrentValueY || order.getCmd() == 1 && order.getOpenPrice() >= mCurrentValueY){
-            line.setmBitmapLabelY(bitmapIconGreenYLabel);
             line.setLineColor(colorGreen);
+            line.setIsRed(false);
         }else{
-            line.setmBitmapLabelY(bitmapIconRedYLabel);
+            line.setIsRed(true);
             line.setLineColor(colorRed);
         }
         line.setmTimer(String.valueOf(ConventDate.getDifferenceDate(order.getOptionsData().getExpirationTime())));
     }
 
-    public Bitmap getmBitmapLabelY() {
-        return mBitmapLabelY;
+    public boolean isRed() {
+        return isRed;
     }
 
-    public void setmBitmapLabelY(Bitmap mBitmapLabelY) {
-        this.mBitmapLabelY = mBitmapLabelY;
+    public void setIsRed(boolean isRed) {
+        this.isRed = isRed;
     }
 
     public boolean ismIsAmerican() {

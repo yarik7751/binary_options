@@ -2,13 +2,15 @@
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
@@ -230,22 +232,56 @@ public class XAxisRenderer extends AxisRenderer {
                             break;
                         }
                     }
-
                     for (LimitLine l : limitLines) {
                         if (l instanceof XDealingLine) {
                             XDealingLine line = (XDealingLine) l;
                             OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
                             String strLabelX = String.valueOf(ConventDate.convertDateFromMilSecHHMM(ConventDate.genericTimeForChartLabels(line.getLimit())));
                             String strLabelY = ConventDate.getDifferenceDateToString(Long.valueOf(line.getmTimer()));
-                            Bitmap iconLabelX = line.getmBitmapLabelX();
-                            Bitmap iconLabelY = line.getmBitmapLabelY();
-                            Bitmap iconClose = BaseLimitLine.iconClose;
-                            Bitmap iconCMD;
-                            if(order.getCmd() == 1){
-                                iconCMD = BaseLimitLine.iconCMDDown;
+                            /** X label*/
+                            View linearLayoutXLabel;
+                            if(line.isRed()){
+                                linearLayoutXLabel = View.inflate(GrandCapitalApplication.getAppContext(), R.layout.incl_chart_label_x_red, null);
                             }else{
-                                iconCMD = BaseLimitLine.iconCMDUp;
+                                linearLayoutXLabel = View.inflate(GrandCapitalApplication.getAppContext(), R.layout.incl_chart_label_x_green, null);
                             }
+                            TextView tvTimeX = (TextView) linearLayoutXLabel.findViewById(R.id.tv_dealing_time);
+                            tvTimeX.setText(strLabelX);
+
+                            linearLayoutXLabel.setDrawingCacheEnabled(true);
+                            linearLayoutXLabel.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                            linearLayoutXLabel.layout(0, 0, linearLayoutXLabel.getMeasuredWidth(), linearLayoutXLabel.getMeasuredHeight());
+
+                            linearLayoutXLabel.buildDrawingCache(true);
+                            Bitmap iconLabelX = Bitmap.createBitmap(linearLayoutXLabel.getDrawingCache());
+                            linearLayoutXLabel.setDrawingCacheEnabled(false); // clear drawing cache
+                            /** Y label*/
+                            View linearLayoutYLabel;
+                            if(line.isRed()){
+                                linearLayoutYLabel = View.inflate(GrandCapitalApplication.getAppContext(), R.layout.incl_chart_label_y_red, null);
+                            }else{
+                                linearLayoutYLabel = View.inflate(GrandCapitalApplication.getAppContext(), R.layout.incl_chart_label_y_green, null);
+                            }
+                            ImageView imgCMD = (ImageView) linearLayoutYLabel.findViewById(R.id.img_dealing_cmd);
+                            if(order.getCmd() == 1){
+                                imgCMD.setImageDrawable(GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.down));
+                            }else{
+                                imgCMD.setImageDrawable(GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.up));
+                            }
+                            TextView tvTimeY = (TextView) linearLayoutYLabel.findViewById(R.id.tv_dealing_time);
+                            tvTimeY.setText(strLabelY);
+                            if(line.ismIsAmerican()){
+                                ImageView imgClose = (ImageView) linearLayoutYLabel.findViewById(R.id.img_dealing_close);
+                                imgClose.setVisibility(View.VISIBLE);
+                            }
+                            linearLayoutYLabel.setDrawingCacheEnabled(true);
+                            linearLayoutYLabel.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+                            linearLayoutYLabel.layout(0, 0, linearLayoutYLabel.getMeasuredWidth(), linearLayoutYLabel.getMeasuredHeight());
+
+                            linearLayoutYLabel.buildDrawingCache(true);
+                            Bitmap iconLabelY = Bitmap.createBitmap(linearLayoutYLabel.getDrawingCache());
+                            linearLayoutYLabel.setDrawingCacheEnabled(false); // clear drawing cache
+                            /**********************************************************************/
                             if (!line.ismIsActive()) {
                                 line.enableDashedLine(10f, 10f, 0f);
                             }else {
@@ -261,51 +297,11 @@ public class XAxisRenderer extends AxisRenderer {
                             float posX = pts[0];
                             float posYLabel = pts[1];
 
-                            float paddingVertIconLabelY = Utils.convertDpToPixel(12);
-                            float paddingHorizIconLabelY = Utils.convertDpToPixel(14);
-
-                            float paddingVertIconLabelX = Utils.convertDpToPixel(35);
-                            float paddingHorizIconLabelX = Utils.convertDpToPixel(5);
-
-                            float height_markerIconCMD = Utils.convertDpToPixel(12);
-                            float width_markerIconCMD = Utils.convertDpToPixel(12);
-
-                            float height = Utils.calcTextHeight(textPaint, strLabelX);
-                            float width = Utils.calcTextWidth(textPaint, strLabelX);
-                            float height_marker = height + paddingVertIconLabelX;
-                            float width_marker = width + paddingHorizIconLabelX;
-
-                            float heightStrLabelY = Utils.calcTextHeight(textPaint, strLabelY);
-                            float widthStrLabelY  = Utils.calcTextWidth(textPaint, strLabelY);
-
-                            float height_markerIconLabelY = heightStrLabelY  + paddingVertIconLabelY;
-                            float width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY + width_markerIconCMD;
-
-                            if (iconLabelX != null && iconLabelY != null && iconCMD != null) {
-                                if(line.ismIsAmerican()){
-                                    float height_markerIconClose = Utils.convertDpToPixel(12);
-                                    float width_markerIconClose =  Utils.convertDpToPixel(12);
-                                    iconClose = Bitmap.createScaledBitmap(iconClose, (int) width_markerIconClose, (int) height_markerIconClose, false);
-                                    paddingHorizIconLabelY = Utils.convertDpToPixel(16);
-                                    width_markerIconLabelY = widthStrLabelY  + paddingHorizIconLabelY*6/5 + width_markerIconCMD +  width_markerIconClose;
-                                }
-                                /**create bitmaps*/
-                                iconLabelX = Bitmap.createScaledBitmap(iconLabelX, (int) width_marker, (int) height_marker, false);
-                                iconLabelY = Bitmap.createScaledBitmap(iconLabelY, (int) width_markerIconLabelY, (int) height_markerIconLabelY, false);
-                                iconCMD = Bitmap.createScaledBitmap(iconCMD, (int) width_markerIconCMD, (int) height_markerIconCMD, false);
-
+                            if (iconLabelX != null && iconLabelY != null) {
                                 /**positionBitmap X*/
-                                c.drawBitmap(iconLabelX, posX - width_marker / 2, pos - height_marker / 4, paint);
-                                c.drawText(strLabelX, posX, pos + paddingVertIconLabelX/4, textPaint);
+                                c.drawBitmap(iconLabelX, posX - iconLabelX.getWidth()/2, pos - iconLabelX.getHeight()/3, paint);
                                 /**positionBitmap Y*/
-                                c.drawBitmap(iconLabelY, posX - width_markerIconLabelY / 2, posYLabel - height_markerIconLabelY / 2, paint);
-                                c.drawBitmap(iconCMD, posX - width_markerIconLabelY/2 + paddingHorizIconLabelY/4, posYLabel - height_markerIconCMD / 2, paint);
-                                c.drawText(strLabelY, posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*1/3 + width_markerIconCMD*2 ,
-                                        posYLabel + heightStrLabelY  / 2, textPaint);
-                                if(line.ismIsAmerican()){
-                                    c.drawBitmap(iconClose,  posX - width_markerIconLabelY/2 + paddingHorizIconLabelY*4/7 +
-                                            width_markerIconCMD*2 + widthStrLabelY/2, posYLabel - height_markerIconCMD / 2, paint);
-                                }
+                                c.drawBitmap(iconLabelY, posX - iconLabelY.getWidth()/2, posYLabel - iconLabelY.getHeight()/2, paint);
                                 line.setMaxWeightCanvasLabel(c.getMaximumBitmapWidth());
                             }
                         }
@@ -448,22 +444,6 @@ public class XAxisRenderer extends AxisRenderer {
             mLimitLinePaint.setTextSize(limitLine.getTextSize());
             float xOffset = limitLine.getLineWidth() + limitLine.getXOffset();
             final LimitLine.LimitLabelPosition labelPosition = limitLine.getLabelPosition();
-
-//            if (labelPosition == LimitLine.LimitLabelPosition.RIGHT_TOP) {
-//                final float labelLineHeight = Utils.calcTextHeight(mLimitLinePaint, label);
-//                mLimitLinePaint.setTextAlign(Align.LEFT);
-//                c.drawText(label, position[0] + xOffset, mViewPortHandler.contentTop() + yOffset + labelLineHeight, mLimitLinePaint);
-//            } else if (labelPosition == LimitLine.LimitLabelPosition.RIGHT_BOTTOM) {
-//                mLimitLinePaint.setTextAlign(Align.LEFT);
-//                c.drawText(label, position[0] + xOffset, mViewPortHandler.contentBottom() - yOffset, mLimitLinePaint);
-//            } else if (labelPosition == LimitLine.LimitLabelPosition.LEFT_TOP) {
-//                mLimitLinePaint.setTextAlign(Align.RIGHT);
-//                final float labelLineHeight = Utils.calcTextHeight(mLimitLinePaint, label);
-//                c.drawText(label, position[0] - xOffset, mViewPortHandler.contentTop() + yOffset + labelLineHeight, mLimitLinePaint);
-//            } else {
-//                mLimitLinePaint.setTextAlign(Align.RIGHT);
-//                c.drawText(label, position[0] - xOffset, mViewPortHandler.contentBottom() - yOffset, mLimitLinePaint);
-//            }
         }
     }
 }
