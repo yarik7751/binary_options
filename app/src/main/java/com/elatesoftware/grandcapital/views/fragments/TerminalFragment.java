@@ -107,7 +107,6 @@ public class TerminalFragment extends Fragment {
     private final static int POINT_OPEN_DEALING = 1;
     private final static int POINT_CLOSE_DEALING = 2;
 
-    //public static boolean isAddInChart = false;
     public static boolean isOpen = false;
     public boolean isDirection = true;
     private boolean isFirstDrawPoint = true;
@@ -134,7 +133,6 @@ public class TerminalFragment extends Fragment {
     private LinearLayout llProgressBar;
     private RelativeLayout rlChart;
     private FrameLayout flMain;
-    private LinearLayout llTopPanel;
     private LinearLayout llSignal;
     private TextView tvCurrentActive;
     private TextView tvCurrentActiveAmount;
@@ -210,7 +208,6 @@ public class TerminalFragment extends Fragment {
         etValueTime = (EditText) parentView.findViewById(R.id.tvValueTabTimeTerminal);
         llLowerTerminal = (LinearLayout) parentView.findViewById(R.id.llLowerTerminal);
         llHigherTerminal = (LinearLayout) parentView.findViewById(R.id.llHigherTerminal);
-        llTopPanel = (LinearLayout) parentView.findViewById(R.id.ll_top_panel);
         llButtons = (LinearLayout) parentView.findViewById(R.id.ll_buttons);
         llDeposit = (LinearLayout) parentView.findViewById(R.id.ll_deposit);
         rlChart = (RelativeLayout) parentView.findViewById(R.id.rl_chart);
@@ -410,14 +407,19 @@ public class TerminalFragment extends Fragment {
         requestEarlyClosure();
         requestGetAllOrders();
     }
+
     @Override
-    public void onPause() {
+    public void onStop() {
         if(mWebSocket != null){
             mWebSocket.closeSocket();
         }
+        super.onStop();
+    }
+
+    @Override
+    public void onPause() {
         stopTimerRedrawLimitLines();
         isFinishedDrawPoint = false;
-       // isAddInChart = false;
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         isFirstDrawPoint = true;
         listSocketAnswerQueue.clear();
@@ -431,9 +433,6 @@ public class TerminalFragment extends Fragment {
     @Override
     public void onDestroy() {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
-        /*if(mWebSocket != null){
-            mWebSocket.closeSocket();
-        }*/
         GrandCapitalApplication.isTypeOptionAmerican = false;
         super.onDestroy();
     }
@@ -955,16 +954,11 @@ public class TerminalFragment extends Fragment {
 
     public void answerSocket(final SocketAnswer answer) {
         if (answer != null) {
-            /*if (isAddInChart) {*/
-                isFirstLoopPoint = false;
-                if(listSocketAnswerQueue == null){
-                    listSocketAnswerQueue = new ArrayList<>();
-                }
-                listSocketAnswerQueue.add(answer);
-          /*  } else {
-                Log.d(GrandCapitalApplication.TAG_SOCKET, "add in list background");
-                SymbolHistoryAnswer.addSocketAnswerInSymbol(answer);
-            }*/
+            isFirstLoopPoint = false;
+            if(listSocketAnswerQueue == null){
+                listSocketAnswerQueue = new ArrayList<>();
+            }
+            listSocketAnswerQueue.add(answer);
         }
     }
     public synchronized void addEntry(final SocketAnswer answer) {
@@ -1055,7 +1049,6 @@ public class TerminalFragment extends Fragment {
     }
     private synchronized void drawDataSymbolHistory(final String symbol) {
         /*if (SymbolHistoryAnswer.getInstance() == null || SymbolHistoryAnswer.getInstance().size() == 0) {
-            //isAddInChart = true;
             return;
         }*/
         final List<SymbolHistoryAnswer> listSymbol = SymbolHistoryAnswer.getInstance();
@@ -1101,7 +1094,6 @@ public class TerminalFragment extends Fragment {
         if(WebSocketApi.getmSymbolCurrent() == null || !WebSocketApi.getmSymbolCurrent().equals(symbol)){
             mWebSocket = new WebSocketApi(symbol);
         }
-        //isAddInChart = true;
         isFinishedDrawPoint = true;
         stopProgress();
     }
@@ -1272,7 +1264,6 @@ public class TerminalFragment extends Fragment {
                 SymbolHistoryAnswer.getInstance() != null){
                     drawDataSymbolHistory(ConventString.getActive(tvValueActive));
             } else {
-               // isAddInChart = true;
                 mWebSocket = new WebSocketApi(sSymbolCurrent);
                 stopProgress();
             }

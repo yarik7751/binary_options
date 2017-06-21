@@ -3,8 +3,9 @@
     android:id="@+id/ll_top_panel"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:gravity="center"
+    android:gravity="top"
     android:layout_height="60dp"
+    android:paddingTop="10dp"
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
     android:background="@color/dialog_bg"
@@ -29,7 +30,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:padding="8dp">
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp">
 
         <TextView
             style="@style/BoldText"
