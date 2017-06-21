@@ -16,35 +16,35 @@
         android:textSize="14sp"
         android:layout_marginLeft="10dp"
         style="@style/MenuItem"
-        tools:text="Logout"
+        tools:text="Dealings"
         android:id="@+id/tv_title"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:minWidth="20dp"
-        android:layout_height="20dp"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="12dp"
-        android:gravity="center"
+        android:gravity="top"
         android:id="@+id/badge_layout">
 
-        <LinearLayout
+        <RelativeLayout
             android:orientation="horizontal"
+            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:minWidth="20dp"
-            android:layout_height="20dp"
             android:gravity="center"
-            android:background="@drawable/chart_label_down_background">
+            android:background="@drawable/badge">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:id="@+id/menu_badge"
+                android:gravity="center"
                 android:singleLine="true"
-                tools:text="27"
+                tools:text="1"
+                android:padding="0dp"
+                android:textAlignment="center"
                 android:textColor="#ffffff"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:textSize="9sp" />
+        </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

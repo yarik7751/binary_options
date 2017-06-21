@@ -42,6 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/emailEditTextLayout"
+                app:hintTextAppearance="@style/TextInputLayout"
                 android:textColorHint="@color/editTextHint">
                 <EditText
                     android:id="@+id/login"
@@ -60,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/passwordEditTextLayout"
                 app:passwordToggleEnabled="false"
+                app:hintTextAppearance="@style/TextInputLayout"
                 android:textColorHint="@color/editTextHint">
 
                 <EditText

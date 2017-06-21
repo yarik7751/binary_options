@@ -165,6 +165,7 @@
     <!--//нет перевода-->
 
     <string name="error_find_signal">No signals available for this asset</string>
+    <string name="no_such_orders">You have no closed trade</string>
 
     <string name="of_price">Price </string>
     <string name="profit">Profit </string>

@@ -67,6 +67,13 @@
         <item name="android:paddingBottom">16dp</item>
         <item name="android:gravity">center</item>
     </style>
+    
+    <style name="TextInputLayout" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/chart_values</item>
+        <item name="colorControlNormal">@color/chart_values</item>
+        <item name="colorControlActivated">@color/chart_values</item>
+        <item name="colorControlHighlight">@color/chart_values</item>
+    </style>
 
     <style name="AccentButtonStyle" parent="LigthText">
         <item name="fontPath">fonts/OpenSans-Regular.ttf</item>

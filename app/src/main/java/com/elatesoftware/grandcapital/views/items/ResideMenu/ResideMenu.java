@@ -107,6 +107,7 @@ public class ResideMenu extends FrameLayout {
         tvDepositMenu = (TextView)findViewById(R.id.tvDepositMenu);
 
         findViewById(R.id.rl_close).setOnClickListener(v -> closeMenu());
+        findViewById(R.id.close_button).setOnClickListener(v -> closeMenu());
         //closeButton.setOnClickListener(v -> closeMenu());
     }
 

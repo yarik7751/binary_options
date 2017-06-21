@@ -134,8 +134,8 @@
     <string name="active">"Актив "</string>
     <string name="amount">Инвестиции</string>
     <string name="time">Время</string>
-    <string name="lower">Вниз</string>
-    <string name="higher">Вверх</string>
+    <string name="lower">ВНИЗ</string>
+    <string name="higher">ВВЕРХ</string>
     <string name="yesterday">Вчера</string>
     <string name="clode_dealing_title">Вы уверены, что хотите закрыть сделку?</string>
     <string name="error">Ошибка!</string>
