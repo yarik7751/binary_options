@@ -1,12 +1,5 @@
 <resources>
-    <string name="app_name">GrandCapital</string>
-    <string name="userLogin">10025808</string>
-    <string name="userPassword">6elFJkuL</string>
-    <string name="userLogin1">10026417</string>
-    <string name="userPassword1">UFZ0Spmi</string>
 
-    <string name="number">number</string>
-    <string name="logical_number">logical_number</string>
     <string name="is_their_message">is_their_message</string>
 
     <string name="all_quotes">Все котировки</string>
@@ -16,13 +9,13 @@
     <string name="error_incorrent_password_input">Пароль</string>
     <string name="error_wront_password">Неверный пароль</string>
     <string name="error_incorrent_login_input">Логин</string>
-    <string name="connection_not_secure">Your connection is not private. Are you sure you want to continue?</string>
+    <string name="connection_not_secure">Ваше соединение не защищено. Вы хотите продолжить?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="cancel">Отмена</string>
     <string name="cancel_dont_show">Отменить и больше не показывать</string>
     <string name="ok">OK</string>
-    <string name="caution">Caution!</string>
+    <string name="caution">Внимание!</string>
     <string name="logout">Выйти?</string>
     <string name="reward">Прибыль: </string>
     <string name="open_account">Открыть счет</string>
@@ -58,9 +51,8 @@
     <string name="request_error_request">Не удалось выполнить запрос</string>
     <string name="request_error_text">Что-то пошло не так и нам не удалось выполнить ваш запрос. Пожалуйста, попробуйте снова</string>
     <string name="request_error_message_button">OK</string>
-    <string name="grandcapital_icon_description">GrandCapital icon</string>
     <string name="menu_account_name_fish">Richard Branson</string>
-    <string name="menu_account_balance_text_fish">Balance: $45,612</string>
+    <string name="menu_account_balance_text_fish">Баланс: $45,612</string>
 
     <!--Menu items name-->
     <string name="menu_item_terminal">Терминал</string>
@@ -95,7 +87,7 @@
     <!--Dealing list headers open-->
     <string name="dealing_page_open_active">Актив</string>
     <string name="dealing_page_open_open">Цена открытия</string>
-    <string name="dealing_page_open_market">Market</string>
+    <string name="dealing_page_open_market">Текущая цена</string>
     <string name="dealing_page_open_amount">Инвестиции</string>
     <string name="dealing_page_open_time">Время</string>
 
@@ -106,7 +98,6 @@
     <string name="dealing_page_close_invest">Инвестиции</string>
     <string name="dealing_page_close_income">Прибыль</string>
 
-    <string name="dealing_page_item_arrow_description">Up or down arrow</string>
     <string name="dealing_page_request_error_title">Не удалось выполнить запрос</string>
 
     <string-array name="how_it_works_page_questions">
@@ -134,11 +125,10 @@
     <string name="zero_dollars">$10</string>
 
     <!--нет перевода-->
-    <string name="attention">Attention!</string>
+    <string name="attention">Внимание!</string>
     <!--//нет перевода-->
 
     <string name="balance">Баланс</string>
-    <string name="link_company">https://grandcapital.ru</string>
     <string name="deposit">Пополнить счет</string>
     <string name="withdraw">Вывести средства</string>
     <string name="active">"Актив "</string>
@@ -152,7 +142,7 @@
     <string name="no_correct_values">Введенные данные неверны. Пожалуйста, проверьте данные и попробуйте снова</string>
 
     <!--нет перевода-->
-    <string name="error_max_time">Maximum time interval — 2880 minutes</string>
+    <string name="error_max_time">Максимальный временной интервал — 2880 минут</string>
     <!--//нет перевода-->
 
     <string name="error_find_signal">Для этого инструмента торговые сигналы отсутствуют</string>
@@ -173,4 +163,9 @@
         <item>Ноябрь</item>
         <item>Декабрь</item>
     </string-array>
+    <string name="time_has_not_passed">Подождите, пожалуйста</string>
+    <string name="choose_an_active">Выберите котировку</string>
+    <string name="deposit_withdraw">Ввод/вывод средств</string>
+    <string name="dealing_can_not_be_closed">Сделка не может быть закрыта.</string>
+    <string name="seconds_remaining">осталось секунд.</string>
 </resources>

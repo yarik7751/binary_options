@@ -1,12 +1,5 @@
 <resources>
-    <string name="app_name">GrandCapital</string>
-    <string name="userLogin">10025808</string>
-    <string name="userPassword">6elFJkuL</string>
-    <string name="userLogin1">10026417</string>
-    <string name="userPassword1">UFZ0Spmi</string>
 
-    <string name="number">number</string>
-    <string name="logical_number">logical_number</string>
     <string name="is_their_message">is_their_message</string>
 
     <string name="all_quotes">Tous les quotes</string>
@@ -58,7 +51,6 @@
     <string name="request_error_request">The request failed. Please try again</string>
     <string name="request_error_text">Quelque chose s\'est mal passé et nous n\'avons pas pu compléter votre demande. Veuillez réessayer</string>
     <string name="request_error_message_button">OK</string>
-    <string name="grandcapital_icon_description">GrandCapital icon</string>
     <string name="menu_account_name_fish">Richard Branson</string>
     <string name="menu_account_balance_text_fish">Solde: 45 612 $</string>
 
@@ -106,7 +98,6 @@
     <string name="dealing_page_close_invest">Investi</string>
     <string name="dealing_page_close_income">Profit</string>
 
-    <string name="dealing_page_item_arrow_description">Up or down arrow</string>
     <string name="dealing_page_request_error_title">Votre demande a échoué</string>
 
     <string-array name="how_it_works_page_questions">
@@ -138,7 +129,6 @@
     <!--//нет перевода-->
 
     <string name="balance">Solde</string>
-    <string name="link_company">https://grandcapital.ru</string>
     <string name="deposit">DÉPÔT</string>
     <string name="withdraw">RETRAIT</string>
     <string name="active">Le capital</string>
@@ -173,4 +163,9 @@
         <item>Novembre</item>
         <item>Décembre</item>
     </string-array>
+    <string name="choose_an_active">Choose an active</string>
+    <string name="deposit_withdraw">Dépôt et retrait</string>
+    <string name="dealing_can_not_be_closed">The dealing can not be closed.</string>
+    <string name="time_has_not_passed">Time has not passed</string>
+    <string name="seconds_remaining">seconds remaining.</string>
 </resources>

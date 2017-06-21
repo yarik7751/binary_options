@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name">GrandCapital</string>
-    <string name="userLogin">10025808</string>
-    <string name="userPassword">6elFJkuL</string>
-    <string name="userLogin1">10026417</string>
-    <string name="userPassword1">UFZ0Spmi</string>
+    <string name="app_name" translatable="false">GrandCapital</string>
+    <string name="userLogin" translatable="false">10025808</string>
+    <string name="userPassword" translatable="false">6elFJkuL</string>
+    <string name="userLogin1" translatable="false">10026417</string>
+    <string name="userPassword1" translatable="false">UFZ0Spmi</string>
 
-    <string name="userLoginAmerican">10031740</string>
-    <string name="userPasswordAmerican">2nFaxHcy</string>
+    <string name="userLoginAmerican" translatable="false">10031740</string>
+    <string name="userPasswordAmerican" translatable="false">2nFaxHcy</string>
 
-    <string name="number">number</string>
-    <string name="logical_number">logical_number</string>
+    <string name="number" translatable="false">number</string>
+    <string name="logical_number" translatable="false">logical_number</string>
     <string name="is_their_message">is_their_message</string>
 
     <string name="all_quotes">All quotes</string>
@@ -61,7 +61,7 @@
     <string name="request_error_request">The request failed. Please try again</string>
     <string name="request_error_text">Something went wrong and we could not complete your request. Please try again</string>
     <string name="request_error_message_button">OK</string>
-    <string name="grandcapital_icon_description">GrandCapital icon</string>
+    <string name="grandcapital_icon_description" translatable="false">GrandCapital icon</string>
     <string name="menu_account_name_fish">Richard Branson</string>
     <string name="menu_account_balance_text_fish">Balance: $45,612</string>
     
@@ -113,7 +113,7 @@
     <string name="dealing_page_close_invest">Invested</string>
     <string name="dealing_page_close_income">Profit</string>
 
-    <string name="dealing_page_item_arrow_description">Up or down arrow</string>
+    <string name="dealing_page_item_arrow_description" translatable="false">Up or down arrow</string>
     <string name="dealing_page_request_error_title">The request failed</string>
 
     <string-array name="how_it_works_page_questions">
@@ -140,14 +140,14 @@
     <string name="zero_min">1 MIN</string>
     <string name="zero_dollars">$10</string>
 
-    <string name="string_for_reward">$0.0 (0%)</string>
+    <string name="string_for_reward" translatable="false">$0.0 (0%)</string>
     <!--нет перевода-->
     <string name="attention">Attention!</string>
 
     <!--//нет перевода-->
 
     <string name="balance">Balance</string>
-    <string name="link_company">https://grandcapital.ru</string>
+    <string name="link_company" translatable="false">https://grandcapital.ru</string>
     <string name="deposit">DEPOSIT</string>
     <string name="withdraw">WITHDRAW</string>
     <string name="active">Asset</string>

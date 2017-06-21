@@ -65,10 +65,12 @@ public final class WebSocketApi extends WebSocketListener {
         }
         mMessageCurrent = text;
     }
+
     @Override
     public void onClosing(WebSocket webSocket, int code, String reason) {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "CloseSocket = " + reason);
     }
+
     @Override
     public void onClosed(WebSocket webSocket, int code, String reason) {
         super.onClosed(webSocket, code, reason);
@@ -76,6 +78,7 @@ public final class WebSocketApi extends WebSocketListener {
         answerSave = null;
         mSymbolCurrent = null;
     }
+
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "FailSocket = " +  t.getMessage());

@@ -7,7 +7,6 @@ import android.content.Context;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
 import com.orm.SugarContext;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;

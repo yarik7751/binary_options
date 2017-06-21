@@ -50,7 +50,6 @@ public class GrandCapitalApi {
     public static final String TAG = "GrandCapitalApi_Log";
 
     private static IGrandCapitalApi grandCapitalApiService = null;
-    private static IGrandCapitalApi grandCapitalApiSimpleService = null;
     private static IGrandCapitalApi grandCapitalApiServiceChat = null;
 
     private static final String BASE_URL = "https://grandcapital.ru";

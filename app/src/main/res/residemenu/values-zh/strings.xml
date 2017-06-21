@@ -1,12 +1,5 @@
 <resources>
-    <string name="app_name">GrandCapital</string>
-    <string name="userLogin">10025808</string>
-    <string name="userPassword">6elFJkuL</string>
-    <string name="userLogin1">10026417</string>
-    <string name="userPassword1">UFZ0Spmi</string>
 
-    <string name="number">number</string>
-    <string name="logical_number">logical_number</string>
     <string name="is_their_message">is_their_message</string>
 
     <string name="all_quotes">所有报价</string>
@@ -60,7 +53,6 @@
     <string name="request_error_request">The request failed. Please try again</string>
     <string name="request_error_text">发生错误，我们无法完成您的申请。请再试一次。</string>
     <string name="request_error_message_button">好</string>
-    <string name="grandcapital_icon_description">GrandCapital icon</string>
     <string name="menu_account_name_fish">理查德·布兰森</string>
     <string name="menu_account_balance_text_fish">余额</string>
 
@@ -108,7 +100,6 @@
     <string name="dealing_page_close_invest">投资</string>
     <string name="dealing_page_close_income">获利</string>
 
-    <string name="dealing_page_item_arrow_description">Up or down arrow</string>
     <string name="dealing_page_request_error_title">申请失败</string>
 
     <string-array name="how_it_works_page_questions">
@@ -140,7 +131,6 @@
     <!--//нет перевода-->
 
     <string name="balance">余额</string>
-    <string name="link_company">https://grandcapital.ru</string>
     <string name="deposit">入金</string>
     <string name="withdraw">出金</string>
     <string name="active">资产</string>
@@ -175,4 +165,9 @@
         <item>十一月</item>
         <item>十二月</item>
     </string-array>
+    <string name="choose_an_active">Choose an active</string>
+    <string name="deposit_withdraw">出/入金</string>
+    <string name="dealing_can_not_be_closed">The dealing can not be closed.</string>
+    <string name="time_has_not_passed">Time has not passed</string>
+    <string name="seconds_remaining">seconds remaining.</string>
 </resources>
