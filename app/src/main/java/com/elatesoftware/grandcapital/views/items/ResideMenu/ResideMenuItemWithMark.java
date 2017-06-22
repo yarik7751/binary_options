@@ -2,11 +2,10 @@ package com.elatesoftware.grandcapital.views.items.resideMenu;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
-import com.elatesoftware.grandcapital.utils.AndroidUtils;
 
 public class ResideMenuItemWithMark extends ResideMenuBaseItem {
 
@@ -45,15 +44,15 @@ public class ResideMenuItemWithMark extends ResideMenuBaseItem {
         checkValue();
     }
     private void checkValue(){
-        LinearLayout badgeLayout = (LinearLayout) findViewById(R.id.badge_layout);
+        RelativeLayout badgeLayout = (RelativeLayout) findViewById(R.id.badge_layout);
         tv_value = (TextView) findViewById(R.id.menu_badge);
         if (value > 0) {
             tv_value.setText(String.valueOf(value));
             badgeLayout.setVisibility(VISIBLE);
-            if(value > 99) {
+            /*if(value > 99) {
                 ((LayoutParams) tv_value.getLayoutParams()).leftMargin = AndroidUtils.dp(4);
                 ((LayoutParams) tv_value.getLayoutParams()).rightMargin = AndroidUtils.dp(4);
-            }
+            }*/
         }
         if(value == 0){
             badgeLayout.setVisibility(INVISIBLE);

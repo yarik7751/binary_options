@@ -195,7 +195,6 @@ public class BaseActivity extends CustomFontsActivity {
     private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
         @Override
         public void openMenu() {
-            //mDealing.setValue(9);
             setDealings();
             mResideMenu.setScrolling(true);
         }
@@ -340,7 +339,6 @@ public class BaseActivity extends CustomFontsActivity {
             .replace(R.id.toolbar, targetFragment, "fragment")
             .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .commit();
-
     }
 
     public static ResideMenu getResideMenu() {

@@ -28,6 +28,6 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:background="@drawable/bg_shadow_270"></LinearLayout>
+            android:background="@drawable/bg_shadow_270" />
     </FrameLayout>
 </LinearLayout>
