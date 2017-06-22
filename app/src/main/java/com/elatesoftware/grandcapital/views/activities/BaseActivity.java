@@ -25,7 +25,7 @@ import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.fragments.DealingFragment;
 import com.elatesoftware.grandcapital.views.fragments.DepositFragment;
-import com.elatesoftware.grandcapital.views.fragments.HowItWorksFragment;
+import com.elatesoftware.grandcapital.views.fragments.FAQFragment;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuotesChoiceFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuotesFragment;
@@ -228,7 +228,7 @@ public class BaseActivity extends CustomFontsActivity {
             } else if (view == mQuotes) {
                 changeMainFragment(new QuotesFragment());
             } else if (view == mHowItWorks) {
-                changeMainFragment(new HowItWorksFragment());
+                changeMainFragment(new FAQFragment());
             } else if (view == mPromotions) {
                 changeMainFragment(new PromotionsFragment());
             } else if (view == mDepositWithdraw) {
@@ -383,7 +383,7 @@ public class BaseActivity extends CustomFontsActivity {
             getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_promotions));
             getToolbar().hideTabs();
             getToolbar().setBurgerType(ToolbarFragment.BURGER_OPEN_MENU);
-        }else if(sMainTagFragment.equals(HowItWorksFragment.class.getName())) {
+        }else if(sMainTagFragment.equals(FAQFragment.class.getName())) {
             getToolbar().setPageTitle(context.getResources().getString(R.string.toolbar_name_how_it_works));
             getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
             getToolbar().deselectAll();

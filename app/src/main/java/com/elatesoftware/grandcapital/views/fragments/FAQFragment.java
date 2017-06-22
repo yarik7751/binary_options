@@ -22,26 +22,25 @@ import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.adapters.howItWorks.FragmentHowItWorksListAdapter;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
-public class HowItWorksFragment extends Fragment {
+public class FAQFragment extends Fragment {
 
-    public static final String TAG = "HowItWorksFragment";
-
+    public static final String TAG = "FAQFragment";
     private RecyclerView mRecyclerView;
     private LinearLayout llProgress;
 
     private GetResponseQuestionsBroadcastReceiver mQuestionsBroadcastReceiver;
 
-    private static HowItWorksFragment fragment = null;
-    public static HowItWorksFragment getInstance() {
+    private static FAQFragment fragment = null;
+    public static FAQFragment getInstance() {
         if (fragment == null) {
-            fragment = new HowItWorksFragment();
+            fragment = new FAQFragment();
         }
         return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_how_it_works, container, false);
+        return inflater.inflate(R.layout.fragment_faq, container, false);
     }
 
     @Override

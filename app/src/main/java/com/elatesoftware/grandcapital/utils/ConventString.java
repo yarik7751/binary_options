@@ -193,6 +193,7 @@ public class ConventString {
                 language.equals("fr") ||
                 language.equals("in") ||
                 language.equals("vi") ||
+                language.equals("ru") ||
                 language.equals("кг") ||
                 language.equals("zh");
     }
