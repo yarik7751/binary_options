@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#000000</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimaryDark">#0E2030</color>
     <color name="colorAccent">#ffffff</color>
 
     <color name="textFiledColors">#ffffff</color>
-
     <color name="editTextHint">#ffffff</color>
 
     <color name="accentButtonGradientStartColor">#ef216c</color>
@@ -27,7 +26,8 @@
     <color name="dealingListItemColor">#1affffff</color>
 
     <color name="dealingListUpOrderColor">#00bc97</color>
-    <color name="dealingOpenOrCloseOrderColor">#15A596</color>
+    <color name="dealingCloseOrderBackgroundColor">#15A596</color>
+    <color name="dealingOpenOrderBackgroundColor">#000000</color>
     <color name="dealingListDownOrderColor">#fb3150</color>
 
     <color name="chart_label_up_color">#9900bc97</color>

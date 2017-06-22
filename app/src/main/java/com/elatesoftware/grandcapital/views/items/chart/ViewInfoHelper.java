@@ -37,8 +37,8 @@ public class ViewInfoHelper {
         mOpenDealingView = LayoutInflater.from(mContext).inflate(R.layout.incl_label_open_dealing, null);
         mCloseDealingView = LayoutInflater.from(mContext).inflate(R.layout.incl_label_close_dealing, null);
 
-        mOpenDealingView.setBackgroundColor(ConventImage.getColorWithAlpha(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.colorPrimaryDark), 0.7f));
-        mCloseDealingView.setBackgroundColor(ConventImage.getColorWithAlpha(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingOpenOrCloseOrderColor), 0.7f));
+        mOpenDealingView.setBackgroundColor(ConventImage.getColorWithAlpha(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingOpenOrderBackgroundColor), 0.7f));
+        mCloseDealingView.setBackgroundColor(ConventImage.getColorWithAlpha(GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingCloseOrderBackgroundColor), 0.7f));
 
         mOpenDealingView.setTag(TAG_OPEN_DEALING);
         mCloseDealingView.setTag(TAG_CLOSE_DEALING);

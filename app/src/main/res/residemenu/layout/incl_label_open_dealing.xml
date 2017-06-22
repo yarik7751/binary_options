@@ -18,7 +18,7 @@
         android:layout_marginBottom="8dp"
         android:paddingRight="10dp"
         android:text="@string/label_open_dealing_title"
-        android:textColor="@color/dealingOpenOrCloseOrderColor"
+        android:textColor="@color/dealingCloseOrderBackgroundColor"
         android:textStyle="bold"
         android:textSize="16sp" />
 
