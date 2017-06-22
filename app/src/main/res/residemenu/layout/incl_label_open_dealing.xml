@@ -15,16 +15,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="14dp"
+        android:layout_marginBottom="8dp"
+        android:paddingRight="10dp"
         android:text="@string/label_open_dealing_title"
-        android:textColor="@color/dealingListUpOrderColor"
+        android:textColor="@color/dealingOpenOrCloseOrderColor"
         android:textStyle="bold"
         android:textSize="16sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal">
 
         <TextView
@@ -38,6 +39,7 @@
         <TextView
             android:id="@+id/tvActive"
             style="@style/BoldText"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -48,7 +50,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal">
 
         <TextView
@@ -62,6 +64,7 @@
         <TextView
             android:id="@+id/tvAmount"
             style="@style/BoldText"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -72,6 +75,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal">
 
         <TextView
@@ -85,6 +89,7 @@
         <TextView
             android:id="@+id/tvTime"
             style="@style/BoldText"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"

@@ -34,7 +34,7 @@
     <string name="open_account_title">Open Live account</string>
 
     <string name="label_open_dealing_title">TRADE IS OPEN</string>
-    <string name="label_close_dealing_title">TRADE IS CLOSED</string>
+    <string name="label_close_dealing_title">TRADE IS CLOSED!</string>
 
     <!--Signin activity-->
     <string name="signin_page_button_text">SIGN IN</string>

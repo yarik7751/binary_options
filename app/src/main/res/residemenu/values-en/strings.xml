@@ -24,7 +24,7 @@
     <string name="open_account_title">Open Live account</string>
 
     <string name="label_open_dealing_title">TRADE IS OPEN</string>
-    <string name="label_close_dealing_title">TRADE IS CLOSED</string>
+    <string name="label_close_dealing_title">TRADE IS CLOSED!</string>
 
     <!--Signin activity-->
     <string name="signin_page_button_text">SIGN IN</string>
@@ -130,6 +130,7 @@
 
     <string name="balance">Balance</string>
     <string name="deposit">DEPOSIT</string>
+    <string name="deposit_terminal">DEPOSIT</string>
     <string name="withdraw">WITHDRAW</string>
     <string name="active">Asset</string>
     <string name="amount">Amount</string>

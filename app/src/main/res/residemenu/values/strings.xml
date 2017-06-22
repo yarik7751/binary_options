@@ -2,4 +2,5 @@
 <resources>
     <string name="choose_an_active">Выберите котировку</string>
     <string name="deposit_withdraw">Deposit/Withdraw</string>
+    <string name="deposit_terminal">DEPOSIT</string>
 </resources>

@@ -24,7 +24,7 @@
     <string name="open_account_title">Ouvrir un compte en direct</string>
 
     <string name="label_open_dealing_title">LE TRADE EST OUVERT</string>
-    <string name="label_close_dealing_title">LE TRADE EST FERMÉ</string>
+    <string name="label_close_dealing_title">LE TRADE EST FERMÉ!</string>
 
     <!--Signin activity-->
     <string name="signin_page_button_text">SE CONNECTER</string>
@@ -168,4 +168,5 @@
     <string name="dealing_can_not_be_closed">The dealing can not be closed.</string>
     <string name="time_has_not_passed">Time has not passed</string>
     <string name="seconds_remaining">seconds remaining.</string>
+    <string name="deposit_terminal">DÉPÔT</string>
 </resources>

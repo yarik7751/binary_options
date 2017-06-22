@@ -23,13 +23,13 @@
         android:orientation="vertical"
         android:padding="0dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginLeft="4dp">
+        android:layout_marginTop="0dp">
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:padding="0dp"
             android:id="@+id/badge_layout"
             android:layout_gravity="top"
             android:layout_marginTop="2dp"
@@ -41,8 +41,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/menu_badge"
                 android:singleLine="true"
-                tools:text="3"
-                android:padding="0dp"
+                tools:text="33333333333"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp"
                 style="@style/MenuItem"
                 android:gravity="center_horizontal"
                 android:textAlignment="center"

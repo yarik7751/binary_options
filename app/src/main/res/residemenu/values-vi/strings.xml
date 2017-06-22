@@ -24,7 +24,7 @@
     <string name="open_account_title">Mở tài khoản thực</string>
 
     <string name="label_open_dealing_title">GIAO DỊCH ĐÃ MỞ</string>
-    <string name="label_close_dealing_title">GIAO DỊCH ĐÃ ĐÓNG</string>
+    <string name="label_close_dealing_title">GIAO DỊCH ĐÃ ĐÓNG!</string>
 
     <!--Signin activity-->
     <string name="signin_page_button_text">ĐĂNG NHẬP</string>
@@ -168,4 +168,5 @@
     <string name="dealing_can_not_be_closed">The dealing can not be closed.</string>
     <string name="time_has_not_passed">Time has not passed</string>
     <string name="seconds_remaining">seconds remaining.</string>
+    <string name="deposit_terminal">GỬI TIỀN</string>
 </resources>

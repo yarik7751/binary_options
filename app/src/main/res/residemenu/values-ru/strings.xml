@@ -23,8 +23,7 @@
     <string name="open_account_message">Вы совершили несколько сделок. \nНачните зарабатывать реальные деньги!</string>
     <string name="open_account_title">Открыть реальный счет</string>
 
-    <string name="label_open_dealing_title">Сделка открыта</string>
-    <string name="label_close_dealing_title">Сделка закрыта</string>
+    <string name="label_open_dealing_title">СДЕЛКА ОТКРЫТА</string>
 
     <!--Signin activity-->
     <string name="signin_page_button_text">Войти</string>
@@ -129,7 +128,7 @@
     <!--//нет перевода-->
 
     <string name="balance">Баланс</string>
-    <string name="deposit">Пополнить счет</string>
+    <string name="deposit">ПОПОЛНИТЬ СЧЕТ</string>
     <string name="withdraw">Вывести средства</string>
     <string name="active">"Актив "</string>
     <string name="amount">Инвестиции</string>
@@ -168,4 +167,6 @@
     <string name="deposit_withdraw">Ввод/вывод средств</string>
     <string name="dealing_can_not_be_closed">Сделка не может быть закрыта.</string>
     <string name="seconds_remaining">осталось секунд.</string>
+    <string name="label_close_dealing_title">СДЕЛКА ЗАКРЫТА!</string>
+    <string name="deposit_terminal">ПОПОЛНИТЬ</string>
 </resources>
