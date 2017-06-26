@@ -80,7 +80,7 @@ public class ViewInfoHelper {
     }
 
     public void updateSettingsCloseDealing(OrderAnswer order, Activity activity){
-        CustomSharedPreferences.setAmtCloseDealings(activity, CustomSharedPreferences.getAmtCloseDealings(activity) + 1);
+        CustomSharedPreferences.setAmtOpenDealings(activity, CustomSharedPreferences.getAmtOpenDealings(activity) + 1);
         showViewCloseDealing(order);
         ((BaseActivity) activity).setDealings();
         BaseActivity.getToolbar().setDealingSelectIcon();

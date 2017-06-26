@@ -1,6 +1,5 @@
 package com.elatesoftware.grandcapital.views.fragments;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -95,7 +94,7 @@ public class ToolbarFragment extends Fragment {
         int[] drawableResources = {
                 R.drawable.signal,
                 R.drawable.terminal,
-                CustomSharedPreferences.getAmtCloseDealings(getContext()) == 0 ? R.drawable.order : R.drawable.order_active,
+                CustomSharedPreferences.getAmtOpenDealings(getContext()) == 0 ? R.drawable.order : R.drawable.order_active,
                 R.drawable.arrowdown,
                 R.drawable.quotes
         };

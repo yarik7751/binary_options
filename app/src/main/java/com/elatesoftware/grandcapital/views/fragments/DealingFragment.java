@@ -88,7 +88,7 @@ public class DealingFragment extends Fragment {
 
         initTabs();
         initListHeaders();
-        cleanCloseDealings();
+        cleanOpenDealings();
     }
 
     @Override
@@ -128,8 +128,8 @@ public class DealingFragment extends Fragment {
         getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
     }
 
-    private void cleanCloseDealings() {
-        CustomSharedPreferences.setAmtCloseDealings(getContext(), 0);
+    private void cleanOpenDealings() {
+        CustomSharedPreferences.setAmtOpenDealings(getContext(), 0);
         ((BaseActivity) getActivity()).setDealings();
         BaseActivity.getToolbar().setDealingIcon();
     }

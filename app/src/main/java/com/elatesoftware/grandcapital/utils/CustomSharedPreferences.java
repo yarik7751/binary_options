@@ -16,7 +16,7 @@ public class CustomSharedPreferences {
      private static final String SHARED_PREFERENCES_USER = "USER";
      private static final String SHARED_PREFERENCES_CHAT_HISTORY = "SHARED_PREFERENCES_CHAT_HISTORY";
      private static final String SHARED_PREFERENCES_SELECTED_QUOTES = "SHARED_PREFERENCES_SELECTED_QUOTES";
-     private static final String SHARED_PREFERENCES_CLOSE_DEALINGS = "SHARED_PREFERENCES_CLOSE_DEALINGS";
+     private static final String SHARED_PREFERENCES_OPEN_DEALINGS = "SHARED_PREFERENCES_OPEN_DEALINGS";
      private static final String SHARED_PREFERENCES_INTERVAL_ADVERTISING = "SHARED_PREFERENCES_INTERVAL_ADVERTISING";
      private static final String SHARED_PREFERENCES_AGREE_CLOSE_DEALING = "SHARED_PREFERENCES_AGREE_CLOSE_DEALING";
 
@@ -48,7 +48,7 @@ public class CustomSharedPreferences {
         editor.putString(SHARED_PREFERENCES_USER, null);
         editor.putString(SHARED_PREFERENCES_CHAT_HISTORY, null);
         editor.putString(SHARED_PREFERENCES_SELECTED_QUOTES, null);
-        editor.putString(SHARED_PREFERENCES_CLOSE_DEALINGS, null);
+        editor.putString(SHARED_PREFERENCES_OPEN_DEALINGS, null);
         editor.putString(SHARED_PREFERENCES_INTERVAL_ADVERTISING, null);
         editor.putString(SHARED_PREFERENCES_AGREE_CLOSE_DEALING, null);
         editor.apply();
@@ -74,14 +74,14 @@ public class CustomSharedPreferences {
         return sharedPreferences.getString(SHARED_PREFERENCES_SELECTED_QUOTES, "");
     }
 
-    public static void setAmtCloseDealings(Context context, int amt) {
+    public static void setAmtOpenDealings(Context context, int amt) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        sharedPreferences.edit().putInt(SHARED_PREFERENCES_CLOSE_DEALINGS, amt).apply();
+        sharedPreferences.edit().putInt(SHARED_PREFERENCES_OPEN_DEALINGS, amt).apply();
     }
 
-    public static int getAmtCloseDealings(Context context) {
+    public static int getAmtOpenDealings(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
-        return sharedPreferences.getInt(SHARED_PREFERENCES_CLOSE_DEALINGS, 0);
+        return sharedPreferences.getInt(SHARED_PREFERENCES_OPEN_DEALINGS, 0);
     }
 
     public static void setIntervalAdvertising(Context context, int amt) {

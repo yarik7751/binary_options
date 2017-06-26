@@ -1202,14 +1202,14 @@ public class TerminalFragment extends Fragment {
                 llSignal.clearAnimation();
                 flMain.removeView(llSignal);
                 flMain.addView(llSignal, ConventImage.getFrameParams(isDirection));
-                if (!isDirection) {
+                /*if (!isDirection) {
                     new Handler().postDelayed(() -> {
                         if (!isDirection) {
                             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
                             showSignalsPanel();
-                        }
+                      }
                     }, 3000);
-                }
+                }*/
             }
             @Override
             public void onAnimationRepeat(Animation animation) {

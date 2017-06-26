@@ -154,8 +154,9 @@ public class BaseActivity extends CustomFontsActivity {
     }
 
     public void setDealings() {
-        mDealing.setValue(CustomSharedPreferences.getAmtCloseDealings(this));
+        mDealing.setValue(CustomSharedPreferences.getAmtOpenDealings(this));
     }
+
     private void addItems() {
         mTerminal = new ResideMenuItem(this, getString(R.string.menu_item_terminal));
         mDealing = new ResideMenuItemWithMark(this, getString(R.string.menu_item_dealing));
@@ -251,7 +252,6 @@ public class BaseActivity extends CustomFontsActivity {
     public void setMain(int i) {
         getToolbar().mTabLayout.setOnChangePosition(() -> {
             Log.d(TAG, "mTabLayout.setOnChangePosition");
-
             switch (i){
                 case SIGNAL_POSITION:
                     Log.d(TAG, "SIGNAL_POSITION");

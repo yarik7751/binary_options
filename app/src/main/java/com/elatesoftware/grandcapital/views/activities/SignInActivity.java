@@ -97,6 +97,31 @@ public class SignInActivity extends CustomFontsActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
+        IntentFilter intentFilter1 = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
+        intentFilter1.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(mInfoBroadcastReceiver, intentFilter1);
+        mSignInBroadcastReceiver = new GetResponseSignInBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(SignInService.ACTION_SERVICE_SIGN_IN);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(mSignInBroadcastReceiver, intentFilter);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mSignInBroadcastReceiver);
+        unregisterReceiver(mInfoBroadcastReceiver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
     public void signIn() {
         btnSignIn.setEnabled(false);
         if (checkConnection()) {
@@ -173,30 +198,6 @@ public class SignInActivity extends CustomFontsActivity {
     private void requestInfoUser(){
         Intent intentMyIntentService = new Intent(this, InfoUserService.class);
         startService(intentMyIntentService);
-    }
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
-        IntentFilter intentFilter1 = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
-        intentFilter1.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(mInfoBroadcastReceiver, intentFilter1);
-        mSignInBroadcastReceiver = new GetResponseSignInBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(SignInService.ACTION_SERVICE_SIGN_IN);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        registerReceiver(mSignInBroadcastReceiver, intentFilter);
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(mSignInBroadcastReceiver);
-        unregisterReceiver(mInfoBroadcastReceiver);
     }
 
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
