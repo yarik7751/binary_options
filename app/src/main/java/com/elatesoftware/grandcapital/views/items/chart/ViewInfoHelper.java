@@ -13,7 +13,6 @@ import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.utils.ConventString;
-import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
@@ -80,10 +79,8 @@ public class ViewInfoHelper {
     }
 
     public void updateSettingsCloseDealing(OrderAnswer order, Activity activity){
-        CustomSharedPreferences.setAmtOpenDealings(activity, CustomSharedPreferences.getAmtOpenDealings(activity) + 1);
         showViewCloseDealing(order);
         ((BaseActivity) activity).setDealings();
-        BaseActivity.getToolbar().setDealingSelectIcon();
         CustomDialog.showViewOpenRealAccount(activity);
     }
 }

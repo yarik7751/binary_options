@@ -62,7 +62,6 @@ public class SignInActivity extends CustomFontsActivity {
             LayoutTransition layoutTransition = rootView.getLayoutTransition();
             layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         }
-
         tvSignUp.setOnClickListener(v -> {
             /*Intent i = new Intent(getApplicationContext(), SignUpActivity.class);
             startActivity(i);*/

@@ -917,7 +917,7 @@ public class TerminalFragment extends Fragment {
             if (list.size() != 0) {
                 rlErrorSignal.setVisibility(View.GONE);
                 tvCurrentActive.setText(symbol);
-                tvCurrentActiveAmount.setText(list.get(0).getCost());
+                tvCurrentActiveAmount.setText(Double.toString(mCurrentValueY));
                 for (SignalAnswer answer : list) {
                     if (answer.getTime() == 60) {
                         ConventString.parseResponseSignals(getActivity(), tvSignalMinutes1, answer.getSummary());
@@ -1186,9 +1186,10 @@ public class TerminalFragment extends Fragment {
     }
 
     public void showSignalsPanel() {
-        parseResponseSignals(ConventString.getActive(tvValueActive));
         if(!isDirection) {
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+        }else{
+            parseResponseSignals(ConventString.getActive(tvValueActive));
         }
         TranslateAnimation animation = new TranslateAnimation(0, 0, 0, AndroidUtils.dp(isDirection ? 80 : -80));
         animation.setDuration(Const.INTERVAL_ANIM_PANEL);
@@ -1289,6 +1290,8 @@ public class TerminalFragment extends Fragment {
                 currentDealing.setVolume(Double.valueOf(intent.getStringExtra(MakeDealingService.VOLUME)).intValue());
                 typePoint = POINT_OPEN_DEALING;
                 new Handler().postDelayed(() -> requestGetAllOrders(), 5000);
+                CustomSharedPreferences.setAmtOpenDealings(getContext(), CustomSharedPreferences.getAmtOpenDealings(getContext()) + 1);
+                ((BaseActivity) getActivity()).setDealings();
                 mViewInfoHelper.showViewOpenDealing(intent.getStringExtra(MakeDealingService.SYMBOL),
                         intent.getStringExtra(MakeDealingService.VOLUME),
                         intent.getStringExtra(MakeDealingService.EXPIRATION));
@@ -1322,7 +1325,10 @@ public class TerminalFragment extends Fragment {
                         CheckDealingService.setListOrderAnswer(listAllOpenDealings);
                         parseClosingDealings(listAllClosedDealings);
 
-                        if(listOpenDealings != null && listOpenDealings.size() != 0){
+                        CustomSharedPreferences.setAmtOpenDealings(getContext(), listAllOpenDealings.size());
+                        ((BaseActivity) getActivity()).setDealings();
+
+                        if(listOpenDealings.size() != 0){
                             int i = 0;
                             if(BaseLimitLine.getYLimitLines() != null && BaseLimitLine.getYLimitLines() != null){
                                 i = BaseLimitLine.getYLimitLines().size();
@@ -1391,6 +1397,8 @@ public class TerminalFragment extends Fragment {
                     if(order != null){
                         redrawPointsDealings(ticket);
                         requestBalanceUser();
+                        CustomSharedPreferences.setAmtOpenDealings(getContext(), CheckDealingService.getListOrderAnswer().size());
+                        ((BaseActivity) getActivity()).setDealings();
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         BaseLimitLine.deleteDealingLimitLine(ticket);
                         typePoint = POINT_CLOSE_DEALING;

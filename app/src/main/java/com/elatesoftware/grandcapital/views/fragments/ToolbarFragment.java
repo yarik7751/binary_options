@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
@@ -121,12 +122,12 @@ public class ToolbarFragment extends Fragment {
         }
     }
 
-    public void setDealingSelectIcon() {
-        mTabLayout.setIcon(BaseActivity.DEALING_POSITION, R.drawable.order_active);
-    }
-
     public void setDealingIcon() {
-        mTabLayout.setIcon(BaseActivity.DEALING_POSITION, R.drawable.order);
+        if(CustomSharedPreferences.getAmtOpenDealings(GrandCapitalApplication.getAppContext()) == 0){
+            mTabLayout.setIcon(BaseActivity.DEALING_POSITION, R.drawable.order);
+        }else{
+            mTabLayout.setIcon(BaseActivity.DEALING_POSITION, R.drawable.order_active);
+        }
     }
 
     public void switchTab(int position) {

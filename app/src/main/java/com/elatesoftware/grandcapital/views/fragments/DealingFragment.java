@@ -18,18 +18,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
+import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingOpenOrdersAdapter;
+import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.services.DeleteDealingService;
 import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
-import com.elatesoftware.grandcapital.views.items.CustomDialog;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingCloseOrdersAdapter;
-import com.elatesoftware.grandcapital.adapters.dealing.FragmentDealingOpenOrdersAdapter;
-import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +87,6 @@ public class DealingFragment extends Fragment {
 
         initTabs();
         initListHeaders();
-        cleanOpenDealings();
     }
 
     @Override
@@ -126,12 +124,6 @@ public class DealingFragment extends Fragment {
         Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
         intentService.putExtra(Const.ACTION, DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
         getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
-    }
-
-    private void cleanOpenDealings() {
-        CustomSharedPreferences.setAmtOpenDealings(getContext(), 0);
-        ((BaseActivity) getActivity()).setDealings();
-        BaseActivity.getToolbar().setDealingIcon();
     }
 
     private void initTabs() {

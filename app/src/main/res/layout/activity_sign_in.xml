@@ -43,7 +43,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/emailEditTextLayout"
                 app:hintTextAppearance="@style/TextInputLayout"
-                android:textColorHint="@color/editTextHint">
+                android:textColorHint="@color/editTextHint"
+                android:backgroundTint="@color/chart_values">
 
                 <EditText
                     android:id="@+id/login"
@@ -64,7 +65,8 @@
                 android:id="@+id/passwordEditTextLayout"
                 app:passwordToggleEnabled="false"
                 app:hintTextAppearance="@style/TextInputLayout"
-                android:textColorHint="@color/editTextHint">
+                android:textColorHint="@color/editTextHint"
+                android:backgroundTint="@color/chart_values">
 
                 <EditText
                     android:id="@+id/password"
@@ -80,7 +82,7 @@
                     android:backgroundTint="@color/chart_values"
                     style="@style/EditText"/>
             </android.support.design.widget.TextInputLayout>
-            <!--android:background="@drawable/abc"-->
+
             <Button
                 android:id="@+id/email_sign_in_button"
                 style="@style/AccentButtonStyle"
