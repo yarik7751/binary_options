@@ -60,6 +60,19 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="SupportChatStyle" parent="LigthText">
+        <item name="fontPath">fonts/OpenSans-Regular.ttf</item>
+    </style>
+
+    <style name="ContentMessageSupportChatStyle" parent="SupportChatStyle">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="DateMessageSupportChatStyle" parent="SupportChatStyle">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/chart_values</item>
+    </style>
+
     <style name="EditText" parent="LigthText">
         <item name="android:textColorHint">@color/editTextHint</item>
         <item name="android:textSize">@dimen/edit_text_size</item>

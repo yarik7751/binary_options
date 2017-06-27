@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="24dp"
+    android:gravity="left"
+    android:paddingLeft="18dp"
+    android:paddingRight="18dp">
+
+    <ImageView
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/avatar_chat" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/white_first"
+        android:paddingTop="12dp"
+        android:paddingLeft="24dp"
+        android:paddingBottom="12dp"
+        android:paddingRight="12dp"
+        android:layout_marginLeft="4dp">
+
+        <TextView
+            android:id="@+id/tvContentMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            style="@style/ContentMessageSupportChatStyle"
+            android:maxLines="1"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="12dp"
+            tools:text="Hello world! This message is big and date on second line"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/tvDateMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/DateMessageSupportChatStyle"
+                tools:text="12:47"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+
+            <ProgressBar
+                android:id="@+id/pb_loading"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

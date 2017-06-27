@@ -94,7 +94,7 @@ public class SupportFragment extends Fragment {
                 edMessage.setText(edMessage.getText().toString().trim());
                 if (!TextUtils.isEmpty(edMessage.getText().toString())) {
                     message = edMessage.getText().toString();
-                    addYourMessageInView(message, System.currentTimeMillis(), true);
+                    addYourMessageInView(message, System.currentTimeMillis());
                     Intent intent = new Intent(getContext(), ChatService.class);
                     if (!isChatCreated) {
                         try {
@@ -145,7 +145,7 @@ public class SupportFragment extends Fragment {
         super.onStop();
     }
 
-    private void addYourMessageInView(String message, long unix, boolean addInHistory) {
+    private void addYourMessageInView(String message, long unix) {
         MessageChat messageChat = new MessageChat(message, unix, false);
         if(adapter == null) {
             List<MessageChat> messages = new ArrayList<>();
@@ -158,7 +158,7 @@ public class SupportFragment extends Fragment {
         rvMessages.scrollToPosition(adapter.getItemCount() - 1);
     }
 
-    private void addTheirMessageInView(String message, long unix, boolean addInHistory) {
+    private void addTheirMessageInView(String message, long unix) {
         if(message.contains("/") && message.indexOf("/") == 0) {
             return;
         }
@@ -188,24 +188,20 @@ public class SupportFragment extends Fragment {
                     isMessageLoading = false;
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && ChatCreateAnswer.getInstance() != null){
                         adapter.loadedMessages();
-                        Log.d(TAG, "ChatCreateAnswer: " + ChatCreateAnswer.getInstance());
                         caseId = ChatCreateAnswer.getInstance().getCaseId();
                         handler.postDelayed(runnablePollChat, INTERVAL);
                         GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {
                         adapter.deleteLoading();
-                        Log.d(TAG, "CREATE_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),
                                 getString(R.string.request_error_title),
                                 getString(R.string.request_error_text));
                     }
                     break;
                 case ChatService.POLL_CHAT:
-                    Log.d(TAG, "POLL_CHAT");
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && PollChatAnswer.getInstance() != null &&
                             PollChatAnswer.getInstance() != null && !TextUtils.isEmpty(caseId)) {
                         ArrayList<PollChatAnswer.Message> messages = PollChatAnswer.getInstance().getMessageList();
-                        Log.d(TAG, "messages \n: " + messages);
                         if(messages.size() > 0) {
                             PollChatAnswer.Message lastMessage = messages.get(messages.size() - 1);
                             if(lastIndex < lastMessage.getIndex()) {
@@ -213,14 +209,12 @@ public class SupportFragment extends Fragment {
                                 lastIndex = lastMessage.getIndex();
                             }
                         }
-                        Log.d(TAG, "typing: " + PollChatAnswer.getInstance().isAgentTyping());
                         if(PollChatAnswer.getInstance().isAgentTyping()) {
                             addTyping();
                         } else {
                             adapter.deleteTyping();
                         }
                     } else {
-                        Log.d(TAG, "POLL_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),
                                 getString(R.string.request_error_title),
                                 getString(R.string.request_error_text));
@@ -234,7 +228,6 @@ public class SupportFragment extends Fragment {
                         GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {
                         adapter.deleteLoading();
-                        Log.d(TAG, "SEND_MESSAGE_CHAT error " + response);
                         CustomDialog.showDialogInfo(getActivity(),
                                 getString(R.string.request_error_title),
                                 getString(R.string.request_error_text));
@@ -247,11 +240,9 @@ public class SupportFragment extends Fragment {
     }
 
     private void addTheirMessages(ArrayList<PollChatAnswer.Message> messages) {
-        Log.d(TAG, "addTheirMessages");
         for(int i = messages.size() - 1; i >= 0; i--) {
             if(lastIndex < messages.get(i).getIndex()) {
-                Log.d(TAG, i + "\n" + messages.get(i));
-                addTheirMessageInView(messages.get(i).getText(), System.currentTimeMillis(), true);
+                addTheirMessageInView(messages.get(i).getText(), System.currentTimeMillis());
             } else {
                 break;
             }
@@ -261,8 +252,6 @@ public class SupportFragment extends Fragment {
     private void loadChatHistory() {
         try {
             List<MessageChat> history = MessageChat.listAll(MessageChat.class);
-            Log.d(TAG, "dbHistoryList: " + history);
-            Log.d(TAG, "dbHistoryList.size(): " + history.size());
             for (MessageChat msg : history) {
                 msg.setLoading(false);
             }

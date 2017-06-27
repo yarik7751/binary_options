@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_marginTop="6dp"
+    android:gravity="left"
+    android:paddingLeft="18dp"
+    android:paddingRight="18dp">
+
+    <ImageView
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:id="@+id/imageView" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/white_rect"
+        android:paddingTop="12dp"
+        android:paddingLeft="12dp"
+        android:paddingBottom="12dp"
+        android:paddingRight="12dp"
+        android:layout_marginLeft="16dp">
+
+        <TextView
+            android:id="@+id/tvContentMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            style="@style/ContentMessageSupportChatStyle"
+            android:layout_marginBottom="2dp"
+            tools:text="Hello world! This message is big and date on second line"/>
+
+        <RelativeLayout
+            android:id="@+id/rl_time"
+            android:layout_gravity="right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvDateMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/DateMessageSupportChatStyle"
+                tools:text="12:07"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+
+            <ProgressBar
+                android:id="@+id/pb_loading"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

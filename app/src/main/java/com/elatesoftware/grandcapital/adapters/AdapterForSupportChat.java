@@ -1,19 +1,15 @@
 package com.elatesoftware.grandcapital.adapters;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.pojo_chat.MessageChat;
-import com.elatesoftware.grandcapital.utils.AndroidUtils;
 import com.elatesoftware.grandcapital.utils.ConventDate;
 
 import java.util.ArrayList;
@@ -28,11 +24,15 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     private List<MessageChat> mListMessages;
     private Context mContext;
 
-    static final int VIEW_TYPE_USER_FIRST = 0;
-    static final int VIEW_TYPE_SUPPORT_FIRST = 1;
-    static final int VIEW_TYPE_USER = 2;
-    static final int VIEW_TYPE_SUPPORT = 3;
-    static final int VIEW_TYPE_TYPING = 4;
+    private static final int VIEW_TYPE_USER_FIRST = 0;
+    private static final int VIEW_TYPE_SUPPORT_FIRST = 1;
+    private static final int VIEW_TYPE_USER_SECOND = 2;
+    private static final int VIEW_TYPE_SUPPORT_SECOND = 3;
+    private static final int VIEW_TYPE_TYPING = 4;
+    private static final int VIEW_TYPE_USER_FIRST_ONE_LINE = 5;
+    private static final int VIEW_TYPE_USER_SECOND_ONE_LINE = 6;
+    private static final int VIEW_TYPE_SUPPORT_FIRST_ONE_LINE = 7;
+    private static final int VIEW_TYPE_SUPPORT_SECOND_ONE_LINE = 8;
 
     public AdapterForSupportChat(List<MessageChat> list, Context context) {
         this.mListMessages = list;
@@ -43,15 +43,23 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType){
             case VIEW_TYPE_USER_FIRST:
-                return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user_message, parent, false));
+                return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_user_first, parent, false));
             case VIEW_TYPE_SUPPORT_FIRST:
-                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_their_message, parent, false));
-            case VIEW_TYPE_USER:
-                return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user_message_second, parent, false));
-            case VIEW_TYPE_SUPPORT:
-                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_their_message_second, parent, false));
+                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_first, parent, false));
+            case VIEW_TYPE_USER_SECOND:
+                return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_user_second, parent, false));
+            case VIEW_TYPE_SUPPORT_SECOND:
+                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_second, parent, false));
             case VIEW_TYPE_TYPING:
-                return new MessageTypingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_their_typing, parent, false));
+                return new MessageTypingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_typing, parent, false));
+            case VIEW_TYPE_USER_FIRST_ONE_LINE:
+                return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_user_first_one_line, parent, false));
+            case VIEW_TYPE_USER_SECOND_ONE_LINE:
+                return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_user_second_one_line, parent, false));
+            case VIEW_TYPE_SUPPORT_FIRST_ONE_LINE:
+                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_first_one_line, parent, false));
+            case VIEW_TYPE_SUPPORT_SECOND_ONE_LINE:
+                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_second_one_line, parent, false));
         }
         return null;
     }
@@ -61,45 +69,30 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
         MessageBaseViewHolder baseHolder;
         final MessageChat message = getMessage(position);
         switch (holder.getItemViewType()) {
+            case VIEW_TYPE_USER_FIRST_ONE_LINE:
+            case VIEW_TYPE_USER_SECOND_ONE_LINE:
             case VIEW_TYPE_USER_FIRST:
-            case VIEW_TYPE_USER: {
+            case VIEW_TYPE_USER_SECOND: {
                 baseHolder = (MessageUserViewHolder) holder;
                 baseHolder.bind(message, position);
                 ((MessageUserViewHolder) holder).tvDate.setText(ConventDate.getChatDateByUnix(mContext, message.getTime()));
                 TextView tvMessage = ((MessageUserViewHolder) holder).tvMessage;
                 tvMessage.setText(message.getText());
-                tvMessage.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        int lineCount = tvMessage.getLineCount();
-                        if (lineCount > 1) {
-                            ((MessageUserViewHolder) holder).llMessage.setOrientation(LinearLayout.VERTICAL);
-                        }
-                    }
-                });
                 ((MessageUserViewHolder) holder).pbLoading.setVisibility(getMessage(position).isLoading() ? View.VISIBLE : View.GONE);
             }
                 break;
+            case VIEW_TYPE_SUPPORT_FIRST_ONE_LINE:
+            case VIEW_TYPE_SUPPORT_SECOND_ONE_LINE:
             case VIEW_TYPE_SUPPORT_FIRST:
-            case VIEW_TYPE_SUPPORT: {
+            case VIEW_TYPE_SUPPORT_SECOND: {
                 baseHolder = (MessageSupportViewHolder) holder;
                 baseHolder.bind(message, position);
                 ((MessageSupportViewHolder) holder).tvDate.setText(ConventDate.getChatDateByUnix(mContext, message.getTime()));
                 TextView tvMessage = ((MessageSupportViewHolder) holder).tvMessage;
                 tvMessage.setText(message.getText());
-                tvMessage.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        int lineCount = tvMessage.getLineCount();
-                        if (lineCount  > 1) {
-                            ((MessageSupportViewHolder) holder).llMessage.setOrientation(LinearLayout.VERTICAL);
-                        }
-                    }
-                });
             }
                 break;
             case VIEW_TYPE_TYPING:
-
                 break;
             default:
                 break;
@@ -114,15 +107,31 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
         }
         if (msg.isTheir()) {
             if(position > 0 && mListMessages.get(position - 1).isTheir()) {
-                return VIEW_TYPE_SUPPORT;
+                if(msg.getText() != null && msg.getText().length() >= 30){
+                    return VIEW_TYPE_SUPPORT_SECOND;
+                }else{
+                    return VIEW_TYPE_SUPPORT_SECOND_ONE_LINE;
+                }
             } else {
-                return VIEW_TYPE_SUPPORT_FIRST;
+                if(msg.getText() != null && msg.getText().length() >= 30){
+                    return VIEW_TYPE_SUPPORT_FIRST;
+                }else{
+                    return VIEW_TYPE_SUPPORT_FIRST_ONE_LINE;
+                }
             }
         } else {
             if(position > 0 && !mListMessages.get(position - 1).isTheir()) {
-                return VIEW_TYPE_USER;
+                if(msg.getText() != null && msg.getText().length() >= 30){
+                    return VIEW_TYPE_USER_SECOND;
+                }else{
+                    return VIEW_TYPE_USER_SECOND_ONE_LINE;
+                }
             } else {
-                return VIEW_TYPE_USER_FIRST;
+                if(msg.getText() != null && msg.getText().length() >= 30){
+                    return VIEW_TYPE_USER_FIRST;
+                }else{
+                    return VIEW_TYPE_USER_FIRST_ONE_LINE;
+                }
             }
         }
     }
@@ -206,32 +215,24 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     static class MessageUserViewHolder extends  MessageBaseViewHolder{
 
         private TextView tvMessage, tvDate;
-        private RelativeLayout rlTime;
-        private LinearLayout llMessage;
         private ProgressBar pbLoading;
 
         public MessageUserViewHolder(View view) {
             super(view);
-            tvMessage = (TextView) view.findViewById(R.id.tv_message);
-            tvDate = (TextView) view.findViewById(R.id.tv_time);
+            tvMessage = (TextView) view.findViewById(R.id.tvContentMessage);
+            tvDate = (TextView) view.findViewById(R.id.tvDateMessage);
             pbLoading = (ProgressBar) view.findViewById(R.id.pb_loading);
-            rlTime = (RelativeLayout) view.findViewById(R.id.rl_time);
-            llMessage = (LinearLayout) view.findViewById(R.id.ll_message);
         }
     }
 
     static class MessageSupportViewHolder extends MessageBaseViewHolder {
 
         private  TextView tvMessage, tvDate;
-        private RelativeLayout rlTime;
-        private LinearLayout llMessage;
 
         public MessageSupportViewHolder(View view) {
             super(view);
-            tvMessage = (TextView) view.findViewById(R.id.tv_message);
-            tvDate = (TextView) view.findViewById(R.id.tv_time);
-            rlTime = (RelativeLayout) view.findViewById(R.id.rl_time);
-            llMessage = (LinearLayout) view.findViewById(R.id.ll_message);
+            tvMessage = (TextView) view.findViewById(R.id.tvContentMessage);
+            tvDate = (TextView) view.findViewById(R.id.tvDateMessage);
         }
     }
 
