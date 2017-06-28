@@ -21,7 +21,7 @@
     <!-- for text -->
     <style name="AppTabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">#b3ffffff</item>
+        <item name="android:textColor">@color/empty_items_dealings</item>
         <item name="textAllCaps">false</item>
     </style>
 

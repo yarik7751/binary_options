@@ -123,20 +123,6 @@
             android:background="@drawable/bg_shadow_270"/>
     </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/fragment_dealing_no_elements_layout"
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="gone"
-        android:paddingTop="8dp">
-        <TextView
-            style="@style/BoldText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No such orders"
-            android:textSize="@dimen/dealing_fragment_no_orders_message_size" />
-    </LinearLayout>
+    <include layout="@layout/incl_dealings_empty_list"
+        android:visibility="gone"/>
 </RelativeLayout>

@@ -19,7 +19,6 @@
     <color name="menuAccountBalanceTextColor">#b3ffffff</color>
 
     <color name="menuBadgeColor">#de4d66</color>
-
     <color name="toolbarColor">#cc24303e</color>
 
     <color name="dealingListTitlesColor">#b3ffffff</color>
@@ -35,6 +34,8 @@
 
     <color name="chart_line_selected_horizontal_with_marker">#158376</color>
     <color name="chart_values">#B9C5CB</color>
+    <color name="empty_items_dealings">#b3ffffff
+    </color>
     <color name="color_text_deposit">#FEC528</color>
     <color name="color_view_terminal">#0F202F</color>
 

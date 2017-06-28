@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
@@ -48,7 +49,8 @@ public class DealingFragment extends Fragment {
     private TextView mFourthColumnHeader;
     private TextView mFifthColumnHeader;
     private LinearLayout mListLayout;
-    private LinearLayout mNoOrdersLayout;
+    private RelativeLayout mNoOrdersLayout;
+    private TextView tvEmptyDealing;
     private LinearLayout mProgressLayout;
 
     public static final int OPEN_TAB_POSITION = 0;
@@ -82,7 +84,8 @@ public class DealingFragment extends Fragment {
         ((BaseActivity) getActivity()).hideShadow();
 
         mListLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_list);
-        mNoOrdersLayout = (LinearLayout) view.findViewById(R.id.fragment_dealing_no_elements_layout);
+        mNoOrdersLayout = (RelativeLayout) view.findViewById(R.id.rl_no_elements);
+        tvEmptyDealing = (TextView) mNoOrdersLayout.findViewById(R.id.tvEmptyItems);
         mProgressLayout = (LinearLayout) view.findViewById(R.id.layout_progress_bar);
 
         initTabs();
@@ -106,7 +109,6 @@ public class DealingFragment extends Fragment {
 
     @Override
     public void onPause() {
-        Log.d(TAG, "onPause()");
         ((BaseActivity) getActivity()).showShadow();
         getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
         getActivity().unregisterReceiver(mDeleteDealingBroadcastReceiver);
@@ -163,7 +165,6 @@ public class DealingFragment extends Fragment {
                 null,
                 null
         );
-        Log.d(TAG, "currentTabPosition: " + currentTabPosition);
     }
 
     private void initListHeaders() {
@@ -176,6 +177,11 @@ public class DealingFragment extends Fragment {
 
     private void checkOrders(List<OrderAnswer> currentOrders) {
         if (currentOrders.size() == 0) {
+            if(currentTabPosition == OPEN_TAB_POSITION){
+                tvEmptyDealing.setText(getResources().getString(R.string.empty_message_for_open_dealings));
+            }else{
+                tvEmptyDealing.setText(getResources().getString(R.string.empty_message_for_close_dealings));
+            }
             mListLayout.setVisibility(View.GONE);
             mNoOrdersLayout.setVisibility(View.VISIBLE);
             mProgressLayout.setVisibility(View.GONE);

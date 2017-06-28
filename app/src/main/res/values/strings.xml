@@ -116,6 +116,9 @@
     <string name="dealing_page_item_arrow_description" translatable="false">Up or down arrow</string>
     <string name="dealing_page_request_error_title">The request failed</string>
 
+    <string name="empty_message_for_close_dealings">You have no closed trades</string>
+    <string name="empty_message_for_open_dealings">You have no opened trades</string>
+
     <string-array name="how_it_works_page_questions">
         <item>What are Binary Options?</item>
         <item>Binary Options in MT4: placing a trade</item>

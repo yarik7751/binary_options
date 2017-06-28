@@ -169,4 +169,6 @@
     <string name="seconds_remaining">осталось секунд.</string>
     <string name="label_close_dealing_title">СДЕЛКА ЗАКРЫТА!</string>
     <string name="deposit_terminal">ПОПОЛНИТЬ</string>
+    <string name="empty_message_for_open_dealings">У вас нет открытых сделок</string>
+    <string name="empty_message_for_close_dealings">У вас нет закрытых сделок</string>
 </resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rl_no_elements"
+    android:paddingTop="8dp"
+    android:background="@android:color/transparent">
+
+    <TextView
+        android:layout_centerInParent="true"
+        style="@style/LigthText"
+        android:id="@+id/tvEmptyItems"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/empty_items_dealings"
+        android:text="@string/empty_message_for_open_dealings" />
+
+    <ImageView
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:src="@drawable/clock"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/tvEmptyItems"
+        android:layout_marginBottom="28dp"/>
+
+</RelativeLayout>

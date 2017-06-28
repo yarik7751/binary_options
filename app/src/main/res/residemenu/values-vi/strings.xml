@@ -169,4 +169,6 @@
     <string name="time_has_not_passed">Time has not passed</string>
     <string name="seconds_remaining">seconds remaining.</string>
     <string name="deposit_terminal">GỬI TIỀN</string>
+    <string name="empty_message_for_close_dealings">Bạn không có giao dịch nào được đóng</string>
+    <string name="empty_message_for_open_dealings">Bạn không có giao dịch nào được mở</string>
 </resources>
