@@ -27,16 +27,16 @@
         android:layout_marginLeft="16dp">
 
         <TextView
-            android:id="@+id/tvContentMessage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="left"
-            style="@style/ContentMessageSupportChatStyle"
-            android:layout_marginBottom="2dp"
-            android:layout_marginRight="12dp"
-            android:maxLines="1"
-            tools:text="fgfgg"/>
+        android:id="@+id/tvContentMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="left"
+        style="@style/ContentMessageSupportChatStyle"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="12dp"
+        android:maxLines="1"
+        tools:text="fglkhygyujujujujujujujujujujujujujujujujujjjkfgg"/>
 
         <RelativeLayout
             android:gravity="center_vertical"
@@ -52,10 +52,10 @@
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"/>
 
-            <ProgressBar
-                android:id="@+id/pb_loading"
-                android:layout_width="20dp"
-                android:layout_height="20dp" />
+             <ProgressBar
+                 android:id="@+id/pb_loading"
+                 android:layout_width="20dp"
+                 android:layout_height="20dp" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

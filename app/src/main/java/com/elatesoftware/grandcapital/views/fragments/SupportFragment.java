@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,8 +70,7 @@ public class SupportFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_support, null);
-        return v;
+        return inflater.inflate(R.layout.fragment_support, null);
     }
 
     @Override
@@ -171,6 +169,7 @@ public class SupportFragment extends Fragment {
         MessageChat messageChat = new MessageChat("", 0, true);
         messageChat.setTyping(true);
         adapter.addMessage(messageChat);
+        rvMessages.scrollToPosition(adapter.getItemCount() - 1);
     }
 
     private boolean isTheirMessageView(View v) {
@@ -193,9 +192,7 @@ public class SupportFragment extends Fragment {
                         GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {
                         adapter.deleteLoading();
-                        CustomDialog.showDialogInfo(getActivity(),
-                                getString(R.string.request_error_title),
-                                getString(R.string.request_error_text));
+                        CustomDialog.showDialogInfo(getActivity(), getString(R.string.request_error_title), getString(R.string.request_error_text));
                     }
                     break;
                 case ChatService.POLL_CHAT:
@@ -215,22 +212,17 @@ public class SupportFragment extends Fragment {
                             adapter.deleteTyping();
                         }
                     } else {
-                        CustomDialog.showDialogInfo(getActivity(),
-                                getString(R.string.request_error_title),
-                                getString(R.string.request_error_text));
+                        CustomDialog.showDialogInfo(getActivity(), getString(R.string.request_error_title), getString(R.string.request_error_text));
                     }
                     break;
                 case ChatService.SEND_MESSAGE_CHAT:
                     isMessageLoading = false;
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SendMessageAnswer.getInstance() != null) {
                         adapter.loadedMessages();
-                        Log.d(TAG, SendMessageAnswer.getInstance() + "");
                         GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {
                         adapter.deleteLoading();
-                        CustomDialog.showDialogInfo(getActivity(),
-                                getString(R.string.request_error_title),
-                                getString(R.string.request_error_text));
+                        CustomDialog.showDialogInfo(getActivity(), getString(R.string.request_error_title), getString(R.string.request_error_text));
                     }
                     break;
                 default:

@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:gravity="left"
             style="@style/ContentMessageSupportChatStyle"
-            android:layout_marginBottom="2dp"
+            android:layout_marginBottom="3dp"
             tools:text="Hello world! This message is big and date on second linegfhgfhg"/>
 
         <RelativeLayout

@@ -44,22 +44,22 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
         switch (viewType){
             case VIEW_TYPE_USER_FIRST:
                 return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_user_first, parent, false));
-            case VIEW_TYPE_SUPPORT_FIRST:
-                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_first, parent, false));
-            case VIEW_TYPE_USER_SECOND:
-                return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_user_second, parent, false));
-            case VIEW_TYPE_SUPPORT_SECOND:
-                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_second, parent, false));
-            case VIEW_TYPE_TYPING:
-                return new MessageTypingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_typing, parent, false));
             case VIEW_TYPE_USER_FIRST_ONE_LINE:
                 return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_user_first_one_line, parent, false));
+            case VIEW_TYPE_USER_SECOND:
+                return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_user_second, parent, false));
             case VIEW_TYPE_USER_SECOND_ONE_LINE:
                 return new MessageUserViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_user_second_one_line, parent, false));
+            case VIEW_TYPE_SUPPORT_FIRST:
+                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_first, parent, false));
             case VIEW_TYPE_SUPPORT_FIRST_ONE_LINE:
                 return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_first_one_line, parent, false));
+            case VIEW_TYPE_SUPPORT_SECOND:
+                return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_second, parent, false));
             case VIEW_TYPE_SUPPORT_SECOND_ONE_LINE:
                 return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_second_one_line, parent, false));
+            case VIEW_TYPE_TYPING:
+                return new MessageTypingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_typing, parent, false));
         }
         return null;
     }
@@ -68,6 +68,7 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         MessageBaseViewHolder baseHolder;
         final MessageChat message = getMessage(position);
+        holder.setIsRecyclable(false); //TODO запрещает использовать элементы повторно.!
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_USER_FIRST_ONE_LINE:
             case VIEW_TYPE_USER_SECOND_ONE_LINE:
@@ -76,9 +77,9 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
                 baseHolder = (MessageUserViewHolder) holder;
                 baseHolder.bind(message, position);
                 ((MessageUserViewHolder) holder).tvDate.setText(ConventDate.getChatDateByUnix(mContext, message.getTime()));
-                TextView tvMessage = ((MessageUserViewHolder) holder).tvMessage;
-                tvMessage.setText(message.getText());
+                ((MessageUserViewHolder) holder).tvMessage.setText(message.getText());
                 ((MessageUserViewHolder) holder).pbLoading.setVisibility(getMessage(position).isLoading() ? View.VISIBLE : View.GONE);
+                ((MessageUserViewHolder) holder).tvDate.setVisibility(getMessage(position).isLoading() ? View.GONE : View.VISIBLE);
             }
                 break;
             case VIEW_TYPE_SUPPORT_FIRST_ONE_LINE:
@@ -88,8 +89,7 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
                 baseHolder = (MessageSupportViewHolder) holder;
                 baseHolder.bind(message, position);
                 ((MessageSupportViewHolder) holder).tvDate.setText(ConventDate.getChatDateByUnix(mContext, message.getTime()));
-                TextView tvMessage = ((MessageSupportViewHolder) holder).tvMessage;
-                tvMessage.setText(message.getText());
+                ((MessageSupportViewHolder) holder).tvMessage.setText(message.getText());
             }
                 break;
             case VIEW_TYPE_TYPING:
@@ -107,13 +107,13 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
         }
         if (msg.isTheir()) {
             if(position > 0 && mListMessages.get(position - 1).isTheir()) {
-                if(msg.getText() != null && msg.getText().length() >= 30){
+                if(msg.getText() != null && (msg.getText().length() >= 30 || msg.getText().contains("\n"))){
                     return VIEW_TYPE_SUPPORT_SECOND;
                 }else{
                     return VIEW_TYPE_SUPPORT_SECOND_ONE_LINE;
                 }
             } else {
-                if(msg.getText() != null && msg.getText().length() >= 30){
+                if(msg.getText() != null && (msg.getText().length() >= 30 || msg.getText().contains("\n"))){
                     return VIEW_TYPE_SUPPORT_FIRST;
                 }else{
                     return VIEW_TYPE_SUPPORT_FIRST_ONE_LINE;
@@ -121,13 +121,13 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
             }
         } else {
             if(position > 0 && !mListMessages.get(position - 1).isTheir()) {
-                if(msg.getText() != null && msg.getText().length() >= 30){
+                if(msg.getText() != null && (msg.getText().length() >= 30 || msg.getText().contains("\n"))){
                     return VIEW_TYPE_USER_SECOND;
                 }else{
                     return VIEW_TYPE_USER_SECOND_ONE_LINE;
                 }
             } else {
-                if(msg.getText() != null && msg.getText().length() >= 30){
+                if(msg.getText() != null && (msg.getText().length() >= 30 || msg.getText().contains("\n"))){
                     return VIEW_TYPE_USER_FIRST;
                 }else{
                     return VIEW_TYPE_USER_FIRST_ONE_LINE;
@@ -149,7 +149,7 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
         return mListMessages;
     }
 
-    MessageChat getMessage(int position){
+    private MessageChat getMessage(int position){
         return mListMessages.get(position);
     }
 
@@ -205,19 +205,19 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     }
 
     static class MessageBaseViewHolder extends RecyclerView.ViewHolder {
-        public MessageBaseViewHolder(View itemView) {
+         MessageBaseViewHolder(View itemView) {
             super(itemView);
         }
-        public void bind(final MessageChat msg, final int position) {
+         void bind(final MessageChat msg, final int position) {
         }
     }
 
-    static class MessageUserViewHolder extends  MessageBaseViewHolder{
+   private static class MessageUserViewHolder extends  MessageBaseViewHolder{
 
         private TextView tvMessage, tvDate;
         private ProgressBar pbLoading;
 
-        public MessageUserViewHolder(View view) {
+         MessageUserViewHolder(View view) {
             super(view);
             tvMessage = (TextView) view.findViewById(R.id.tvContentMessage);
             tvDate = (TextView) view.findViewById(R.id.tvDateMessage);
@@ -225,20 +225,20 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    static class MessageSupportViewHolder extends MessageBaseViewHolder {
+   private static class MessageSupportViewHolder extends MessageBaseViewHolder {
 
         private  TextView tvMessage, tvDate;
 
-        public MessageSupportViewHolder(View view) {
+        MessageSupportViewHolder(View view) {
             super(view);
             tvMessage = (TextView) view.findViewById(R.id.tvContentMessage);
             tvDate = (TextView) view.findViewById(R.id.tvDateMessage);
         }
     }
 
-    static class MessageTypingViewHolder extends MessageBaseViewHolder {
+   private static class MessageTypingViewHolder extends MessageBaseViewHolder {
 
-        public MessageTypingViewHolder(View itemView) {
+        MessageTypingViewHolder(View itemView) {
             super(itemView);
         }
     }
