@@ -77,12 +77,13 @@
         <item name="android:textColorHint">@color/editTextHint</item>
         <item name="android:textSize">@dimen/edit_text_size</item>
         <item name="fontPath">fonts/OpenSans-Regular.ttf</item>
-        <item name="android:paddingBottom">16dp</item>
+        <item name="android:paddingBottom">18dp</item>
         <item name="android:gravity">center</item>
 
-        <item name="colorControlNormal">@color/chart_values</item>
-        <item name="colorControlActivated">@color/chart_values</item>
-        <item name="colorControlHighlight">@color/chart_values</item>
+        <item name="colorControlNormal">@color/line_text_view</item>
+        <item name="colorControlActivated">@color/line_text_view</item>
+        <item name="colorControlHighlight">@color/line_text_view</item>
+        <item name="colorAccent">@color/line_text_view</item>
     </style>
 
     <style name="TextInputLayout" parent="@android:style/TextAppearance">
@@ -92,10 +93,10 @@
         <item name="colorControlActivated">@color/chart_values</item>
         <item name="colorControlHighlight">@color/chart_values</item>
         <item name="colorAccent">@color/chart_values</item>
-        <item name="colorPrimary">@color/chart_values</item>
-        <item name="colorPrimaryDark">@color/chart_values</item>
-        <item name="android:colorBackground">@color/chart_values</item>
-        <item name="android:colorFocusedHighlight">@color/chart_values</item>
+        <item name="colorPrimary">@color/line_text_view</item>
+        <item name="colorPrimaryDark">@color/line_text_view</item>
+        <item name="android:colorBackground">@color/line_text_view</item>
+        <item name="android:colorFocusedHighlight">@color/line_text_view</item>
     </style>
 
     <style name="AccentButtonStyle" parent="LigthText">

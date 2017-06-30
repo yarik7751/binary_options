@@ -34,6 +34,7 @@
 
     <color name="chart_line_selected_horizontal_with_marker">#158376</color>
     <color name="chart_values">#B9C5CB</color>
+    <color name="line_text_view">#8E99A1</color>
     <color name="empty_items_dealings">#b3ffffff
     </color>
     <color name="color_text_deposit">#FEC528</color>

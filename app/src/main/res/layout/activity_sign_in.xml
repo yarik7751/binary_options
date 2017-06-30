@@ -44,7 +44,7 @@
                 android:id="@+id/emailEditTextLayout"
                 app:hintTextAppearance="@style/TextInputLayout"
                 android:textColorHint="@color/editTextHint"
-                android:backgroundTint="@color/chart_values">
+                android:backgroundTint="@color/line_text_view">
 
                 <EditText
                     android:id="@+id/login"
@@ -54,8 +54,9 @@
                     android:imeActionId="@+id/login"
                     android:imeOptions="actionUnspecified"
                     android:maxLines="1"
+                    android:textCursorDrawable="@null"
                     style="@style/EditText"
-                    android:backgroundTint="@color/chart_values"
+                    android:backgroundTint="@color/line_text_view"
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
 
@@ -66,20 +67,21 @@
                 app:passwordToggleEnabled="false"
                 app:hintTextAppearance="@style/TextInputLayout"
                 android:textColorHint="@color/editTextHint"
-                android:backgroundTint="@color/chart_values">
+                android:backgroundTint="@color/line_text_view">
 
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/signin_page_password_field_text"
+                    android:textCursorDrawable="@null"
                     android:imeActionId="@+id/password"
                     android:imeActionLabel="@string/signin_page_button_text"
                     android:imeOptions="actionGo"
                     android:inputType="textPassword"
                     app:hintEnabled="false"
                     android:maxLines="1"
-                    android:backgroundTint="@color/chart_values"
+                    android:backgroundTint="@color/line_text_view"
                     style="@style/EditText"/>
             </android.support.design.widget.TextInputLayout>
 
