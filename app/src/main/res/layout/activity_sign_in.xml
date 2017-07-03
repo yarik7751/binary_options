@@ -45,7 +45,8 @@
                 android:id="@+id/emailEditTextLayout"
                 app:hintTextAppearance="@style/TextInputLayout"
                 android:textColorHint="@color/editTextHint"
-                android:backgroundTint="@color/line_text_view">
+                android:backgroundTint="@color/line_text_view"
+                android:layout_marginBottom="6dp">
 
                 <EditText
                     android:id="@+id/login"
@@ -68,7 +69,8 @@
                 app:passwordToggleEnabled="false"
                 app:hintTextAppearance="@style/TextInputLayout"
                 android:textColorHint="@color/editTextHint"
-                android:backgroundTint="@color/line_text_view">
+                android:backgroundTint="@color/line_text_view"
+                android:layout_marginBottom="6dp">
 
                 <EditText
                     android:id="@+id/password"
@@ -92,6 +94,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
                 android:text="@string/signin_page_button_text" />
 
             <LinearLayout

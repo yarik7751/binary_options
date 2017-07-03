@@ -63,8 +63,6 @@ public class SignInActivity extends CustomFontsActivity {
             layoutTransition.enableTransitionType(LayoutTransition.CHANGING);
         }
         tvSignUp.setOnClickListener(v -> {
-            /*Intent i = new Intent(getApplicationContext(), SignUpActivity.class);
-            startActivity(i);*/
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_SIGN_UP));
             startActivity(browserIntent);
         });
