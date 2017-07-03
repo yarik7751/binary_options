@@ -11,42 +11,45 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:animateLayoutChanges="true"
+        android:paddingTop="16dp"
         android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/email_login_form"
-            android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:focusableInTouchMode="true"
-            android:layout_gravity="center_horizontal"
-            android:layout_centerInParent="true"
-            android:animateLayoutChanges="true"
-            android:paddingLeft="@dimen/login_fileds_padding"
-            android:paddingRight="@dimen/login_fileds_padding"
-            android:paddingBottom="@dimen/login_page_center_fields_padding">
-
+            android:id="@+id/rl_logo"
+            android:layout_centerHorizontal="true">
             <ImageView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:id="@+id/imgLogo"
                 android:src="@drawable/logo"
                 android:layout_gravity="center_horizontal"
-                android:paddingLeft="@dimen/login_image_padding"
-                android:paddingRight="@dimen/login_image_padding"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:paddingBottom="@dimen/login_image_bottom_padding"
                 android:contentDescription="@string/grandcapital_icon_description" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/email_login_form"
+            android:layout_below="@+id/rl_logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:focusableInTouchMode="true"
+            android:layout_gravity="center_horizontal"
+            android:animateLayoutChanges="true"
+            android:paddingLeft="@dimen/login_fileds_padding"
+            android:paddingRight="@dimen/login_fileds_padding"
+            android:paddingBottom="@dimen/login_page_center_fields_padding"
+            android:dividerPadding="0dp">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/emailEditTextLayout"
+                android:layout_margin="0dp"
                 app:hintTextAppearance="@style/TextInputLayout"
                 android:textColorHint="@color/editTextHint"
-                android:backgroundTint="@color/line_text_view"
-                android:layout_marginBottom="6dp">
+                android:backgroundTint="@color/line_text_view">
 
                 <EditText
                     android:id="@+id/login"
@@ -58,6 +61,7 @@
                     android:maxLines="1"
                     android:textCursorDrawable="@null"
                     style="@style/EditText"
+                    android:layout_margin="0dp"
                     android:backgroundTint="@color/line_text_view"
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
@@ -67,10 +71,10 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/passwordEditTextLayout"
                 app:passwordToggleEnabled="false"
+                android:layout_margin="0dp"
                 app:hintTextAppearance="@style/TextInputLayout"
                 android:textColorHint="@color/editTextHint"
-                android:backgroundTint="@color/line_text_view"
-                android:layout_marginBottom="6dp">
+                android:backgroundTint="@color/line_text_view">
 
                 <EditText
                     android:id="@+id/password"
@@ -84,6 +88,7 @@
                     android:inputType="textPassword"
                     app:hintEnabled="false"
                     android:maxLines="1"
+                    android:layout_margin="0dp"
                     android:backgroundTint="@color/line_text_view"
                     style="@style/EditText"/>
             </android.support.design.widget.TextInputLayout>

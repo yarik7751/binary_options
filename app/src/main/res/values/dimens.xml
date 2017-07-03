@@ -1,7 +1,7 @@
 <resources>
 
     <dimen name="login_fileds_padding">16dp</dimen>
-    <dimen name="login_image_padding">105dp</dimen>
+    <dimen name="login_image_padding">30dp</dimen>
 
     <dimen name="button_radius">50dp</dimen>
     <dimen name="login_image_bottom_padding">30dp</dimen>

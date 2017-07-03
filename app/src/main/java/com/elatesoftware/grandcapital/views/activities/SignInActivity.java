@@ -1,24 +1,31 @@
 package com.elatesoftware.grandcapital.views.activities;
 
 import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elatesoftware.grandcapital.R;
@@ -29,9 +36,10 @@ import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.services.SignInService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
+import com.elatesoftware.grandcapital.views.interfaces.OnKeyboardVisibilityListener;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
-public class SignInActivity extends CustomFontsActivity {
+public class SignInActivity extends CustomFontsActivity implements OnKeyboardVisibilityListener {
 
     private EditText etLogin;
     private EditText etPassword;
@@ -41,6 +49,7 @@ public class SignInActivity extends CustomFontsActivity {
     private TextView tvForgotPassword;
     private TextInputLayout tilLogin;
     private TextInputLayout tilPassword;
+    private RelativeLayout rlLogo;
     private GetResponseSignInBroadcastReceiver mSignInBroadcastReceiver;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
@@ -56,6 +65,8 @@ public class SignInActivity extends CustomFontsActivity {
         tilLogin = (TextInputLayout) findViewById(R.id.emailEditTextLayout);
         tilPassword = (TextInputLayout) findViewById(R.id.passwordEditTextLayout);
         tvForgotPassword = (TextView) findViewById(R.id.forgot_password_link);
+        rlLogo = (RelativeLayout) findViewById(R.id.rl_logo);
+        setKeyboardVisibilityListener(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             ViewGroup rootView = (ViewGroup) findViewById(R.id.email_login_form);
@@ -73,8 +84,12 @@ public class SignInActivity extends CustomFontsActivity {
         }});
         tilLogin.setErrorEnabled(true);
         tilPassword.setErrorEnabled(true);
-
-        etLogin.setOnFocusChangeListener((v, hasFocus) -> tilLogin.setError(null));
+        etLogin.setOnFocusChangeListener((v, hasFocus) -> {
+            tilLogin.setError(null);
+        });
+        etPassword.setOnFocusChangeListener((v, hasFocus) -> {
+            tilPassword.setError(null);
+        });
         etPassword.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_GO || event == null || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
                 signIn();
@@ -87,7 +102,6 @@ public class SignInActivity extends CustomFontsActivity {
             }
             return false;
         });
-        etPassword.setOnFocusChangeListener((v, hasFocus) -> tilPassword.setError(null));
         tvForgotPassword.setOnClickListener(v -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(getResources().getString(R.string.link_company)));
             startActivity(browserIntent);
@@ -105,6 +119,7 @@ public class SignInActivity extends CustomFontsActivity {
         IntentFilter intentFilter = new IntentFilter(SignInService.ACTION_SERVICE_SIGN_IN);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mSignInBroadcastReceiver, intentFilter);
+        animationCloseKeyboard();
     }
     @Override
     protected void onPause() {
@@ -119,6 +134,52 @@ public class SignInActivity extends CustomFontsActivity {
         finish();
     }
 
+    @Override
+    public void onVisibilityChanged(boolean visible) {
+        if(visible){
+            animationOpenKeyboard();
+        }else{
+            animationCloseKeyboard();
+        }
+    }
+    private void setKeyboardVisibilityListener(final OnKeyboardVisibilityListener onKeyboardVisibilityListener) {
+        final View parentView = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+        parentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            private boolean alreadyOpen;
+            private final int defaultKeyboardHeightDP = 100;
+            private final int EstimatedKeyboardDP = defaultKeyboardHeightDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
+            private final Rect rect = new Rect();
+
+            @Override
+            public void onGlobalLayout() {
+                int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
+                parentView.getWindowVisibleDisplayFrame(rect);
+                int heightDiff = parentView.getRootView().getHeight() - (rect.bottom - rect.top);
+                boolean isShown = heightDiff >= estimatedKeyboardHeight;
+
+                if (isShown == alreadyOpen) {
+                    return;
+                }
+                alreadyOpen = isShown;
+                onKeyboardVisibilityListener.onVisibilityChanged(isShown);
+            }
+        });
+    }
+    private void animationOpenKeyboard(){
+        ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(rlLogo,
+                PropertyValuesHolder.ofFloat("scaleX", 0.5f),
+                PropertyValuesHolder.ofFloat("scaleY", 0.5f));
+        scaleDown.setDuration(300);
+        scaleDown.start();
+    }
+    private void animationCloseKeyboard(){
+        ObjectAnimator scaleDown = ObjectAnimator.ofPropertyValuesHolder(rlLogo,
+                PropertyValuesHolder.ofFloat("scaleX", 0.7f),
+                PropertyValuesHolder.ofFloat("scaleY", 0.7f));
+        scaleDown.setDuration(300);
+        scaleDown.start();
+    }
     public void signIn() {
         btnSignIn.setEnabled(false);
         if (checkConnection()) {
@@ -165,11 +226,13 @@ public class SignInActivity extends CustomFontsActivity {
     private boolean checkInput(String login, String password) {
         boolean answer = true;
         if (login == null || login.isEmpty()) {
+            etLogin.setError(getString(R.string.error_incorrent_login_input));
             tilLogin.setError(getString(R.string.error_incorrent_login_input));
             answer = false;
         }
         if (password == null || password.isEmpty()) {
             tilPassword.setError(getString(R.string.error_incorrent_password_input));
+            etPassword.setError(getString(R.string.error_incorrent_login_input));
             answer = false;
         }
         if (!answer) {
