@@ -52,22 +52,24 @@
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="16dp">
+                    <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="center_horizontal"-->
+                        <!--android:src="@drawable/menu_photo_background"-->
+                        <!--android:paddingLeft="@dimen/menu_account_photo_padding"-->
+                        <!--android:paddingRight="@dimen/menu_account_photo_padding"-->
+                        <!--android:adjustViewBounds="true"/>-->
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:src="@drawable/menu_photo_background"
-                        android:paddingLeft="@dimen/menu_account_photo_padding"
-                        android:paddingRight="@dimen/menu_account_photo_padding"
-                        android:adjustViewBounds="true"/>
-                    <ImageView
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
                         android:id="@+id/imgvUserPhoto"
                         android:layout_centerInParent="true"
                         android:src="@drawable/avatar"
-                        android:adjustViewBounds="true"/>
+                        android:adjustViewBounds="true" />
                     </RelativeLayout>
 
                 <TextView

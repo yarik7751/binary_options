@@ -136,7 +136,9 @@ public class ToolTabsView extends LinearLayout {
 
     public void setIcon(int logicNumber, int res) {
         int position = getPositionByLogicNumber(logicNumber);
-        ((ImageView) llTabs.getChildAt(position).findViewById(R.id.img)).setImageResource(res);
+        if(position >= 0){
+            ((ImageView) llTabs.getChildAt(position).findViewById(R.id.img)).setImageResource(res);
+        }
     }
 
     public void setOnChooseTab(OnChooseTab onChooseTab) {
@@ -196,7 +198,9 @@ public class ToolTabsView extends LinearLayout {
                 setTint(v, false);
                 if (titles != null && titles[i] != null) {
                     TextView tv = (TextView) v.findViewById(R.id.tv);
-                    tv.setText(titles[i]);
+                    if(tv != null){
+                        tv.setText(titles[i]);
+                    }
                 }
                 v.setTag(R.string.logical_number, i);
                 Log.d(TAG, "setData widthItem: " + widthView / adapter.getItemsCount());

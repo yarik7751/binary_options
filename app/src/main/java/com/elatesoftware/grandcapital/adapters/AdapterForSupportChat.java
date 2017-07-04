@@ -59,7 +59,7 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
             case VIEW_TYPE_SUPPORT_SECOND_ONE_LINE:
                 return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_second_one_line, parent, false));
             case VIEW_TYPE_TYPING:
-                return new MessageTypingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_typing, parent, false));
+                return new MessageTypingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_typing, parent, false));
         }
         return null;
     }

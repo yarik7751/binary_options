@@ -407,7 +407,6 @@ public class TerminalFragment extends Fragment {
         requestEarlyClosure();
         requestGetAllOrders();
     }
-
     @Override
     public void onStop() {
         if(mWebSocket != null){
@@ -415,7 +414,6 @@ public class TerminalFragment extends Fragment {
         }
         super.onStop();
     }
-
     @Override
     public void onPause() {
         stopTimerRedrawLimitLines();
@@ -706,7 +704,6 @@ public class TerminalFragment extends Fragment {
             return false;
         });
     }
-
     private synchronized LineDataSet createSetDataChart() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
         Collections.sort(set.getValues(), new EntryXComparator());

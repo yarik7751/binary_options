@@ -20,11 +20,11 @@
         android:layout_marginRight="4dp"
         android:layout_toLeftOf="@id/logo"
         android:background="@drawable/green_first"
-        android:paddingBottom="12dp"
+        android:paddingBottom="6dp"
         android:paddingLeft="12dp"
         android:paddingRight="24dp"
-        android:gravity="right"
-        android:paddingTop="12dp">
+        android:gravity="right|center"
+        android:paddingTop="8dp">
 
         <TextView
             android:id="@+id/tvContentMessage"
@@ -32,7 +32,6 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
             android:layout_marginRight="12dp"
             android:maxLines="1"
             tools:text="jhfgvfdgbgfhfghngnhgnghnghnghhhhb" />
