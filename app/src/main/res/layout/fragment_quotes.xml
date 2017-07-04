@@ -9,7 +9,9 @@
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fadeScrollbars="false"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:orientation="vertical"
@@ -29,6 +31,8 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_selected_quotes"
+                android:fadeScrollbars="false"
+                android:overScrollMode="never"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -45,6 +49,8 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_all_quotes"
+                android:fadeScrollbars="false"
+                android:overScrollMode="never"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

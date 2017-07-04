@@ -10,7 +10,9 @@
         android:id="@+id/rv_quotes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:fadeScrollbars="false"
+        android:overScrollMode="never"/>
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

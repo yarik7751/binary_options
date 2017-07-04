@@ -112,6 +112,8 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/ordersListOpen"
+                android:fadeScrollbars="false"
+                android:overScrollMode="never"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </LinearLayout>

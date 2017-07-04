@@ -118,7 +118,6 @@ public class SignInActivity extends CustomFontsActivity implements OnKeyboardVis
         IntentFilter intentFilter = new IntentFilter(SignInService.ACTION_SERVICE_SIGN_IN);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mSignInBroadcastReceiver, intentFilter);
-        animationCloseKeyboard();
     }
     @Override
     protected void onPause() {

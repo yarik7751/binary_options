@@ -174,7 +174,11 @@ public class GrandCapitalApi {
             if(response != null){
                 if(response.code() == CODE_SUCCESS) {
                     InfoAnswer.setInstance(response.body());
-                    User.getInstance().setUserName(InfoAnswer.getInstance().getName());
+                    if(InfoAnswer.getInstance() != null && InfoAnswer.getInstance().getName() != null){
+                        User.getInstance().setUserName(InfoAnswer.getInstance().getName());
+                    }else{
+                        User.setInstance(null);
+                    }
                     CustomSharedPreferences.updateInfoUser(GrandCapitalApplication.getAppContext());
                     if(InfoAnswer.getInstance() != null) {
                         if(InfoAnswer.getInstance().getServerName().contains("demo") && CustomSharedPreferences.getIntervalAdvertising(GrandCapitalApplication.getAppContext()) <= 0) {

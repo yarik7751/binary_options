@@ -23,8 +23,8 @@ import okhttp3.WebSocketListener;
 
 public final class WebSocketApi extends WebSocketListener {
 
-    private WebSocket webSocket = null;
-    private Timer mTimer;
+    private static WebSocket webSocket = null;
+    private static Timer mTimer;
 
     private static String mSymbolCurrent = null;
     private String mMessageCurrent = null;
@@ -112,7 +112,11 @@ public final class WebSocketApi extends WebSocketListener {
         }, 1000, 1000);
     }
 
-    public void closeSocket(){
+    public static WebSocket getWebSocket() {
+        return webSocket;
+    }
+
+    public static void closeSocket(){
         mTimer.purge();
         mTimer.cancel();
         webSocket.close(1000, "Goodbye, Socket!");

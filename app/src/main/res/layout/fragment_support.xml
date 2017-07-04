@@ -14,6 +14,10 @@
         android:id="@+id/rv_messages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fadeScrollbars="false"
+        android:fadingEdgeLength="0dp"
+        android:fadingEdge="none"
+        android:overScrollMode="never"
         android:paddingTop="10dp"
         android:layout_weight="1"/>
 

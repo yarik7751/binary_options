@@ -6,6 +6,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/bg"
     tools:context=".views.activities.SignInActivity"
+    android:fadeScrollbars="false"
+    android:overScrollMode="never"
+    android:scrollbarSize="0dp"
+    android:scrollbars="none"
+    android:scrollbarAlwaysDrawVerticalTrack="false"
     android:fillViewport="true">
 
     <RelativeLayout
@@ -17,7 +22,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/rl_logo"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:scaleY="0.7"
+            android:scaleX="0.7">
             <ImageView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"

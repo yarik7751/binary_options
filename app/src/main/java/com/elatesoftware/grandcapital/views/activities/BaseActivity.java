@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.elatesoftware.grandcapital.R;
+import com.elatesoftware.grandcapital.api.socket.WebSocketApi;
 import com.elatesoftware.grandcapital.models.User;
 import com.elatesoftware.grandcapital.services.CheckDealingService;
 import com.elatesoftware.grandcapital.services.InfoUserService;
@@ -219,6 +220,9 @@ public class BaseActivity extends CustomFontsActivity {
         @Override
         public void onClick(View view) {
             if (view == mLogout) {
+                if(WebSocketApi.getWebSocket() != null ){
+                    WebSocketApi.closeSocket();
+                }
                 CustomDialog.showDialogLogout(BaseActivity.this);
             }else if (view == mTerminal) {
                 //changeMainFragment(TerminalFragment.getInstance());
