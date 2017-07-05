@@ -1041,6 +1041,12 @@ public class TerminalFragment extends Fragment {
     }
     private synchronized void drawDataSymbolHistory(final String symbol) {
         final List<SymbolHistoryAnswer> listSymbol = SymbolHistoryAnswer.getInstance();
+        /**clear chart for correct build */
+        if(mChart != null && mChart.getLineData() != null){
+            mChart.getLineData().clearValues();
+            mChart.clearValues();
+        }
+        /**********************************/
         if (listSymbol != null && listSymbol.size() != 0) {
             Log.d(GrandCapitalApplication.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
             getActivity().runOnUiThread(() -> {
@@ -1087,7 +1093,6 @@ public class TerminalFragment extends Fragment {
         isFinishedDrawPoint = true;
         stopProgress();
     }
-
     private void drawCurrentPoint(Entry entry) {
         if (imgPointCurrent != null) {
             MPPointF point = mChart.getPosition(entry, YAxis.AxisDependency.RIGHT);
