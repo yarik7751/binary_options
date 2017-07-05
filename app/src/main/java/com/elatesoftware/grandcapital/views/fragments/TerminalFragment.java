@@ -158,7 +158,6 @@ public class TerminalFragment extends Fragment {
     private float x1 = -1, y1 = -1, x2 = -1, y2 = -1, distance1 = -1, distance2 = -1;
 
     private ViewInfoHelper mViewInfoHelper;
-    private WebSocketApi mWebSocket;
 
     private List<String> listActives = new ArrayList<>();
     public  List<OrderAnswer> listCurrentClosingDealings = new ArrayList<>();
@@ -409,9 +408,7 @@ public class TerminalFragment extends Fragment {
     }
     @Override
     public void onStop() {
-        if(mWebSocket != null){
-            mWebSocket.closeSocket();
-        }
+        WebSocketApi.closeSocket();
         super.onStop();
     }
     @Override
@@ -763,11 +760,10 @@ public class TerminalFragment extends Fragment {
     }
     private void changeActive(){
         startProgress();
+        WebSocketApi.closeSocket();
         llDeposit.setBackgroundColor(getResources().getColor(R.color.dialog_bg));
         imgPointCurrent.setVisibility(View.INVISIBLE);
-        if(mWebSocket != null){
-            mWebSocket.closeSocket();
-        }
+
         if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
             sSymbolCurrent = Const.SYMBOL;
         }
@@ -785,7 +781,6 @@ public class TerminalFragment extends Fragment {
         SymbolHistoryAnswer.nullInstance();
         SocketAnswer.nullInstance();
         OrderAnswer.nullInstance();
-
         clearChart();
         listSocketAnswerQueue.clear();
         listCurrentClosingDealings.clear();
@@ -1082,14 +1077,15 @@ public class TerminalFragment extends Fragment {
                         }
                         if(isFirstLoopPoint) {
                             new Handler().postDelayed(this, 50);
+                        }else {
+                            stopProgress();
                         }
-                        stopProgress();
                     }
                 }, 50));
             }
         }
         if(WebSocketApi.getmSymbolCurrent() == null || !WebSocketApi.getmSymbolCurrent().equals(symbol)){
-            mWebSocket = new WebSocketApi(symbol);
+            new WebSocketApi(symbol);
         }
         isFinishedDrawPoint = true;
         stopProgress();
@@ -1262,7 +1258,7 @@ public class TerminalFragment extends Fragment {
                 SymbolHistoryAnswer.getInstance() != null){
                     drawDataSymbolHistory(ConventString.getActive(tvValueActive));
             } else {
-                mWebSocket = new WebSocketApi(sSymbolCurrent);
+                new WebSocketApi(sSymbolCurrent);
                 stopProgress();
             }
         }

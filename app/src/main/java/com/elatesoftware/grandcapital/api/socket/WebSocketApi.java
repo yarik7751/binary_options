@@ -82,7 +82,9 @@ public final class WebSocketApi extends WebSocketListener {
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         Log.d(GrandCapitalApplication.TAG_SOCKET, "FailSocket = " +  t.getMessage());
-        new WebSocketApi(mSymbolCurrent);
+        if(mSymbolCurrent != null && !mSymbolCurrent.equals("")){
+            new WebSocketApi(mSymbolCurrent);
+        }
     }
 
     private void startTimer(){
@@ -112,14 +114,14 @@ public final class WebSocketApi extends WebSocketListener {
         }, 1000, 1000);
     }
 
-    public static WebSocket getWebSocket() {
-        return webSocket;
-    }
-
     public static void closeSocket(){
-        mTimer.purge();
-        mTimer.cancel();
-        webSocket.close(1000, "Goodbye, Socket!");
+        if(mTimer != null){
+            mTimer.purge();
+            mTimer.cancel();
+        }
+        if(webSocket != null){
+            webSocket.close(1000, "Goodbye, Socket!");
+        }
     }
 
     public static String getmSymbolCurrent() {

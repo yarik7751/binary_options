@@ -220,9 +220,7 @@ public class BaseActivity extends CustomFontsActivity {
         @Override
         public void onClick(View view) {
             if (view == mLogout) {
-                if(WebSocketApi.getWebSocket() != null ){
-                    WebSocketApi.closeSocket();
-                }
+                WebSocketApi.closeSocket();
                 CustomDialog.showDialogLogout(BaseActivity.this);
             }else if (view == mTerminal) {
                 //changeMainFragment(TerminalFragment.getInstance());
