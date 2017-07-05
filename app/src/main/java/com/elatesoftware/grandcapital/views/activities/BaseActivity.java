@@ -246,7 +246,7 @@ public class BaseActivity extends CustomFontsActivity {
                 //changeMainFragment(new DepositFragment());
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
                 startActivity(browserIntent);
-                GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_DEPOSIT, null, null);
+                GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_IN_OUT_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_DEPOSIT, null, null);
             }
             mResideMenu.closeMenu();
         }
@@ -261,7 +261,7 @@ public class BaseActivity extends CustomFontsActivity {
                     if(TerminalFragment.isOpen && terminalFragment != null) {
                         terminalFragment.showSignalsPanel();
                     }
-                    GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_WIDGET_SIGNALS, null, null);
+                    GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_WIDGET_SIGNALS, null, null);
                     break;
                 case TERMINAL_POSITION:
                     Log.d(TAG, "TERMINAL_POSITION");

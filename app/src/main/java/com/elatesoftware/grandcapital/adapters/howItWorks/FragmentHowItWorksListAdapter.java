@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.QuestionsAnswer;
-import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.fragments.FAQFragment;
@@ -65,7 +64,7 @@ public class FragmentHowItWorksListAdapter extends GrandCapitalListAdapter {
             bundle.putString(QuestionFragment.HEADER_TEXT, mQuestionsNames[position]);
             bundle.putString(QuestionFragment.CONTENT_TEXT, mQuestionsContent[position]);
 
-            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_QUESTION_SCREEN, Const.ANALYTICS_LIST_QUESTION, mQuestionsNames[position], null);
+            GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_QUESTION_SCREEN, GoogleAnalyticsUtil.ANALYTICS_LIST_QUESTION, mQuestionsNames[position], null);
 
             BaseActivity.sMainTagFragment = FAQFragment.class.getName();
             QuestionFragment questionFragment = new QuestionFragment();

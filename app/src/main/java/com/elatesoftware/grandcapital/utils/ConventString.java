@@ -72,7 +72,7 @@ public class ConventString {
             }
         }
         v.setText(time + (isOpenKeyboard ? "" : " MIN"));
-        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CHANGE_TIME, isAdd ? "+" : "-", (long) time);
+        GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_CHANGE_TIME, isAdd ? "+" : "-", (long) time);
     }
 
     public static void setTimeValue(EditText v, int value, boolean isOpenKeyboard) {
@@ -96,7 +96,7 @@ public class ConventString {
             }
         }
         v.setText((isOpenKeyboard ? "" : "$") + amout);
-        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS, isAdd ? "+" : "-", (long) amout);
+        GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_CHANGE_AMOUNT_INVESTMENTS, isAdd ? "+" : "-", (long) amout);
     }
     public static double getAmountValue(EditText v) {
         String valueStr = v.getText().toString();

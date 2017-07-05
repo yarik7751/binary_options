@@ -14,16 +14,11 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.BinaryOptionAnswer;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
-import com.elatesoftware.grandcapital.models.User;
-import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.fragments.PromotionsFragment;
 import com.elatesoftware.grandcapital.views.fragments.QuestionFragment;
-import com.elatesoftware.grandcapital.views.fragments.WebFragment;
-import com.google.android.gms.analytics.HitBuilders;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -95,7 +90,7 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
             bundle.putString(QuestionFragment.HEADER_TEXT, finalName);
             bundle.putString(QuestionFragment.CONTENT_TEXT, finalLongDescription);
 
-            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_PROMOTIONS_SCREEN, Const.ANALYTICS_LIST_PROMOTION, binaryOptionAnswer.getElements().get(position).getShortDescription(), null);
+            GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_PROMOTIONS_SCREEN, GoogleAnalyticsUtil.ANALYTICS_LIST_PROMOTION, binaryOptionAnswer.getElements().get(position).getShortDescription(), null);
 
             BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
             QuestionFragment questionFragment = new QuestionFragment();

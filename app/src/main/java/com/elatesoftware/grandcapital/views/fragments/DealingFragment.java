@@ -160,8 +160,8 @@ public class DealingFragment extends Fragment {
 
     private void analytics(int tabPosition) {
         GoogleAnalyticsUtil.sendEvent(
-                Const.ANALYTICS_DEALINGS_SCREEN,
-                tabPosition == 0 ? Const.ANALYTICS_TAB_OPEN_DEALINGS : Const.ANALYTICS_TAB_CLOSE_DEALINGS,
+                GoogleAnalyticsUtil.ANALYTICS_DEALINGS_SCREEN,
+                tabPosition == 0 ? GoogleAnalyticsUtil.ANALYTICS_TAB_OPEN_DEALINGS : GoogleAnalyticsUtil.ANALYTICS_TAB_CLOSE_DEALINGS,
                 null,
                 null
         );

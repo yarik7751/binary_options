@@ -370,7 +370,7 @@ public class TerminalFragment extends Fragment {
             BaseActivity.sMainTagFragment = TerminalFragment.class.getName();
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
             startActivity(browserIntent);
-            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_DEPOSIT, null, null);
+            GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_IN_OUT_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_DEPOSIT, null, null);
         });
         llLowerTerminal.setOnClickListener(v -> {
             llLowerTerminal.setEnabled(false);
@@ -772,8 +772,8 @@ public class TerminalFragment extends Fragment {
         tvValueActive.setText(sSymbolCurrent);
         Log.d(TAG, "sSymbolCurrent: " + sSymbolCurrent);
         GoogleAnalyticsUtil.sendEvent(
-                Const.ANALYTICS_TERMINAL_SCREEN,
-                Const.ANALYTICS_BUTTON_CHANGE_ACTIVE,
+                GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN,
+                GoogleAnalyticsUtil.ANALYTICS_BUTTON_CHANGE_ACTIVE,
                 sSymbolCurrent,
                 null
         );
@@ -868,8 +868,8 @@ public class TerminalFragment extends Fragment {
             intentService.putExtra(MakeDealingService.EXPIRATION, String.valueOf(ConventString.getTimeValue(etValueTime)));
             getActivity().startService(intentService);
             GoogleAnalyticsUtil.sendEvent(
-                    Const.ANALYTICS_TERMINAL_SCREEN,
-                    lowerOrHeight.equals(Const.CMD_HEIGHT) ? Const.ANALYTICS_BUTTON_UP : Const.ANALYTICS_BUTTON_DOWN,
+                    GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN,
+                    lowerOrHeight.equals(Const.CMD_HEIGHT) ? GoogleAnalyticsUtil.ANALYTICS_BUTTON_UP : GoogleAnalyticsUtil.ANALYTICS_BUTTON_DOWN,
                     null,
                     null
             );
@@ -1040,9 +1040,6 @@ public class TerminalFragment extends Fragment {
         }
     }
     private synchronized void drawDataSymbolHistory(final String symbol) {
-        /*if (SymbolHistoryAnswer.getInstance() == null || SymbolHistoryAnswer.getInstance().size() == 0) {
-            return;
-        }*/
         final List<SymbolHistoryAnswer> listSymbol = SymbolHistoryAnswer.getInstance();
         if (listSymbol != null && listSymbol.size() != 0) {
             Log.d(GrandCapitalApplication.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
@@ -1177,7 +1174,6 @@ public class TerminalFragment extends Fragment {
             }
         }
     }
-
     public void showSignalsPanel() {
         if(!isDirection) {
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
@@ -1395,7 +1391,7 @@ public class TerminalFragment extends Fragment {
                         mViewInfoHelper.updateSettingsCloseDealing(order, getActivity());
                         BaseLimitLine.deleteDealingLimitLine(ticket);
                         typePoint = POINT_CLOSE_DEALING;
-                        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_TERMINAL_SCREEN, Const.ANALYTICS_BUTTON_CLOSE_DEALINGS, null, null);
+                        GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_CLOSE_DEALINGS, null, null);
                     }
                 }
             }

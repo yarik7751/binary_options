@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.GrandCapitalListAdapter;
 import com.elatesoftware.grandcapital.api.pojo.Instrument;
-import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
@@ -90,11 +89,11 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
                     selectedQuotes += selectedInstruments.get(position).getSymbol() + ";";
                 }
                 CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
-                GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_QUOTES_SCREEN, Const.ANALYTICS_BUTTON_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
+                GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_QUOTES_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
             } else if(variant == SELECT_QUOTES) {
                 selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol().toUpperCase() + ";", "");
                 CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
-                GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_QUOTES_SCREEN, Const.ANALYTICS_BUTTON_DELETE_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
+                GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_QUOTES_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_DELETE_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
             }
             onSharedPreferencesChange.onChange();
         });

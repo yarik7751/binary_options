@@ -66,13 +66,13 @@ public class DepositFragment  extends Fragment {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
             startActivity(browserIntent);
-            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_DEPOSIT, null, null);
+            GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_IN_OUT_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_DEPOSIT, null, null);
         });
         llWithdraw.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = DepositFragment.class.getName();
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_WITHDRAW));
             startActivity(browserIntent);
-            GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_IN_OUT_SCREEN, Const.ANALYTICS_BUTTON_WITHDRAW, null, null);
+            GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_IN_OUT_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_WITHDRAW, null, null);
         });
 
         /**rvIoOut.setLayoutManager(new LinearLayoutManager(getContext()));*/

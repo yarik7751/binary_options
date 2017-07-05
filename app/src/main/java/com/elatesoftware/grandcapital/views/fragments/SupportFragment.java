@@ -189,7 +189,7 @@ public class SupportFragment extends Fragment {
                         adapter.loadedMessages();
                         caseId = ChatCreateAnswer.getInstance().getCaseId();
                         handler.postDelayed(runnablePollChat, INTERVAL);
-                        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
+                        GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_SUPPORT_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {
                         adapter.deleteLoading();
                         CustomDialog.showDialogInfo(getActivity(), getString(R.string.request_error_title), getString(R.string.request_error_text));
@@ -219,7 +219,7 @@ public class SupportFragment extends Fragment {
                     isMessageLoading = false;
                     if (response != null && response.equals(Const.RESPONSE_CODE_SUCCESS) && SendMessageAnswer.getInstance() != null) {
                         adapter.loadedMessages();
-                        GoogleAnalyticsUtil.sendEvent(Const.ANALYTICS_SUPPORT_SCREEN, Const.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
+                        GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_SUPPORT_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_SEND_MESSAGE, message, null);
                     } else {
                         adapter.deleteLoading();
                         CustomDialog.showDialogInfo(getActivity(), getString(R.string.request_error_title), getString(R.string.request_error_text));
