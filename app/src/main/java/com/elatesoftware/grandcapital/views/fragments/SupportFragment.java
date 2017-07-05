@@ -177,7 +177,6 @@ public class SupportFragment extends Fragment {
     }
 
     public class GetChatBroadcastReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getStringExtra(SignInService.RESPONSE);
@@ -207,6 +206,7 @@ public class SupportFragment extends Fragment {
                             }
                         }
                         if(PollChatAnswer.getInstance().isAgentTyping()) {
+                            adapter.deleteTyping();
                             addTyping();
                         } else {
                             adapter.deleteTyping();

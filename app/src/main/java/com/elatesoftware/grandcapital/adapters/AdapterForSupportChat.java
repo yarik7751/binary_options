@@ -28,11 +28,12 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     private static final int VIEW_TYPE_SUPPORT_FIRST = 1;
     private static final int VIEW_TYPE_USER_SECOND = 2;
     private static final int VIEW_TYPE_SUPPORT_SECOND = 3;
-    private static final int VIEW_TYPE_TYPING = 4;
-    private static final int VIEW_TYPE_USER_FIRST_ONE_LINE = 5;
-    private static final int VIEW_TYPE_USER_SECOND_ONE_LINE = 6;
-    private static final int VIEW_TYPE_SUPPORT_FIRST_ONE_LINE = 7;
-    private static final int VIEW_TYPE_SUPPORT_SECOND_ONE_LINE = 8;
+    private static final int VIEW_TYPE_TYPING_FIRST = 4;
+    private static final int VIEW_TYPE_TYPING_SECOND = 5;
+    private static final int VIEW_TYPE_USER_FIRST_ONE_LINE = 6;
+    private static final int VIEW_TYPE_USER_SECOND_ONE_LINE = 7;
+    private static final int VIEW_TYPE_SUPPORT_FIRST_ONE_LINE = 8;
+    private static final int VIEW_TYPE_SUPPORT_SECOND_ONE_LINE = 9;
 
     public AdapterForSupportChat(List<MessageChat> list, Context context) {
         this.mListMessages = list;
@@ -58,8 +59,10 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
                 return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_second, parent, false));
             case VIEW_TYPE_SUPPORT_SECOND_ONE_LINE:
                 return new MessageSupportViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_support_second_one_line, parent, false));
-            case VIEW_TYPE_TYPING:
-                return new MessageTypingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_typing, parent, false));
+            case VIEW_TYPE_TYPING_FIRST:
+                return new MessageTypingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_typing_first, parent, false));
+            case VIEW_TYPE_TYPING_SECOND:
+                return new MessageTypingViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message_typing_second, parent, false));
         }
         return null;
     }
@@ -68,7 +71,7 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         MessageBaseViewHolder baseHolder;
         final MessageChat message = getMessage(position);
-        holder.setIsRecyclable(false); //TODO запрещает использовать элементы повторно.!
+        holder.setIsRecyclable(false); /**запрещает использовать элементы повторно!*/
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_USER_FIRST_ONE_LINE:
             case VIEW_TYPE_USER_SECOND_ONE_LINE:
@@ -92,7 +95,8 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
                 ((MessageSupportViewHolder) holder).tvMessage.setText(message.getText());
             }
                 break;
-            case VIEW_TYPE_TYPING:
+            case VIEW_TYPE_TYPING_FIRST:
+            case VIEW_TYPE_TYPING_SECOND:
                 break;
             default:
                 break;
@@ -103,7 +107,11 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     public int getItemViewType(int position) {
         MessageChat msg = getMessage(position);
         if(msg.isTyping()) {
-            return VIEW_TYPE_TYPING;
+            if(position > 0 && mListMessages.get(position - 1).isTheir()){
+                return VIEW_TYPE_TYPING_SECOND;
+            }else{
+                return VIEW_TYPE_TYPING_FIRST;
+            }
         }
         if (msg.isTheir()) {
             if(position > 0 && mListMessages.get(position - 1).isTheir()) {
@@ -213,10 +221,8 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     }
 
    private static class MessageUserViewHolder extends  MessageBaseViewHolder{
-
         private TextView tvMessage, tvDate;
         private ProgressBar pbLoading;
-
          MessageUserViewHolder(View view) {
             super(view);
             tvMessage = (TextView) view.findViewById(R.id.tvContentMessage);
@@ -226,9 +232,7 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     }
 
    private static class MessageSupportViewHolder extends MessageBaseViewHolder {
-
         private  TextView tvMessage, tvDate;
-
         MessageSupportViewHolder(View view) {
             super(view);
             tvMessage = (TextView) view.findViewById(R.id.tvContentMessage);
@@ -237,7 +241,6 @@ public class AdapterForSupportChat extends  RecyclerView.Adapter<RecyclerView.Vi
     }
 
    private static class MessageTypingViewHolder extends MessageBaseViewHolder {
-
         MessageTypingViewHolder(View itemView) {
             super(itemView);
         }
