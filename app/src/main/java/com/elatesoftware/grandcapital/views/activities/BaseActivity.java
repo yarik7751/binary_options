@@ -146,7 +146,7 @@ public class BaseActivity extends CustomFontsActivity {
 
     private void setupMenu() {
         mResideMenu = new ResideMenu(this);
-        mResideMenu.setBackground(R.drawable.menu_bg);
+        mResideMenu.setBackground(R.drawable.bg_menu);
         mResideMenu.attachToActivity(this);
         mResideMenu.setMenuListener(menuListener);
         mResideMenu.setSwipeDirectionDisable(ResideMenu.DIRECTION_RIGHT);

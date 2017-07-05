@@ -42,7 +42,7 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
 
     @Override
     public FragmentPromotionsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_promotions_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_promotions, parent, false);
         return new FragmentPromotionsViewHolder(v);
     }
 

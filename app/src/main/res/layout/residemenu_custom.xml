@@ -13,7 +13,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@drawable/shadow"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        />
 
     <RelativeLayout
         android:id="@+id/sv_menu_holder"
