@@ -4,10 +4,11 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:gravity="top"
-    android:layout_height="60dp"
+    android:layout_height="wrap_content"
     android:paddingTop="10dp"
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
+    android:paddingBottom="4dp"
     android:background="@color/dialog_bg"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
@@ -21,6 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
+            style="@style/SupportChatStyle"
+            android:textSize="14sp"
             android:id="@+id/tvErrorSignal"
             android:textColor="@color/color_text_deposit"
             tools:text="@string/error_find_signal"/>

@@ -904,26 +904,31 @@ public class TerminalFragment extends Fragment {
     }
 
     private void parseResponseSignals(String symbol) {
-        if (SignalAnswer.getInstance() != null) {
+        if (SignalAnswer.getInstance() != null && SignalAnswer.getSignalsActive(symbol).size() != 0) {
             List<SignalAnswer> list = SignalAnswer.getSignalsActive(symbol);
-            if (list.size() != 0) {
-                rlErrorSignal.setVisibility(View.GONE);
-                tvCurrentActive.setText(symbol);
-                tvCurrentActiveAmount.setText(Double.toString(mCurrentValueY));
-                for (SignalAnswer answer : list) {
-                    if (answer.getTime() == 60) {
-                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes1, answer.getSummary());
-                    } else if (answer.getTime() == 300) {
-                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes5, answer.getSummary());
-                    } else if (answer.getTime() == 900) {
-                        ConventString.parseResponseSignals(getActivity(), tvSignalMinutes15, answer.getSummary());
-                    }
+            rlErrorSignal.setVisibility(View.GONE);
+            tvCurrentActive.setText(symbol);
+            tvCurrentActiveAmount.setText(Double.toString(mCurrentValueY));
+            for (SignalAnswer answer : list) {
+                if (answer.getTime() == 60 && !isEmptyTradeSignals(answer.getSummary())) {
+                    ConventString.parseResponseSignals(getActivity(), tvSignalMinutes1, answer.getSummary());
+                } else if (answer.getTime() == 300 && !isEmptyTradeSignals(answer.getSummary())) {
+                    ConventString.parseResponseSignals(getActivity(), tvSignalMinutes5, answer.getSummary());
+                } else if (answer.getTime() == 900 && !isEmptyTradeSignals(answer.getSummary())) {
+                   ConventString.parseResponseSignals(getActivity(), tvSignalMinutes15, answer.getSummary());
                 }
-            } else {
-                rlErrorSignal.setVisibility(View.VISIBLE);
-                tvErrorSignal.setText(getResources().getString(R.string.error_find_signal));
             }
+        }else{
+            isEmptyTradeSignals("");
         }
+    }
+    private boolean isEmptyTradeSignals(String summary){
+        if(summary.equals("")){
+            rlErrorSignal.setVisibility(View.VISIBLE);
+            tvErrorSignal.setText(getResources().getString(R.string.error_find_signal));
+            return true;
+        }
+        return false;
     }
     private void parseClosingDealings(List<OrderAnswer> listAllClosedDealings){
         if(listCurrentClosingDealings != null && listCurrentClosingDealings.size() != 0){

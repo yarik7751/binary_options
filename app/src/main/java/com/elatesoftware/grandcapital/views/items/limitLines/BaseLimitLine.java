@@ -345,7 +345,7 @@ public class BaseLimitLine extends LimitLine {
             Collections.sort(listLines,(p1, p2) -> (new Gson().fromJson(p1.getLabel(), OrderAnswer.class).getOpenTime().compareTo(
                                                    (new Gson().fromJson(p2.getLabel(), OrderAnswer.class).getOpenTime()))));
             Collections.sort(listOrders,(o1, o2) -> o1.getOpenTime().compareTo(o2.getOpenTime()));
-            //TODO xz....bug  was fixed or not?
+            //TODO xz....bug was fixed or not? Error: java.lang.IndexOutOfBoundsException: Invalid index 1, size is 1
            if(listLines.size() > 0 && listOrders.size() > 0 && listLines.size() > listOrders.size()){
                 if(listOrders.size() > 1){
                     listLines = listLines.subList(0, listOrders.size()-1);

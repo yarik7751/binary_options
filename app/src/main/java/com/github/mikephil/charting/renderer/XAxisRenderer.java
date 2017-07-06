@@ -233,7 +233,6 @@ public class XAxisRenderer extends AxisRenderer {
                             linearLayoutXLabel.setDrawingCacheEnabled(true);
                             linearLayoutXLabel.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
                             linearLayoutXLabel.layout(0, 0, linearLayoutXLabel.getMeasuredWidth(), linearLayoutXLabel.getMeasuredHeight());
-
                             linearLayoutXLabel.buildDrawingCache(true);
                             Bitmap iconLabelX = Bitmap.createBitmap(linearLayoutXLabel.getDrawingCache());
                             linearLayoutXLabel.setDrawingCacheEnabled(false); // clear drawing cache
