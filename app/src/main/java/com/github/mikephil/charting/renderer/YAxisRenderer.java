@@ -15,10 +15,10 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.ActiveDealingLine;
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.SocketLine;
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.YDealingLine;
+import com.elatesoftware.grandcapital.views.items.limitLines.ActiveDealingLine;
+import com.elatesoftware.grandcapital.views.items.limitLines.BaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.limitLines.SocketLine;
+import com.elatesoftware.grandcapital.views.items.limitLines.YDealingLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;
@@ -34,12 +34,10 @@ import java.util.List;
 public class YAxisRenderer extends AxisRenderer {
 
     protected YAxis mYAxis;
-
     protected Paint mZeroLinePaint;
 
     public YAxisRenderer(ViewPortHandler viewPortHandler, YAxis yAxis, Transformer trans) {
         super(viewPortHandler, trans, yAxis);
-
         this.mYAxis = yAxis;
         if(mViewPortHandler != null)
             mAxisLabelPaint.setColor(Color.BLACK);
@@ -55,10 +53,9 @@ public class YAxisRenderer extends AxisRenderer {
      */
     @Override
     public void renderAxisLabels(Canvas c) {
-
-        if (!mYAxis.isEnabled() || !mYAxis.isDrawLabelsEnabled())
+        if (!mYAxis.isEnabled() || !mYAxis.isDrawLabelsEnabled()){
             return;
-
+        }
         float[] positions = getTransformedPositions();
 
         mAxisLabelPaint.setTypeface(mYAxis.getTypeface());
@@ -71,8 +68,7 @@ public class YAxisRenderer extends AxisRenderer {
         AxisDependency dependency = mYAxis.getAxisDependency();
         YAxisLabelPosition labelPosition = mYAxis.getLabelPosition();
 
-        float xPos = 0f;
-
+        float xPos;
         if (dependency == AxisDependency.LEFT) {
             if (labelPosition == YAxisLabelPosition.OUTSIDE_CHART) {
                 mAxisLabelPaint.setTextAlign(Align.RIGHT);
@@ -95,10 +91,9 @@ public class YAxisRenderer extends AxisRenderer {
 
     @Override
     public void renderAxisLine(Canvas c) {
-
-        if (!mYAxis.isEnabled() || !mYAxis.isDrawAxisLineEnabled())
+        if (!mYAxis.isEnabled() || !mYAxis.isDrawAxisLineEnabled()){
             return;
-
+        }
         mAxisLinePaint.setColor(mYAxis.getAxisLineColor());
         mAxisLinePaint.setStrokeWidth(mYAxis.getAxisLineWidth());
 
@@ -125,7 +120,7 @@ public class YAxisRenderer extends AxisRenderer {
             }
             c.drawText(text, fixedPosition, positions[i * 2 + 1] + offset, mAxisLabelPaint);
         }
-        // limitline labels
+        /** limitline labels*/
         List<LimitLine> limitLines = mYAxis.getLimitLines();
         float[] pts = new float[2];
 
@@ -142,7 +137,7 @@ public class YAxisRenderer extends AxisRenderer {
                 yDealingLine = (YDealingLine) lineLimit;
             }
         }
-        //********remove***************
+        /*********remove****************/
         if(socketLine != null){
             limitLines.remove(socketLine);
         }
@@ -152,7 +147,7 @@ public class YAxisRenderer extends AxisRenderer {
         if(yDealingLine != null){
             limitLines.remove(yDealingLine);
         }
-        //********add***************
+        /********add****************/
         if(socketLine != null){
             limitLines.add(socketLine);
         }
@@ -162,7 +157,7 @@ public class YAxisRenderer extends AxisRenderer {
         if(yDealingLine != null){
             limitLines.add(yDealingLine);
         }
-        //********draw***************
+        /********draw***************/
         for (LimitLine l : limitLines) {
             if (l instanceof BaseLimitLine) {
                 BaseLimitLine line = (BaseLimitLine) l;
@@ -340,7 +335,6 @@ public class YAxisRenderer extends AxisRenderer {
 
             Path gridLinePath = mRenderGridLinesPath;
             gridLinePath.reset();
-
             // draw the grid
             for (int i = 0; i < positions.length; i += 2) {
                 // draw a path because lines don't support dashing on lower android versions

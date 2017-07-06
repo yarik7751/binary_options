@@ -49,12 +49,7 @@ public class ResideMenuItemWithMark extends ResideMenuBaseItem {
         if (value > 0) {
             tv_value.setText(String.valueOf(value));
             badgeLayout.setVisibility(VISIBLE);
-            /*if(value > 99) {
-                ((LayoutParams) tv_value.getLayoutParams()).leftMargin = AndroidUtils.dp(4);
-                ((LayoutParams) tv_value.getLayoutParams()).rightMargin = AndroidUtils.dp(4);
-            }*/
-        }
-        if(value == 0){
+        }else{
             badgeLayout.setVisibility(INVISIBLE);
         }
     }

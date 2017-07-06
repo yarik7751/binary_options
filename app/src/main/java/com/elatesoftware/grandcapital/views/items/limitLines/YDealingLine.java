@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.views.items.chart.limitLines;
+package com.elatesoftware.grandcapital.views.items.limitLines;
 
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.utils.ConventDate;

@@ -1,4 +1,3 @@
-
 package com.github.mikephil.charting.renderer;
 
 import android.graphics.Bitmap;
@@ -16,9 +15,9 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
 import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.BaseLimitLine;
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.XDealingLine;
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.YDealingLine;
+import com.elatesoftware.grandcapital.views.items.limitLines.BaseLimitLine;
+import com.elatesoftware.grandcapital.views.items.limitLines.XDealingLine;
+import com.elatesoftware.grandcapital.views.items.limitLines.YDealingLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.XAxis.XAxisPosition;
@@ -57,93 +56,75 @@ public class XAxisRenderer extends AxisRenderer {
     }
     @Override
     public void computeAxis(float min, float max, boolean inverted) {
-
         // calculate the starting and entry point of the y-labels (depending on
         // zoom / contentrect bounds)
         if (mViewPortHandler.contentWidth() > 10 && !mViewPortHandler.isFullyZoomedOutX()) {
-
             MPPointD p1 = mTrans.getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop());
             MPPointD p2 = mTrans.getValuesByTouchPoint(mViewPortHandler.contentRight(), mViewPortHandler.contentTop());
-
             if (inverted) {
-
                 min = (float) p2.x;
                 max = (float) p1.x;
             } else {
-
                 min = (float) p1.x;
                 max = (float) p2.x;
             }
-
             MPPointD.recycleInstance(p1);
             MPPointD.recycleInstance(p2);
         }
-
         computeAxisValues(min, max);
     }
+
     @Override
     protected void computeAxisValues(float min, float max) {
         super.computeAxisValues(min, max);
         computeSize();
     }
+
     protected void computeSize() {
-
         String longest = mXAxis.getLongestLabel();
-
         mAxisLabelPaint.setTypeface(mXAxis.getTypeface());
         mAxisLabelPaint.setTextSize(mXAxis.getTextSize());
-
         final FSize labelSize = Utils.calcTextSize(mAxisLabelPaint, longest);
-
         final float labelWidth = labelSize.width;
         final float labelHeight = Utils.calcTextHeight(mAxisLabelPaint, "Q");
-
         final FSize labelRotatedSize = Utils.getSizeOfRotatedRectangleByDegrees(
                 labelWidth,
                 labelHeight,
                 mXAxis.getLabelRotationAngle());
-
         mXAxis.mLabelWidth = Math.round(labelWidth);
         mXAxis.mLabelHeight = Math.round(labelHeight);
         mXAxis.mLabelRotatedWidth = Math.round(labelRotatedSize.width);
         mXAxis.mLabelRotatedHeight = Math.round(labelRotatedSize.height);
-
         FSize.recycleInstance(labelRotatedSize);
         FSize.recycleInstance(labelSize);
     }
+
     @Override
     public void renderAxisLabels(Canvas c) {
-
-        if (!mXAxis.isEnabled() || !mXAxis.isDrawLabelsEnabled())
+        if (!mXAxis.isEnabled() || !mXAxis.isDrawLabelsEnabled()) {
             return;
-
+        }
         float yoffset = mXAxis.getYOffset();
-
         mAxisLabelPaint.setTypeface(mXAxis.getTypeface());
         mAxisLabelPaint.setTextSize(mXAxis.getTextSize());
         mAxisLabelPaint.setColor(mXAxis.getTextColor());
-
         MPPointF pointF = MPPointF.getInstance(0, 0);
         if (mXAxis.getPosition() == XAxisPosition.TOP) {
             pointF.x = 0.5f;
             pointF.y = 1.0f;
             drawLabels(c, mViewPortHandler.contentTop() - yoffset, pointF);
-
         } else if (mXAxis.getPosition() == XAxisPosition.TOP_INSIDE) {
             pointF.x = 0.5f;
             pointF.y = 1.0f;
             drawLabels(c, mViewPortHandler.contentTop() + yoffset + mXAxis.mLabelRotatedHeight, pointF);
-
         } else if (mXAxis.getPosition() == XAxisPosition.BOTTOM) {
             pointF.x = 0.5f;
             pointF.y = 0.0f;
             drawLabels(c, mViewPortHandler.contentBottom() + yoffset, pointF);
-
         } else if (mXAxis.getPosition() == XAxisPosition.BOTTOM_INSIDE) {
             pointF.x = 0.5f;
             pointF.y = 0.0f;
             drawLabels(c, mViewPortHandler.contentBottom() - yoffset - mXAxis.mLabelRotatedHeight, pointF);
-
         } else { // BOTH SIDED
             pointF.x = 0.5f;
             pointF.y = 1.0f;
@@ -156,8 +137,9 @@ public class XAxisRenderer extends AxisRenderer {
     }
     @Override
     public void renderAxisLine(Canvas c) {
-        if (!mXAxis.isDrawAxisLineEnabled() || !mXAxis.isEnabled())
+        if (!mXAxis.isDrawAxisLineEnabled() || !mXAxis.isEnabled()) {
             return;
+        }
         mAxisLinePaint.setColor(mXAxis.getAxisLineColor());
         mAxisLinePaint.setStrokeWidth(mXAxis.getAxisLineWidth());
         mAxisLinePaint.setPathEffect(mXAxis.getAxisLineDashPathEffect());
@@ -359,7 +341,6 @@ public class XAxisRenderer extends AxisRenderer {
      * @param gridLinePath
      */
     protected void drawGridLine(Canvas c, float x, float y, Path gridLinePath) {
-
         gridLinePath.moveTo(x, mViewPortHandler.contentBottom());
         gridLinePath.lineTo(x, mViewPortHandler.contentTop());
         // draw a path because lines don't support dashing on lower android versions
@@ -375,18 +356,19 @@ public class XAxisRenderer extends AxisRenderer {
     @Override
     public void renderLimitLines(Canvas c) {
         List<LimitLine> limitLines = mXAxis.getLimitLines();
-        if (limitLines == null || limitLines.size() <= 0)
+        if (limitLines == null || limitLines.size() <= 0) {
             return;
+        }
         float[] position = mRenderLimitLinesBuffer;
         position[0] = 0;
         position[1] = 0;
 
         for (int i = 0; i < limitLines.size(); i++) {
             LimitLine l = limitLines.get(i);
-            if (!l.isEnabled())
+            if (!l.isEnabled()) {
                 continue;
+            }
             int clipRestoreCount = c.save();
-
             position[0] = l.getLimit();
             if(l instanceof BaseLimitLine){
                 OrderAnswer orderAnswer = new Gson().fromJson(l.getLabel(), OrderAnswer.class);

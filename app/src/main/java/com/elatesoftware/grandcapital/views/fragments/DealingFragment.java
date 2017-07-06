@@ -27,6 +27,7 @@ import com.elatesoftware.grandcapital.services.DeleteDealingService;
 import com.elatesoftware.grandcapital.services.OrdersService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
@@ -248,15 +249,14 @@ public class DealingFragment extends Fragment {
                                                     getString(R.string.seconds_remaining) : ""));
                                 }
                             });
+                            CustomSharedPreferences.setAmtOpenDealings(getContext(), currentOrders.size());
+                            ((BaseActivity) getActivity()).setDealings();
                             mRecyclerView.setAdapter(mAdapterOpen);
                         } else {
                             mAdapterOpen.updateAdapter(currentOrders);
                         }
                     } else {
                         mAdapterOpen = null;
-                        if(mAdapterClose == null) {
-
-                        }
                         mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
                         mRecyclerView.setAdapter(mAdapterClose);
                         //mProgressLayout.setVisibility(View.GONE);

@@ -116,28 +116,21 @@ public abstract class AxisRenderer extends Renderer {
      * @param max - the maximum value in the data object for this axis
      */
     public void computeAxis(float min, float max, boolean inverted) {
-
         // calculate the starting and entry point of the y-labels (depending on
         // zoom / contentrect bounds)
         if (mViewPortHandler != null && mViewPortHandler.contentWidth() > 10 && !mViewPortHandler.isFullyZoomedOutY()) {
-
             MPPointD p1 = mTrans.getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentTop());
             MPPointD p2 = mTrans.getValuesByTouchPoint(mViewPortHandler.contentLeft(), mViewPortHandler.contentBottom());
-
             if (!inverted) {
-
                 min = (float) p2.y;
                 max = (float) p1.y;
             } else {
-
                 min = (float) p1.y;
                 max = (float) p2.y;
             }
-
             MPPointD.recycleInstance(p1);
             MPPointD.recycleInstance(p2);
         }
-
         computeAxisValues(min, max);
     }
 
@@ -147,13 +140,10 @@ public abstract class AxisRenderer extends Renderer {
      * @return
      */
     protected void computeAxisValues(float min, float max) {
-
         float yMin = min;
         float yMax = max;
-
         int labelCount = mAxis.getLabelCount();
         double range = Math.abs(yMax - yMin);
-
         if (labelCount == 0 || range <= 0 || Double.isInfinite(range)) {
             mAxis.mEntries = new float[]{};
             mAxis.mCenteredEntries = new float[]{};
@@ -167,9 +157,9 @@ public abstract class AxisRenderer extends Renderer {
 
         // If granularity is enabled, then do not allow the interval to go below specified granularity.
         // This is used to avoid repeated values when rounding values for display.
-        if (mAxis.isGranularityEnabled())
+        if (mAxis.isGranularityEnabled()){
             interval = interval < mAxis.getGranularity() ? mAxis.getGranularity() : interval;
-
+        }
         // Normalize interval
         double intervalMagnitude = Utils.roundToNextSignificant(Math.pow(10, (int) Math.log10(interval)));
         int intervalSigDigit = (int) (interval / intervalMagnitude);
@@ -178,85 +168,64 @@ public abstract class AxisRenderer extends Renderer {
             // 90
             interval = Math.floor(10 * intervalMagnitude);
         }
-
         int n = mAxis.isCenterAxisLabelsEnabled() ? 1 : 0;
-
         // force label count
         if (mAxis.isForceLabelsEnabled()) {
 
             interval = (float) range / (float) (labelCount - 1);
             mAxis.mEntryCount = labelCount;
-
             if (mAxis.mEntries.length < labelCount) {
                 // Ensure stops contains at least numStops elements.
                 mAxis.mEntries = new float[labelCount];
             }
-
             float v = min;
-
             for (int i = 0; i < labelCount; i++) {
                 mAxis.mEntries[i] = v;
                 v += interval;
             }
-
             n = labelCount;
-
             // no forced count
         } else {
-
             double first = interval == 0.0 ? 0.0 : Math.ceil(yMin / interval) * interval;
             if(mAxis.isCenterAxisLabelsEnabled()) {
                 first -= interval;
             }
-
             double last = interval == 0.0 ? 0.0 : Utils.nextUp(Math.floor(yMax / interval) * interval);
-
             double f;
             int i;
-
             if (interval != 0.0) {
                 for (f = first; f <= last; f += interval) {
                     ++n;
                 }
             }
-
             mAxis.mEntryCount = n;
-
             if (mAxis.mEntries.length < n) {
                 // Ensure stops contains at least numStops elements.
                 mAxis.mEntries = new float[n];
             }
-
             for (f = first, i = 0; i < n; f += interval, ++i) {
-
-                if (f == 0.0) // Fix for negative zero case (Where value == -0.0, and 0.0 == -0.0)
+                if (f == 0.0) { // Fix for negative zero case (Where value == -0.0, and 0.0 == -0.0)
                     f = 0.0;
-
+                }
                 mAxis.mEntries[i] = (float) f;
             }
         }
-
         // set decimals
         if (interval < 1) {
             mAxis.mDecimals = (int) Math.ceil(-Math.log10(interval));
         } else {
             mAxis.mDecimals = 0;
         }
-
         if (mAxis.isCenterAxisLabelsEnabled()) {
-
             if (mAxis.mCenteredEntries.length < n) {
                 mAxis.mCenteredEntries = new float[n];
             }
-
             float offset = (float)interval / 2f;
-
             for (int i = 0; i < n; i++) {
                 mAxis.mCenteredEntries[i] = mAxis.mEntries[i] + offset;
             }
         }
     }
-
     /**
      * Draws the axis labels to the screen.
      *

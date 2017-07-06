@@ -3,6 +3,7 @@
     <style name="AccentButtonStyle" parent="LigthText">
         <item name="android:background">@drawable/button</item>
         <item name="android:elevation">30dp</item>
+        <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">

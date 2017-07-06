@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.views.items.chart;
+package com.elatesoftware.grandcapital.views.items;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,6 @@ import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
 import com.elatesoftware.grandcapital.utils.ConventImage;
 import com.elatesoftware.grandcapital.utils.ConventString;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
-import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
 /**
  * Created by Darya on 30.03.2017.

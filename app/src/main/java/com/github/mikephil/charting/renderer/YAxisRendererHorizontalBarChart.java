@@ -8,7 +8,7 @@ import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
 
-import com.elatesoftware.grandcapital.views.items.chart.limitLines.YDealingLine;
+import com.elatesoftware.grandcapital.views.items.limitLines.YDealingLine;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.components.YAxis.AxisDependency;

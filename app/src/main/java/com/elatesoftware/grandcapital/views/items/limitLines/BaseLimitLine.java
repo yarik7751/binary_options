@@ -1,4 +1,4 @@
-package com.elatesoftware.grandcapital.views.items.chart.limitLines;
+package com.elatesoftware.grandcapital.views.items.limitLines;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -331,7 +331,7 @@ public class BaseLimitLine extends LimitLine {
             }
         }
     }
-    public static void addTicketsInLines(List<OrderAnswer> listOrders){
+    public synchronized static void addTicketsInLines(List<OrderAnswer> listOrders){
         List<XDealingLine> listLimitX = BaseLimitLine.getXLimitLines();
         List<YDealingLine> listLimitY = BaseLimitLine.getYLimitLines();
         List<DealingLine> listLines = new ArrayList<>();
@@ -345,13 +345,22 @@ public class BaseLimitLine extends LimitLine {
             Collections.sort(listLines,(p1, p2) -> (new Gson().fromJson(p1.getLabel(), OrderAnswer.class).getOpenTime().compareTo(
                                                    (new Gson().fromJson(p2.getLabel(), OrderAnswer.class).getOpenTime()))));
             Collections.sort(listOrders,(o1, o2) -> o1.getOpenTime().compareTo(o2.getOpenTime()));
-            if(listOrders.size() != listLines.size() && listOrders.size() > 1){
+            //TODO xz....bug  was fixed or not?
+           if(listLines.size() > 0 && listOrders.size() > 0 && listLines.size() > listOrders.size()){
+                if(listOrders.size() > 1){
                     listLines = listLines.subList(0, listOrders.size()-1);
+                }else if(listOrders.size() == 1){
+                    listLines = listLines.subList(0, 1);
+                }
             }
-            for(int i= 0; i< listLines.size(); i++){
-                OrderAnswer orderAnswer = new Gson().fromJson(listLines.get(i).getLabel(), OrderAnswer.class);
-                orderAnswer.setTicket(listOrders.get(i).getTicket());
-                listLines.get(i).setLabel(new Gson().toJson(orderAnswer));
+
+            //*****************************
+            if(listOrders.size() == listLines.size() && listLines.size() > 0 && listOrders.size() > 0 && listLines.size() >= listOrders.size()){
+                for(int i = 0; i < listLines.size(); i++){
+                    OrderAnswer orderAnswer = new Gson().fromJson(listLines.get(i).getLabel(), OrderAnswer.class);
+                    orderAnswer.setTicket(listOrders.get(i).getTicket());
+                    listLines.get(i).setLabel(new Gson().toJson(orderAnswer));
+                }
             }
         }
     }
