@@ -24,7 +24,6 @@ import com.github.mikephil.charting.utils.Utils;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.lang.ref.WeakReference;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,7 +51,7 @@ public class LineChartRenderer extends LineRadarRenderer {
     /**
      * the bitmap configuration to be used
      */
-    protected Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_8888;
+    protected Bitmap.Config mBitmapConfig = Bitmap.Config.ARGB_4444;
 
     protected Path cubicPath = new Path();
     protected Path cubicFillPath = new Path();
