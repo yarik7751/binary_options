@@ -353,8 +353,6 @@ public class BaseLimitLine extends LimitLine {
                     listLines = listLines.subList(0, 1);
                 }
             }
-
-            //*****************************
             if(listOrders.size() == listLines.size() && listLines.size() > 0 && listOrders.size() > 0 && listLines.size() >= listOrders.size()){
                 for(int i = 0; i < listLines.size(); i++){
                     OrderAnswer orderAnswer = new Gson().fromJson(listLines.get(i).getLabel(), OrderAnswer.class);
