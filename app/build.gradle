@@ -29,9 +29,9 @@ android {
         main {
             res.srcDirs =
                     [
-                            'src/main/res/residemenu',
-                            'src/main/res/fragments',
-                            'src/main/res'
+                        'src/main/res/residemenu',
+                        'src/main/res/fragments',
+                        'src/main/res'
                     ]
         }
     }

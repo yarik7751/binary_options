@@ -115,7 +115,7 @@ public class BaseActivity extends CustomFontsActivity {
 
     @Override
     public void onBackPressed() {
-        if(mResideMenu.isOpened()) {
+        if(mResideMenu.isOpenedMenu()) {
             mResideMenu.closeMenu();
         }
         if(!setBackActionByCurrFragment()) {

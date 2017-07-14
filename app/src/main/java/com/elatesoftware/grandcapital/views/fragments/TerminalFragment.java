@@ -61,8 +61,8 @@ import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
-import com.elatesoftware.grandcapital.views.items.animation.PointAnimation;
 import com.elatesoftware.grandcapital.views.items.ViewInfoHelper;
+import com.elatesoftware.grandcapital.views.items.animation.PointAnimation;
 import com.elatesoftware.grandcapital.views.items.limitLines.ActiveDealingLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.BaseLimitLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.DealingLine;
@@ -1232,6 +1232,8 @@ public class TerminalFragment extends Fragment {
             requestDeleteDealing(order);
         }
     }
+
+
 
     public class GetResponseBalanceBroadcastReceiver extends BroadcastReceiver{
         @Override

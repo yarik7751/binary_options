@@ -29,7 +29,7 @@ import com.nineoldandroids.view.ViewHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResideMenu extends FrameLayout {
+public class ResideMenu extends FrameLayout  {
 
     public static final int DIRECTION_LEFT = 0;
     public static final int DIRECTION_RIGHT = 1;
@@ -46,7 +46,7 @@ public class ResideMenu extends FrameLayout {
     private Activity activity;
     private ViewGroup viewDecor;  /** The DecorView of current activity.*/
     private TouchDisableView viewActivity;
-    private boolean isOpened;  /**The flag of menu opening status.*/
+    private boolean isOpenedMenu;  /**The flag of menu opening status.*/
     private float shadowAdjustScaleX;
     private float shadowAdjustScaleY;
     private List<View> ignoredViews; /**Views which need stop to intercept touch events.*/
@@ -294,12 +294,9 @@ public class ResideMenu extends FrameLayout {
         return menuListener;
     }
 
-    /**
-     * Show the menu;
-     */
     public void openMenu(int direction) {
         setScaleDirection(direction);
-        isOpened = true;
+        isOpenedMenu = true;
         AnimatorSet scaleDown_activity = buildScaleDownAnimation(viewActivity, mScaleValue, mScaleValue);
         AnimatorSet scaleDown_shadow = buildScaleDownAnimation(imageViewShadow, mScaleValue + shadowAdjustScaleX, mScaleValue + shadowAdjustScaleY);
         AnimatorSet alpha_menu = buildMenuAnimation(scrollViewMenu, 1.0f);
@@ -309,11 +306,9 @@ public class ResideMenu extends FrameLayout {
         scaleDown_activity.start();
         refreshBalanceUser();
     }
-    /**
-     * Close the menu;
-     */
+
     public void closeMenu() {
-        isOpened = false;
+        isOpenedMenu = false;
         AnimatorSet scaleUp_activity = buildScaleUpAnimation(viewActivity, 1.0f, 1.0f);
         AnimatorSet scaleUp_shadow = buildScaleUpAnimation(imageViewShadow, 1.0f, 1.0f);
         AnimatorSet alpha_menu = buildMenuAnimation(scrollViewMenu, 0.0f);
@@ -355,12 +350,12 @@ public class ResideMenu extends FrameLayout {
      *
      * @return
      */
-    public boolean isOpened() {
-        return isOpened;
+    public boolean isOpenedMenu() {
+        return isOpenedMenu;
     }
 
     private OnClickListener viewActivityOnClickListener = view -> {
-        if (isOpened()) {
+        if (isOpenedMenu()) {
             closeMenu();
         }
     };
@@ -368,7 +363,7 @@ public class ResideMenu extends FrameLayout {
     private Animator.AnimatorListener animationListener = new Animator.AnimatorListener() {
         @Override
         public void onAnimationStart(Animator animation) {
-            if (isOpened()) {
+            if (isOpenedMenu()) {
                 showScrollViewMenu(scrollViewMenu);
                 if (menuListener != null)
                     menuListener.openMenu();
@@ -377,8 +372,7 @@ public class ResideMenu extends FrameLayout {
 
         @Override
         public void onAnimationEnd(Animator animation) {
-            // reset the view;
-            if (isOpened()) {
+            if (isOpenedMenu()) {
                 viewActivity.setTouchDisable(true);
                 viewActivity.setOnClickListener(viewActivityOnClickListener);
             } else {
@@ -409,9 +403,8 @@ public class ResideMenu extends FrameLayout {
      */
     private AnimatorSet buildScaleDownAnimation(View target, float targetScaleX, float targetScaleY) {
         AnimatorSet scaleDown = new AnimatorSet();
-        scaleDown.playTogether(
-                ObjectAnimator.ofFloat(target, "scaleX", targetScaleX),
-                ObjectAnimator.ofFloat(target, "scaleY", targetScaleY));
+        scaleDown.playTogether(ObjectAnimator.ofFloat(target, "scaleX", targetScaleX),
+                               ObjectAnimator.ofFloat(target, "scaleY", targetScaleY));
         if (mUse3D) {
             int angle = scaleDirection == DIRECTION_LEFT ? -ROTATE_Y_ANGLE : ROTATE_Y_ANGLE;
             scaleDown.playTogether(ObjectAnimator.ofFloat(target, "rotationY", angle));
@@ -430,10 +423,8 @@ public class ResideMenu extends FrameLayout {
      */
     private AnimatorSet buildScaleUpAnimation(View target, float targetScaleX, float targetScaleY) {
         AnimatorSet scaleUp = new AnimatorSet();
-        scaleUp.playTogether(
-                ObjectAnimator.ofFloat(target, "scaleX", targetScaleX),
-                ObjectAnimator.ofFloat(target, "scaleY", targetScaleY)
-        );
+        scaleUp.playTogether(ObjectAnimator.ofFloat(target, "scaleX", targetScaleX),
+                             ObjectAnimator.ofFloat(target, "scaleY", targetScaleY));
         if (mUse3D) {
             scaleUp.playTogether(ObjectAnimator.ofFloat(target, "rotationY", 0));
         }
@@ -521,7 +512,7 @@ public class ResideMenu extends FrameLayout {
             case MotionEvent.ACTION_DOWN:
                 lastActionDownX = ev.getX();
                 lastActionDownY = ev.getY();
-                isInIgnoredView = isInIgnoredView(ev) && !isOpened();
+                isInIgnoredView = isInIgnoredView(ev) && !isOpenedMenu();
                 pressedState = PRESSED_DOWN;
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -575,7 +566,7 @@ public class ResideMenu extends FrameLayout {
                     break;
                 }
                 pressedState = PRESSED_DONE;
-                if (isOpened()) {
+                if (isOpenedMenu()) {
                     if (currentActivityScaleX > 0.56f) {
                         closeMenu();
                     }
@@ -613,6 +604,7 @@ public class ResideMenu extends FrameLayout {
     public void setUse3D(boolean use3D) {
         mUse3D = use3D;
     }
+
 
     public interface OnMenuListener {
 
