@@ -115,7 +115,7 @@ public class BaseLimitLine extends LimitLine {
                 if (ConventDate.genericTimeForChart(ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000) < xMax) {
                     XDealingLine lineX = new XDealingLine(ConventDate.genericTimeForChart(
                             ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000),
-                            new Gson().toJson(order),lineY.getmTimer(), lineY.ismIsAmerican(), lineY.ismIsActive());
+                            new Gson().toJson(order), lineY.getmTimer(), lineY.ismIsAmerican(), lineY.ismIsActive());
                     if(lineY.ismIsActive()){
                         lineX.enableDashedLine(0f, 0f, 0f);
                         ActiveDealingLine.deleteDealingLine();
@@ -267,7 +267,7 @@ public class BaseLimitLine extends LimitLine {
         }
         return null;
     }
-    public static void drawAllDealingsLimitLines(List<OrderAnswer> list, double mCurrentValueY){
+    public static void drawAllDealingsLimitLines(List<OrderAnswer> list){
         if(getXLimitLines() != null && getXLimitLines().size() != 0){
             xAxis.removeAllLimitLines();
         }
@@ -281,21 +281,21 @@ public class BaseLimitLine extends LimitLine {
             for(OrderAnswer orderAnswer : list){
                 if(ConventDate.validationDateTimer(orderAnswer.getOptionsData().getExpirationTime())) {
                     if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(orderAnswer.getOpenTime()) >= 61){
-                        drawDealingLimitLine(orderAnswer, true, mCurrentValueY);
+                        drawDealingLimitLine(orderAnswer, true);
                     }else{
-                        drawDealingLimitLine(orderAnswer, false, mCurrentValueY);
+                        drawDealingLimitLine(orderAnswer, false);
                     }
                 }
             }
             BaseLimitLine.activationSelectedDealing(null);
         }
     }
-    public static void drawDealingLimitLine(OrderAnswer order, boolean isAmerican, double mCurrentValueY) {
+    public static void drawDealingLimitLine(OrderAnswer order, boolean isAmerican) {
         if (order != null) {
             if(ConventDate.genericTimeForChart(ConventDate.getConvertDateInMilliseconds(order.getOptionsData().getExpirationTime()) * 1000) >= mChart.getHighestVisibleX()){
-                YDealingLine.createYDealingLine(order, mCurrentValueY, isAmerican);
+                YDealingLine.createYDealingLine(order, isAmerican);
             }else{
-                XDealingLine.createXDealingLine(order, mCurrentValueY, isAmerican);
+                XDealingLine.createXDealingLine(order, isAmerican);
             }
         }
     }

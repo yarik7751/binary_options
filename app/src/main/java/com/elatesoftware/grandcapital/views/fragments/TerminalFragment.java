@@ -853,7 +853,8 @@ public class TerminalFragment extends Fragment {
     }
     private void requestMakeDealing(String lowerOrHeight) {
         startProgress();
-        if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 && !ConventString.getActive(tvValueActive).isEmpty()) {
+        if (ConventString.getAmountValue(etValueAmount) != 0 && ConventString.getTimeValue(etValueTime) != 0 &&
+                !ConventString.getActive(tvValueActive).isEmpty()) {
             if(ConventString.getTimeValue(etValueTime) > Const.MAX_TIME_MIN) {
                 CustomDialog.showDialogInfo(getActivity(), getResources().getString(R.string.error), getResources().getString(R.string.error_max_time));
                 stopProgress();
@@ -981,7 +982,7 @@ public class TerminalFragment extends Fragment {
                                 String dataEntry = new Gson().toJson(order);
                                 entryLast.setIcon(drawableMarkerDealing);
                                 entryLast.setData(dataEntry);
-                                BaseLimitLine.drawDealingLimitLine(order, false, mCurrentValueY);
+                                BaseLimitLine.drawDealingLimitLine(order, false);
                                 currentDealing = null;
                                 typePoint = POINT_SIMPLY;
                                 break;
@@ -1049,7 +1050,6 @@ public class TerminalFragment extends Fragment {
             mChart.getLineData().clearValues();
             mChart.clearValues();
         }
-        /**********************************/
         if (listSymbol != null && listSymbol.size() != 0) {
             Log.d(GrandCapitalApplication.TAG_SOCKET, "drawDataSymbolHistory size = " + listSymbol.size());
             getActivity().runOnUiThread(() -> {
@@ -1132,7 +1132,7 @@ public class TerminalFragment extends Fragment {
                     if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                         line.setmIsAmerican(true);
                     }
-                    DealingLine.updateColorDealingLine(line, order, mCurrentValueY);
+                    DealingLine.updateColorDealingLine(line, order);
                     if(line.ismIsActive()){
                         ActiveDealingLine.drawActiveDealingLine(line, order);
                     }
@@ -1155,7 +1155,7 @@ public class TerminalFragment extends Fragment {
                     if(GrandCapitalApplication.isTypeOptionAmerican && ConventDate.getDifferenceDate(order.getOpenTime()) >= 61){
                         line.setmIsAmerican(true);
                     }
-                    DealingLine.updateColorDealingLine(line, order, mCurrentValueY);
+                    DealingLine.updateColorDealingLine(line, order);
                     if(line.ismIsActive()){
                         ActiveDealingLine.drawActiveDealingLine(line, order);
                     }
@@ -1334,7 +1334,7 @@ public class TerminalFragment extends Fragment {
                                 i = BaseLimitLine.getXLimitLines().size();
                             }
                             if(i < listOpenDealings.size()){
-                                BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings, mCurrentValueY);
+                                BaseLimitLine.drawAllDealingsLimitLines(listOpenDealings);
                                 if (currEntry != null) {
                                     SocketLine.drawSocketLine(currEntry);
                                 }

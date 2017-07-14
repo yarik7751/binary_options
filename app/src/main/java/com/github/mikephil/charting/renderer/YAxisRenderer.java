@@ -36,16 +36,23 @@ public class YAxisRenderer extends AxisRenderer {
     protected YAxis mYAxis;
     protected Paint mZeroLinePaint;
 
+    private static Paint paintLine;
+
     public YAxisRenderer(ViewPortHandler viewPortHandler, YAxis yAxis, Transformer trans) {
         super(viewPortHandler, trans, yAxis);
         this.mYAxis = yAxis;
-        if(mViewPortHandler != null)
+        if(mViewPortHandler != null){
             mAxisLabelPaint.setColor(Color.BLACK);
+        }
             mAxisLabelPaint.setTextSize(Utils.convertDpToPixel(10f));
             mZeroLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mZeroLinePaint.setColor(Color.GRAY);
             mZeroLinePaint.setStrokeWidth(1f);
             mZeroLinePaint.setStyle(Paint.Style.STROKE);
+
+            paintLine = new Paint();
+            paintLine.setStyle(Paint.Style.FILL);
+            paintLine.setTextSize(mYAxis.getTextSize());
         }
 
     /**
@@ -168,10 +175,7 @@ public class YAxisRenderer extends AxisRenderer {
                     lineSocket.setLineColor(Color.WHITE);
                     lineSocket.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
 
-                    Paint paint = new Paint();
-                    paint.setStyle(Paint.Style.FILL);
-                    paint.setColor(Color.WHITE);
-                    paint.setTextSize(mYAxis.getTextSize());
+                    paintLine.setColor(Color.WHITE);
 
                     Paint textPaint = mAxisLabelPaint;
                     textPaint.setColor(Color.BLACK);
@@ -206,7 +210,7 @@ public class YAxisRenderer extends AxisRenderer {
 
                     if (bitmapLabel != null) {
                         bitmapLabel = Bitmap.createScaledBitmap(bitmapLabel, (int) width_marker, (int) height_marker, false);
-                        c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz, posY - height_marker + paddingVert / 2, paint);
+                        c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz, posY - height_marker + paddingVert / 2, paintLine);
                         c.drawText(strLabel, fixedPosition - paddingHoriz / 3, posY, textPaint);
                         if (!lastSymbol.equals("")) {
                             textPaint.setColor(Color.parseColor("#FD3E3C"));
@@ -220,10 +224,8 @@ public class YAxisRenderer extends AxisRenderer {
                     lineDealing.setLineWidth(1.0f);
                     lineDealing.setLineColor(line.getLineColor());
                     lineDealing.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-                    Paint paint = new Paint();
-                    paint.setStyle(Paint.Style.FILL);
-                    paint.setColor(line.getLineColor());
-                    paint.setTextSize(mYAxis.getTextSize());
+
+                    paintLine.setColor(line.getLineColor());
 
                     Paint textPaint = mAxisLabelPaint;
                     textPaint.setColor(Color.WHITE);
@@ -251,7 +253,7 @@ public class YAxisRenderer extends AxisRenderer {
 
                     if (bitmapLabel != null && strLabel != null) {
                         bitmapLabel = Bitmap.createScaledBitmap(bitmapLabel, (int) width_marker, (int) height_marker, false);
-                        c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz/2, posY - height_marker + paddingVert / 2, paint);
+                        c.drawBitmap(bitmapLabel, fixedPosition - paddingHoriz/2, posY - height_marker + paddingVert / 2, paintLine);
                         c.drawText(strLabel, fixedPosition, posY, textPaint);
                         lineDealing.setMaxWeightCanvasLabel(0);
                     }
@@ -261,10 +263,8 @@ public class YAxisRenderer extends AxisRenderer {
                         lineDealing.setLineWidth(0.0f);
                         lineDealing.setLineColor(Color.TRANSPARENT);
                         line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-                        Paint paint = new Paint();
-                        paint.setStyle(Paint.Style.FILL);
-                        paint.setColor(Color.WHITE);
-                        paint.setTextSize(mYAxis.getTextSize());
+
+                        paintLine.setColor(Color.WHITE);
 
                         Paint textPaint = mAxisLabelPaint;
                         textPaint.setColor(Color.WHITE);
@@ -276,40 +276,12 @@ public class YAxisRenderer extends AxisRenderer {
 
                         pts[1] = lineDealing.getLimit();
                         mTrans.pointValuesToPixel(pts);
-                        OrderAnswer order = new Gson().fromJson(line.getLabel(), OrderAnswer.class);
-                        String strLabelY  = ConventDate.getDifferenceDateToString(Long.valueOf(lineDealing.getmTimer()));
+                        Bitmap iconLabelY = lineDealing.getBitmapY();
 
-                        /** Y Label*/
-                        View linearLayoutYLabel;
-                        if(lineDealing.isRed()){
-                            linearLayoutYLabel = View.inflate(GrandCapitalApplication.getAppContext(), R.layout.incl_chart_label_y_red, null);
-                        }else{
-                            linearLayoutYLabel = View.inflate(GrandCapitalApplication.getAppContext(), R.layout.incl_chart_label_y_green, null);
-                        }
-                        ImageView imgCMD = (ImageView) linearLayoutYLabel.findViewById(R.id.img_dealing_cmd);
-                        if(order.getCmd() == 1){
-                            imgCMD.setImageDrawable(GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.down));
-                        }else{
-                            imgCMD.setImageDrawable(GrandCapitalApplication.getAppContext().getResources().getDrawable(R.drawable.up));
-                        }
-                        TextView tvTimeY = (TextView) linearLayoutYLabel.findViewById(R.id.tv_dealing_time);
-                        tvTimeY.setText(strLabelY);
-                        if(lineDealing.ismIsAmerican()){
-                            ImageView imgClose = (ImageView) linearLayoutYLabel.findViewById(R.id.img_dealing_close);
-                            imgClose.setVisibility(View.VISIBLE);
-                        }
-                        linearLayoutYLabel.setDrawingCacheEnabled(true);
-                        linearLayoutYLabel.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-                        linearLayoutYLabel.layout(0, 0, linearLayoutYLabel.getMeasuredWidth(), linearLayoutYLabel.getMeasuredHeight());
-
-                        linearLayoutYLabel.buildDrawingCache(true);
-                        Bitmap iconLabelY = Bitmap.createBitmap(linearLayoutYLabel.getDrawingCache());
-                        linearLayoutYLabel.setDrawingCacheEnabled(false); // clear drawing cache
-                       /**********************************************************************/
                         float posY = pts[1];
                         if (iconLabelY != null) {
                             /**positionBitmap Y*/
-                            c.drawBitmap(iconLabelY, fixedPosition - iconLabelY.getWidth() * 2/3, posY - iconLabelY.getHeight()/2, paint);
+                            c.drawBitmap(iconLabelY, fixedPosition - iconLabelY.getWidth() * 2/3, posY - iconLabelY.getHeight()/2, paintLine);
                             lineDealing.setMaxWeightCanvasLabel(c.getMaximumBitmapWidth());
                         }
                 }
