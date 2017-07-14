@@ -178,20 +178,6 @@ public class Transformer {
             }
         }catch(NegativeArraySizeException ex){
             ex.printStackTrace();
-            /*********************xz start**************************************************/
-           /* if(valuePointsForGenerateTransformedValuesLine != null && valuePointsForGenerateTransformedValuesLine.length != 0) {
-                List<Float> values = new ArrayList<>();
-                for(Float item: valuePointsForGenerateTransformedValuesLine){
-                    values.add(item);
-                }
-                Collections.sort(values, new FloatComparator());
-                valuePointsForGenerateTransformedValuesLine = null;
-                valuePointsForGenerateTransformedValuesLine = new float[values.size()];
-                for(int i = 0; i< values.size(); i ++){
-                    valuePointsForGenerateTransformedValuesLine[i] = values.get(i);
-                }
-            }*/
-            /*********************xz end**************************************************/
         }
         float[] valuePoints = valuePointsForGenerateTransformedValuesLine;
         for (int j = 0; j < count; j += 2) {
@@ -217,20 +203,14 @@ public class Transformer {
      * @param data
      * @return
      */
-    public float[] generateTransformedValuesCandle(ICandleDataSet data,
-                                                   float phaseX, float phaseY, int from, int to) {
-
+    public float[] generateTransformedValuesCandle(ICandleDataSet data, float phaseX, float phaseY, int from, int to) {
         final int count = (int) ((to - from) * phaseX + 1) * 2;
-
         if (valuePointsForGenerateTransformedValuesCandle.length != count) {
             valuePointsForGenerateTransformedValuesCandle = new float[count];
         }
         float[] valuePoints = valuePointsForGenerateTransformedValuesCandle;
-
         for (int j = 0; j < count; j += 2) {
-
             CandleEntry e = data.getEntryForIndex(j / 2 + from);
-
             if (e != null) {
                 valuePoints[j] = e.getX();
                 valuePoints[j + 1] = e.getHigh() * phaseY;
@@ -239,9 +219,7 @@ public class Transformer {
                 valuePoints[j + 1] = 0;
             }
         }
-
         getValueToPixelMatrix().mapPoints(valuePoints);
-
         return valuePoints;
     }
 
@@ -252,7 +230,6 @@ public class Transformer {
      * @param path
      */
     public void pathValueToPixel(Path path) {
-
         path.transform(mMatrixValueToPx);
         path.transform(mViewPortHandler.getMatrixTouch());
         path.transform(mMatrixOffset);
@@ -264,7 +241,6 @@ public class Transformer {
      * @param paths
      */
     public void pathValuesToPixel(List<Path> paths) {
-
         for (int i = 0; i < paths.size(); i++) {
             pathValueToPixel(paths.get(i));
         }
@@ -277,7 +253,6 @@ public class Transformer {
      * @param pts
      */
     public void pointValuesToPixel(float[] pts) {
-
         mMatrixValueToPx.mapPoints(pts);
         mViewPortHandler.getMatrixTouch().mapPoints(pts);
         mMatrixOffset.mapPoints(pts);
@@ -289,7 +264,6 @@ public class Transformer {
      * @param r
      */
     public void rectValueToPixel(RectF r) {
-
         mMatrixValueToPx.mapRect(r);
         mViewPortHandler.getMatrixTouch().mapRect(r);
         mMatrixOffset.mapRect(r);
@@ -302,7 +276,6 @@ public class Transformer {
      * @param phaseY
      */
     public void rectToPixelPhase(RectF r, float phaseY) {
-
         // multiply the height of the rect with the phase
         r.top *= phaseY;
         r.bottom *= phaseY;
@@ -313,7 +286,6 @@ public class Transformer {
     }
 
     public void rectToPixelPhaseHorizontal(RectF r, float phaseY) {
-
         // multiply the height of the rect with the phase
         r.left *= phaseY;
         r.right *= phaseY;
@@ -329,7 +301,6 @@ public class Transformer {
      * @param r
      */
     public void rectValueToPixelHorizontal(RectF r) {
-
         mMatrixValueToPx.mapRect(r);
         mViewPortHandler.getMatrixTouch().mapRect(r);
         mMatrixOffset.mapRect(r);

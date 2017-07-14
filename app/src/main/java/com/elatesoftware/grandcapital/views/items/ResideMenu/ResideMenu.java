@@ -124,9 +124,7 @@ public class ResideMenu extends FrameLayout  {
         int bottomPadding = viewActivity.getPaddingBottom() + insets.bottom;
         boolean hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK);
         boolean hasHomeKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_HOME);
-        /*if (!hasBackKey || !hasHomeKey) {//there's a navigation bar
-            bottomPadding += getNavigationBarHeight();
-        }*/
+
         this.setPadding(viewActivity.getPaddingLeft() + insets.left,
                 viewActivity.getPaddingTop() + insets.top,
                 viewActivity.getPaddingRight() + insets.right,
@@ -410,7 +408,7 @@ public class ResideMenu extends FrameLayout  {
             scaleDown.playTogether(ObjectAnimator.ofFloat(target, "rotationY", angle));
         }
         scaleDown.setInterpolator(AnimationUtils.loadInterpolator(activity, android.R.anim.decelerate_interpolator));
-        scaleDown.setDuration(250);
+        scaleDown.setDuration(400);
         return scaleDown;
     }
 
@@ -428,14 +426,14 @@ public class ResideMenu extends FrameLayout  {
         if (mUse3D) {
             scaleUp.playTogether(ObjectAnimator.ofFloat(target, "rotationY", 0));
         }
-        scaleUp.setDuration(250);
+        scaleUp.setDuration(400);
         return scaleUp;
     }
 
     private AnimatorSet buildMenuAnimation(View target, float alpha) {
         AnimatorSet alphaAnimation = new AnimatorSet();
         alphaAnimation.playTogether(ObjectAnimator.ofFloat(target, "alpha", alpha));
-        alphaAnimation.setDuration(250);
+        alphaAnimation.setDuration(400);
         return alphaAnimation;
     }
 

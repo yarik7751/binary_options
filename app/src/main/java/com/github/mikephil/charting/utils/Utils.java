@@ -35,39 +35,32 @@ import java.util.List;
 public abstract class Utils {
 
     private static DisplayMetrics mMetrics;
-    private static int mMinimumFlingVelocity = 50;
-    private static int mMaximumFlingVelocity = 8000;
+    private static int mMinimumFlingVelocity = 10;
+    private static int mMaximumFlingVelocity = 30;
     public final static double DEG2RAD = (Math.PI / 180.0);
     public final static float FDEG2RAD = ((float) Math.PI / 180.f);
 
     @SuppressWarnings("unused")
     public final static double DOUBLE_EPSILON = Double.longBitsToDouble(1);
-
     @SuppressWarnings("unused")
     public final static float FLOAT_EPSILON = Float.intBitsToFloat(1);
 
     /**
      * initialize method, called inside the Chart.init() method.
-     *
      * @param context
      */
     @SuppressWarnings("deprecation")
     public static void init(Context context) {
-
         if (context == null) {
             // noinspection deprecation
             mMinimumFlingVelocity = ViewConfiguration.getMinimumFlingVelocity();
             // noinspection deprecation
             mMaximumFlingVelocity = ViewConfiguration.getMaximumFlingVelocity();
-
-            Log.e("MPChartLib-Utils"
-                    , "Utils.init(...) PROVIDED CONTEXT OBJECT IS NULL");
-
+            Log.e("MPChartLib-Utils", "Utils.init(...) PROVIDED CONTEXT OBJECT IS NULL");
         } else {
             ViewConfiguration viewConfiguration = ViewConfiguration.get(context);
             mMinimumFlingVelocity = viewConfiguration.getScaledMinimumFlingVelocity();
             mMaximumFlingVelocity = viewConfiguration.getScaledMaximumFlingVelocity();
-
             Resources res = context.getResources();
             mMetrics = res.getDisplayMetrics();
         }
@@ -81,9 +74,7 @@ public abstract class Utils {
      */
     @Deprecated
     public static void init(Resources res) {
-
         mMetrics = res.getDisplayMetrics();
-
         // noinspection deprecation
         mMinimumFlingVelocity = ViewConfiguration.getMinimumFlingVelocity();
         // noinspection deprecation
@@ -100,9 +91,7 @@ public abstract class Utils {
      * device density
      */
     public static float convertDpToPixel(float dp) {
-
         if (mMetrics == null) {
-
             Log.e("MPChartLib-Utils",
                     "Utils NOT INITIALIZED. You need to call Utils.init(...) at least once before" +
                             " calling Utils.convertDpToPixel(...). Otherwise conversion does not " +
@@ -156,7 +145,6 @@ public abstract class Utils {
      * @return
      */
     public static int calcTextHeight(Paint paint, String demoText) {
-
         Rect r = mCalcTextHeightRect;
         r.set(0,0,0,0);
         paint.getTextBounds(demoText, 0, demoText.length(), r);
@@ -224,8 +212,7 @@ public abstract class Utils {
      * yourself.
      */
     private static final int POW_10[] = {
-            1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000
-    };
+            1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
 
     private static IValueFormatter mDefaultValueFormatter = generateDefaultValueFormatter();
 
@@ -371,12 +358,10 @@ public abstract class Utils {
      * @return
      */
     public static int getDecimals(float number) {
-
         float i = roundToNextSignificant(number);
-        
-        if (Float.isInfinite(i))
+        if (Float.isInfinite(i)) {
             return 0;
-        
+        }
         return (int) Math.ceil(-Math.log10(i)) + 2;
     }
 
@@ -387,11 +372,8 @@ public abstract class Utils {
      * @return
      */
     public static int[] convertIntegers(List<Integer> integers) {
-
         int[] ret = new int[integers.size()];
-
         copyIntegers(integers, ret);
-
         return ret;
     }
 
@@ -438,8 +420,7 @@ public abstract class Utils {
             return d;
         else {
             d += 0.0d;
-            return Double.longBitsToDouble(Double.doubleToRawLongBits(d) +
-                    ((d >= 0.0d) ? +1L : -1L));
+            return Double.longBitsToDouble(Double.doubleToRawLongBits(d) + ((d >= 0.0d) ? +1L : -1L));
         }
     }
 
@@ -465,12 +446,10 @@ public abstract class Utils {
         outputPoint.y = (float) (center.y + dist * Math.sin(Math.toRadians(angle)));
     }
 
-    public static void velocityTrackerPointerUpCleanUpIfNecessary(MotionEvent ev,
-                                                                  VelocityTracker tracker) {
-
+    public static void velocityTrackerPointerUpCleanUpIfNecessary(MotionEvent ev, VelocityTracker tracker) {
         // Check the dot product of current velocities.
         // If the pointer that left was opposing another velocity vector, clear.
-        tracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
+        tracker.computeCurrentVelocity(500, mMaximumFlingVelocity);
         final int upIndex = ev.getActionIndex();
         final int id1 = ev.getPointerId(upIndex);
         final float x1 = tracker.getXVelocity(id1);
@@ -492,9 +471,8 @@ public abstract class Utils {
     }
 
     /**
-     * Original method view.postInvalidateOnAnimation() only supportd in API >=
-     * 16, This is a replica of the code from ViewCompat.
-     *
+     * Original method view.postInvalidateOnAnimation() only supportd in API >= 16,
+     * This is a replica of the code from ViewCompat.
      * @param view
      */
     @SuppressLint("NewApi")
@@ -517,9 +495,9 @@ public abstract class Utils {
      * returns an angle between 0.f < 360.f (not less than zero, less than 360)
      */
     public static float getNormalizedAngle(float angle) {
-        while (angle < 0.f)
+        while (angle < 0.f) {
             angle += 360.f;
-
+        }
         return angle % 360.f;
     }
 

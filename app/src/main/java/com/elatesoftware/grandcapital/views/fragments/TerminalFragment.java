@@ -79,7 +79,6 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.github.mikephil.charting.utils.EntryXComparator;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.google.gson.Gson;
 
@@ -703,7 +702,6 @@ public class TerminalFragment extends Fragment {
     }
     private synchronized LineDataSet createSetDataChart() {
         LineDataSet set = new LineDataSet(null, "Dynamic Data");
-        Collections.sort(set.getValues(), new EntryXComparator());
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(Color.WHITE);
         set.setCircleColor(Color.WHITE);
@@ -990,8 +988,8 @@ public class TerminalFragment extends Fragment {
                             default:
                                 break;
                         }
-                        divX = (currEntry.getX() - entryLast.getX()) / 10.f;
-                        divY = (currEntry.getY() - entryLast.getY()) / 10.f;
+                        divX = (currEntry.getX() - entryLast.getX()) / 5.f;
+                        divY = (currEntry.getY() - entryLast.getY()) / 5.f;
                         numberTemporaryPoint = 0;
                         final Entry simplyEntry = new Entry(entryLast.getX(), entryLast.getY(), null, null);
                             handler.postAtTime(new Runnable() {
@@ -1012,10 +1010,10 @@ public class TerminalFragment extends Fragment {
 
                                         redrawItemsChart(simplyEntry);
 
-                                        if(numberTemporaryPoint == 10){
+                                        if(numberTemporaryPoint == 5){
                                             isFinishedDrawPoint = true;
                                         }
-                                        if (numberTemporaryPoint < 10) {
+                                        if (numberTemporaryPoint < 5) {
                                             handler.postDelayed(this, TIME_ANIMATION_DRAW_POINT);
                                         }
                                     }
@@ -1232,8 +1230,6 @@ public class TerminalFragment extends Fragment {
             requestDeleteDealing(order);
         }
     }
-
-
 
     public class GetResponseBalanceBroadcastReceiver extends BroadcastReceiver{
         @Override
