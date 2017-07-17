@@ -31,6 +31,7 @@ public class PromotionsFragment extends Fragment {
     //private TabLayout promotionsTabs;
     private RecyclerView rvPromotions;
     private LinearLayout llProgress;
+    private FragmentPromotionsAdapter adapter;
 
     private GetResponseBinaryOptionBroadcastReceiver mBinaryOptionBroadcastReceiver;
 
@@ -58,6 +59,8 @@ public class PromotionsFragment extends Fragment {
         rvPromotions = (RecyclerView) view.findViewById(R.id.promotionsListOpen);
         rvPromotions.setLayoutManager(new LinearLayoutManager(getContext()));
         llProgress = (LinearLayout) view.findViewById(R.id.layout_progress_bar);
+        adapter = new FragmentPromotionsAdapter(getActivity(), BinaryOptionAnswer.getInstance());
+        rvPromotions.setAdapter(adapter);
 
         /*promotionsTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -108,7 +111,7 @@ public class PromotionsFragment extends Fragment {
                 Log.d(TAG, "BinaryOptionAnswer: " + BinaryOptionAnswer.getInstance());
                 Log.d(TAG, "BinaryOptionAnswer size: " + BinaryOptionAnswer.getInstance().getElements().size());
                 Log.d(TAG, "BinaryOptionAnswer elements: " + BinaryOptionAnswer.getInstance().getElements());
-                rvPromotions.setAdapter(new FragmentPromotionsAdapter(getActivity(), BinaryOptionAnswer.getInstance()));
+                adapter.setList(BinaryOptionAnswer.getInstance());
             } else {
                 CustomDialog.showDialogInfo(getActivity(),
                         getString(R.string.request_error_title),

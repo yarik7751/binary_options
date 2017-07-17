@@ -75,6 +75,9 @@ public class FragmentHowItWorksListAdapter extends GrandCapitalListAdapter {
 
     @Override
     public int getItemCount() {
+        if(mQuestionsNames == null){
+            return 0;
+        }
         return mQuestionsNames.length;
     }
 }

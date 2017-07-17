@@ -65,6 +65,7 @@ public class FAQFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter(QuestionsService.ACTION_SERVICE_QUESTIONS);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mQuestionsBroadcastReceiver, intentFilter);
+
         Intent pageIntent = new Intent(getActivity(), QuestionsService.class);
         pageIntent.putExtra(QuestionsService.PAGE, 1);
         getActivity().startService(pageIntent);

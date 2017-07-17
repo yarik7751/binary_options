@@ -98,9 +98,16 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
             BaseActivity.addNextFragment(questionFragment);
         });
     }
+    public void setList(BinaryOptionAnswer answer){
+        binaryOptionAnswer = answer;
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemCount() {
+        if(binaryOptionAnswer == null ){
+            return 0;
+        }
         return binaryOptionAnswer.getElements().size();
     }
 

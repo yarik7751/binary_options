@@ -2,7 +2,6 @@ package com.elatesoftware.grandcapital.adapters.dealing;
 
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +43,9 @@ class FragmentDealingOrdersAdapter extends GrandCapitalListAdapter {
 
     @Override
     public int getItemCount() {
+        if(orderList == null){
+            return 0;
+        }
         return orderList.size();
     }
 }

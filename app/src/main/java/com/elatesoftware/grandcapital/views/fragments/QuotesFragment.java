@@ -25,6 +25,7 @@ import com.elatesoftware.grandcapital.services.InfoUserService;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +44,9 @@ public class QuotesFragment extends Fragment {
 
     private List<Instrument> lastInstruments;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
+
+    private QuotesAdapter adapterSelected;
+    private QuotesAdapter adapterAllSelected;
 
     private Handler handler;
 
@@ -103,6 +107,15 @@ public class QuotesFragment extends Fragment {
         rvSelectedQuotes.setNestedScrollingEnabled(false);
 
         handler = new Handler();
+        lastInstruments = new ArrayList<>();
+        if(InfoAnswer.getInstance() != null) {
+            lastInstruments = InfoAnswer.getInstance().getInstruments();
+        }
+        adapterSelected = new QuotesAdapter(getActivity(), lastInstruments, QuotesAdapter.SELECT_QUOTES, onSharedPreferencesChange);
+        adapterAllSelected = new QuotesAdapter(getActivity(), lastInstruments, QuotesAdapter.ALL_QUOTES, onSharedPreferencesChange);
+
+        rvAllQuotes.setAdapter(adapterAllSelected);
+        rvSelectedQuotes.setAdapter(adapterSelected);
     }
 
     @Override
@@ -112,14 +125,8 @@ public class QuotesFragment extends Fragment {
         IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mInfoBroadcastReceiver, intentFilter);
-        llProgressBar.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(() -> {
-            if(InfoAnswer.getInstance() != null) {
-                lastInstruments = InfoAnswer.getInstance().getInstruments();
-                setData(lastInstruments);
-                handler.postDelayed(runnableQuotes, INTERVAL);
-            }
-        }, 1000);
+        //llProgressBar.setVisibility(View.VISIBLE);
+        handler.postDelayed(runnableQuotes, INTERVAL);
     }
 
     @Override
@@ -130,8 +137,11 @@ public class QuotesFragment extends Fragment {
     }
 
     private void setData(List<Instrument> quotes) {
-        rvAllQuotes.setAdapter(new QuotesAdapter(getActivity(), quotes, QuotesAdapter.ALL_QUOTES, onSharedPreferencesChange));
-        rvSelectedQuotes.setAdapter(new QuotesAdapter(getActivity(), quotes, QuotesAdapter.SELECT_QUOTES, onSharedPreferencesChange));
+        adapterSelected.setList(quotes);
+        adapterSelected.notifyDataSetChanged();
+
+        adapterAllSelected.setList(quotes);
+        adapterAllSelected.notifyDataSetChanged();
     }
 
     public class GetResponseInfoBroadcastReceiver extends BroadcastReceiver {
@@ -141,8 +151,7 @@ public class QuotesFragment extends Fragment {
             String responseSummary = intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY);
             if(responseInfo != null && responseSummary != null && responseInfo.equals(Const.RESPONSE_CODE_SUCCESS) && responseSummary.equals(Const.RESPONSE_CODE_SUCCESS)){
                 if(InfoAnswer.getInstance() != null) {
-                    List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
-                    comparisonQuotes(newInstruments);
+                    comparisonQuotes(InfoAnswer.getInstance().getInstruments());
                 }
             }
         }

@@ -37,28 +37,10 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
 
     public QuotesAdapter(Context ctx, List<Instrument> instruments, int variant, OnSharedPreferencesChange onSharedPreferencesChange) {
         order = ORDER_EVEN;
-        List<Instrument> instruments1 = instruments;
         this.variant = variant;
         this.onSharedPreferencesChange = onSharedPreferencesChange;
         context = ctx;
-        if(instruments1 != null) {
-            selectedInstruments = new ArrayList<>();
-            for (Instrument inst : instruments1) {
-                String selectedInstData = CustomSharedPreferences.getSelectedQuotes(context);
-                if(inst.getColor() == 0) {
-                    inst.setColor(this.context.getResources().getColor(R.color.menuAccountBalanceTextColor));
-                }
-                if(variant == ALL_QUOTES) {
-                    if (!selectedInstData.contains(inst.getSymbol() + ";")) {
-                        selectedInstruments.add(inst);
-                    }
-                } else if(variant == SELECT_QUOTES) {
-                    if (selectedInstData.contains(inst.getSymbol() + ";")) {
-                        selectedInstruments.add(inst);
-                    }
-                }
-            }
-        }
+        setList(instruments);
     }
 
     @Override
@@ -102,6 +84,30 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
         return selectedInstruments == null ? 0 : selectedInstruments.size();
     }
 
+    public void setList(List<Instrument> list){
+        if(selectedInstruments != null){
+            selectedInstruments.clear();
+        }else{
+            selectedInstruments = new ArrayList<>();
+        }
+        if(list != null) {
+            for (Instrument inst : list) {
+                String selectedInstData = CustomSharedPreferences.getSelectedQuotes(context);
+                if(inst.getColor() == 0) {
+                    inst.setColor(this.context.getResources().getColor(R.color.menuAccountBalanceTextColor));
+                }
+                if(variant == ALL_QUOTES) {
+                    if (!selectedInstData.contains(inst.getSymbol() + ";")) {
+                        selectedInstruments.add(inst);
+                    }
+                } else if(variant == SELECT_QUOTES) {
+                    if (selectedInstData.contains(inst.getSymbol() + ";")) {
+                        selectedInstruments.add(inst);
+                    }
+                }
+            }
+        }
+    }
     private class QuotesViewHolder extends RecyclerView.ViewHolder {
          View itemView;
          TextView tvCurrency, tvAsk;
