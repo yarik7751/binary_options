@@ -2,7 +2,6 @@ package com.elatesoftware.grandcapital.adapters.quotes;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,26 +35,25 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
 
     private int variant;
 
-    public QuotesAdapter(Context context, List<Instrument> instruments, int variant, OnSharedPreferencesChange onSharedPreferencesChange) {
-        Log.d(TAG, "AllQuotesAdapter constructor");
+    public QuotesAdapter(Context ctx, List<Instrument> instruments, int variant, OnSharedPreferencesChange onSharedPreferencesChange) {
         order = ORDER_EVEN;
         List<Instrument> instruments1 = instruments;
         this.variant = variant;
         this.onSharedPreferencesChange = onSharedPreferencesChange;
-        this.context = context;
+        context = ctx;
         if(instruments1 != null) {
             selectedInstruments = new ArrayList<>();
             for (Instrument inst : instruments1) {
-                String selectedInstData = CustomSharedPreferences.getSelectedQuotes(this.context);
+                String selectedInstData = CustomSharedPreferences.getSelectedQuotes(context);
                 if(inst.getColor() == 0) {
                     inst.setColor(this.context.getResources().getColor(R.color.menuAccountBalanceTextColor));
                 }
                 if(variant == ALL_QUOTES) {
-                    if (!selectedInstData.contains(inst.getSymbol().toUpperCase() + ";")) {
+                    if (!selectedInstData.contains(inst.getSymbol() + ";")) {
                         selectedInstruments.add(inst);
                     }
                 } else if(variant == SELECT_QUOTES) {
-                    if (selectedInstData.contains(inst.getSymbol().toUpperCase() + ";")) {
+                    if (selectedInstData.contains(inst.getSymbol() + ";")) {
                         selectedInstruments.add(inst);
                     }
                 }
@@ -91,7 +89,7 @@ public class QuotesAdapter extends GrandCapitalListAdapter {
                 CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
                 GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_QUOTES_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
             } else if(variant == SELECT_QUOTES) {
-                selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol().toUpperCase() + ";", "");
+                selectedQuotes = selectedQuotes.replace(selectedInstruments.get(position).getSymbol() + ";", "");
                 CustomSharedPreferences.saveSelectedQuotes(context, selectedQuotes);
                 GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_QUOTES_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_DELETE_FAVORITES, selectedInstruments.get(position).getSymbol(), null);
             }

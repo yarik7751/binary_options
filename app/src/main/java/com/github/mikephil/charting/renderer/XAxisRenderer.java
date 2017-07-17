@@ -7,14 +7,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
-import com.elatesoftware.grandcapital.utils.ConventDate;
 import com.elatesoftware.grandcapital.views.items.limitLines.BaseLimitLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.XDealingLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.YDealingLine;
@@ -198,52 +192,51 @@ public class XAxisRenderer extends AxisRenderer {
                     }
                 }
                 drawLabel(c, label, x, pos, anchor, labelRotationAngleDegrees);
+            }
+        }
+        List<LimitLine> limitLines = mXAxis.getLimitLines();
+        if(limitLines != null && limitLines.size() != 0){
+            float[] pts = new float[2];
+            Paint textPaint = mAxisLabelPaint;
+            textPaint.setColor(Color.WHITE);
+            textPaint.setTextSize(mAxisLabelPaint.getTextSize());
+            textPaint.setPathEffect(null);
+            textPaint.setStrokeWidth(0.5f);
 
-                List<LimitLine> limitLines = mXAxis.getLimitLines();
-                if(limitLines != null && limitLines.size() != 0){
-                    float[] pts = new float[2];
-                    Paint textPaint = mAxisLabelPaint;
-                    textPaint.setColor(Color.WHITE);
-                    textPaint.setTextSize(mAxisLabelPaint.getTextSize());
-                    textPaint.setPathEffect(null);
-                    textPaint.setStrokeWidth(0.5f);
+            for(LimitLine lineLimit: limitLines){
+                if(lineLimit instanceof XDealingLine && ((XDealingLine) lineLimit).ismIsActive()){
+                    limitLines.remove(lineLimit);
+                    limitLines.add(lineLimit);
+                    break;
+                }
+            }
+            for (LimitLine l : limitLines) {
+                if (l instanceof XDealingLine) {
+                    XDealingLine line = (XDealingLine) l;
+                    Bitmap iconLabelX = line.getBitmapXLabel();
+                    Bitmap iconLabelY = line.getBitmapYLabel();
 
-                    for(LimitLine lineLimit: limitLines){
-                        if(lineLimit instanceof XDealingLine && ((XDealingLine) lineLimit).ismIsActive()){
-                            limitLines.remove(lineLimit);
-                            limitLines.add(lineLimit);
-                            break;
-                        }
+                    if (!line.ismIsActive()) {
+                        line.enableDashedLine(10f, 10f, 0f);
+                    }else {
+                        line.enableDashedLine(0f, 0f, 0f);
                     }
-                    for (LimitLine l : limitLines) {
-                        if (l instanceof XDealingLine) {
-                            XDealingLine line = (XDealingLine) l;
-                            Bitmap iconLabelX = line.getBitmapXLabel();
-                            Bitmap iconLabelY = line.getBitmapYLabel();
+                    line.setLineWidth(1.0f);
+                    line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
 
-                            if (!line.ismIsActive()) {
-                                line.enableDashedLine(10f, 10f, 0f);
-                            }else {
-                                line.enableDashedLine(0f, 0f, 0f);
-                            }
-                            line.setLineWidth(1.0f);
-                            line.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+                    pts[0] = l.getLimit();
+                    pts[1] =  line.getFloatOpenPrice();
+                    mTrans.pointValuesToPixel(pts);
 
-                            pts[0] = l.getLimit();
-                            pts[1] =  line.getFloatOpenPrice();
-                            mTrans.pointValuesToPixel(pts);
+                    float posX = pts[0];
+                    float posYLabel = pts[1];
 
-                            float posX = pts[0];
-                            float posYLabel = pts[1];
-
-                            if (iconLabelX != null && iconLabelY != null) {
-                                /**positionBitmap X*/
-                                c.drawBitmap(iconLabelX, posX - iconLabelX.getWidth()/2, pos - iconLabelX.getHeight()/3, paintLine);
-                                /**positionBitmap Y*/
-                                c.drawBitmap(iconLabelY, posX - iconLabelY.getWidth()/2, posYLabel - iconLabelY.getHeight()/2, paintLine);
-                                line.setMaxWeightCanvasLabel(c.getMaximumBitmapWidth());
-                            }
-                        }
+                    if (iconLabelX != null && iconLabelY != null) {
+                        /**positionBitmap X*/
+                        c.drawBitmap(iconLabelX, posX - iconLabelX.getWidth()/2, pos - iconLabelX.getHeight()/3, paintLine);
+                        /**positionBitmap Y*/
+                        c.drawBitmap(iconLabelY, posX - iconLabelY.getWidth()/2, posYLabel - iconLabelY.getHeight()/2, paintLine);
+                        line.setMaxWeightCanvasLabel(c.getMaximumBitmapWidth());
                     }
                 }
             }

@@ -10,10 +10,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.adapters.quotes.OnSharedPreferencesChange;
@@ -39,11 +39,12 @@ public class QuotesFragment extends Fragment {
     static final int UP_TEXT_COLOR = GrandCapitalApplication.getAppContext().getResources().getColor(R.color.dealingListUpOrderColor);
 
     private RecyclerView rvSelectedQuotes, rvAllQuotes;
+    private LinearLayout llProgressBar;
 
     private List<Instrument> lastInstruments;
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
 
-    private Handler handler = new Handler();
+    private Handler handler;
 
     private Runnable runnableQuotes = new Runnable() {
         @Override
@@ -57,10 +58,10 @@ public class QuotesFragment extends Fragment {
     private OnSharedPreferencesChange onSharedPreferencesChange = new OnSharedPreferencesChange() {
         @Override
         public void onChange() {
-            Log.d(TAG, "onChange()");
             setData(lastInstruments);
         }
     };
+
     private static QuotesFragment fragment = null;
     public static QuotesFragment getInstance() {
         if (fragment == null) {
@@ -84,6 +85,8 @@ public class QuotesFragment extends Fragment {
 
         rvAllQuotes = (RecyclerView) view.findViewById(R.id.rv_all_quotes);
         rvSelectedQuotes = (RecyclerView) view.findViewById(R.id.rv_selected_quotes);
+        llProgressBar = (LinearLayout) view.findViewById(R.id.layout_progress_bar);
+
         rvAllQuotes.setLayoutManager(new LinearLayoutManager(getContext()) {
             @Override
             public boolean canScrollVertically() {
@@ -99,20 +102,24 @@ public class QuotesFragment extends Fragment {
         rvAllQuotes.setNestedScrollingEnabled(false);
         rvSelectedQuotes.setNestedScrollingEnabled(false);
 
-        if(InfoAnswer.getInstance() != null) {
-            lastInstruments = InfoAnswer.getInstance().getInstruments();
-            setData(lastInstruments);
-            handler.postDelayed(runnableQuotes, INTERVAL);
-        }
+        handler = new Handler();
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mInfoBroadcastReceiver, intentFilter);
+        llProgressBar.setVisibility(View.VISIBLE);
+        new Handler().postDelayed(() -> {
+            if(InfoAnswer.getInstance() != null) {
+                lastInstruments = InfoAnswer.getInstance().getInstruments();
+                setData(lastInstruments);
+                handler.postDelayed(runnableQuotes, INTERVAL);
+            }
+        }, 1000);
     }
 
     @Override
@@ -134,7 +141,6 @@ public class QuotesFragment extends Fragment {
             String responseSummary = intent.getStringExtra(InfoUserService.RESPONSE_SUMMARY);
             if(responseInfo != null && responseSummary != null && responseInfo.equals(Const.RESPONSE_CODE_SUCCESS) && responseSummary.equals(Const.RESPONSE_CODE_SUCCESS)){
                 if(InfoAnswer.getInstance() != null) {
-                    Log.d(TAG, "comparisonQuotes onReceive");
                     List<Instrument> newInstruments = InfoAnswer.getInstance().getInstruments();
                     comparisonQuotes(newInstruments);
                 }
@@ -166,6 +172,7 @@ public class QuotesFragment extends Fragment {
             }
             lastInstruments = newInstruments;
             setData(lastInstruments);
+            llProgressBar.setVisibility(View.GONE);
         }
     }
 }

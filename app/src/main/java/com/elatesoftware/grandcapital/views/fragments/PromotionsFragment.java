@@ -59,7 +59,6 @@ public class PromotionsFragment extends Fragment {
         rvPromotions.setLayoutManager(new LinearLayoutManager(getContext()));
         llProgress = (LinearLayout) view.findViewById(R.id.layout_progress_bar);
 
-        loadBinaryOptionData();
         /*promotionsTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -81,12 +80,13 @@ public class PromotionsFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         mBinaryOptionBroadcastReceiver = new GetResponseBinaryOptionBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(BinaryOptionService.ACTION_SERVICE_BINARY_OPTION);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mBinaryOptionBroadcastReceiver, intentFilter);
+        loadBinaryOptionData();
     }
 
     @Override

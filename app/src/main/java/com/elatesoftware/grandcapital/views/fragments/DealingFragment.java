@@ -89,47 +89,6 @@ public class DealingFragment extends Fragment {
         tvEmptyDealing = (TextView) mNoOrdersLayout.findViewById(R.id.tvEmptyItems);
         mProgressLayout = (LinearLayout) view.findViewById(R.id.layout_progress_bar);
 
-        initTabs();
-        initListHeaders();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        sIsOpen = true;
-        mOrdersBroadcastReceiver = new GetResponseOrdersBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
-
-        mDeleteDealingBroadcastReceiver = new GetResponseDeleteDealingBroadcastReceiver();
-        IntentFilter intentFilterDeleteDealing = new IntentFilter(DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
-        intentFilterDeleteDealing.addCategory(Intent.CATEGORY_DEFAULT);
-        getActivity().registerReceiver(mDeleteDealingBroadcastReceiver, intentFilterDeleteDealing);
-    }
-
-    @Override
-    public void onPause() {
-        ((BaseActivity) getActivity()).showShadow();
-        getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
-        getActivity().unregisterReceiver(mDeleteDealingBroadcastReceiver);
-        sIsOpen = false;
-        super.onPause();
-
-    }
-    private void requestOrders(){
-        Intent intentService = new Intent(getActivity(), OrdersService.class);
-        intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS_DEALING);
-        getActivity().startService(intentService);
-    }
-
-    private void requestDeleteDealing(OrderAnswer order) {
-        Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
-        intentService.putExtra(Const.ACTION, DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
-        getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
-    }
-
-    private void initTabs() {
         mRecyclerView = (RecyclerView) getView().findViewById(R.id.ordersListOpen);
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
@@ -138,7 +97,7 @@ public class DealingFragment extends Fragment {
         mTabs = (TabLayout) getView().findViewById(R.id.dealingTabs);
         mTabs.getTabAt(currentTabPosition).select();
         analytics(currentTabPosition);
-        requestOrders();
+
         mTabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -157,6 +116,49 @@ public class DealingFragment extends Fragment {
             }
         });
         mTabs.getTabAt(currentTabPosition).select();
+        mFirstColumnHeader = (TextView) getView().findViewById(R.id.tv_dealing_header_col1_active);
+        mSecondColumnHeader = (TextView) getView().findViewById(R.id.tv_dealing_header_col2_open);
+        mThirdColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_3);
+        mFourthColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_4);
+        mFifthColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_5);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sIsOpen = true;
+        mOrdersBroadcastReceiver = new GetResponseOrdersBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(OrdersService.ACTION_SERVICE_ORDERS);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mOrdersBroadcastReceiver, intentFilter);
+
+        mDeleteDealingBroadcastReceiver = new GetResponseDeleteDealingBroadcastReceiver();
+        IntentFilter intentFilterDeleteDealing = new IntentFilter(DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
+        intentFilterDeleteDealing.addCategory(Intent.CATEGORY_DEFAULT);
+        getActivity().registerReceiver(mDeleteDealingBroadcastReceiver, intentFilterDeleteDealing);
+
+        requestOrders();
+    }
+
+    @Override
+    public void onStop() {
+        ((BaseActivity) getActivity()).showShadow();
+        getActivity().unregisterReceiver(mOrdersBroadcastReceiver);
+        getActivity().unregisterReceiver(mDeleteDealingBroadcastReceiver);
+        sIsOpen = false;
+        super.onStop();
+
+    }
+    private void requestOrders(){
+        Intent intentService = new Intent(getActivity(), OrdersService.class);
+        intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS_DEALING);
+        getActivity().startService(intentService);
+    }
+
+    private void requestDeleteDealing(OrderAnswer order) {
+        Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
+        intentService.putExtra(Const.ACTION, DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
+        getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
     }
 
     private void analytics(int tabPosition) {
@@ -166,14 +168,6 @@ public class DealingFragment extends Fragment {
                 null,
                 null
         );
-    }
-
-    private void initListHeaders() {
-        mFirstColumnHeader = (TextView) getView().findViewById(R.id.tv_dealing_header_col1_active);
-        mSecondColumnHeader = (TextView) getView().findViewById(R.id.tv_dealing_header_col2_open);
-        mThirdColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_3);
-        mFourthColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_4);
-        mFifthColumnHeader = (TextView) getView().findViewById(R.id.fragment_dealing_header_column_5);
     }
 
     private void checkOrders(List<OrderAnswer> currentOrders) {

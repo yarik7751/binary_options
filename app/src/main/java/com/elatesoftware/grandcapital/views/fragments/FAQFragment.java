@@ -56,20 +56,19 @@ public class FAQFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        Intent pageIntent = new Intent(getActivity(), QuestionsService.class);
-        pageIntent.putExtra(QuestionsService.PAGE, 1);
-        getActivity().startService(pageIntent);
-        llProgress.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         mQuestionsBroadcastReceiver = new GetResponseQuestionsBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(QuestionsService.ACTION_SERVICE_QUESTIONS);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mQuestionsBroadcastReceiver, intentFilter);
+        Intent pageIntent = new Intent(getActivity(), QuestionsService.class);
+        pageIntent.putExtra(QuestionsService.PAGE, 1);
+        getActivity().startService(pageIntent);
+        llProgress.setVisibility(View.VISIBLE);
     }
 
     @Override

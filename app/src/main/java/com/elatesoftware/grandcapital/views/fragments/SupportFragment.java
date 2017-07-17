@@ -115,16 +115,16 @@ public class SupportFragment extends Fragment {
                 }
             }
         });
-        loadChatHistory();
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         mChatBroadcastReceiver = new GetChatBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(ChatService.ACTION_SERVICE_CHAT);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mChatBroadcastReceiver, intentFilter);
+        loadChatHistory();
     }
 
     @Override

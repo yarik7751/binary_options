@@ -50,6 +50,5 @@ public class QuestionFragment extends Fragment {
 
         TextView contentText  = (TextView) view.findViewById(R.id.fragment_question_content);
         contentText.setText(mContent);
-        Log.d(TAG, "mContent: " + mContent);
     }
 }
