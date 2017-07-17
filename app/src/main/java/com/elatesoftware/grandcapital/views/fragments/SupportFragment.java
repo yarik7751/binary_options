@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,7 +80,6 @@ public class SupportFragment extends Fragment {
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_support));
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
         BaseActivity.getToolbar().deselectAll();
-        TerminalFragment.getInstance().setEnabled(false);
 
         cbSendMessage = (CircleButton) view.findViewById(R.id.cb_send_message);
         edMessage = (EditText) view.findViewById(R.id.ed_message);
@@ -131,7 +131,6 @@ public class SupportFragment extends Fragment {
     public void onStop() {
         handler.removeCallbacks(runnablePollChat);
         getActivity().unregisterReceiver(mChatBroadcastReceiver);
-        TerminalFragment.getInstance().setEnabled(true);
         if(adapter != null) {
             List<MessageChat> messages = adapter.getListMessages();
             for(MessageChat msg : messages) {

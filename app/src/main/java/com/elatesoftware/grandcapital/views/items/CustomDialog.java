@@ -14,7 +14,6 @@ import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.utils.Const;
 import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.utils.GoogleAnalyticsUtil;
-import com.elatesoftware.grandcapital.views.activities.BaseActivity;
 import com.elatesoftware.grandcapital.views.activities.SignInActivity;
 
 public class CustomDialog {
@@ -79,7 +78,6 @@ public class CustomDialog {
             CustomSharedPreferences.setIntervalAdvertising(activity.getApplicationContext(), -1);
             GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_EVENT_EXIT, null, null, null);
             dialog.cancel();
-            BaseActivity.removeTerminal();
             activity.finish();
             CustomSharedPreferences.deleteInfoUser(activity.getApplicationContext());
         });

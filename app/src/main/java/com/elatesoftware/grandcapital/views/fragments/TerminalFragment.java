@@ -69,6 +69,7 @@ import com.elatesoftware.grandcapital.views.items.limitLines.DealingLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.SocketLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.XDealingLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.YDealingLine;
+import com.elatesoftware.grandcapital.views.items.resideMenu.ResideMenu;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -96,7 +97,7 @@ public class TerminalFragment extends Fragment {
     private static int TIME_ANIMATION_DRAW_POINT = 100;
     public static float MAX_X_SCALE = 9f;
 
-    public static String sSymbolCurrent = "";
+    //public static String sSymbolCurrent = "";
     public static double mCurrentValueY = 0;
     private Timer mTimerRedraw;
     private OrderAnswer currentDealing = new OrderAnswer();
@@ -181,6 +182,17 @@ public class TerminalFragment extends Fragment {
         return fragment;
     }
 
+    private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
+        @Override
+        public void openMenu() {
+
+        }
+        @Override
+        public void closeMenu() {
+
+        }
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
@@ -231,10 +243,20 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
+
+        try {
+             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
+        }
+        BaseActivity.getResideMenu().setMenuListener(menuListener);
         mViewInfoHelper = new ViewInfoHelper(rlChart);
 
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
+        isValueIterator = false;
+        isTimeIterator = false;
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
@@ -340,32 +362,31 @@ public class TerminalFragment extends Fragment {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
                 if (index == 0) {
-                    sSymbolCurrent = listActives.get(listActives.size() - 1);
+                    BaseActivity.sSymbolCurrent = listActives.get(listActives.size() - 1);
                 } else {
-                    sSymbolCurrent = listActives.get(index - 1);
+                    BaseActivity.sSymbolCurrent = listActives.get(index - 1);
                 }
                 changeActive();
                 parseResponseSignals(ConventString.getActive(tvValueActive));
             } else {
-                sSymbolCurrent = Const.SYMBOL;
+                BaseActivity.sSymbolCurrent = Const.SYMBOL;
             }
         });
         tvRightActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
                 if (index == (listActives.size() - 1)) {
-                    sSymbolCurrent = listActives.get(0);
+                    BaseActivity.sSymbolCurrent = listActives.get(0);
                 } else {
-                    sSymbolCurrent = listActives.get(index + 1);
+                    BaseActivity.sSymbolCurrent = listActives.get(index + 1);
                 }
                 changeActive();
                 parseResponseSignals(ConventString.getActive(tvValueActive));
             } else {
-                sSymbolCurrent = Const.SYMBOL;
+                BaseActivity.sSymbolCurrent = Const.SYMBOL;
             }
         });
         tvDeposit.setOnClickListener(v -> {
-            //BaseActivity.changeMainFragment(new DepositFragment())
             BaseActivity.sMainTagFragment = TerminalFragment.class.getName();
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
             startActivity(browserIntent);
@@ -396,8 +417,8 @@ public class TerminalFragment extends Fragment {
         registerBroadcasts();
         clearChart();
         updateBalance(0);
-        if (sSymbolCurrent != null && !sSymbolCurrent.equals("")) {
-            tvValueActive.setText(sSymbolCurrent);
+        if (BaseActivity.sSymbolCurrent != null && !BaseActivity.sSymbolCurrent.equals("")) {
+            tvValueActive.setText(BaseActivity.sSymbolCurrent);
             drawDataSymbolHistory(ConventString.getActive(tvValueActive));
         } else {
             changeActive();
@@ -407,26 +428,23 @@ public class TerminalFragment extends Fragment {
     }
     @Override
     public void onStop() {
+        Log.d("fragments", "onStop Terminal");
         WebSocketApi.closeSocket();
-        super.onStop();
-    }
-    @Override
-    public void onPause() {
         stopTimerRedrawLimitLines();
         isFinishedDrawPoint = false;
-        Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         isFirstDrawPoint = true;
         listSocketAnswerQueue.clear();
         imgPointCurrent.setVisibility(View.INVISIBLE);
         isOpen = false;
         clearChart();
-        super.onPause();
         unregisterBroadcasts();
         BaseActivity.getResideMenu().setScrolling(true);
+        super.onStop();
     }
+
     @Override
     public void onDestroy() {
-        Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
+        Log.d("fragments", "onDestroy Terminal");
         GrandCapitalApplication.isTypeOptionAmerican = false;
         super.onDestroy();
     }
@@ -762,17 +780,17 @@ public class TerminalFragment extends Fragment {
         llDeposit.setBackgroundColor(getResources().getColor(R.color.dialog_bg));
         imgPointCurrent.setVisibility(View.INVISIBLE);
 
-        if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
-            sSymbolCurrent = Const.SYMBOL;
+        if (BaseActivity.sSymbolCurrent == null || BaseActivity.sSymbolCurrent.equals("")) {
+            BaseActivity.sSymbolCurrent = Const.SYMBOL;
         }
         isFirstDrawPoint = true;
         isFirstLoopPoint = true;
-        tvValueActive.setText(sSymbolCurrent);
-        Log.d(TAG, "sSymbolCurrent: " + sSymbolCurrent);
+        tvValueActive.setText(BaseActivity.sSymbolCurrent);
+        Log.d(TAG, "sSymbolCurrent: " + BaseActivity.sSymbolCurrent);
         GoogleAnalyticsUtil.sendEvent(
                 GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN,
                 GoogleAnalyticsUtil.ANALYTICS_BUTTON_CHANGE_ACTIVE,
-                sSymbolCurrent,
+                BaseActivity.sSymbolCurrent,
                 null
         );
 
@@ -789,13 +807,13 @@ public class TerminalFragment extends Fragment {
         if (!symbol.isEmpty() && !symbol.equals("") && listActives.size() > 0) {
             int index = listActives.indexOf(symbol);
             if(listActives.size() > index){
-                sSymbolCurrent = symbol;
+                BaseActivity.sSymbolCurrent = symbol;
                 tvValueActive.setText(listActives.get(index));
                 changeActive();
                 parseResponseSignals(ConventString.getActive(tvValueActive));
             }
         } else {
-            sSymbolCurrent = Const.SYMBOL;
+            BaseActivity.sSymbolCurrent = Const.SYMBOL;
         }
     }
 
@@ -1262,7 +1280,7 @@ public class TerminalFragment extends Fragment {
                 SymbolHistoryAnswer.getInstance() != null){
                     drawDataSymbolHistory(ConventString.getActive(tvValueActive));
             } else {
-                new WebSocketApi(sSymbolCurrent);
+                new WebSocketApi(BaseActivity.sSymbolCurrent);
                 stopProgress();
             }
         }

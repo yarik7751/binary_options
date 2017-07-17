@@ -46,6 +46,7 @@ public class BaseActivity extends CustomFontsActivity {
     public Context context;
     public static String sMainTagFragment = "";
     public static String sCurrentTagFragment = "";
+    public static String sSymbolCurrent = "";
 
     private static ResideMenu mResideMenu;
     private ResideMenuItem mTerminal;
@@ -60,7 +61,6 @@ public class BaseActivity extends CustomFontsActivity {
     private LinearLayout llShadow;
     private ResideMenuItem mLogout;
     private View mDeposit;
-    private TerminalFragment terminalFragment;
 
     private static ToolbarFragment toolbar;
 
@@ -73,6 +73,50 @@ public class BaseActivity extends CustomFontsActivity {
     public static final int QUOTES_POSITION = 4;
 
     private GetResponseInfoBroadcastReceiver mInfoBroadcastReceiver;
+
+    private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
+        @Override
+        public void openMenu() {
+            setDealings();
+            mResideMenu.setScrolling(true);
+        }
+        @Override
+        public void closeMenu() {
+            if(TerminalFragment.isOpen) {
+                mResideMenu.setScrolling(false);
+            } else {
+                mResideMenu.setScrolling(true);
+            }
+        }
+    };
+    private View.OnClickListener menuClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (view == mLogout) {
+                WebSocketApi.closeSocket();
+                CustomDialog.showDialogLogout(BaseActivity.this);
+            }else if (view == mTerminal && !TerminalFragment.getInstance().isVisible()){
+                changeMainFragment(TerminalFragment.getInstance());
+            } else if (view == mSupport) {
+                changeMainFragment(new SupportFragment());
+            } else if (view == mDealing) {
+                changeMainFragment(new DealingFragment());
+            } else if (view == mQuotes) {
+                changeMainFragment(new QuotesFragment());
+            } else if (view == mHowItWorks) {
+                changeMainFragment(new FAQFragment());
+            } else if (view == mPromotions) {
+                changeMainFragment(new PromotionsFragment());
+            } else if (view == mDepositWithdraw) {
+                changeMainFragment(new DepositFragment());
+            }else if (view == mDeposit) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
+                startActivity(browserIntent);
+                GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_IN_OUT_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_DEPOSIT, null, null);
+            }
+            mResideMenu.closeMenu();
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,8 +134,7 @@ public class BaseActivity extends CustomFontsActivity {
             if (savedInstanceState == null) {
                 toolbar = new ToolbarFragment();
                 changeToolbarFragment(toolbar);
-                //changeMainFragment(TerminalFragment.getInstance());
-                terminalFragment = setTerminalFragment();
+                changeMainFragment(TerminalFragment.getInstance());
                 getInfoUser();
                 startService(new Intent(this, CheckDealingService.class));
             }
@@ -126,11 +169,10 @@ public class BaseActivity extends CustomFontsActivity {
             if(!TextUtils.isEmpty(sMainTagFragment)) {
                 setToolbarInfoByTag();
             } else {
-                Log.d(TAG, "backToRootFragment (onBackPressed): true");
                 setToolBarTerminalInfo();
+                changeMainFragment(TerminalFragment.getInstance());
                 backToRootFragment = false;
             }
-            super.onBackPressed();
         } else {
             goHome();
         }
@@ -195,62 +237,11 @@ public class BaseActivity extends CustomFontsActivity {
         //mResideMenu.addMenuItem(mSettings, ResideMenu.DIRECTION_LEFT);
         mResideMenu.addMenuItem(mLogout, ResideMenu.DIRECTION_LEFT);
     }
-    private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
-        @Override
-        public void openMenu() {
-            setDealings();
-            mResideMenu.setScrolling(true);
-        }
-        @Override
-        public void closeMenu() {
-            if(TerminalFragment.isOpen) {
-                mResideMenu.setScrolling(false);
-            } else {
-                mResideMenu.setScrolling(true);
-            }
-        }
-    };
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         return mResideMenu.dispatchTouchEvent(ev);
     }
-
-    private View.OnClickListener menuClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (view == mLogout) {
-                WebSocketApi.closeSocket();
-                CustomDialog.showDialogLogout(BaseActivity.this);
-            }else if (view == mTerminal) {
-                //changeMainFragment(TerminalFragment.getInstance());
-                terminalFragment = setTerminalFragment();
-            } else if (view == mSupport) {
-                changeMainFragment(new SupportFragment());
-            } else if (view == mDealing) {
-                changeMainFragment(new DealingFragment());
-            } else if (view == mQuotes) {
-                changeMainFragment(new QuotesFragment());
-            } else if (view == mHowItWorks) {
-                changeMainFragment(new FAQFragment());
-            } else if (view == mPromotions) {
-                changeMainFragment(new PromotionsFragment());
-            } else if (view == mDepositWithdraw) {
-                changeMainFragment(new DepositFragment());
-            }
-            /*else if (view == mAccounts) {
-                changeMainFragment(new AccountsFragment());
-            }*/ /*else if (view == mSettings) {
-                changeMainFragment(new SettingsFragment());
-            } */else if (view == mDeposit) {
-                //changeMainFragment(new DepositFragment());
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
-                startActivity(browserIntent);
-                GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_IN_OUT_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_DEPOSIT, null, null);
-            }
-            mResideMenu.closeMenu();
-        }
-    };
 
     public void setMain(int i) {
         getToolbar().mTabLayout.setOnChangePosition(() -> {
@@ -258,16 +249,17 @@ public class BaseActivity extends CustomFontsActivity {
             switch (i){
                 case SIGNAL_POSITION:
                     Log.d(TAG, "SIGNAL_POSITION");
-                    if(TerminalFragment.isOpen && terminalFragment != null) {
-                        terminalFragment.showSignalsPanel();
+                    if(TerminalFragment.getInstance() != null && TerminalFragment.isOpen) {
+                        TerminalFragment.getInstance().showSignalsPanel();
                     }
                     GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_WIDGET_SIGNALS, null, null);
                     break;
                 case TERMINAL_POSITION:
                     Log.d(TAG, "TERMINAL_POSITION");
-                    terminalFragment = setTerminalFragment();
-                    if(!terminalFragment.isDirection) {
-                        terminalFragment.showSignalsPanel();
+                    if(!TerminalFragment.getInstance().isVisible()){
+                        changeMainFragment(TerminalFragment.getInstance());
+                    }else if(TerminalFragment.getInstance() != null && !TerminalFragment.getInstance().isDirection) {
+                        TerminalFragment.getInstance().showSignalsPanel();
                     }
                     break;
                 case DEALING_POSITION:
@@ -288,30 +280,17 @@ public class BaseActivity extends CustomFontsActivity {
     public static void changeMainFragment(Fragment targetFragment) {
         backToRootFragment = true;
         fragmentManager.popBackStack();
+        if(targetFragment instanceof  TerminalFragment){
+            if(backToRootFragment) {
+                clearFragmentBackStack();
+            }
+            backToRootFragment = false;
+        }
         onSwitchFragment(targetFragment, targetFragment.getClass().getName(), true, true, R.id.content);
     }
 
     public static void addNextFragment(Fragment fragment) {
         onSwitchFragment(fragment, fragment.getClass().getName(), true, true, R.id.content);
-    }
-
-    public  TerminalFragment setTerminalFragment() {
-        TerminalFragment fragment = TerminalFragment.getInstance();
-        if(backToRootFragment) {
-            clearFragmentBackStack();
-        }
-        backToRootFragment = false;
-        if(fragmentManager.findFragmentByTag(fragment.getClass().getName()) == null) {
-            onSwitchFragment(fragment, fragment.getClass().getName(), false, true, R.id.content);
-        } else {
-            setToolBarTerminalInfo();
-        }
-        return fragment;
-    }
-
-    public static void removeTerminal() {
-        TerminalFragment fragment = TerminalFragment.getInstance();
-        fragmentManager.beginTransaction().remove(fragment).commit();
     }
 
     public static void clearFragmentBackStack() {
@@ -326,7 +305,7 @@ public class BaseActivity extends CustomFontsActivity {
         if(anim) {
             tr.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         }
-        tr.add(res, fragment, tag);
+        tr.replace(res, fragment, tag);
         if (add) {
             try {
                 tr.addToBackStack(tag);

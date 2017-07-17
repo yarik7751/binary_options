@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,9 +107,6 @@ public class PromotionsFragment extends Fragment {
             String response = intent.getStringExtra(QuestionsService.RESPONSE);
             llProgress.setVisibility(View.GONE);
             if(response != null && response.equals(Const.RESPONSE_CODE_SUCCESS)) {
-                Log.d(TAG, "BinaryOptionAnswer: " + BinaryOptionAnswer.getInstance());
-                Log.d(TAG, "BinaryOptionAnswer size: " + BinaryOptionAnswer.getInstance().getElements().size());
-                Log.d(TAG, "BinaryOptionAnswer elements: " + BinaryOptionAnswer.getInstance().getElements());
                 adapter.setList(BinaryOptionAnswer.getInstance());
             } else {
                 CustomDialog.showDialogInfo(getActivity(),
