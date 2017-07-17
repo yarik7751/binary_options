@@ -244,7 +244,6 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
-
         try {
              BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
              BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
@@ -256,8 +255,10 @@ public class TerminalFragment extends Fragment {
 
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
+
         isValueIterator = true;
         isTimeIterator = true;
+
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
@@ -852,22 +853,22 @@ public class TerminalFragment extends Fragment {
     }
 
     private void requestBalanceUser() {
-        Intent intentBalanceService = new Intent(getActivity(), InfoUserService.class);
+        Intent intentBalanceService = new Intent(getActivity().getApplicationContext(), InfoUserService.class);
         getActivity().startService(intentBalanceService);
     }
     private void requestEarlyClosure() {
-        Intent intent = new Intent(getActivity(), EarlyClosureService.class);
+        Intent intent = new Intent(getActivity().getApplicationContext(), EarlyClosureService.class);
         intent.putExtra(EarlyClosureService.SYMBOL, tvValueActive.getText().toString());
         intent.putExtra(EarlyClosureService.TIME, ConventString.getTimeValue(etValueTime));
         getActivity().startService(intent);
     }
     private void requestSymbolHistory(String symbol) {
-        Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
+        Intent intentService = new Intent(getActivity().getApplicationContext(), SymbolHistoryService.class);
         intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
         getActivity().startService(intentService);
     }
     private void requestSignals() {
-        Intent intentService = new Intent(getActivity(), SignalService.class);
+        Intent intentService = new Intent(getActivity().getApplicationContext(), SignalService.class);
         getActivity().startService(intentService);
     }
     private void requestMakeDealing(String lowerOrHeight) {
@@ -879,7 +880,7 @@ public class TerminalFragment extends Fragment {
                 stopProgress();
                 return;
             }
-            Intent intentService = new Intent(getActivity(), MakeDealingService.class);
+            Intent intentService = new Intent(getActivity().getApplicationContext(), MakeDealingService.class);
             intentService.putExtra(MakeDealingService.CMD, lowerOrHeight);
             intentService.putExtra(MakeDealingService.SYMBOL, ConventString.getActive(tvValueActive));
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
@@ -898,14 +899,14 @@ public class TerminalFragment extends Fragment {
     }
     private void requestGetAllOrders() {
         if(isAdded()) {
-            Intent intentService = new Intent(getActivity(), OrdersService.class);
+            Intent intentService = new Intent(getActivity().getApplicationContext(), OrdersService.class);
             intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS_TERMINAL);
             getActivity().startService(intentService);
         }
     }
     private void requestGetTicketOrder(OrderAnswer order) {
         if(isAdded()) {
-            Intent intentService = new Intent(getActivity(), OrdersService.class);
+            Intent intentService = new Intent(getActivity().getApplicationContext(), OrdersService.class);
             intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_TICKET_ORDER);
             intentService.putExtra(OrdersService.ORDER, new Gson().toJson(order));
             getActivity().startService(intentService);
@@ -913,7 +914,7 @@ public class TerminalFragment extends Fragment {
     }
     private void requestDeleteDealing(OrderAnswer order){
         if(order.getTicket() != null && order.getTicket() != 0 ){
-            Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
+            Intent intentService = new Intent(getActivity().getApplicationContext(), DeleteDealingService.class);
             getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
             llProgressBar.setVisibility(View.VISIBLE);
         }else{
