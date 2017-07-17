@@ -256,8 +256,8 @@ public class TerminalFragment extends Fragment {
 
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
-        isValueIterator = false;
-        isTimeIterator = false;
+        isValueIterator = true;
+        isTimeIterator = true;
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
