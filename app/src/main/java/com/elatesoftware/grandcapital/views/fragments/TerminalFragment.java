@@ -114,6 +114,7 @@ public class TerminalFragment extends Fragment {
     private boolean isFirstLoopPoint = true;
     private boolean isTimeIterator, isValueIterator, isOpenKeyboard = false;
     private static boolean isFinishedDrawPoint = true;
+    private static boolean isUpdateChart = true;
 
     public LineChart mChart;
     private TextView tvBalance;
@@ -185,11 +186,11 @@ public class TerminalFragment extends Fragment {
     private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
         @Override
         public void openMenu() {
-
+            isUpdateChart = false;
         }
         @Override
         public void closeMenu() {
-
+            isUpdateChart = true;
         }
     };
 
@@ -1130,10 +1131,12 @@ public class TerminalFragment extends Fragment {
         }
     }
     public void redrawItemsChart(Entry entry){
-        SocketLine.drawSocketLine(entry);
-        drawCurrentPoint(entry);
-        redrawYLimitLines();
-        redrawXLimitLines();
+        if(isUpdateChart){
+            SocketLine.drawSocketLine(entry);
+            drawCurrentPoint(entry);
+            redrawYLimitLines();
+            redrawXLimitLines();
+        }
     }
     private void redrawXLimitLines(){
         List<XDealingLine> list = BaseLimitLine.getXLimitLines();
