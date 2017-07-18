@@ -90,8 +90,10 @@ public class ToolTabsView extends LinearLayout {
 
     public void hideTab(int position) {
         Log.d(TAG, "hideTab");
-        llTabs.getChildAt(position).setVisibility(GONE);
-        setNumbers();
+        if(llTabs != null && llTabs.getChildAt(position) != null){
+            llTabs.getChildAt(position).setVisibility(GONE);
+            setNumbers();
+        }
     }
 
     public void showTab(int position) {
@@ -115,15 +117,14 @@ public class ToolTabsView extends LinearLayout {
     }
 
     public void selectTab(int logicNumber) {
-        deselectAllTabs();
-        getNumbersTabsToLog();
-        int position = getPositionByLogicNumber(logicNumber);
-        setTint(llTabs.getChildAt(position), true);
-        vIndicator.setVisibility(VISIBLE);
-        moveIndicatior((int) llTabs.getChildAt(position).getTag(R.string.number), false);
-        /*if(onChooseTab != null) {
-            onChooseTab.onChoose(llTabs.getChildAt(position), logicNumber);
-        }*/
+        if (llTabs != null && llTabs.getChildAt(getPositionByLogicNumber(logicNumber)) != null) {
+            deselectAllTabs();
+            getNumbersTabsToLog();
+            int position = getPositionByLogicNumber(logicNumber);
+            setTint(llTabs.getChildAt(position), true);
+            vIndicator.setVisibility(VISIBLE);
+            moveIndicatior((int) llTabs.getChildAt(position).getTag(R.string.number), false);
+        }
     }
 
     public void deselectAllTabs() {

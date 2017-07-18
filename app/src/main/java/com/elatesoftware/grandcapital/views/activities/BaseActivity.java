@@ -167,6 +167,7 @@ public class BaseActivity extends CustomFontsActivity {
         }
         if(backToRootFragment) {
             if(!TextUtils.isEmpty(sMainTagFragment)) {
+                fragmentManager.popBackStack();
                 setToolbarInfoByTag();
             } else {
                 setToolBarTerminalInfo();
