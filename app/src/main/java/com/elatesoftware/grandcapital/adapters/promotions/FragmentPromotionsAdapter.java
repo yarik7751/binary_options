@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
 
         Gson gson = new Gson();
         String name = binaryOptionAnswer.getElements().get(position).getShortDescriptionEn().toUpperCase();
-        String longDescription = binaryOptionAnswer.getElements().get(position).getLongDescription();
+        String longDescription = binaryOptionAnswer.getElements().get(position).getLongDescriptionEn();
         try {
             String jsonStr = gson.toJson(binaryOptionAnswer.getElements().get(position), BinaryOptionAnswer.Element.class);
             JSONObject elem = new JSONObject(jsonStr);
@@ -67,8 +68,8 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
                 nameParam = "short_description_zh_cn";
                 longDescription = "long_description_zh_cn";
             }
-            name = elem.getString(nameParam);
-            longDescription = elem.getString(longDescriptionParam);
+            name = TextUtils.isEmpty(elem.getString(nameParam)) ? name : elem.getString(nameParam);
+            longDescription = TextUtils.isEmpty(elem.getString(longDescriptionParam)) ? longDescription : elem.getString(longDescriptionParam);
         } catch (JSONException e) {
             e.printStackTrace();
         }
