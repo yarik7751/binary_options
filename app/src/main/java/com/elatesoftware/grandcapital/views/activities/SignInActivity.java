@@ -38,6 +38,8 @@ import com.elatesoftware.grandcapital.utils.CustomSharedPreferences;
 import com.elatesoftware.grandcapital.views.interfaces.OnKeyboardVisibilityListener;
 import com.elatesoftware.grandcapital.views.items.CustomDialog;
 
+import java.util.Locale;
+
 public class SignInActivity extends CustomFontsActivity implements OnKeyboardVisibilityListener {
 
     private EditText etLogin;
@@ -56,6 +58,7 @@ public class SignInActivity extends CustomFontsActivity implements OnKeyboardVis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        CustomSharedPreferences.setLanguage(this);
         llProgress = (LinearLayout) findViewById(R.id.layout_progress_bar);
         etLogin = (EditText) findViewById(R.id.login);
         etPassword = (EditText) findViewById(R.id.password);

@@ -101,10 +101,20 @@ public class BaseActivity extends CustomFontsActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(CustomSharedPreferences.isChangedLanguage(this)) {
+            CustomSharedPreferences.setLanguage(this);
+            restartActivity();
+        }
         mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         registerReceiver(mInfoBroadcastReceiver, intentFilter);
+    }
+
+    private void restartActivity() {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
     }
 
     @Override
@@ -156,7 +166,7 @@ public class BaseActivity extends CustomFontsActivity {
 
     public void setDealings() {
         mDealing.setValue(CustomSharedPreferences.getAmtOpenDealings(this));
-        BaseActivity.getToolbar().setDealingIcon();
+        //BaseActivity.getToolbar().setDealingIcon();
     }
 
     private void addItems() {

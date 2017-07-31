@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import com.elatesoftware.grandcapital.models.User;
 import com.google.gson.Gson;
 
+import java.util.Locale;
+
 /**
  * Created by Дарья Высокович on 16.02.2017.
  */
@@ -19,6 +21,7 @@ public class CustomSharedPreferences {
      private static final String SHARED_PREFERENCES_OPEN_DEALINGS = "SHARED_PREFERENCES_OPEN_DEALINGS";
      private static final String SHARED_PREFERENCES_INTERVAL_ADVERTISING = "SHARED_PREFERENCES_INTERVAL_ADVERTISING";
      private static final String SHARED_PREFERENCES_AGREE_CLOSE_DEALING = "SHARED_PREFERENCES_AGREE_CLOSE_DEALING";
+     private static final String SHARED_PREFERENCES_LANGUAGE = "SHARED_PREFERENCES_LANGUAGE";
 
     public static boolean isSaveUserInPreferences(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
@@ -99,5 +102,17 @@ public class CustomSharedPreferences {
     public static int getIntervalAdvertising(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
         return sharedPreferences.getInt(SHARED_PREFERENCES_INTERVAL_ADVERTISING, -1);
+    }
+
+    public static boolean isChangedLanguage(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        String myLanguage = sharedPreferences.getString(SHARED_PREFERENCES_LANGUAGE, Locale.getDefault().getLanguage());
+        String language = Locale.getDefault().getLanguage();
+        return !language.equals(myLanguage);
+    }
+
+    public static void setLanguage(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        sharedPreferences.edit().putString(SHARED_PREFERENCES_LANGUAGE, Locale.getDefault().getLanguage()).apply();
     }
 }

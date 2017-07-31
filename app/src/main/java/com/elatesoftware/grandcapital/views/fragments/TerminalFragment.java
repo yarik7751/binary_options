@@ -231,6 +231,15 @@ public class TerminalFragment extends Fragment {
             BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
             BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
         });
+        try {
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_TERMINALE_FRAGMENT);
+            BaseActivity.getToolbar().switchTab(BaseActivity.TERMINAL_POSITION);
+        } catch (NullPointerException e) {
+
+        }
+
+        isValueIterator = true;
+        isTimeIterator = true;
         mViewInfoHelper = new ViewInfoHelper(rlChart);
 
         etValueAmount.clearFocus();
@@ -383,6 +392,7 @@ public class TerminalFragment extends Fragment {
         initializationChart();
         setSizeHeight();
     }
+
     @Override
     public void onResume() {
         super.onResume();
