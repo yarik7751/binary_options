@@ -203,11 +203,9 @@ public class ToolbarFragment extends Fragment {
     }
 
     public void showTabs() {
-        //if (mTabLayout.getVisibility() == View.INVISIBLE || mTabLayout.getVisibility() == View.GONE) {
-            mTabLayout.setVisibility(View.VISIBLE);
-            mTabLayout.getLayoutParams().width = AndroidUtils.dp(170);
-            ((RelativeLayout.LayoutParams) mPageTitle.getLayoutParams()).rightMargin = AndroidUtils.dp(180);
-        //}
+        mTabLayout.setVisibility(View.VISIBLE);
+        mTabLayout.getLayoutParams().width = AndroidUtils.dp(170);
+        ((RelativeLayout.LayoutParams) mPageTitle.getLayoutParams()).rightMargin = AndroidUtils.dp(180);
     }
 
     public void setPageTitle(String title) {

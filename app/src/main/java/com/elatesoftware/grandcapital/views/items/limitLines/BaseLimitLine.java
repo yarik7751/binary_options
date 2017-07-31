@@ -64,7 +64,7 @@ public class BaseLimitLine extends LimitLine {
 
     public static List<XDealingLine> getXLimitLines() {
         List<XDealingLine> list = new ArrayList<>();
-        if(xAxis.getLimitLines() != null && xAxis.getLimitLines().size() != 0){
+        if(xAxis != null && xAxis.getLimitLines() != null && xAxis.getLimitLines().size() != 0){
             for(LimitLine l: xAxis.getLimitLines()){
                 list.add((XDealingLine) l);
             }

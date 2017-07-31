@@ -69,6 +69,7 @@ import com.elatesoftware.grandcapital.views.items.limitLines.DealingLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.SocketLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.XDealingLine;
 import com.elatesoftware.grandcapital.views.items.limitLines.YDealingLine;
+import com.elatesoftware.grandcapital.views.items.resideMenu.ResideMenu;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -96,7 +97,7 @@ public class TerminalFragment extends Fragment {
     private static int TIME_ANIMATION_DRAW_POINT = 100;
     public static float MAX_X_SCALE = 9f;
 
-    public static String sSymbolCurrent = "";
+    //public static String sSymbolCurrent = "";
     public static double mCurrentValueY = 0;
     private Timer mTimerRedraw;
     private OrderAnswer currentDealing = new OrderAnswer();
@@ -113,6 +114,7 @@ public class TerminalFragment extends Fragment {
     private boolean isFirstLoopPoint = true;
     private boolean isTimeIterator, isValueIterator, isOpenKeyboard = false;
     private static boolean isFinishedDrawPoint = true;
+    private static boolean isUpdateChart = true;
 
     public LineChart mChart;
     private TextView tvBalance;
@@ -181,6 +183,17 @@ public class TerminalFragment extends Fragment {
         return fragment;
     }
 
+    private ResideMenu.OnMenuListener menuListener = new ResideMenu.OnMenuListener() {
+        @Override
+        public void openMenu() {
+            isUpdateChart = false;
+        }
+        @Override
+        public void closeMenu() {
+            isUpdateChart = true;
+        }
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View parentView = inflater.inflate(R.layout.fragment_terminal, container, false);
@@ -244,6 +257,10 @@ public class TerminalFragment extends Fragment {
 
         etValueAmount.clearFocus();
         etValueTime.clearFocus();
+
+        isValueIterator = true;
+        isTimeIterator = true;
+
         etValueAmount.setText(getResources().getString(R.string.zero_dollars));
         etValueTime.setText(getResources().getString(R.string.zero_min));
 
@@ -349,32 +366,31 @@ public class TerminalFragment extends Fragment {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
                 if (index == 0) {
-                    sSymbolCurrent = listActives.get(listActives.size() - 1);
+                    BaseActivity.sSymbolCurrent = listActives.get(listActives.size() - 1);
                 } else {
-                    sSymbolCurrent = listActives.get(index - 1);
+                    BaseActivity.sSymbolCurrent = listActives.get(index - 1);
                 }
                 changeActive();
                 parseResponseSignals(ConventString.getActive(tvValueActive));
             } else {
-                sSymbolCurrent = Const.SYMBOL;
+                BaseActivity.sSymbolCurrent = Const.SYMBOL;
             }
         });
         tvRightActive.setOnClickListener(v -> {
             if (!ConventString.getActive(tvValueActive).isEmpty() && listActives.size() > 0) {
                 int index = listActives.indexOf(ConventString.getActive(tvValueActive));
                 if (index == (listActives.size() - 1)) {
-                    sSymbolCurrent = listActives.get(0);
+                    BaseActivity.sSymbolCurrent = listActives.get(0);
                 } else {
-                    sSymbolCurrent = listActives.get(index + 1);
+                    BaseActivity.sSymbolCurrent = listActives.get(index + 1);
                 }
                 changeActive();
                 parseResponseSignals(ConventString.getActive(tvValueActive));
             } else {
-                sSymbolCurrent = Const.SYMBOL;
+                BaseActivity.sSymbolCurrent = Const.SYMBOL;
             }
         });
         tvDeposit.setOnClickListener(v -> {
-            //BaseActivity.changeMainFragment(new DepositFragment())
             BaseActivity.sMainTagFragment = TerminalFragment.class.getName();
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(Const.URL_GRAND_CAPITAL_ACCOUNT + User.getInstance().getLogin() + Const.URL_GRAND_CAPITAL_DEPOSIT));
             startActivity(browserIntent);
@@ -392,7 +408,6 @@ public class TerminalFragment extends Fragment {
         initializationChart();
         setSizeHeight();
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -406,8 +421,8 @@ public class TerminalFragment extends Fragment {
         registerBroadcasts();
         clearChart();
         updateBalance(0);
-        if (sSymbolCurrent != null && !sSymbolCurrent.equals("")) {
-            tvValueActive.setText(sSymbolCurrent);
+        if (BaseActivity.sSymbolCurrent != null && !BaseActivity.sSymbolCurrent.equals("")) {
+            tvValueActive.setText(BaseActivity.sSymbolCurrent);
             drawDataSymbolHistory(ConventString.getActive(tvValueActive));
         } else {
             changeActive();
@@ -418,25 +433,21 @@ public class TerminalFragment extends Fragment {
     @Override
     public void onStop() {
         WebSocketApi.closeSocket();
-        super.onStop();
-    }
-    @Override
-    public void onPause() {
         stopTimerRedrawLimitLines();
         isFinishedDrawPoint = false;
-        Log.d(GrandCapitalApplication.TAG_SOCKET, "onPause() Terminal");
         isFirstDrawPoint = true;
         listSocketAnswerQueue.clear();
         imgPointCurrent.setVisibility(View.INVISIBLE);
         isOpen = false;
         clearChart();
-        super.onPause();
         unregisterBroadcasts();
         BaseActivity.getResideMenu().setScrolling(true);
+        super.onStop();
     }
+
     @Override
     public void onDestroy() {
-        Log.d(GrandCapitalApplication.TAG_SOCKET, "onDestroy() Terminal");
+        Log.d("fragments", "onDestroy Terminal");
         GrandCapitalApplication.isTypeOptionAmerican = false;
         super.onDestroy();
     }
@@ -772,17 +783,17 @@ public class TerminalFragment extends Fragment {
         llDeposit.setBackgroundColor(getResources().getColor(R.color.dialog_bg));
         imgPointCurrent.setVisibility(View.INVISIBLE);
 
-        if (sSymbolCurrent == null || sSymbolCurrent.equals("")) {
-            sSymbolCurrent = Const.SYMBOL;
+        if (BaseActivity.sSymbolCurrent == null || BaseActivity.sSymbolCurrent.equals("")) {
+            BaseActivity.sSymbolCurrent = Const.SYMBOL;
         }
         isFirstDrawPoint = true;
         isFirstLoopPoint = true;
-        tvValueActive.setText(sSymbolCurrent);
-        Log.d(TAG, "sSymbolCurrent: " + sSymbolCurrent);
+        tvValueActive.setText(BaseActivity.sSymbolCurrent);
+        Log.d(TAG, "sSymbolCurrent: " + BaseActivity.sSymbolCurrent);
         GoogleAnalyticsUtil.sendEvent(
                 GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN,
                 GoogleAnalyticsUtil.ANALYTICS_BUTTON_CHANGE_ACTIVE,
-                sSymbolCurrent,
+                BaseActivity.sSymbolCurrent,
                 null
         );
 
@@ -799,13 +810,13 @@ public class TerminalFragment extends Fragment {
         if (!symbol.isEmpty() && !symbol.equals("") && listActives.size() > 0) {
             int index = listActives.indexOf(symbol);
             if(listActives.size() > index){
-                sSymbolCurrent = symbol;
+                BaseActivity.sSymbolCurrent = symbol;
                 tvValueActive.setText(listActives.get(index));
                 changeActive();
                 parseResponseSignals(ConventString.getActive(tvValueActive));
             }
         } else {
-            sSymbolCurrent = Const.SYMBOL;
+            BaseActivity.sSymbolCurrent = Const.SYMBOL;
         }
     }
 
@@ -843,22 +854,22 @@ public class TerminalFragment extends Fragment {
     }
 
     private void requestBalanceUser() {
-        Intent intentBalanceService = new Intent(getActivity(), InfoUserService.class);
+        Intent intentBalanceService = new Intent(getActivity().getApplicationContext(), InfoUserService.class);
         getActivity().startService(intentBalanceService);
     }
     private void requestEarlyClosure() {
-        Intent intent = new Intent(getActivity(), EarlyClosureService.class);
+        Intent intent = new Intent(getActivity().getApplicationContext(), EarlyClosureService.class);
         intent.putExtra(EarlyClosureService.SYMBOL, tvValueActive.getText().toString());
         intent.putExtra(EarlyClosureService.TIME, ConventString.getTimeValue(etValueTime));
         getActivity().startService(intent);
     }
     private void requestSymbolHistory(String symbol) {
-        Intent intentService = new Intent(getActivity(), SymbolHistoryService.class);
+        Intent intentService = new Intent(getActivity().getApplicationContext(), SymbolHistoryService.class);
         intentService.putExtra(SymbolHistoryService.SYMBOL, symbol);
         getActivity().startService(intentService);
     }
     private void requestSignals() {
-        Intent intentService = new Intent(getActivity(), SignalService.class);
+        Intent intentService = new Intent(getActivity().getApplicationContext(), SignalService.class);
         getActivity().startService(intentService);
     }
     private void requestMakeDealing(String lowerOrHeight) {
@@ -870,7 +881,7 @@ public class TerminalFragment extends Fragment {
                 stopProgress();
                 return;
             }
-            Intent intentService = new Intent(getActivity(), MakeDealingService.class);
+            Intent intentService = new Intent(getActivity().getApplicationContext(), MakeDealingService.class);
             intentService.putExtra(MakeDealingService.CMD, lowerOrHeight);
             intentService.putExtra(MakeDealingService.SYMBOL, ConventString.getActive(tvValueActive));
             intentService.putExtra(MakeDealingService.VOLUME, String.valueOf(ConventString.getAmountValue(etValueAmount)));
@@ -889,14 +900,14 @@ public class TerminalFragment extends Fragment {
     }
     private void requestGetAllOrders() {
         if(isAdded()) {
-            Intent intentService = new Intent(getActivity(), OrdersService.class);
+            Intent intentService = new Intent(getActivity().getApplicationContext(), OrdersService.class);
             intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS_TERMINAL);
             getActivity().startService(intentService);
         }
     }
     private void requestGetTicketOrder(OrderAnswer order) {
         if(isAdded()) {
-            Intent intentService = new Intent(getActivity(), OrdersService.class);
+            Intent intentService = new Intent(getActivity().getApplicationContext(), OrdersService.class);
             intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_TICKET_ORDER);
             intentService.putExtra(OrdersService.ORDER, new Gson().toJson(order));
             getActivity().startService(intentService);
@@ -904,7 +915,7 @@ public class TerminalFragment extends Fragment {
     }
     private void requestDeleteDealing(OrderAnswer order){
         if(order.getTicket() != null && order.getTicket() != 0 ){
-            Intent intentService = new Intent(getActivity(), DeleteDealingService.class);
+            Intent intentService = new Intent(getActivity().getApplicationContext(), DeleteDealingService.class);
             getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
             llProgressBar.setVisibility(View.VISIBLE);
         }else{
@@ -1122,10 +1133,12 @@ public class TerminalFragment extends Fragment {
         }
     }
     public void redrawItemsChart(Entry entry){
-        SocketLine.drawSocketLine(entry);
-        drawCurrentPoint(entry);
-        redrawYLimitLines();
-        redrawXLimitLines();
+        if(isUpdateChart){
+            SocketLine.drawSocketLine(entry);
+            drawCurrentPoint(entry);
+            redrawYLimitLines();
+            redrawXLimitLines();
+        }
     }
     private void redrawXLimitLines(){
         List<XDealingLine> list = BaseLimitLine.getXLimitLines();
@@ -1272,7 +1285,7 @@ public class TerminalFragment extends Fragment {
                 SymbolHistoryAnswer.getInstance() != null){
                     drawDataSymbolHistory(ConventString.getActive(tvValueActive));
             } else {
-                new WebSocketApi(sSymbolCurrent);
+                new WebSocketApi(BaseActivity.sSymbolCurrent);
                 stopProgress();
             }
         }
