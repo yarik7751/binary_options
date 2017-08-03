@@ -90,7 +90,8 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
             bundle.putString(QuestionFragment.HEADER_TEXT, finalName);
             bundle.putString(QuestionFragment.CONTENT_TEXT, finalLongDescription);
 
-            GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_PROMOTIONS_SCREEN, GoogleAnalyticsUtil.ANALYTICS_LIST_PROMOTION, binaryOptionAnswer.getElements().get(position).getShortDescription(), null);
+            GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_PROMOTIONS_SCREEN,
+                    GoogleAnalyticsUtil.ANALYTICS_LIST_PROMOTION, binaryOptionAnswer.getElements().get(position).getShortDescription(), null);
 
             BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
             QuestionFragment questionFragment = new QuestionFragment();

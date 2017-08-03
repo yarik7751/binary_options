@@ -221,7 +221,7 @@ public class BaseActivity extends CustomFontsActivity {
 
     public void setDealings() {
         mDealing.setValue(CustomSharedPreferences.getAmtOpenDealings(this));
-        //BaseActivity.getToolbar().setDealingIcon();
+        BaseActivity.getToolbar().setDealingIcon();
     }
 
     private void addItems() {

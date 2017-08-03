@@ -33,22 +33,22 @@
             android:name=".views.activities.BaseActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|locale"
+            android:configChanges="keyboardHidden"
             android:windowSoftInputMode="adjustResize|stateHidden">
         </activity>
         <activity
             android:name=".views.activities.SignInActivity"
             android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|locale"
+            android:configChanges="keyboardHidden"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
             android:name=".views.activities.SignUpActivity"
             android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|locale"
+            android:configChanges="keyboardHidden"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
             android:name=".views.activities.WebActivity"
-            android:configChanges="keyboardHidden|locale"
+            android:configChanges="keyboardHidden"
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <service android:name=".services.SignInService"/>
         <service android:name=".services.InfoUserService"/>
