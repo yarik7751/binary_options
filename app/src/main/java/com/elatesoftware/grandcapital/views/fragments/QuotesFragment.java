@@ -82,6 +82,12 @@ public class QuotesFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
+            BaseActivity.getToolbar().switchTab(BaseActivity.QUOTES_POSITION);
+            BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_quotes));
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+            BaseActivity.getToolbar().switchTab(5);
+        });
         BaseActivity.getToolbar().switchTab(BaseActivity.QUOTES_POSITION);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_quotes));
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);

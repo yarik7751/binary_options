@@ -80,6 +80,10 @@ public class DealingFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.toolbar_name_dealing));
+        BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
+            BaseActivity.getToolbar().switchTab(BaseActivity.DEALING_POSITION);
+        });
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_OTHER_FRAGMENT);
         BaseActivity.getToolbar().switchTab(BaseActivity.DEALING_POSITION);
         ((BaseActivity) getActivity()).hideShadow();

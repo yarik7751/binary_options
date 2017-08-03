@@ -356,7 +356,9 @@ public class TerminalFragment extends Fragment {
                          .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                          .addToBackStack("choice")
                          .commit();
+
             BaseActivity.backToRootFragment = true;
+            BaseActivity.currentFragment = choiceFragment;
             BaseActivity.sMainTagFragment = QuotesChoiceFragment.class.getName();
         });
         tvLeftActive.setOnClickListener(v -> {

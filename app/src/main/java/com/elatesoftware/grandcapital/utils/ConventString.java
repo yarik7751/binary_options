@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.elatesoftware.grandcapital.R;
 import com.elatesoftware.grandcapital.models.User;
 
+import java.util.Locale;
+
 /**
  * Created by Darya on 12.03.2017.
  */
@@ -196,5 +198,16 @@ public class ConventString {
                 language.equals("ru") ||
                 language.equals("кг") ||
                 language.equals("zh");
+    }
+
+    public static String getLanguageForPromotions() {
+        String language = Locale.getDefault().getLanguage();
+        if(!ConventString.isOurLanguage(language)) {
+            language = "en";
+        }
+        if(language.equals("zh") || language.equals("cn")) {
+            language = "zh_cn";
+        }
+        return language;
     }
 }

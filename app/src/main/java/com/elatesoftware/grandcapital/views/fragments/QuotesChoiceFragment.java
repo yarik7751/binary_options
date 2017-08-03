@@ -77,6 +77,12 @@ public class QuotesChoiceFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        BaseActivity.getToolbar().mTabLayout.setOnLoadData(() -> {
+            BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.choose_an_active));
+            BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_EMPTY_FRAGMENT);
+            BaseActivity.getToolbar().deselectAll();
+            BaseActivity.getToolbar().setBurgerType(ToolbarFragment.BURGER_BACK_PRESSED);
+        });
         BaseActivity.getToolbar().setPageTitle(getResources().getString(R.string.choose_an_active));
         BaseActivity.getToolbar().hideTabsByType(ToolbarFragment.TOOLBAR_EMPTY_FRAGMENT);
         BaseActivity.getToolbar().deselectAll();

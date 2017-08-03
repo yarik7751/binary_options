@@ -6,6 +6,8 @@
     tools:context=".views.fragments.QuestionFragment"
     android:background="@drawable/bg">
 
+    <include layout="@layout/incl_progress_bar" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

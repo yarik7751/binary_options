@@ -43,7 +43,9 @@ public class BaseActivity extends CustomFontsActivity {
 
     public static final String TAG = "BaseActivity_TAG";
     public static FragmentManager fragmentManager;
+    public static Fragment currentFragment;
     public Context context;
+    private boolean isRestared;
     public static String sMainTagFragment = "";
     public static String sCurrentTagFragment = "";
     public static String sSymbolCurrent = "";
@@ -100,7 +102,7 @@ public class BaseActivity extends CustomFontsActivity {
             } else if (view == mSupport) {
                 changeMainFragment(new SupportFragment());
             } else if (view == mDealing) {
-                changeMainFragment(new DealingFragment());
+                changeMainFragment(DealingFragment.getInstance());
             } else if (view == mQuotes) {
                 changeMainFragment(new QuotesFragment());
             } else if (view == mHowItWorks) {
@@ -119,6 +121,12 @@ public class BaseActivity extends CustomFontsActivity {
     };
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        isRestared = true;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
@@ -131,23 +139,26 @@ public class BaseActivity extends CustomFontsActivity {
             fragmentManager = getSupportFragmentManager();
             context = this;
             setupMenu();
-            if (savedInstanceState == null) {
-                toolbar = new ToolbarFragment();
+            //if (savedInstanceState == null) {
+                toolbar = ToolbarFragment.getInstance();
                 changeToolbarFragment(toolbar);
-                changeMainFragment(TerminalFragment.getInstance());
+                if(currentFragment == null) {
+                    currentFragment = TerminalFragment.getInstance();
+                }
+                changeMainFragment(currentFragment);
                 getInfoUser();
                 startService(new Intent(this, CheckDealingService.class));
-            }
+            //}
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(CustomSharedPreferences.isChangedLanguage(this)) {
+        /*if(CustomSharedPreferences.isChangedLanguage(this)) {
             CustomSharedPreferences.setLanguage(this);
             restartActivity();
-        }
+        }*/
         mInfoBroadcastReceiver = new GetResponseInfoBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(InfoUserService.ACTION_SERVICE_GET_INFO);
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
@@ -163,6 +174,7 @@ public class BaseActivity extends CustomFontsActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        isRestared = false;
         unregisterReceiver(mInfoBroadcastReceiver);
     }
 
@@ -275,7 +287,7 @@ public class BaseActivity extends CustomFontsActivity {
                     break;
                 case DEALING_POSITION:
                     Log.d(TAG, "DEALING_POSITION");
-                    changeMainFragment(new DealingFragment());
+                    changeMainFragment(DealingFragment.getInstance());
                     break;
                 case REFRESH_POSITION:
                     Log.d(TAG, "REFRESH_POSITION");
@@ -298,10 +310,12 @@ public class BaseActivity extends CustomFontsActivity {
             backToRootFragment = false;
         }
         onSwitchFragment(targetFragment, targetFragment.getClass().getName(), true, true, R.id.content);
+        currentFragment = targetFragment;
     }
 
     public static void addNextFragment(Fragment fragment) {
         onSwitchFragment(fragment, fragment.getClass().getName(), true, true, R.id.content);
+        currentFragment = fragment;
     }
 
     public static void clearFragmentBackStack() {
@@ -342,7 +356,7 @@ public class BaseActivity extends CustomFontsActivity {
         if(toolbar != null) {
             return toolbar;
         } else {
-            toolbar = new ToolbarFragment();
+            toolbar = ToolbarFragment.getInstance();
             changeToolbarFragment(toolbar);
             return toolbar;
         }

@@ -55,25 +55,22 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
         Gson gson = new Gson();
         String name = binaryOptionAnswer.getElements().get(position).getShortDescriptionEn().toUpperCase();
         String longDescription = binaryOptionAnswer.getElements().get(position).getLongDescriptionEn();
+        String jsonStr = gson.toJson(binaryOptionAnswer.getElements().get(position), BinaryOptionAnswer.Element.class);
         try {
-            String jsonStr = gson.toJson(binaryOptionAnswer.getElements().get(position), BinaryOptionAnswer.Element.class);
             JSONObject elem = new JSONObject(jsonStr);
-            String language = Locale.getDefault().getLanguage();
-            if(!ConventString.isOurLanguage(language)) {
-                language = "en";
-            }
+            String language = ConventString.getLanguageForPromotions();
             String nameParam = "short_description_" + language;
             String longDescriptionParam = "long_description_" + language;
-            if(language.equals("zh") || language.equals("cn")) {
+            /*if(language.equals("zh") || language.equals("cn")) {
                 nameParam = "short_description_zh_cn";
                 longDescription = "long_description_zh_cn";
-            }
+            }*/
             name = TextUtils.isEmpty(elem.getString(nameParam)) ? name : elem.getString(nameParam);
+            name = name.toUpperCase();
             longDescription = TextUtils.isEmpty(elem.getString(longDescriptionParam)) ? longDescription : elem.getString(longDescriptionParam);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        name = name.toUpperCase();
         promotionsViewHolder.tvName.setText(name);
         promotionsViewHolder.imgLink.setOnClickListener(v -> {
             BaseActivity.sMainTagFragment = PromotionsFragment.class.getName();
@@ -88,6 +85,8 @@ public class FragmentPromotionsAdapter extends GrandCapitalListAdapter {
         String finalName = name;
         promotionsViewHolder.itemView.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
+            bundle.putString(QuestionFragment.PROMOTIONS_JSON_DATA, jsonStr);
+            bundle.putInt(QuestionFragment.NUMBER_QUESTION, position);
             bundle.putString(QuestionFragment.HEADER_TEXT, finalName);
             bundle.putString(QuestionFragment.CONTENT_TEXT, finalLongDescription);
 

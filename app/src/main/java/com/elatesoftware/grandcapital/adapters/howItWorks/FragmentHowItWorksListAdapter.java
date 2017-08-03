@@ -61,6 +61,7 @@ public class FragmentHowItWorksListAdapter extends GrandCapitalListAdapter {
         questionHolder.mQuestionName.setText(mQuestionsNames[position]);
         holder.itemView.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
+            bundle.putInt(QuestionFragment.NUMBER_QUESTION, position);
             bundle.putString(QuestionFragment.HEADER_TEXT, mQuestionsNames[position]);
             bundle.putString(QuestionFragment.CONTENT_TEXT, mQuestionsContent[position]);
 
