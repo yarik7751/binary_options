@@ -142,6 +142,7 @@
 
     <string name="zero_min">1 MIN</string>
     <string name="zero_dollars">$10</string>
+    <string name="min">MIN</string>
 
     <string name="string_for_reward" translatable="false">$0.0 (0%)</string>
     <!--нет перевода-->

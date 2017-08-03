@@ -1,6 +1,7 @@
 package com.elatesoftware.grandcapital.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.text.Html;
 import android.text.Spannable;
@@ -24,6 +25,10 @@ public class ConventString {
 
     public static final String TAG = "ConventString_Log";
 
+    public static String getSignatureMIN(Context context) {
+        return " " + context.getResources().getString(R.string.min);
+    }
+
     public static void setMaskAmount(EditText v, boolean isBol) {
         String str = v.getText().toString();
         if(isBol) {
@@ -43,27 +48,27 @@ public class ConventString {
         }
     }
 
-    public static void setMaskTime(EditText v, boolean isBol) {
+    public static void setMaskTime(Context context, EditText v, boolean isBol) {
         String str = v.getText().toString();
         if(isBol) {
             v.setCursorVisible(true);
-            str = str.replace(" MIN", "");
+            str = str.replace(getSignatureMIN(context), "");
             v.setText(str);
             v.setSelection(v.getText().toString().length());
         } else {
             v.setCursorVisible(false);
-            if(!str.contains(" MIN")) {
+            if(!str.contains(getSignatureMIN(context))) {
                 if(TextUtils.isEmpty(str)) {
                     str = "0";
                 }
                 int value = Integer.parseInt(str);
-                v.setText(value + " MIN");
+                v.setText(value + getSignatureMIN(context));
             }
         }
     }
-    public static void changeTimeValue(EditText v, boolean isAdd, boolean isOpenKeyboard) {
+    public static void changeTimeValue(Context context, EditText v, boolean isAdd, boolean isOpenKeyboard) {
         String str = v.getText().toString();
-        str = str.replace(" MIN", "");
+        str = str.replace(getSignatureMIN(context), "");
         int time = Integer.parseInt(str);
         if(isAdd) {
             time++;
@@ -73,15 +78,15 @@ public class ConventString {
                 time = 0;
             }
         }
-        v.setText(time + (isOpenKeyboard ? "" : " MIN"));
+        v.setText(time + (isOpenKeyboard ? "" : getSignatureMIN(context)));
         GoogleAnalyticsUtil.sendEvent(GoogleAnalyticsUtil.ANALYTICS_TERMINAL_SCREEN, GoogleAnalyticsUtil.ANALYTICS_BUTTON_CHANGE_TIME, isAdd ? "+" : "-", (long) time);
     }
 
-    public static void setTimeValue(EditText v, int value, boolean isOpenKeyboard) {
-        v.setText(value + (isOpenKeyboard ? "" : " MIN"));
+    public static void setTimeValue(Context context, EditText v, int value, boolean isOpenKeyboard) {
+        v.setText(value + (isOpenKeyboard ? "" : getSignatureMIN(context)));
     }
 
-    public static void setAmountValue(EditText v, double value, boolean isOpenKeyboard) {
+    public static void setAmountValue(Context context, EditText v, double value, boolean isOpenKeyboard) {
         v.setText((isOpenKeyboard ? "" : "$") + value);
     }
 

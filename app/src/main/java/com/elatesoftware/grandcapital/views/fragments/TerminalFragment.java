@@ -272,7 +272,7 @@ public class TerminalFragment extends Fragment {
                 ConventString.setMaskAmount(etValueAmount, isOpen1);
             }
             if (etValueTime.isFocused()) {
-                ConventString.setMaskTime(etValueTime, isOpen1);
+                ConventString.setMaskTime(getContext(), etValueTime, isOpen1);
             }
         });
         etValueAmount.setOnFocusChangeListener((v, hasFocus) -> {
@@ -288,7 +288,7 @@ public class TerminalFragment extends Fragment {
                 if(!hasFocus) {
                     isTimeIterator = true;
                 }
-                ConventString.setMaskTime(etValueTime, hasFocus);
+                ConventString.setMaskTime(getContext(), etValueTime, hasFocus);
             }
         });
         etValueAmount.addTextChangedListener(new TextWatcher() {
@@ -339,11 +339,11 @@ public class TerminalFragment extends Fragment {
         });
         tvPlusTime.setOnClickListener(v ->{
                 isTimeIterator = true;
-                ConventString.changeTimeValue(etValueTime, true, isOpenKeyboard && etValueTime.isFocused());
+                ConventString.changeTimeValue(getContext(), etValueTime, true, isOpenKeyboard && etValueTime.isFocused());
         });
         tvMinusTime.setOnClickListener(v -> {
             isTimeIterator = true;
-                ConventString.changeTimeValue(etValueTime, false, isOpenKeyboard && etValueTime.isFocused());
+                ConventString.changeTimeValue(getContext(), etValueTime, false, isOpenKeyboard && etValueTime.isFocused());
         });
         tvValueActive.setOnClickListener(v -> {
             Bundle bundle = new Bundle();

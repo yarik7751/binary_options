@@ -125,6 +125,7 @@
 
     <string name="zero_min">1 分钟</string>
     <string name="zero_dollars">$10</string>
+    <string name="min">分钟</string>
 
     <!--нет перевода-->
     <string name="attention">注意！</string>
