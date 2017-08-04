@@ -154,13 +154,13 @@ public class DealingFragment extends Fragment {
 
     }
     private void requestOrders(){
-        Intent intentService = new Intent(getActivity().getApplicationContext(), OrdersService.class);
+        Intent intentService = new Intent(getContext(), OrdersService.class);
         intentService.putExtra(OrdersService.FUNCTION, OrdersService.GET_ALL_ORDERS_DEALING);
         getActivity().startService(intentService);
     }
 
     private void requestDeleteDealing(OrderAnswer order) {
-        Intent intentService = new Intent(getActivity().getApplicationContext(), DeleteDealingService.class);
+        Intent intentService = new Intent(getContext(), DeleteDealingService.class);
         intentService.putExtra(Const.ACTION, DeleteDealingService.ACTION_SERVICE_DELETE_DEALING);
         getActivity().startService(intentService.putExtra(DeleteDealingService.TICKET, order.getTicket()));
     }

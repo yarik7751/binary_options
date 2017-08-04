@@ -103,7 +103,7 @@ public class PromotionsFragment extends Fragment {
     }
 
     private void loadBinaryOptionData() {
-        getActivity().startService(new Intent(getActivity().getApplicationContext(), BinaryOptionService.class));
+        getActivity().startService(new Intent(getContext(), BinaryOptionService.class));
     }
 
     public class GetResponseBinaryOptionBroadcastReceiver extends BroadcastReceiver {

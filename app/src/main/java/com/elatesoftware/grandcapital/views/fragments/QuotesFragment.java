@@ -53,7 +53,7 @@ public class QuotesFragment extends Fragment {
     private Runnable runnableQuotes = new Runnable() {
         @Override
         public void run() {
-            Intent intentService = new Intent(getActivity().getApplicationContext(), InfoUserService.class);
+            Intent intentService = new Intent(getContext(), InfoUserService.class);
             getActivity().startService(intentService);
             handler.postDelayed(runnableQuotes, INTERVAL);
         }

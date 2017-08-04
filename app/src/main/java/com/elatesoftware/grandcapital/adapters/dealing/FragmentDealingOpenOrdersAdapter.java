@@ -3,21 +3,18 @@ package com.elatesoftware.grandcapital.adapters.dealing;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.daimajia.swipe.SwipeLayout;
 import com.elatesoftware.grandcapital.api.pojo.OrderAnswer;
+import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
+import com.elatesoftware.grandcapital.utils.ConventDate;
+import com.elatesoftware.grandcapital.utils.ConventString;
 
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-import com.elatesoftware.grandcapital.app.GrandCapitalApplication;
-import com.elatesoftware.grandcapital.utils.ConventDate;
-import com.elatesoftware.grandcapital.utils.ConventString;
-
 public class FragmentDealingOpenOrdersAdapter extends FragmentDealingOrdersAdapter {
 
     private OnCloseDealing onCloseDealing;
-    private SwipeLayout slLast;
 
     public FragmentDealingOpenOrdersAdapter(List<OrderAnswer> orderList, OnCloseDealing _onCloseDealing) {
         super(orderList);

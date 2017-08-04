@@ -72,7 +72,7 @@ public class FAQFragment extends Fragment {
         intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
         getActivity().registerReceiver(mQuestionsBroadcastReceiver, intentFilter);
 
-        Intent pageIntent = new Intent(getActivity().getApplicationContext(), QuestionsService.class);
+        Intent pageIntent = new Intent(getContext(), QuestionsService.class);
         pageIntent.putExtra(QuestionsService.PAGE, 1);
         getActivity().startService(pageIntent);
         llProgress.setVisibility(View.VISIBLE);
