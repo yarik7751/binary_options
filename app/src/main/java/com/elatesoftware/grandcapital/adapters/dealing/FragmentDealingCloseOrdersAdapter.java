@@ -46,4 +46,9 @@ public class FragmentDealingCloseOrdersAdapter extends FragmentDealingOrdersAdap
             orderHolder.mArrow.setImageDrawable(UP_DRAWABLE);
         }
     }
+
+    public void updateAdapter(List<OrderAnswer> _orderList) {
+        orderList = _orderList;
+        notifyDataSetChanged();
+    }
 }

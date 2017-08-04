@@ -255,8 +255,12 @@ public class DealingFragment extends Fragment {
                         }
                     } else {
                         mAdapterOpen = null;
-                        mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
-                        mRecyclerView.setAdapter(mAdapterClose);
+                        if(mAdapterClose == null) {
+                            mAdapterClose = new FragmentDealingCloseOrdersAdapter(currentOrders);
+                            mRecyclerView.setAdapter(mAdapterClose);
+                        } else {
+                            mAdapterClose.updateAdapter(currentOrders);
+                        }
                         //mProgressLayout.setVisibility(View.GONE);
                     }
                     setListHeader(currentTabPosition);

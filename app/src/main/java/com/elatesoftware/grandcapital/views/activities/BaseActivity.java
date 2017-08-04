@@ -102,7 +102,7 @@ public class BaseActivity extends CustomFontsActivity {
             } else if (view == mSupport) {
                 changeMainFragment(new SupportFragment());
             } else if (view == mDealing) {
-                changeMainFragment(DealingFragment.getInstance());
+                changeMainFragment(new DealingFragment());
             } else if (view == mQuotes) {
                 changeMainFragment(new QuotesFragment());
             } else if (view == mHowItWorks) {
@@ -287,7 +287,7 @@ public class BaseActivity extends CustomFontsActivity {
                     break;
                 case DEALING_POSITION:
                     Log.d(TAG, "DEALING_POSITION");
-                    changeMainFragment(DealingFragment.getInstance());
+                    changeMainFragment(new DealingFragment());
                     break;
                 case REFRESH_POSITION:
                     Log.d(TAG, "REFRESH_POSITION");
