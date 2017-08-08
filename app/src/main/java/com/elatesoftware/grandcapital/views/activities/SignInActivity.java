@@ -80,8 +80,8 @@ public class SignInActivity extends CustomFontsActivity implements OnKeyboardVis
             startActivity(browserIntent);
         });
         btnSignIn.setOnClickListener(view -> {{
-            //etLogin.setText("10031740");
-            //etPassword.setText("2nFaxHcy");
+            etLogin.setText("10040611");
+            etPassword.setText("jzt4Jw3A");
             signIn();
         }});
         tilLogin.setErrorEnabled(true);

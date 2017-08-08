@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="choose_an_active">Выберите котировку</string>
+    <string name="choose_an_active">Choose an instrument</string>
     <string name="deposit_withdraw">Deposit/Withdraw</string>
     <string name="deposit_terminal">DEPOSIT</string>
 </resources>

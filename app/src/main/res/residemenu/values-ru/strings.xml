@@ -163,7 +163,7 @@
         <item>Декабрь</item>
     </string-array>
     <string name="time_has_not_passed">Подождите, пожалуйста</string>
-    <string name="choose_an_active">Выберите котировку</string>
+    <string name="choose_an_active">Выберите инструмент</string>
     <string name="deposit_withdraw">Ввод/вывод средств</string>
     <string name="dealing_can_not_be_closed">Сделка не может быть закрыта.</string>
     <string name="seconds_remaining">осталось секунд.</string>

@@ -164,7 +164,7 @@
         <item>November</item>
         <item>December</item>
     </string-array>
-    <string name="choose_an_active">Choose an active</string>
+    <string name="choose_an_active">Choose an instrument</string>
     <string name="deposit_withdraw">Deposit/Withdraw</string>
     <string name="dealing_can_not_be_closed">The dealing can not be closed.</string>
     <string name="time_has_not_passed">Time has not passed</string>

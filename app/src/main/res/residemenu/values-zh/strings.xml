@@ -166,7 +166,7 @@
         <item>十一月</item>
         <item>十二月</item>
     </string-array>
-    <string name="choose_an_active">Choose an active</string>
+    <string name="choose_an_active">选择交易品种</string>
     <string name="deposit_withdraw">出/入金</string>
     <string name="dealing_can_not_be_closed">The dealing can not be closed.</string>
     <string name="time_has_not_passed">Time has not passed</string>
